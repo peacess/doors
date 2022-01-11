@@ -1,0 +1,13 @@
+
+enum FrameType:int16{
+    Message = 0,
+}
+
+table Frame{
+    type: FrameType;
+    bytes: [byte];
+}
+
+table Message{
+    text: string;
+}
