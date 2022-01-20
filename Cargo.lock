@@ -19,7 +19,6 @@ name = "chat_server"
 version = "0.1.0"
 dependencies = [
  "flatbuffers",
- "io-uring",
  "mio",
 ]
 
@@ -32,16 +31,6 @@ dependencies = [
  "bitflags",
  "smallvec",
  "thiserror",
-]
-
-[[package]]
-name = "io-uring"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8d75829ed9377bab6c90039fe47b9d84caceb4b5063266142e21bcce6550cda8"
-dependencies = [
- "bitflags",
- "libc",
 ]
 
 [[package]]

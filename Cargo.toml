@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 mio = "0.8.0"
-io-uring = "0.5.2"
+#io-uring = "0.5.2"
 flatbuffers = "2.0.0"
 
 #[lib]
