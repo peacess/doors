@@ -1,0 +1,3 @@
+
+*.go linguist-language=go
+*.rs linguist-language=rust
