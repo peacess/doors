@@ -16,4 +16,4 @@ flatbuffers = "2.0.0"
 
 [[bin]]
 name="chat_server"
-path="src/main.rs"
+path= "src/main.rs"
