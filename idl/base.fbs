@@ -1,3 +1,4 @@
+namespace idl;
 
 enum FrameType:int16{
     Message = 0,
