@@ -6,6 +6,7 @@ enum FrameType:int16{
 //使用int 128来存放uuid, 由于部分语言不支持int128，所以把它分为两个int64的整数
 //它也可以使用来存放public key
 //在内存直接转换时，如果主机的字节序为大端，需要转换字节序
+//flatbuffers使用小端字节序
 struct Int128_64{
     i1: int64;
     i2: int64;
@@ -35,18 +36,25 @@ struct Timestamp{
 
 table Frame{
     len:int32;
-    version:int16;
     type: FrameType;
     bytes: [byte];
 }
 
-table Message{
-    //第一个字段是目的地，方便于做消息的路由
-    to_id: Int128_64;
-    from_id: Int128_64;
+struct MessageHeader{
+    version: int16;
+    to_id: Int128_8;
+    from_id: Int128_8;
+}
+
+table MessageBody{
     //message id
-    id: Int128_64;
+    id: Int128_8;
     // message timestamp
     ts: Timestamp;
     text: string;
+}
+
+table Message{
+    header: MessageHeader;
+    body: MessageBody;
 }
