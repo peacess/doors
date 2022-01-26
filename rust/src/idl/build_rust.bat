@@ -1,2 +1,0 @@
-
-flatc --rust base.fbs
