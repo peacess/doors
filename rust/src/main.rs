@@ -2,8 +2,8 @@ use std::time::SystemTime;
 
 use signal_hook::consts::TERM_SIGNALS;
 
+use chat_server::chat_server::ChatServer;
 use chat_server::config::Config;
-use chat_server::run::ChatServer;
 
 fn main() {
     log::info!("start chat server!");
@@ -17,11 +17,11 @@ fn main() {
         let mut t = None;
         for sig in TERM_SIGNALS {
             match t {
-                None => {
+                None => {//first push ctrl-c
                     t = Some(SystemTime::now());
                 }
-                Some(last) => {
-                    match SystemTime::now().duration_since(last) {
+                Some(pre) => {
+                    match SystemTime::now().duration_since(pre) {
                         Ok(d) => {
                             if d.as_secs() < 10 {
                                 break;
@@ -31,6 +31,8 @@ fn main() {
                             }
                         }
                         Err(e) => {
+                            //reset the time
+                            t = Some(SystemTime::now());
                             log::error!("{}", e);
                         }
                     }

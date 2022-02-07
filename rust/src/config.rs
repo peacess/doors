@@ -3,9 +3,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     #[serde(default = "Config::default_port")]
-    port: i32,
+    pub port: i32,
     #[serde(default = "Config::default_ip")]
-    ip: String,
+    pub ip: String,
 }
 
 

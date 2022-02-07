@@ -1,3 +1,3 @@
 mod idl;
-pub mod run;
+pub mod chat_server;
 pub mod config;
