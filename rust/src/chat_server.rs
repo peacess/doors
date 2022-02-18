@@ -1,4 +1,4 @@
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, fence, Ordering};
 use std::time::Duration;
 
 use mio::{Events, Interest, Poll, Token};
@@ -9,6 +9,7 @@ use crate::config::Config;
 pub struct ChatServer {
     udp_socket: UdpSocket,
     poll: Poll,
+    //字段stop_status并不与其它字段或变量有先后关系，这里只需要可见性，但rust本身没有提供"volatile"可见性，所以这里使用 atomic类型
     stop_status: AtomicBool,
 }
 
@@ -34,14 +35,18 @@ impl ChatServer {
         let _ = self.poll.registry().register(&mut self.udp_socket, ChatServer::ECHOER, Interest::READABLE).expect("");
 
         loop {
-            if self.stop_status.load(Ordering::SeqCst) {
+            //字段stop_status并不与其它字段或变量有先后关系，这里只需要可见性，但rust本身没有提供"volatile"可见性，所以这里使用 atomic类型
+            if self.stop_status.load(Ordering::Relaxed) {
                 break;
             }
+            fence()
             //todo what returned after timeout
             self.poll.poll(&mut events, Some(Duration::from_secs(1))).expect("");
             for event in events.iter() {
                 match event.token() {
                     ChatServer::ECHOER => {
+                        //对于udp来说可以在多线程下recv同一个socket，因为udp包会是一个完整的包，要么收到一个包，要么没有，不会收到半个包的情况。
+                        //todo 这里的接收是放下独立的线程中更高效，还是在当前线程中直接接收，这个有等待验证。如果使用io_uring就没有这个问题，因为数据已经接收完成了
                         let n = self.udp_socket.recv(&mut buf).expect("");
                     }
                     not_token @ _ => {
@@ -53,7 +58,7 @@ impl ChatServer {
     }
 
     pub fn stop(&mut self) {
-        self.stop_status.store(true, Ordering::SeqCst);
+        self.stop_status.store(true, Ordering::Relaxed);
         if let Err(e) = self.poll.registry().deregister(&mut self.udp_socket) {
             log::error!("{}",e);
         }
