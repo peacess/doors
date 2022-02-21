@@ -33,32 +33,21 @@ func (rcv *Frame) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *Frame) Len() int32 {
+func (rcv *Frame) Header(obj *Header) *Header {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
-		return rcv._tab.GetInt32(o + rcv._tab.Pos)
+		x := o + rcv._tab.Pos
+		if obj == nil {
+			obj = new(Header)
+		}
+		obj.Init(rcv._tab.Bytes, x)
+		return obj
 	}
-	return 0
-}
-
-func (rcv *Frame) MutateLen(n int32) bool {
-	return rcv._tab.MutateInt32Slot(4, n)
-}
-
-func (rcv *Frame) Type() FrameType {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
-	if o != 0 {
-		return FrameType(rcv._tab.GetInt16(o + rcv._tab.Pos))
-	}
-	return 0
-}
-
-func (rcv *Frame) MutateType(n FrameType) bool {
-	return rcv._tab.MutateInt16Slot(6, int16(n))
+	return nil
 }
 
 func (rcv *Frame) Bytes(j int) int8 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		a := rcv._tab.Vector(o)
 		return rcv._tab.GetInt8(a + flatbuffers.UOffsetT(j*1))
@@ -67,7 +56,7 @@ func (rcv *Frame) Bytes(j int) int8 {
 }
 
 func (rcv *Frame) BytesLength() int {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		return rcv._tab.VectorLen(o)
 	}
@@ -75,7 +64,7 @@ func (rcv *Frame) BytesLength() int {
 }
 
 func (rcv *Frame) MutateBytes(j int, n int8) bool {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		a := rcv._tab.Vector(o)
 		return rcv._tab.MutateInt8(a+flatbuffers.UOffsetT(j*1), n)
@@ -84,16 +73,13 @@ func (rcv *Frame) MutateBytes(j int, n int8) bool {
 }
 
 func FrameStart(builder *flatbuffers.Builder) {
-	builder.StartObject(3)
+	builder.StartObject(2)
 }
-func FrameAddLen(builder *flatbuffers.Builder, len int32) {
-	builder.PrependInt32Slot(0, len, 0)
-}
-func FrameAddType(builder *flatbuffers.Builder, type_ FrameType) {
-	builder.PrependInt16Slot(1, int16(type_), 0)
+func FrameAddHeader(builder *flatbuffers.Builder, header flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(0, flatbuffers.UOffsetT(header), 0)
 }
 func FrameAddBytes(builder *flatbuffers.Builder, bytes flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(2, flatbuffers.UOffsetT(bytes), 0)
+	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(bytes), 0)
 }
 func FrameStartBytesVector(builder *flatbuffers.Builder, numElems int) flatbuffers.UOffsetT {
 	return builder.StartVector(1, numElems, 1)

@@ -37,13 +37,14 @@ struct Timestamp{
 }
 
 table Frame{
-    len:int32;
-    type: FrameType;
+
     header: Header;
     bytes: [byte];
 }
 
 struct Header{
+    len:int32;
+    type: FrameType;
     version: int16;
     to_id: Int128_8;
 }

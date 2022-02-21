@@ -33,7 +33,7 @@ func (rcv *MessageBody) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *MessageBody) Id(obj *Int128_8) *Int128_8 {
+func (rcv *MessageBody) FromId(obj *Int128_8) *Int128_8 {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		x := o + rcv._tab.Pos
@@ -46,8 +46,21 @@ func (rcv *MessageBody) Id(obj *Int128_8) *Int128_8 {
 	return nil
 }
 
-func (rcv *MessageBody) Ts(obj *Timestamp) *Timestamp {
+func (rcv *MessageBody) Id(obj *Int128_8) *Int128_8 {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
+	if o != 0 {
+		x := o + rcv._tab.Pos
+		if obj == nil {
+			obj = new(Int128_8)
+		}
+		obj.Init(rcv._tab.Bytes, x)
+		return obj
+	}
+	return nil
+}
+
+func (rcv *MessageBody) Ts(obj *Timestamp) *Timestamp {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
@@ -60,7 +73,7 @@ func (rcv *MessageBody) Ts(obj *Timestamp) *Timestamp {
 }
 
 func (rcv *MessageBody) Text() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
 	}
@@ -68,16 +81,19 @@ func (rcv *MessageBody) Text() []byte {
 }
 
 func MessageBodyStart(builder *flatbuffers.Builder) {
-	builder.StartObject(3)
+	builder.StartObject(4)
+}
+func MessageBodyAddFromId(builder *flatbuffers.Builder, fromId flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(0, flatbuffers.UOffsetT(fromId), 0)
 }
 func MessageBodyAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
+	builder.PrependStructSlot(1, flatbuffers.UOffsetT(id), 0)
 }
 func MessageBodyAddTs(builder *flatbuffers.Builder, ts flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(1, flatbuffers.UOffsetT(ts), 0)
+	builder.PrependStructSlot(2, flatbuffers.UOffsetT(ts), 0)
 }
 func MessageBodyAddText(builder *flatbuffers.Builder, text flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(2, flatbuffers.UOffsetT(text), 0)
+	builder.PrependUOffsetTSlot(3, flatbuffers.UOffsetT(text), 0)
 }
 func MessageBodyEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

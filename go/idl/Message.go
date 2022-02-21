@@ -33,12 +33,12 @@ func (rcv *Message) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *Message) Header(obj *MessageHeader) *MessageHeader {
+func (rcv *Message) Header(obj *Header) *Header {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
-			obj = new(MessageHeader)
+			obj = new(Header)
 		}
 		obj.Init(rcv._tab.Bytes, x)
 		return obj

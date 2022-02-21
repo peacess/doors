@@ -7,15 +7,18 @@ import "strconv"
 type FrameType int16
 
 const (
-	FrameTypeMessage FrameType = 0
+	FrameTypeMessage    FrameType = 0
+	FrameTypeMessageAck FrameType = 1
 )
 
 var EnumNamesFrameType = map[FrameType]string{
-	FrameTypeMessage: "Message",
+	FrameTypeMessage:    "Message",
+	FrameTypeMessageAck: "MessageAck",
 }
 
 var EnumValuesFrameType = map[string]FrameType{
-	"Message": FrameTypeMessage,
+	"Message":    FrameTypeMessage,
+	"MessageAck": FrameTypeMessageAck,
 }
 
 func (v FrameType) String() string {

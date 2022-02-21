@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, fence, Ordering};
 use std::time::Duration;
 
@@ -6,6 +7,7 @@ use mio::net::UdpSocket;
 
 use crate::config::Config;
 use crate::frame_handle::FrameHandle;
+use crate::shared::Shared;
 
 pub struct ChatServer {
     udp_socket: UdpSocket,
@@ -20,14 +22,17 @@ impl ChatServer {
     const ECHOER: Token = Token(1);
     pub fn init(config: &Config) -> ChatServer {
         let poll = Poll::new().expect("");
+        let shared = Shared::default();
+        //todo init shared
         let addr = format!("{}:{}", config.ip, config.port).parse().expect("");
         let udp_socket: UdpSocket = UdpSocket::bind(addr).expect("");
         // udp_socket.set_nonblocking(true);
+        let shared = Arc::new(shared);
         ChatServer {
             udp_socket,
             poll,
             stop_status: AtomicBool::new(true),
-            frame_handle: FrameHandle::new(),
+            frame_handle: FrameHandle::new(shared),
         }
     }
 
