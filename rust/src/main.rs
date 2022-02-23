@@ -7,9 +7,16 @@ use chat_server::config::Config;
 
 fn main() {
     log::info!("start chat server!");
-    let config = Config::load("");
-    let mut server = ChatServer {};
-    server.init(&config);
+    let config = {
+        match Config::load("") {
+            Ok(c) => c,
+            Err(e) => {
+                println!("{:?} \n exist chat_server", e); //还没有初始化日志，所以直接输出
+                return;
+            }
+        }
+    };
+    let mut server = ChatServer::init(&config);
     server.start();
 
     //the duration of ctrl-c is le 10s,then exit server

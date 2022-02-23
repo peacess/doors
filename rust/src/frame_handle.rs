@@ -1,5 +1,7 @@
 use std::sync::Arc;
+
 use flatbuffers::Follow;
+
 use crate::idl;
 use crate::idl::FrameType;
 use crate::shared::Shared;
