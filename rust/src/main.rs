@@ -16,7 +16,17 @@ fn main() {
             }
         }
     };
-    let mut server = ChatServer::init(&config);
+    //todo init log
+
+    let mut server = {
+       match ChatServer::init(&config) {
+           Ok(t) => t,
+           Err(e) => {
+               log::error!("{:?} \n exist chat_server", e);
+               return;
+           }
+       }
+    };
     server.start();
 
     //the duration of ctrl-c is le 10s,then exit server

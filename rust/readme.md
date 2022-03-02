@@ -7,6 +7,16 @@
 1. install vcpkg
 2. vcpkg install flatbuffers:x64-windows
 3. set path for "vcpkg/packages/flatbuffers_x64-windows/tools/flatbuffers"
+## install in ubuntu
+1. sudo apt install snapd
+2. sudo snap install flatbuffers
+# rocksdb
+## windows
+1. install llvm, 
+2. 设置path, ..llvm/bin
+3. 设置环境变量， LIBCLANG_PATH=..llvm/bin
+## ubuntu
+1. sudo apt install clang llvm
 
 # net
 ## see

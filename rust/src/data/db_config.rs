@@ -5,16 +5,16 @@ use serde::{Deserialize, Serialize};
 use crate::kits;
 
 #[derive(Serialize, Deserialize, Default)]
-pub struct DbConfig {
+pub struct DataConfig {
     pub path: String,
 }
 
-impl DbConfig {
+impl DataConfig {
     pub const DEFAULT_PATH: &'static str = "data_db";
 
-    pub fn init(config: &mut DbConfig) -> Result<(), io::Error> {
+    pub fn init(config: &mut DataConfig) -> Result<(), io::Error> {
         if config.path.is_empty() {
-            config.path = DbConfig::DEFAULT_PATH.to_owned();
+            config.path = DataConfig::DEFAULT_PATH.to_owned();
         }
 
         let mut p = path::PathBuf::from(&config.path);

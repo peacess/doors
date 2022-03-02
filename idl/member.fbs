@@ -1,0 +1,8 @@
+
+table Member{
+    id: Int128_8;
+    name: string;
+
+    // message timestamp
+    ts: Timestamp;
+}

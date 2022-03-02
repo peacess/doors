@@ -1,5 +1,5 @@
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, fence, Ordering};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
 use mio::{Events, Interest, Poll, Token};
@@ -20,20 +20,20 @@ pub struct ChatServer {
 impl ChatServer {
     const SENDER: Token = Token(0);
     const ECHOER: Token = Token(1);
-    pub fn init(config: &Config) -> ChatServer {
+    pub fn init(config: &Config) -> Result<ChatServer,anyhow::Error> {
         let poll = Poll::new().expect("");
-        let shared = Shared::default();
+        let shared = Shared::init(config)?;
         //todo init shared
-        let addr = format!("{}:{}", config.ip, config.port).parse().expect("");
-        let udp_socket: UdpSocket = UdpSocket::bind(addr).expect("");
+        let addr = format!("{}:{}", config.ip, config.port).parse()?;
+        let udp_socket: UdpSocket = UdpSocket::bind(addr)?;
         // udp_socket.set_nonblocking(true);
         let shared = Arc::new(shared);
-        ChatServer {
+        Ok(ChatServer {
             udp_socket,
             poll,
             stop_status: AtomicBool::new(true),
             frame_handle: FrameHandle::new(shared),
-        }
+        })
     }
 
     pub fn start(&mut self) {
