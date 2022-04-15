@@ -4,7 +4,7 @@ use flatbuffers::Follow;
 
 use crate::idl;
 use crate::idl::FrameType;
-use crate::shared::Shared;
+use crate::server::Shared;
 
 pub struct FrameHandle {
     shared: Arc<Shared>,

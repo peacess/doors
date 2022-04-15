@@ -5,23 +5,11 @@ enum FrameType:int16{
     MessageAck = 1,
 }
 
-//使用int 128来存放uuid, 由于部分语言不支持int128，所以把它分为两个int64的整数
+//使用int 128来存放uuid, 由于部分语言不支持int128,所以后byte来存放
 //它也可以使用来存放public key
 //在内存直接转换时，如果主机的字节序为大端，需要转换字节序
 //flatbuffers使用小端字节序
-struct Int128_64{
-    i1: int64;
-    i2: int64;
-}
-
-struct Int128_32{
-    i1: int32;
-    i2: int32;
-    i3: int32;
-    i4: int32;
-}
-
-struct Int128_8{
+struct Int128{
     i1: byte;
     i2: byte;
     i3: byte;
@@ -46,13 +34,13 @@ struct Header{
     len:int32;
     type: FrameType;
     version: int16;
-    to_id: Int128_8;
+    to_id: Int128;
 }
 
 table MessageBody{
-    from_id: Int128_8;
+    from_id: Int128;
     //message id
-    id: Int128_8;
+    id: Int128;
     // message timestamp
     ts: Timestamp;
     text: string;
@@ -67,7 +55,7 @@ table Message{
 table MessageAck{
     header: Header;
     //message id
-    id: Int128_8;
+    id: Int128;
     // message timestamp
     ts: Timestamp;
 }

@@ -1,6 +1,6 @@
 
 table Member{
-    id: Int128_8;
+    id: Int128;
     name: string;
 
     // message timestamp

@@ -2,8 +2,8 @@ use std::time::SystemTime;
 
 use signal_hook::consts::TERM_SIGNALS;
 
-use chat_server::chat_server::ChatServer;
-use chat_server::config::Config;
+use chat_server::server::ChatServer;
+use chat_server::server::Config;
 
 fn main() {
     log::info!("start chat server!");
@@ -19,13 +19,13 @@ fn main() {
     //todo init log
 
     let mut server = {
-       match ChatServer::init(&config) {
-           Ok(t) => t,
-           Err(e) => {
-               log::error!("{:?} \n exist chat_server", e);
-               return;
-           }
-       }
+        match ChatServer::init(&config) {
+            Ok(t) => t,
+            Err(e) => {
+                log::error!("{:?} \n exist chat_server", e);
+                return;
+            }
+        }
     };
     server.start();
 

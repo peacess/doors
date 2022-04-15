@@ -104,320 +104,18 @@ impl<'a> flatbuffers::Verifiable for FrameType {
 }
 
 impl flatbuffers::SimpleToVerifyInSlice for FrameType {}
-// struct Int128_64, aligned to 8
+// struct Int128, aligned to 1
 #[repr(transparent)]
 #[derive(Clone, Copy, PartialEq)]
-pub struct Int128_64(pub [u8; 16]);
-impl Default for Int128_64 { 
-  fn default() -> Self { 
-    Self([0; 16])
-  }
-}
-impl std::fmt::Debug for Int128_64 {
-  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-    f.debug_struct("Int128_64")
-      .field("i1", &self.i1())
-      .field("i2", &self.i2())
-      .finish()
-  }
-}
-
-impl flatbuffers::SimpleToVerifyInSlice for Int128_64 {}
-impl flatbuffers::SafeSliceAccess for Int128_64 {}
-impl<'a> flatbuffers::Follow<'a> for Int128_64 {
-  type Inner = &'a Int128_64;
-  #[inline]
-  fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    <&'a Int128_64>::follow(buf, loc)
-  }
-}
-impl<'a> flatbuffers::Follow<'a> for &'a Int128_64 {
-  type Inner = &'a Int128_64;
-  #[inline]
-  fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    flatbuffers::follow_cast_ref::<Int128_64>(buf, loc)
-  }
-}
-impl<'b> flatbuffers::Push for Int128_64 {
-    type Output = Int128_64;
-    #[inline]
-    fn push(&self, dst: &mut [u8], _rest: &[u8]) {
-        let src = unsafe {
-            ::std::slice::from_raw_parts(self as *const Int128_64 as *const u8, Self::size())
-        };
-        dst.copy_from_slice(src);
-    }
-}
-impl<'b> flatbuffers::Push for &'b Int128_64 {
-    type Output = Int128_64;
-
-    #[inline]
-    fn push(&self, dst: &mut [u8], _rest: &[u8]) {
-        let src = unsafe {
-            ::std::slice::from_raw_parts(*self as *const Int128_64 as *const u8, Self::size())
-        };
-        dst.copy_from_slice(src);
-    }
-}
-
-impl<'a> flatbuffers::Verifiable for Int128_64 {
-  #[inline]
-  fn run_verifier(
-    v: &mut flatbuffers::Verifier, pos: usize
-  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-    use self::flatbuffers::Verifiable;
-    v.in_buffer::<Self>(pos)
-  }
-}
-impl<'a> Int128_64 {
-  #[allow(clippy::too_many_arguments)]
-  pub fn new(
-    i1: i64,
-    i2: i64,
-  ) -> Self {
-    let mut s = Self([0; 16]);
-    s.set_i1(i1);
-    s.set_i2(i2);
-    s
-  }
-
-  pub fn i1(&self) -> i64 {
-    let mut mem = core::mem::MaybeUninit::<i64>::uninit();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        self.0[0..].as_ptr(),
-        mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i64>(),
-      );
-      mem.assume_init()
-    }.from_little_endian()
-  }
-
-  pub fn set_i1(&mut self, x: i64) {
-    let x_le = x.to_little_endian();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        &x_le as *const i64 as *const u8,
-        self.0[0..].as_mut_ptr(),
-        core::mem::size_of::<i64>(),
-      );
-    }
-  }
-
-  pub fn i2(&self) -> i64 {
-    let mut mem = core::mem::MaybeUninit::<i64>::uninit();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        self.0[8..].as_ptr(),
-        mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i64>(),
-      );
-      mem.assume_init()
-    }.from_little_endian()
-  }
-
-  pub fn set_i2(&mut self, x: i64) {
-    let x_le = x.to_little_endian();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        &x_le as *const i64 as *const u8,
-        self.0[8..].as_mut_ptr(),
-        core::mem::size_of::<i64>(),
-      );
-    }
-  }
-
-}
-
-// struct Int128_32, aligned to 4
-#[repr(transparent)]
-#[derive(Clone, Copy, PartialEq)]
-pub struct Int128_32(pub [u8; 16]);
-impl Default for Int128_32 { 
-  fn default() -> Self { 
-    Self([0; 16])
-  }
-}
-impl std::fmt::Debug for Int128_32 {
-  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-    f.debug_struct("Int128_32")
-      .field("i1", &self.i1())
-      .field("i2", &self.i2())
-      .field("i3", &self.i3())
-      .field("i4", &self.i4())
-      .finish()
-  }
-}
-
-impl flatbuffers::SimpleToVerifyInSlice for Int128_32 {}
-impl flatbuffers::SafeSliceAccess for Int128_32 {}
-impl<'a> flatbuffers::Follow<'a> for Int128_32 {
-  type Inner = &'a Int128_32;
-  #[inline]
-  fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    <&'a Int128_32>::follow(buf, loc)
-  }
-}
-impl<'a> flatbuffers::Follow<'a> for &'a Int128_32 {
-  type Inner = &'a Int128_32;
-  #[inline]
-  fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    flatbuffers::follow_cast_ref::<Int128_32>(buf, loc)
-  }
-}
-impl<'b> flatbuffers::Push for Int128_32 {
-    type Output = Int128_32;
-    #[inline]
-    fn push(&self, dst: &mut [u8], _rest: &[u8]) {
-        let src = unsafe {
-            ::std::slice::from_raw_parts(self as *const Int128_32 as *const u8, Self::size())
-        };
-        dst.copy_from_slice(src);
-    }
-}
-impl<'b> flatbuffers::Push for &'b Int128_32 {
-    type Output = Int128_32;
-
-    #[inline]
-    fn push(&self, dst: &mut [u8], _rest: &[u8]) {
-        let src = unsafe {
-            ::std::slice::from_raw_parts(*self as *const Int128_32 as *const u8, Self::size())
-        };
-        dst.copy_from_slice(src);
-    }
-}
-
-impl<'a> flatbuffers::Verifiable for Int128_32 {
-  #[inline]
-  fn run_verifier(
-    v: &mut flatbuffers::Verifier, pos: usize
-  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-    use self::flatbuffers::Verifiable;
-    v.in_buffer::<Self>(pos)
-  }
-}
-impl<'a> Int128_32 {
-  #[allow(clippy::too_many_arguments)]
-  pub fn new(
-    i1: i32,
-    i2: i32,
-    i3: i32,
-    i4: i32,
-  ) -> Self {
-    let mut s = Self([0; 16]);
-    s.set_i1(i1);
-    s.set_i2(i2);
-    s.set_i3(i3);
-    s.set_i4(i4);
-    s
-  }
-
-  pub fn i1(&self) -> i32 {
-    let mut mem = core::mem::MaybeUninit::<i32>::uninit();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        self.0[0..].as_ptr(),
-        mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i32>(),
-      );
-      mem.assume_init()
-    }.from_little_endian()
-  }
-
-  pub fn set_i1(&mut self, x: i32) {
-    let x_le = x.to_little_endian();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        &x_le as *const i32 as *const u8,
-        self.0[0..].as_mut_ptr(),
-        core::mem::size_of::<i32>(),
-      );
-    }
-  }
-
-  pub fn i2(&self) -> i32 {
-    let mut mem = core::mem::MaybeUninit::<i32>::uninit();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        self.0[4..].as_ptr(),
-        mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i32>(),
-      );
-      mem.assume_init()
-    }.from_little_endian()
-  }
-
-  pub fn set_i2(&mut self, x: i32) {
-    let x_le = x.to_little_endian();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        &x_le as *const i32 as *const u8,
-        self.0[4..].as_mut_ptr(),
-        core::mem::size_of::<i32>(),
-      );
-    }
-  }
-
-  pub fn i3(&self) -> i32 {
-    let mut mem = core::mem::MaybeUninit::<i32>::uninit();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        self.0[8..].as_ptr(),
-        mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i32>(),
-      );
-      mem.assume_init()
-    }.from_little_endian()
-  }
-
-  pub fn set_i3(&mut self, x: i32) {
-    let x_le = x.to_little_endian();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        &x_le as *const i32 as *const u8,
-        self.0[8..].as_mut_ptr(),
-        core::mem::size_of::<i32>(),
-      );
-    }
-  }
-
-  pub fn i4(&self) -> i32 {
-    let mut mem = core::mem::MaybeUninit::<i32>::uninit();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        self.0[12..].as_ptr(),
-        mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i32>(),
-      );
-      mem.assume_init()
-    }.from_little_endian()
-  }
-
-  pub fn set_i4(&mut self, x: i32) {
-    let x_le = x.to_little_endian();
-    unsafe {
-      core::ptr::copy_nonoverlapping(
-        &x_le as *const i32 as *const u8,
-        self.0[12..].as_mut_ptr(),
-        core::mem::size_of::<i32>(),
-      );
-    }
-  }
-
-}
-
-// struct Int128_8, aligned to 1
-#[repr(transparent)]
-#[derive(Clone, Copy, PartialEq)]
-pub struct Int128_8(pub [u8; 8]);
-impl Default for Int128_8 { 
+pub struct Int128(pub [u8; 8]);
+impl Default for Int128 { 
   fn default() -> Self { 
     Self([0; 8])
   }
 }
-impl std::fmt::Debug for Int128_8 {
+impl std::fmt::Debug for Int128 {
   fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-    f.debug_struct("Int128_8")
+    f.debug_struct("Int128")
       .field("i1", &self.i1())
       .field("i2", &self.i2())
       .field("i3", &self.i3())
@@ -430,45 +128,45 @@ impl std::fmt::Debug for Int128_8 {
   }
 }
 
-impl flatbuffers::SimpleToVerifyInSlice for Int128_8 {}
-impl flatbuffers::SafeSliceAccess for Int128_8 {}
-impl<'a> flatbuffers::Follow<'a> for Int128_8 {
-  type Inner = &'a Int128_8;
+impl flatbuffers::SimpleToVerifyInSlice for Int128 {}
+impl flatbuffers::SafeSliceAccess for Int128 {}
+impl<'a> flatbuffers::Follow<'a> for Int128 {
+  type Inner = &'a Int128;
   #[inline]
   fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    <&'a Int128_8>::follow(buf, loc)
+    <&'a Int128>::follow(buf, loc)
   }
 }
-impl<'a> flatbuffers::Follow<'a> for &'a Int128_8 {
-  type Inner = &'a Int128_8;
+impl<'a> flatbuffers::Follow<'a> for &'a Int128 {
+  type Inner = &'a Int128;
   #[inline]
   fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    flatbuffers::follow_cast_ref::<Int128_8>(buf, loc)
+    flatbuffers::follow_cast_ref::<Int128>(buf, loc)
   }
 }
-impl<'b> flatbuffers::Push for Int128_8 {
-    type Output = Int128_8;
+impl<'b> flatbuffers::Push for Int128 {
+    type Output = Int128;
     #[inline]
     fn push(&self, dst: &mut [u8], _rest: &[u8]) {
         let src = unsafe {
-            ::std::slice::from_raw_parts(self as *const Int128_8 as *const u8, Self::size())
+            ::std::slice::from_raw_parts(self as *const Int128 as *const u8, Self::size())
         };
         dst.copy_from_slice(src);
     }
 }
-impl<'b> flatbuffers::Push for &'b Int128_8 {
-    type Output = Int128_8;
+impl<'b> flatbuffers::Push for &'b Int128 {
+    type Output = Int128;
 
     #[inline]
     fn push(&self, dst: &mut [u8], _rest: &[u8]) {
         let src = unsafe {
-            ::std::slice::from_raw_parts(*self as *const Int128_8 as *const u8, Self::size())
+            ::std::slice::from_raw_parts(*self as *const Int128 as *const u8, Self::size())
         };
         dst.copy_from_slice(src);
     }
 }
 
-impl<'a> flatbuffers::Verifiable for Int128_8 {
+impl<'a> flatbuffers::Verifiable for Int128 {
   #[inline]
   fn run_verifier(
     v: &mut flatbuffers::Verifier, pos: usize
@@ -477,7 +175,7 @@ impl<'a> flatbuffers::Verifiable for Int128_8 {
     v.in_buffer::<Self>(pos)
   }
 }
-impl<'a> Int128_8 {
+impl<'a> Int128 {
   #[allow(clippy::too_many_arguments)]
   pub fn new(
     i1: i8,
@@ -859,7 +557,7 @@ impl<'a> Header {
     len: i32,
     type_: FrameType,
     version: i16,
-    to_id: &Int128_8,
+    to_id: &Int128,
   ) -> Self {
     let mut s = Self([0; 16]);
     s.set_len(len);
@@ -938,11 +636,11 @@ impl<'a> Header {
     }
   }
 
-  pub fn to_id(&self) -> &Int128_8 {
-    unsafe { &*(self.0[8..].as_ptr() as *const Int128_8) }
+  pub fn to_id(&self) -> &Int128 {
+    unsafe { &*(self.0[8..].as_ptr() as *const Int128) }
   }
 
-  pub fn set_to_id(&mut self, x: &Int128_8) {
+  pub fn set_to_id(&mut self, x: &Int128) {
     self.0[8..8+8].copy_from_slice(&x.0)
   }
 
@@ -1091,12 +789,12 @@ impl<'a> MessageBody<'a> {
     pub const VT_TEXT: flatbuffers::VOffsetT = 10;
 
   #[inline]
-  pub fn from_id(&self) -> Option<&'a Int128_8> {
-    self._tab.get::<Int128_8>(MessageBody::VT_FROM_ID, None)
+  pub fn from_id(&self) -> Option<&'a Int128> {
+    self._tab.get::<Int128>(MessageBody::VT_FROM_ID, None)
   }
   #[inline]
-  pub fn id(&self) -> Option<&'a Int128_8> {
-    self._tab.get::<Int128_8>(MessageBody::VT_ID, None)
+  pub fn id(&self) -> Option<&'a Int128> {
+    self._tab.get::<Int128>(MessageBody::VT_ID, None)
   }
   #[inline]
   pub fn ts(&self) -> Option<&'a Timestamp> {
@@ -1115,8 +813,8 @@ impl flatbuffers::Verifiable for MessageBody<'_> {
   ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
     use self::flatbuffers::Verifiable;
     v.visit_table(pos)?
-     .visit_field::<Int128_8>(&"from_id", Self::VT_FROM_ID, false)?
-     .visit_field::<Int128_8>(&"id", Self::VT_ID, false)?
+     .visit_field::<Int128>(&"from_id", Self::VT_FROM_ID, false)?
+     .visit_field::<Int128>(&"id", Self::VT_ID, false)?
      .visit_field::<Timestamp>(&"ts", Self::VT_TS, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>(&"text", Self::VT_TEXT, false)?
      .finish();
@@ -1124,8 +822,8 @@ impl flatbuffers::Verifiable for MessageBody<'_> {
   }
 }
 pub struct MessageBodyArgs<'a> {
-    pub from_id: Option<&'a Int128_8>,
-    pub id: Option<&'a Int128_8>,
+    pub from_id: Option<&'a Int128>,
+    pub id: Option<&'a Int128>,
     pub ts: Option<&'a Timestamp>,
     pub text: Option<flatbuffers::WIPOffset<&'a str>>,
 }
@@ -1146,12 +844,12 @@ pub struct MessageBodyBuilder<'a: 'b, 'b> {
 }
 impl<'a: 'b, 'b> MessageBodyBuilder<'a, 'b> {
   #[inline]
-  pub fn add_from_id(&mut self, from_id: &Int128_8) {
-    self.fbb_.push_slot_always::<&Int128_8>(MessageBody::VT_FROM_ID, from_id);
+  pub fn add_from_id(&mut self, from_id: &Int128) {
+    self.fbb_.push_slot_always::<&Int128>(MessageBody::VT_FROM_ID, from_id);
   }
   #[inline]
-  pub fn add_id(&mut self, id: &Int128_8) {
-    self.fbb_.push_slot_always::<&Int128_8>(MessageBody::VT_ID, id);
+  pub fn add_id(&mut self, id: &Int128) {
+    self.fbb_.push_slot_always::<&Int128>(MessageBody::VT_ID, id);
   }
   #[inline]
   pub fn add_ts(&mut self, ts: &Timestamp) {
@@ -1331,8 +1029,8 @@ impl<'a> MessageAck<'a> {
     self._tab.get::<Header>(MessageAck::VT_HEADER, None)
   }
   #[inline]
-  pub fn id(&self) -> Option<&'a Int128_8> {
-    self._tab.get::<Int128_8>(MessageAck::VT_ID, None)
+  pub fn id(&self) -> Option<&'a Int128> {
+    self._tab.get::<Int128>(MessageAck::VT_ID, None)
   }
   #[inline]
   pub fn ts(&self) -> Option<&'a Timestamp> {
@@ -1348,7 +1046,7 @@ impl flatbuffers::Verifiable for MessageAck<'_> {
     use self::flatbuffers::Verifiable;
     v.visit_table(pos)?
      .visit_field::<Header>(&"header", Self::VT_HEADER, false)?
-     .visit_field::<Int128_8>(&"id", Self::VT_ID, false)?
+     .visit_field::<Int128>(&"id", Self::VT_ID, false)?
      .visit_field::<Timestamp>(&"ts", Self::VT_TS, false)?
      .finish();
     Ok(())
@@ -1356,7 +1054,7 @@ impl flatbuffers::Verifiable for MessageAck<'_> {
 }
 pub struct MessageAckArgs<'a> {
     pub header: Option<&'a Header>,
-    pub id: Option<&'a Int128_8>,
+    pub id: Option<&'a Int128>,
     pub ts: Option<&'a Timestamp>,
 }
 impl<'a> Default for MessageAckArgs<'a> {
@@ -1379,8 +1077,8 @@ impl<'a: 'b, 'b> MessageAckBuilder<'a, 'b> {
     self.fbb_.push_slot_always::<&Header>(MessageAck::VT_HEADER, header);
   }
   #[inline]
-  pub fn add_id(&mut self, id: &Int128_8) {
-    self.fbb_.push_slot_always::<&Int128_8>(MessageAck::VT_ID, id);
+  pub fn add_id(&mut self, id: &Int128) {
+    self.fbb_.push_slot_always::<&Int128>(MessageAck::VT_ID, id);
   }
   #[inline]
   pub fn add_ts(&mut self, ts: &Timestamp) {

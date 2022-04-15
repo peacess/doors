@@ -1,7 +1,4 @@
 mod idl;
-pub mod chat_server;
-pub mod config;
-mod frame_handle;
-mod shared;
 mod data;
 mod kits;
+pub mod server;

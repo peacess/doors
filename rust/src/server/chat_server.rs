@@ -5,9 +5,9 @@ use std::time::Duration;
 use mio::{Events, Interest, Poll, Token};
 use mio::net::UdpSocket;
 
-use crate::config::Config;
-use crate::frame_handle::FrameHandle;
-use crate::shared::Shared;
+use crate::server::config::Config;
+use crate::server::FrameHandle;
+use crate::server::Shared;
 
 pub struct ChatServer {
     udp_socket: UdpSocket,
@@ -20,7 +20,7 @@ pub struct ChatServer {
 impl ChatServer {
     const SENDER: Token = Token(0);
     const ECHOER: Token = Token(1);
-    pub fn init(config: &Config) -> Result<ChatServer,anyhow::Error> {
+    pub fn init(config: &Config) -> Result<ChatServer, anyhow::Error> {
         let poll = Poll::new().expect("");
         let shared = Shared::init(config)?;
         //todo init shared
