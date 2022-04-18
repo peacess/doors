@@ -6,7 +6,7 @@ use mio::{Events, Interest, Poll, Token};
 use mio::net::UdpSocket;
 
 use crate::server::config::Config;
-use crate::server::FrameHandle;
+use crate::server::FrameHandles;
 use crate::server::Shared;
 
 pub struct ChatServer {
@@ -14,7 +14,7 @@ pub struct ChatServer {
     poll: Poll,
     //字段stop_status并不与其它字段或变量有先后关系，这里只需要可见性，但rust本身没有提供"volatile"可见性，所以这里使用 atomic类型
     stop_status: AtomicBool,
-    frame_handle: FrameHandle,
+    frame_handle: FrameHandles,
 }
 
 impl ChatServer {
@@ -32,7 +32,7 @@ impl ChatServer {
             udp_socket,
             poll,
             stop_status: AtomicBool::new(true),
-            frame_handle: FrameHandle::new(shared),
+            frame_handle: FrameHandles::new(shared),
         })
     }
 
