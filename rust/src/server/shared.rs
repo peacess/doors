@@ -1,9 +1,10 @@
+use redis_rocksdb::RedisRocksdb;
 use crate::data;
 use crate::data::Data;
 use crate::server::config::Config;
 
 pub struct Shared {
-    pub db: data::Data,
+    pub db: data::Data<RedisRocksdb>,
 }
 
 impl Shared {
