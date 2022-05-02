@@ -1,16 +1,16 @@
 use ckb_rocksdb::prelude::*;
-use redis_rocksdb::{KeyValue, RedisList, RedisRocksdb, RrError};
+use redis_rocksdb::{RedisList, RedisRocksdb, RrError};
 
 use crate::data::DataConfig;
 
-pub struct Data<T> where T: KeyValue + RedisList {
+pub struct Data<T> where T: RedisList {
     db: T,
 }
 
 impl Data<RedisRocksdb> {
     pub fn init(config: &DataConfig) -> Result<Self, anyhow::Error> {
         let db = Data::make_db(config)?;
-        Ok(Data{
+        Ok(Data {
             db: RedisRocksdb::new(db),
         })
     }

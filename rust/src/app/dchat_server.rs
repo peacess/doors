@@ -2,8 +2,8 @@ use std::time::SystemTime;
 
 use signal_hook::consts::TERM_SIGNALS;
 
-use chat_server::server::ChatServer;
-use chat_server::server::Config;
+use dchat::server::ChatServer;
+use dchat::server::Config;
 
 fn main() {
     log::info!("start chat server!");

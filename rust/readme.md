@@ -1,4 +1,11 @@
 
+# build
+## build android
+cargo apk build --bin dchat_android --target aarch64-linux-android/armv7-linux-androideabi/x86_64-linux-android/i686-linux-android
+## build pc
+cargo build --bin dchat_pc --target x86_64-pc-windows-gnu/x86_64-unknown-linux-gnu
+## build web
+cargo build --bin dchat_web --target wasm32-unknown-unknown
 # flatbuffers
 1. install the flatbuffers，find flatc.exe in path
 2. cd src/idl
@@ -10,6 +17,7 @@
 ## install in ubuntu
 1. sudo apt install snapd
 2. sudo snap install flatbuffers
+
 # rocksdb
 ## windows
 1. install llvm, 
