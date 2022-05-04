@@ -7,6 +7,7 @@ use egui_winit_platform::{Platform, PlatformDescriptor};
 use epi::*;
 use winit::event::Event::*;
 use winit::event_loop::ControlFlow;
+
 use crate::ui::DchatUi;
 
 const INITIAL_WIDTH: u32 = 1920;

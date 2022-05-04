@@ -1,22 +1,29 @@
 use std::time::Duration;
+
 use egui::{CtxRef, Rgba, Vec2};
 use epi::{App, Frame, Storage};
 
+use crate::ui::Bars;
+
 pub struct DchatUi {
     pub(crate) title: String,
+    bars: Bars,
 }
 
 impl DchatUi {
     pub fn new() -> Self {
         DchatUi {
-            title: "DChat".to_owned()
+            title: "DChat".to_owned(),
+            bars: Bars::new(),
         }
     }
 }
 
 impl App for DchatUi {
     fn update(&mut self, ctx: &CtxRef, frame: &Frame) {
-        todo!()
+        egui::CentralPanel::default().show(ctx, |ui| {
+            self.bars.show_inside(ui)
+        });
     }
 
     // fn setup(&mut self, _ctx: &CtxRef, _frame: &Frame, _storage: Option<&dyn Storage>) {
