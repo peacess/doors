@@ -3,10 +3,10 @@ use std::time::Duration;
 use egui::{CtxRef, Rgba, Vec2};
 use epi::{App, Frame, Storage};
 
-use crate::ui::Bars;
+use crate::Bars;
 
 pub struct DchatUi {
-    pub(crate) title: String,
+    pub title: String,
     bars: Bars,
 }
 
@@ -22,6 +22,8 @@ impl DchatUi {
 impl App for DchatUi {
     fn update(&mut self, ctx: &CtxRef, frame: &Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
+            #[cfg(debug_assertions)]
+            ui.ctx().set_debug_on_hover(true);
             self.bars.show_inside(ui)
         });
     }

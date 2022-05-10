@@ -1,4 +1,4 @@
-use crate::ui::{DchatUi, egui_entry};
+use crate::{DchatUi, egui_entry};
 
 pub fn run() {
     let app = DchatUi::new();

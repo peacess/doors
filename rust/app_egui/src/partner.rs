@@ -1,6 +1,6 @@
 use egui::Ui;
 
-use crate::ui::{BarType, BarView};
+use crate::{BarType, BarView};
 
 pub struct Partner {}
 
@@ -13,5 +13,10 @@ impl BarView for Partner {
 
     fn bar_type(&self) -> BarType {
         BarType::Partner
+    }
+
+    fn name(&self) -> String {
+        "🌐".to_owned()
+        // "Partner".to_owned()
     }
 }

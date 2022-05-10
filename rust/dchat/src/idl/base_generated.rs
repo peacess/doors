@@ -9,7 +9,6 @@ use std::mem;
 
 use self::flatbuffers::{EndianScalar, Follow};
 
-
 #[allow(unused_imports, dead_code)]
 pub mod idl {
     use std::cmp::Ordering;

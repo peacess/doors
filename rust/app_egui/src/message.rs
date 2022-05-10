@@ -1,7 +1,7 @@
 use egui::{CtxRef, Ui};
 use epi::{App, Frame};
 
-use crate::ui::{BarType, BarView};
+use crate::{BarType, BarView};
 
 pub struct Message {}
 
@@ -14,5 +14,10 @@ impl BarView for Message {
 
     fn bar_type(&self) -> BarType {
         BarType::Message
+    }
+
+    fn name(&self) -> String {
+        "🔉".to_owned()
+        // "Message".to_owned()
     }
 }

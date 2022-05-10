@@ -1,9 +1,11 @@
-use egui::{CtxRef, Ui, Widget};
+use std::borrow::BorrowMut;
+
+use egui::{CtxRef, Direction, Layout, Stroke, Ui, Widget};
 use egui::Key::S;
 use egui::menu::bar;
 use epi::{App, Frame};
 
-use crate::ui::{Message, Partner};
+use crate::{Message, Partner};
 
 #[derive(PartialEq)]
 pub enum BarType {
@@ -14,6 +16,7 @@ pub enum BarType {
 pub trait BarView {
     fn show_inside(&mut self, ui: &mut Ui);
     fn bar_type(&self) -> BarType;
+    fn name(&self) -> String;
 }
 
 pub struct Bars {
@@ -32,12 +35,20 @@ impl Bars {
     }
 
     pub fn show_inside(&mut self, ui: &mut Ui) {
+        let frame = egui::Frame::default().stroke(Stroke::none());
         egui::TopBottomPanel::bottom("bottom_panel")
             .resizable(false)
             .min_height(0.0)
+            .frame(frame)
             .show_inside(ui, |ui| {
-                ui.vertical_centered(|ui| {
-                    ui.heading("Bottom Panel");
+                ui.columns(self.bar_list.len(), |cols| {
+                    for (i, col) in cols.iter_mut().enumerate() {
+                        let bar = &self.bar_list[i];
+                        let layout = Layout::centered_and_justified(Direction::LeftToRight);
+                        col.with_layout(layout, |ui| {
+                            ui.selectable_value(&mut self.selected, bar.bar_type(), bar.name())
+                        });
+                    }
                 });
             });
         for it in &mut self.bar_list {

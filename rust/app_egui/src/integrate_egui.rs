@@ -8,7 +8,7 @@ use epi::*;
 use winit::event::Event::*;
 use winit::event_loop::ControlFlow;
 
-use crate::ui::DchatUi;
+use crate::DchatUi;
 
 const INITIAL_WIDTH: u32 = 1920;
 const INITIAL_HEIGHT: u32 = 1080;
