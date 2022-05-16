@@ -1,9 +1,4 @@
-use std::borrow::BorrowMut;
-
-use egui::{CtxRef, Direction, Layout, Stroke, Ui, Widget};
-use egui::Key::S;
-use egui::menu::bar;
-use epi::{App, Frame};
+use egui::{Direction, Layout, Stroke, Ui};
 
 use crate::{Message, Partner};
 
@@ -27,7 +22,7 @@ pub struct Bars {
 impl Bars {
     pub fn new() -> Bars {
         let bar_list: Vec<Box<dyn BarView>> = vec![Box::new(Message {}), Box::new(Partner {})];
-        let mut bars = Bars {
+        let bars = Bars {
             bar_list: bar_list,
             selected: BarType::Message,
         };

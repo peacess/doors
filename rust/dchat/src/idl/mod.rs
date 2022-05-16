@@ -1,4 +1,6 @@
-pub use base_generated::idl::*;
+pub use base_generated::*;
+pub use partner_generated::*;
 
-mod base_generated;
+pub mod base_generated;
+mod partner_generated;
 

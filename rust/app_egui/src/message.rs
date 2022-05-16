@@ -1,5 +1,4 @@
-use egui::{CtxRef, Ui};
-use epi::{App, Frame};
+use egui::Ui;
 
 use crate::{BarType, BarView};
 

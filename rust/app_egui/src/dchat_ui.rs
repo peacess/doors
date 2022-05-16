@@ -1,7 +1,5 @@
-use std::time::Duration;
-
-use egui::{CtxRef, Rgba, Vec2};
-use epi::{App, Frame, Storage};
+use egui::CtxRef;
+use epi::{App, Frame};
 
 use crate::Bars;
 

@@ -1,8 +1,11 @@
-namespace idl;
+//namespace idl;
 
 enum FrameType:int16{
-    Message = 0,
-    MessageAck = 1,
+    Message = 0, //发送消息
+    MessageAck = 1, //发送消息的响应
+
+    OnLine = 100, //parter的上线
+    OnLineAck = 101,//响应,
 }
 
 //使用int 128来存放uuid, 由于部分语言不支持int128,所以后byte来存放
@@ -25,7 +28,6 @@ struct Timestamp{
 }
 
 table Frame{
-
     header: Header;
     bytes: [byte];
 }
@@ -34,13 +36,15 @@ struct Header{
     len:int32;
     type: FrameType;
     version: int16;
+    from_id: Int128;
     to_id: Int128;
+    forward_id: Int128;
 }
 
 table MessageBody{
-    from_id: Int128;
     //message id
     id: Int128;
+    from_id: Int128;
     // message timestamp
     ts: Timestamp;
     text: string;

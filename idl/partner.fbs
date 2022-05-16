@@ -1,0 +1,28 @@
+
+include "base.fbs";
+//namespace idl;
+
+table Partner{
+    id: Int128;//随机产生的一个唯一标识
+    terminal_id: Int128;//终端id
+    parter_id: Int128;//parter
+    name: string;
+    ip: string;
+    port: int16;
+    create_ts: Timestamp;
+}
+
+table OnLine{
+    header: Header;
+    partner: Partner;
+    ts: Timestamp;
+}
+
+//确认收到消息
+table OnLineAck{
+    header: Header;
+    //OnLine中的 id
+    id: Int128;
+    partner: Partner;
+    ts: Timestamp;
+}

@@ -1,8 +1,0 @@
-
-table Member{
-    id: Int128;
-    name: string;
-
-    // message timestamp
-    ts: Timestamp;
-}

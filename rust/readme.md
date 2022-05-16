@@ -1,7 +1,10 @@
 
 # build
 ## build android
-cargo apk build --bin dchat_android --target aarch64-linux-android/armv7-linux-androideabi/x86_64-linux-android/i686-linux-android
+cargo apk build --bin dchat_android --target aarch64-linux-android
+cargo apk build --bin dchat_android --target armv7-linux-androideabi
+cargo apk build --bin dchat_android --target x86_64-linux-android
+cargo apk build --bin dchat_android --target i686-linux-android
 ## build pc
 cargo build --bin dchat_pc --target x86_64-pc-windows-gnu/x86_64-unknown-linux-gnu
 ## build web
