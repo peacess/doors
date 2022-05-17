@@ -7,21 +7,35 @@ enum FrameType:int16{
     OnLine = 100, //parter的上线
     OnLineAck = 101,//响应,
 }
+// 在编译为 go时，不支持 v:[ubyte:8],这样数组类型，所以才使用一个byte一个字段
+struct UByte8{
+    ub1: ubyte;
+    ub2: ubyte;
+    ub3: ubyte;
+    ub4: ubyte;
+    ub5: ubyte;
+    ub6: ubyte;
+    ub7: ubyte;
+    ub8: ubyte;
+}
 
 //使用int 128来存放uuid, 由于部分语言不支持int128,所以后byte来存放
 //它也可以使用来存放public key
 //在内存直接转换时，如果主机的字节序为大端，需要转换字节序
 //flatbuffers使用小端字节序
-struct Int128{
-    i1: byte;
-    i2: byte;
-    i3: byte;
-    i4: byte;
-    i5: byte;
-    i6: byte;
-    i7: byte;
-    i8: byte;
+// 在编译为 go时，不支持 v:[ubyte:16],这样数组类型，所以才使用一个byte一个字段
+struct UByte16{
+    ub1: UByte8;
+    ub2: UByte8;
 }
+
+struct UByte32{
+    ub1: UByte8;
+    ub2: UByte8;
+    ub3: UByte8;
+    ub4: UByte8;
+}
+
 
 struct Timestamp{
     ts: int64;
@@ -36,15 +50,15 @@ struct Header{
     len:int32;
     type: FrameType;
     version: int16;
-    from_id: Int128;
-    to_id: Int128;
-    forward_id: Int128;
+    from_id: UByte16;
+    to_id: UByte16;
+    forward_id: UByte16;
 }
 
 table MessageBody{
     //message id
-    id: Int128;
-    from_id: Int128;
+    id: UByte16;
+    from_id: UByte16;
     // message timestamp
     ts: Timestamp;
     text: string;
@@ -59,7 +73,7 @@ table Message{
 table MessageAck{
     header: Header;
     //message id
-    id: Int128;
+    id: UByte16;
     // message timestamp
     ts: Timestamp;
 }

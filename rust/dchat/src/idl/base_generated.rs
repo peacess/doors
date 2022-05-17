@@ -112,69 +112,69 @@ impl<'a> flatbuffers::Verifiable for FrameType {
 }
 
 impl flatbuffers::SimpleToVerifyInSlice for FrameType {}
-// struct Int128, aligned to 1
+// struct UByte8, aligned to 1
 #[repr(transparent)]
 #[derive(Clone, Copy, PartialEq)]
-pub struct Int128(pub [u8; 8]);
-impl Default for Int128 { 
+pub struct UByte8(pub [u8; 8]);
+impl Default for UByte8 { 
   fn default() -> Self { 
     Self([0; 8])
   }
 }
-impl std::fmt::Debug for Int128 {
+impl std::fmt::Debug for UByte8 {
   fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-    f.debug_struct("Int128")
-      .field("i1", &self.i1())
-      .field("i2", &self.i2())
-      .field("i3", &self.i3())
-      .field("i4", &self.i4())
-      .field("i5", &self.i5())
-      .field("i6", &self.i6())
-      .field("i7", &self.i7())
-      .field("i8_", &self.i8_())
+    f.debug_struct("UByte8")
+      .field("ub1", &self.ub1())
+      .field("ub2", &self.ub2())
+      .field("ub3", &self.ub3())
+      .field("ub4", &self.ub4())
+      .field("ub5", &self.ub5())
+      .field("ub6", &self.ub6())
+      .field("ub7", &self.ub7())
+      .field("ub8", &self.ub8())
       .finish()
   }
 }
 
-impl flatbuffers::SimpleToVerifyInSlice for Int128 {}
-impl flatbuffers::SafeSliceAccess for Int128 {}
-impl<'a> flatbuffers::Follow<'a> for Int128 {
-  type Inner = &'a Int128;
+impl flatbuffers::SimpleToVerifyInSlice for UByte8 {}
+impl flatbuffers::SafeSliceAccess for UByte8 {}
+impl<'a> flatbuffers::Follow<'a> for UByte8 {
+  type Inner = &'a UByte8;
   #[inline]
   fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    <&'a Int128>::follow(buf, loc)
+    <&'a UByte8>::follow(buf, loc)
   }
 }
-impl<'a> flatbuffers::Follow<'a> for &'a Int128 {
-  type Inner = &'a Int128;
+impl<'a> flatbuffers::Follow<'a> for &'a UByte8 {
+  type Inner = &'a UByte8;
   #[inline]
   fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    flatbuffers::follow_cast_ref::<Int128>(buf, loc)
+    flatbuffers::follow_cast_ref::<UByte8>(buf, loc)
   }
 }
-impl<'b> flatbuffers::Push for Int128 {
-    type Output = Int128;
+impl<'b> flatbuffers::Push for UByte8 {
+    type Output = UByte8;
     #[inline]
     fn push(&self, dst: &mut [u8], _rest: &[u8]) {
         let src = unsafe {
-            ::std::slice::from_raw_parts(self as *const Int128 as *const u8, Self::size())
+            ::std::slice::from_raw_parts(self as *const UByte8 as *const u8, Self::size())
         };
         dst.copy_from_slice(src);
     }
 }
-impl<'b> flatbuffers::Push for &'b Int128 {
-    type Output = Int128;
+impl<'b> flatbuffers::Push for &'b UByte8 {
+    type Output = UByte8;
 
     #[inline]
     fn push(&self, dst: &mut [u8], _rest: &[u8]) {
         let src = unsafe {
-            ::std::slice::from_raw_parts(*self as *const Int128 as *const u8, Self::size())
+            ::std::slice::from_raw_parts(*self as *const UByte8 as *const u8, Self::size())
         };
         dst.copy_from_slice(src);
     }
 }
 
-impl<'a> flatbuffers::Verifiable for Int128 {
+impl<'a> flatbuffers::Verifiable for UByte8 {
   #[inline]
   fn run_verifier(
     v: &mut flatbuffers::Verifier, pos: usize
@@ -183,212 +183,424 @@ impl<'a> flatbuffers::Verifiable for Int128 {
     v.in_buffer::<Self>(pos)
   }
 }
-impl<'a> Int128 {
+impl<'a> UByte8 {
   #[allow(clippy::too_many_arguments)]
   pub fn new(
-    i1: i8,
-    i2: i8,
-    i3: i8,
-    i4: i8,
-    i5: i8,
-    i6: i8,
-    i7: i8,
-    i8_: i8,
+    ub1: u8,
+    ub2: u8,
+    ub3: u8,
+    ub4: u8,
+    ub5: u8,
+    ub6: u8,
+    ub7: u8,
+    ub8: u8,
   ) -> Self {
     let mut s = Self([0; 8]);
-    s.set_i1(i1);
-    s.set_i2(i2);
-    s.set_i3(i3);
-    s.set_i4(i4);
-    s.set_i5(i5);
-    s.set_i6(i6);
-    s.set_i7(i7);
-    s.set_i8_(i8_);
+    s.set_ub1(ub1);
+    s.set_ub2(ub2);
+    s.set_ub3(ub3);
+    s.set_ub4(ub4);
+    s.set_ub5(ub5);
+    s.set_ub6(ub6);
+    s.set_ub7(ub7);
+    s.set_ub8(ub8);
     s
   }
 
-  pub fn i1(&self) -> i8 {
-    let mut mem = core::mem::MaybeUninit::<i8>::uninit();
+  pub fn ub1(&self) -> u8 {
+    let mut mem = core::mem::MaybeUninit::<u8>::uninit();
     unsafe {
       core::ptr::copy_nonoverlapping(
         self.0[0..].as_ptr(),
         mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
       mem.assume_init()
     }.from_little_endian()
   }
 
-  pub fn set_i1(&mut self, x: i8) {
+  pub fn set_ub1(&mut self, x: u8) {
     let x_le = x.to_little_endian();
     unsafe {
       core::ptr::copy_nonoverlapping(
-        &x_le as *const i8 as *const u8,
+        &x_le as *const u8 as *const u8,
         self.0[0..].as_mut_ptr(),
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
     }
   }
 
-  pub fn i2(&self) -> i8 {
-    let mut mem = core::mem::MaybeUninit::<i8>::uninit();
+  pub fn ub2(&self) -> u8 {
+    let mut mem = core::mem::MaybeUninit::<u8>::uninit();
     unsafe {
       core::ptr::copy_nonoverlapping(
         self.0[1..].as_ptr(),
         mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
       mem.assume_init()
     }.from_little_endian()
   }
 
-  pub fn set_i2(&mut self, x: i8) {
+  pub fn set_ub2(&mut self, x: u8) {
     let x_le = x.to_little_endian();
     unsafe {
       core::ptr::copy_nonoverlapping(
-        &x_le as *const i8 as *const u8,
+        &x_le as *const u8 as *const u8,
         self.0[1..].as_mut_ptr(),
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
     }
   }
 
-  pub fn i3(&self) -> i8 {
-    let mut mem = core::mem::MaybeUninit::<i8>::uninit();
+  pub fn ub3(&self) -> u8 {
+    let mut mem = core::mem::MaybeUninit::<u8>::uninit();
     unsafe {
       core::ptr::copy_nonoverlapping(
         self.0[2..].as_ptr(),
         mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
       mem.assume_init()
     }.from_little_endian()
   }
 
-  pub fn set_i3(&mut self, x: i8) {
+  pub fn set_ub3(&mut self, x: u8) {
     let x_le = x.to_little_endian();
     unsafe {
       core::ptr::copy_nonoverlapping(
-        &x_le as *const i8 as *const u8,
+        &x_le as *const u8 as *const u8,
         self.0[2..].as_mut_ptr(),
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
     }
   }
 
-  pub fn i4(&self) -> i8 {
-    let mut mem = core::mem::MaybeUninit::<i8>::uninit();
+  pub fn ub4(&self) -> u8 {
+    let mut mem = core::mem::MaybeUninit::<u8>::uninit();
     unsafe {
       core::ptr::copy_nonoverlapping(
         self.0[3..].as_ptr(),
         mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
       mem.assume_init()
     }.from_little_endian()
   }
 
-  pub fn set_i4(&mut self, x: i8) {
+  pub fn set_ub4(&mut self, x: u8) {
     let x_le = x.to_little_endian();
     unsafe {
       core::ptr::copy_nonoverlapping(
-        &x_le as *const i8 as *const u8,
+        &x_le as *const u8 as *const u8,
         self.0[3..].as_mut_ptr(),
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
     }
   }
 
-  pub fn i5(&self) -> i8 {
-    let mut mem = core::mem::MaybeUninit::<i8>::uninit();
+  pub fn ub5(&self) -> u8 {
+    let mut mem = core::mem::MaybeUninit::<u8>::uninit();
     unsafe {
       core::ptr::copy_nonoverlapping(
         self.0[4..].as_ptr(),
         mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
       mem.assume_init()
     }.from_little_endian()
   }
 
-  pub fn set_i5(&mut self, x: i8) {
+  pub fn set_ub5(&mut self, x: u8) {
     let x_le = x.to_little_endian();
     unsafe {
       core::ptr::copy_nonoverlapping(
-        &x_le as *const i8 as *const u8,
+        &x_le as *const u8 as *const u8,
         self.0[4..].as_mut_ptr(),
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
     }
   }
 
-  pub fn i6(&self) -> i8 {
-    let mut mem = core::mem::MaybeUninit::<i8>::uninit();
+  pub fn ub6(&self) -> u8 {
+    let mut mem = core::mem::MaybeUninit::<u8>::uninit();
     unsafe {
       core::ptr::copy_nonoverlapping(
         self.0[5..].as_ptr(),
         mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
       mem.assume_init()
     }.from_little_endian()
   }
 
-  pub fn set_i6(&mut self, x: i8) {
+  pub fn set_ub6(&mut self, x: u8) {
     let x_le = x.to_little_endian();
     unsafe {
       core::ptr::copy_nonoverlapping(
-        &x_le as *const i8 as *const u8,
+        &x_le as *const u8 as *const u8,
         self.0[5..].as_mut_ptr(),
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
     }
   }
 
-  pub fn i7(&self) -> i8 {
-    let mut mem = core::mem::MaybeUninit::<i8>::uninit();
+  pub fn ub7(&self) -> u8 {
+    let mut mem = core::mem::MaybeUninit::<u8>::uninit();
     unsafe {
       core::ptr::copy_nonoverlapping(
         self.0[6..].as_ptr(),
         mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
       mem.assume_init()
     }.from_little_endian()
   }
 
-  pub fn set_i7(&mut self, x: i8) {
+  pub fn set_ub7(&mut self, x: u8) {
     let x_le = x.to_little_endian();
     unsafe {
       core::ptr::copy_nonoverlapping(
-        &x_le as *const i8 as *const u8,
+        &x_le as *const u8 as *const u8,
         self.0[6..].as_mut_ptr(),
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
     }
   }
 
-  pub fn i8_(&self) -> i8 {
-    let mut mem = core::mem::MaybeUninit::<i8>::uninit();
+  pub fn ub8(&self) -> u8 {
+    let mut mem = core::mem::MaybeUninit::<u8>::uninit();
     unsafe {
       core::ptr::copy_nonoverlapping(
         self.0[7..].as_ptr(),
         mem.as_mut_ptr() as *mut u8,
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
       mem.assume_init()
     }.from_little_endian()
   }
 
-  pub fn set_i8_(&mut self, x: i8) {
+  pub fn set_ub8(&mut self, x: u8) {
     let x_le = x.to_little_endian();
     unsafe {
       core::ptr::copy_nonoverlapping(
-        &x_le as *const i8 as *const u8,
+        &x_le as *const u8 as *const u8,
         self.0[7..].as_mut_ptr(),
-        core::mem::size_of::<i8>(),
+        core::mem::size_of::<u8>(),
       );
     }
+  }
+
+}
+
+// struct UByte16, aligned to 1
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq)]
+pub struct UByte16(pub [u8; 16]);
+impl Default for UByte16 { 
+  fn default() -> Self { 
+    Self([0; 16])
+  }
+}
+impl std::fmt::Debug for UByte16 {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    f.debug_struct("UByte16")
+      .field("ub1", &self.ub1())
+      .field("ub2", &self.ub2())
+      .finish()
+  }
+}
+
+impl flatbuffers::SimpleToVerifyInSlice for UByte16 {}
+impl flatbuffers::SafeSliceAccess for UByte16 {}
+impl<'a> flatbuffers::Follow<'a> for UByte16 {
+  type Inner = &'a UByte16;
+  #[inline]
+  fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    <&'a UByte16>::follow(buf, loc)
+  }
+}
+impl<'a> flatbuffers::Follow<'a> for &'a UByte16 {
+  type Inner = &'a UByte16;
+  #[inline]
+  fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    flatbuffers::follow_cast_ref::<UByte16>(buf, loc)
+  }
+}
+impl<'b> flatbuffers::Push for UByte16 {
+    type Output = UByte16;
+    #[inline]
+    fn push(&self, dst: &mut [u8], _rest: &[u8]) {
+        let src = unsafe {
+            ::std::slice::from_raw_parts(self as *const UByte16 as *const u8, Self::size())
+        };
+        dst.copy_from_slice(src);
+    }
+}
+impl<'b> flatbuffers::Push for &'b UByte16 {
+    type Output = UByte16;
+
+    #[inline]
+    fn push(&self, dst: &mut [u8], _rest: &[u8]) {
+        let src = unsafe {
+            ::std::slice::from_raw_parts(*self as *const UByte16 as *const u8, Self::size())
+        };
+        dst.copy_from_slice(src);
+    }
+}
+
+impl<'a> flatbuffers::Verifiable for UByte16 {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.in_buffer::<Self>(pos)
+  }
+}
+impl<'a> UByte16 {
+  #[allow(clippy::too_many_arguments)]
+  pub fn new(
+    ub1: &UByte8,
+    ub2: &UByte8,
+  ) -> Self {
+    let mut s = Self([0; 16]);
+    s.set_ub1(&ub1);
+    s.set_ub2(&ub2);
+    s
+  }
+
+  pub fn ub1(&self) -> &UByte8 {
+    unsafe { &*(self.0[0..].as_ptr() as *const UByte8) }
+  }
+
+  pub fn set_ub1(&mut self, x: &UByte8) {
+    self.0[0..0+8].copy_from_slice(&x.0)
+  }
+
+  pub fn ub2(&self) -> &UByte8 {
+    unsafe { &*(self.0[8..].as_ptr() as *const UByte8) }
+  }
+
+  pub fn set_ub2(&mut self, x: &UByte8) {
+    self.0[8..8+8].copy_from_slice(&x.0)
+  }
+
+}
+
+// struct UByte32, aligned to 1
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq)]
+pub struct UByte32(pub [u8; 32]);
+impl Default for UByte32 { 
+  fn default() -> Self { 
+    Self([0; 32])
+  }
+}
+impl std::fmt::Debug for UByte32 {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    f.debug_struct("UByte32")
+      .field("ub1", &self.ub1())
+      .field("ub2", &self.ub2())
+      .field("ub3", &self.ub3())
+      .field("ub4", &self.ub4())
+      .finish()
+  }
+}
+
+impl flatbuffers::SimpleToVerifyInSlice for UByte32 {}
+impl flatbuffers::SafeSliceAccess for UByte32 {}
+impl<'a> flatbuffers::Follow<'a> for UByte32 {
+  type Inner = &'a UByte32;
+  #[inline]
+  fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    <&'a UByte32>::follow(buf, loc)
+  }
+}
+impl<'a> flatbuffers::Follow<'a> for &'a UByte32 {
+  type Inner = &'a UByte32;
+  #[inline]
+  fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    flatbuffers::follow_cast_ref::<UByte32>(buf, loc)
+  }
+}
+impl<'b> flatbuffers::Push for UByte32 {
+    type Output = UByte32;
+    #[inline]
+    fn push(&self, dst: &mut [u8], _rest: &[u8]) {
+        let src = unsafe {
+            ::std::slice::from_raw_parts(self as *const UByte32 as *const u8, Self::size())
+        };
+        dst.copy_from_slice(src);
+    }
+}
+impl<'b> flatbuffers::Push for &'b UByte32 {
+    type Output = UByte32;
+
+    #[inline]
+    fn push(&self, dst: &mut [u8], _rest: &[u8]) {
+        let src = unsafe {
+            ::std::slice::from_raw_parts(*self as *const UByte32 as *const u8, Self::size())
+        };
+        dst.copy_from_slice(src);
+    }
+}
+
+impl<'a> flatbuffers::Verifiable for UByte32 {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.in_buffer::<Self>(pos)
+  }
+}
+impl<'a> UByte32 {
+  #[allow(clippy::too_many_arguments)]
+  pub fn new(
+    ub1: &UByte8,
+    ub2: &UByte8,
+    ub3: &UByte8,
+    ub4: &UByte8,
+  ) -> Self {
+    let mut s = Self([0; 32]);
+    s.set_ub1(&ub1);
+    s.set_ub2(&ub2);
+    s.set_ub3(&ub3);
+    s.set_ub4(&ub4);
+    s
+  }
+
+  pub fn ub1(&self) -> &UByte8 {
+    unsafe { &*(self.0[0..].as_ptr() as *const UByte8) }
+  }
+
+  pub fn set_ub1(&mut self, x: &UByte8) {
+    self.0[0..0+8].copy_from_slice(&x.0)
+  }
+
+  pub fn ub2(&self) -> &UByte8 {
+    unsafe { &*(self.0[8..].as_ptr() as *const UByte8) }
+  }
+
+  pub fn set_ub2(&mut self, x: &UByte8) {
+    self.0[8..8+8].copy_from_slice(&x.0)
+  }
+
+  pub fn ub3(&self) -> &UByte8 {
+    unsafe { &*(self.0[16..].as_ptr() as *const UByte8) }
+  }
+
+  pub fn set_ub3(&mut self, x: &UByte8) {
+    self.0[16..16+8].copy_from_slice(&x.0)
+  }
+
+  pub fn ub4(&self) -> &UByte8 {
+    unsafe { &*(self.0[24..].as_ptr() as *const UByte8) }
+  }
+
+  pub fn set_ub4(&mut self, x: &UByte8) {
+    self.0[24..24+8].copy_from_slice(&x.0)
   }
 
 }
@@ -495,10 +707,10 @@ impl<'a> Timestamp {
 // struct Header, aligned to 4
 #[repr(transparent)]
 #[derive(Clone, Copy, PartialEq)]
-pub struct Header(pub [u8; 32]);
+pub struct Header(pub [u8; 56]);
 impl Default for Header { 
   fn default() -> Self { 
-    Self([0; 32])
+    Self([0; 56])
   }
 }
 impl std::fmt::Debug for Header {
@@ -567,11 +779,11 @@ impl<'a> Header {
     len: i32,
     type_: FrameType,
     version: i16,
-    from_id: &Int128,
-    to_id: &Int128,
-    forward_id: &Int128,
+    from_id: &UByte16,
+    to_id: &UByte16,
+    forward_id: &UByte16,
   ) -> Self {
-    let mut s = Self([0; 32]);
+    let mut s = Self([0; 56]);
     s.set_len(len);
     s.set_type_(type_);
     s.set_version(version);
@@ -650,28 +862,28 @@ impl<'a> Header {
     }
   }
 
-  pub fn from_id(&self) -> &Int128 {
-    unsafe { &*(self.0[8..].as_ptr() as *const Int128) }
+  pub fn from_id(&self) -> &UByte16 {
+    unsafe { &*(self.0[8..].as_ptr() as *const UByte16) }
   }
 
-  pub fn set_from_id(&mut self, x: &Int128) {
-    self.0[8..8+8].copy_from_slice(&x.0)
+  pub fn set_from_id(&mut self, x: &UByte16) {
+    self.0[8..8+16].copy_from_slice(&x.0)
   }
 
-  pub fn to_id(&self) -> &Int128 {
-    unsafe { &*(self.0[16..].as_ptr() as *const Int128) }
+  pub fn to_id(&self) -> &UByte16 {
+    unsafe { &*(self.0[24..].as_ptr() as *const UByte16) }
   }
 
-  pub fn set_to_id(&mut self, x: &Int128) {
-    self.0[16..16+8].copy_from_slice(&x.0)
+  pub fn set_to_id(&mut self, x: &UByte16) {
+    self.0[24..24+16].copy_from_slice(&x.0)
   }
 
-  pub fn forward_id(&self) -> &Int128 {
-    unsafe { &*(self.0[24..].as_ptr() as *const Int128) }
+  pub fn forward_id(&self) -> &UByte16 {
+    unsafe { &*(self.0[40..].as_ptr() as *const UByte16) }
   }
 
-  pub fn set_forward_id(&mut self, x: &Int128) {
-    self.0[24..24+8].copy_from_slice(&x.0)
+  pub fn set_forward_id(&mut self, x: &UByte16) {
+    self.0[40..40+16].copy_from_slice(&x.0)
   }
 
 }
@@ -819,12 +1031,12 @@ impl<'a> MessageBody<'a> {
     pub const VT_TEXT: flatbuffers::VOffsetT = 10;
 
   #[inline]
-  pub fn id(&self) -> Option<&'a Int128> {
-    self._tab.get::<Int128>(MessageBody::VT_ID, None)
+  pub fn id(&self) -> Option<&'a UByte16> {
+    self._tab.get::<UByte16>(MessageBody::VT_ID, None)
   }
   #[inline]
-  pub fn from_id(&self) -> Option<&'a Int128> {
-    self._tab.get::<Int128>(MessageBody::VT_FROM_ID, None)
+  pub fn from_id(&self) -> Option<&'a UByte16> {
+    self._tab.get::<UByte16>(MessageBody::VT_FROM_ID, None)
   }
   #[inline]
   pub fn ts(&self) -> Option<&'a Timestamp> {
@@ -843,8 +1055,8 @@ impl flatbuffers::Verifiable for MessageBody<'_> {
   ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
     use self::flatbuffers::Verifiable;
     v.visit_table(pos)?
-     .visit_field::<Int128>(&"id", Self::VT_ID, false)?
-     .visit_field::<Int128>(&"from_id", Self::VT_FROM_ID, false)?
+     .visit_field::<UByte16>(&"id", Self::VT_ID, false)?
+     .visit_field::<UByte16>(&"from_id", Self::VT_FROM_ID, false)?
      .visit_field::<Timestamp>(&"ts", Self::VT_TS, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>(&"text", Self::VT_TEXT, false)?
      .finish();
@@ -852,8 +1064,8 @@ impl flatbuffers::Verifiable for MessageBody<'_> {
   }
 }
 pub struct MessageBodyArgs<'a> {
-    pub id: Option<&'a Int128>,
-    pub from_id: Option<&'a Int128>,
+    pub id: Option<&'a UByte16>,
+    pub from_id: Option<&'a UByte16>,
     pub ts: Option<&'a Timestamp>,
     pub text: Option<flatbuffers::WIPOffset<&'a str>>,
 }
@@ -874,12 +1086,12 @@ pub struct MessageBodyBuilder<'a: 'b, 'b> {
 }
 impl<'a: 'b, 'b> MessageBodyBuilder<'a, 'b> {
   #[inline]
-  pub fn add_id(&mut self, id: &Int128) {
-    self.fbb_.push_slot_always::<&Int128>(MessageBody::VT_ID, id);
+  pub fn add_id(&mut self, id: &UByte16) {
+    self.fbb_.push_slot_always::<&UByte16>(MessageBody::VT_ID, id);
   }
   #[inline]
-  pub fn add_from_id(&mut self, from_id: &Int128) {
-    self.fbb_.push_slot_always::<&Int128>(MessageBody::VT_FROM_ID, from_id);
+  pub fn add_from_id(&mut self, from_id: &UByte16) {
+    self.fbb_.push_slot_always::<&UByte16>(MessageBody::VT_FROM_ID, from_id);
   }
   #[inline]
   pub fn add_ts(&mut self, ts: &Timestamp) {
@@ -1059,8 +1271,8 @@ impl<'a> MessageAck<'a> {
     self._tab.get::<Header>(MessageAck::VT_HEADER, None)
   }
   #[inline]
-  pub fn id(&self) -> Option<&'a Int128> {
-    self._tab.get::<Int128>(MessageAck::VT_ID, None)
+  pub fn id(&self) -> Option<&'a UByte16> {
+    self._tab.get::<UByte16>(MessageAck::VT_ID, None)
   }
   #[inline]
   pub fn ts(&self) -> Option<&'a Timestamp> {
@@ -1076,7 +1288,7 @@ impl flatbuffers::Verifiable for MessageAck<'_> {
     use self::flatbuffers::Verifiable;
     v.visit_table(pos)?
      .visit_field::<Header>(&"header", Self::VT_HEADER, false)?
-     .visit_field::<Int128>(&"id", Self::VT_ID, false)?
+     .visit_field::<UByte16>(&"id", Self::VT_ID, false)?
      .visit_field::<Timestamp>(&"ts", Self::VT_TS, false)?
      .finish();
     Ok(())
@@ -1084,7 +1296,7 @@ impl flatbuffers::Verifiable for MessageAck<'_> {
 }
 pub struct MessageAckArgs<'a> {
     pub header: Option<&'a Header>,
-    pub id: Option<&'a Int128>,
+    pub id: Option<&'a UByte16>,
     pub ts: Option<&'a Timestamp>,
 }
 impl<'a> Default for MessageAckArgs<'a> {
@@ -1107,8 +1319,8 @@ impl<'a: 'b, 'b> MessageAckBuilder<'a, 'b> {
     self.fbb_.push_slot_always::<&Header>(MessageAck::VT_HEADER, header);
   }
   #[inline]
-  pub fn add_id(&mut self, id: &Int128) {
-    self.fbb_.push_slot_always::<&Int128>(MessageAck::VT_ID, id);
+  pub fn add_id(&mut self, id: &UByte16) {
+    self.fbb_.push_slot_always::<&UByte16>(MessageAck::VT_ID, id);
   }
   #[inline]
   pub fn add_ts(&mut self, ts: &Timestamp) {

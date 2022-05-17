@@ -6,34 +6,34 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
-type OnLine struct {
+type MessageAck struct {
 	_tab flatbuffers.Table
 }
 
-func GetRootAsOnLine(buf []byte, offset flatbuffers.UOffsetT) *OnLine {
+func GetRootAsMessageAck(buf []byte, offset flatbuffers.UOffsetT) *MessageAck {
 	n := flatbuffers.GetUOffsetT(buf[offset:])
-	x := &OnLine{}
+	x := &MessageAck{}
 	x.Init(buf, n+offset)
 	return x
 }
 
-func GetSizePrefixedRootAsOnLine(buf []byte, offset flatbuffers.UOffsetT) *OnLine {
+func GetSizePrefixedRootAsMessageAck(buf []byte, offset flatbuffers.UOffsetT) *MessageAck {
 	n := flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])
-	x := &OnLine{}
+	x := &MessageAck{}
 	x.Init(buf, n+offset+flatbuffers.SizeUint32)
 	return x
 }
 
-func (rcv *OnLine) Init(buf []byte, i flatbuffers.UOffsetT) {
+func (rcv *MessageAck) Init(buf []byte, i flatbuffers.UOffsetT) {
 	rcv._tab.Bytes = buf
 	rcv._tab.Pos = i
 }
 
-func (rcv *OnLine) Table() flatbuffers.Table {
+func (rcv *MessageAck) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *OnLine) Header(obj *Header) *Header {
+func (rcv *MessageAck) Header(obj *Header) *Header {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		x := o + rcv._tab.Pos
@@ -46,12 +46,12 @@ func (rcv *OnLine) Header(obj *Header) *Header {
 	return nil
 }
 
-func (rcv *OnLine) Partner(obj *Partner) *Partner {
+func (rcv *MessageAck) Id(obj *UByte16) *UByte16 {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
-		x := rcv._tab.Indirect(o + rcv._tab.Pos)
+		x := o + rcv._tab.Pos
 		if obj == nil {
-			obj = new(Partner)
+			obj = new(UByte16)
 		}
 		obj.Init(rcv._tab.Bytes, x)
 		return obj
@@ -59,7 +59,7 @@ func (rcv *OnLine) Partner(obj *Partner) *Partner {
 	return nil
 }
 
-func (rcv *OnLine) Ts(obj *Timestamp) *Timestamp {
+func (rcv *MessageAck) Ts(obj *Timestamp) *Timestamp {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		x := o + rcv._tab.Pos
@@ -72,18 +72,18 @@ func (rcv *OnLine) Ts(obj *Timestamp) *Timestamp {
 	return nil
 }
 
-func OnLineStart(builder *flatbuffers.Builder) {
+func MessageAckStart(builder *flatbuffers.Builder) {
 	builder.StartObject(3)
 }
-func OnLineAddHeader(builder *flatbuffers.Builder, header flatbuffers.UOffsetT) {
+func MessageAckAddHeader(builder *flatbuffers.Builder, header flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(header), 0)
 }
-func OnLineAddPartner(builder *flatbuffers.Builder, partner flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(partner), 0)
+func MessageAckAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(1, flatbuffers.UOffsetT(id), 0)
 }
-func OnLineAddTs(builder *flatbuffers.Builder, ts flatbuffers.UOffsetT) {
+func MessageAckAddTs(builder *flatbuffers.Builder, ts flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(2, flatbuffers.UOffsetT(ts), 0)
 }
-func OnLineEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+func MessageAckEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()
 }

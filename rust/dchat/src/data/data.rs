@@ -3,6 +3,8 @@ use redis_rocksdb::{RedisList, RedisRocksdb, RrError};
 
 use crate::data::DataConfig;
 
+pub type Id16 = u128;
+
 pub struct Data<T> where T: RedisList {
     db: T,
 }

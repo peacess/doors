@@ -3,9 +3,9 @@ include "base.fbs";
 namespace idl;
 
 table Partner{
-    id: Int128;//随机产生的一个唯一标识
-    terminal_id: Int128;//终端id
-    partner_id: Int128;//partner
+    id: UByte16;//随机产生的一个唯一标识
+    terminal_id: UByte16;//终端id
+    partner_id: UByte16; //partner
     name: string;
     ip: string;
     port: int16;
@@ -22,7 +22,7 @@ table OnLine{
 table OnLineAck{
     header: Header;
     //OnLine中的 id
-    id: Int128;
+    id: UByte16;
     partner: Partner;
     ts: Timestamp;
 }

@@ -63,16 +63,16 @@ impl<'a> Partner<'a> {
     pub const VT_CREATE_TS: flatbuffers::VOffsetT = 16;
 
   #[inline]
-  pub fn id(&self) -> Option<&'a Int128> {
-    self._tab.get::<Int128>(Partner::VT_ID, None)
+  pub fn id(&self) -> Option<&'a UByte16> {
+    self._tab.get::<UByte16>(Partner::VT_ID, None)
   }
   #[inline]
-  pub fn terminal_id(&self) -> Option<&'a Int128> {
-    self._tab.get::<Int128>(Partner::VT_TERMINAL_ID, None)
+  pub fn terminal_id(&self) -> Option<&'a UByte16> {
+    self._tab.get::<UByte16>(Partner::VT_TERMINAL_ID, None)
   }
   #[inline]
-  pub fn partner_id(&self) -> Option<&'a Int128> {
-    self._tab.get::<Int128>(Partner::VT_PARTNER_ID, None)
+  pub fn partner_id(&self) -> Option<&'a UByte16> {
+    self._tab.get::<UByte16>(Partner::VT_PARTNER_ID, None)
   }
   #[inline]
   pub fn name(&self) -> Option<&'a str> {
@@ -99,9 +99,9 @@ impl flatbuffers::Verifiable for Partner<'_> {
   ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
     use self::flatbuffers::Verifiable;
     v.visit_table(pos)?
-     .visit_field::<Int128>(&"id", Self::VT_ID, false)?
-     .visit_field::<Int128>(&"terminal_id", Self::VT_TERMINAL_ID, false)?
-     .visit_field::<Int128>(&"partner_id", Self::VT_PARTNER_ID, false)?
+     .visit_field::<UByte16>(&"id", Self::VT_ID, false)?
+     .visit_field::<UByte16>(&"terminal_id", Self::VT_TERMINAL_ID, false)?
+     .visit_field::<UByte16>(&"partner_id", Self::VT_PARTNER_ID, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>(&"name", Self::VT_NAME, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>(&"ip", Self::VT_IP, false)?
      .visit_field::<i16>(&"port", Self::VT_PORT, false)?
@@ -111,9 +111,9 @@ impl flatbuffers::Verifiable for Partner<'_> {
   }
 }
 pub struct PartnerArgs<'a> {
-    pub id: Option<&'a Int128>,
-    pub terminal_id: Option<&'a Int128>,
-    pub partner_id: Option<&'a Int128>,
+    pub id: Option<&'a UByte16>,
+    pub terminal_id: Option<&'a UByte16>,
+    pub partner_id: Option<&'a UByte16>,
     pub name: Option<flatbuffers::WIPOffset<&'a str>>,
     pub ip: Option<flatbuffers::WIPOffset<&'a str>>,
     pub port: i16,
@@ -139,16 +139,16 @@ pub struct PartnerBuilder<'a: 'b, 'b> {
 }
 impl<'a: 'b, 'b> PartnerBuilder<'a, 'b> {
   #[inline]
-  pub fn add_id(&mut self, id: &Int128) {
-    self.fbb_.push_slot_always::<&Int128>(Partner::VT_ID, id);
+  pub fn add_id(&mut self, id: &UByte16) {
+    self.fbb_.push_slot_always::<&UByte16>(Partner::VT_ID, id);
   }
   #[inline]
-  pub fn add_terminal_id(&mut self, terminal_id: &Int128) {
-    self.fbb_.push_slot_always::<&Int128>(Partner::VT_TERMINAL_ID, terminal_id);
+  pub fn add_terminal_id(&mut self, terminal_id: &UByte16) {
+    self.fbb_.push_slot_always::<&UByte16>(Partner::VT_TERMINAL_ID, terminal_id);
   }
   #[inline]
-  pub fn add_partner_id(&mut self, partner_id: &Int128) {
-    self.fbb_.push_slot_always::<&Int128>(Partner::VT_PARTNER_ID, partner_id);
+  pub fn add_partner_id(&mut self, partner_id: &UByte16) {
+    self.fbb_.push_slot_always::<&UByte16>(Partner::VT_PARTNER_ID, partner_id);
   }
   #[inline]
   pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b  str>) {
@@ -355,8 +355,8 @@ impl<'a> OnLineAck<'a> {
     self._tab.get::<Header>(OnLineAck::VT_HEADER, None)
   }
   #[inline]
-  pub fn id(&self) -> Option<&'a Int128> {
-    self._tab.get::<Int128>(OnLineAck::VT_ID, None)
+  pub fn id(&self) -> Option<&'a UByte16> {
+    self._tab.get::<UByte16>(OnLineAck::VT_ID, None)
   }
   #[inline]
   pub fn partner(&self) -> Option<Partner<'a>> {
@@ -376,7 +376,7 @@ impl flatbuffers::Verifiable for OnLineAck<'_> {
     use self::flatbuffers::Verifiable;
     v.visit_table(pos)?
      .visit_field::<Header>(&"header", Self::VT_HEADER, false)?
-     .visit_field::<Int128>(&"id", Self::VT_ID, false)?
+     .visit_field::<UByte16>(&"id", Self::VT_ID, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<Partner>>(&"partner", Self::VT_PARTNER, false)?
      .visit_field::<Timestamp>(&"ts", Self::VT_TS, false)?
      .finish();
@@ -385,7 +385,7 @@ impl flatbuffers::Verifiable for OnLineAck<'_> {
 }
 pub struct OnLineAckArgs<'a> {
     pub header: Option<&'a Header>,
-    pub id: Option<&'a Int128>,
+    pub id: Option<&'a UByte16>,
     pub partner: Option<flatbuffers::WIPOffset<Partner<'a>>>,
     pub ts: Option<&'a Timestamp>,
 }
@@ -410,8 +410,8 @@ impl<'a: 'b, 'b> OnLineAckBuilder<'a, 'b> {
     self.fbb_.push_slot_always::<&Header>(OnLineAck::VT_HEADER, header);
   }
   #[inline]
-  pub fn add_id(&mut self, id: &Int128) {
-    self.fbb_.push_slot_always::<&Int128>(OnLineAck::VT_ID, id);
+  pub fn add_id(&mut self, id: &UByte16) {
+    self.fbb_.push_slot_always::<&UByte16>(OnLineAck::VT_ID, id);
   }
   #[inline]
   pub fn add_partner(&mut self, partner: flatbuffers::WIPOffset<Partner<'b >>) {

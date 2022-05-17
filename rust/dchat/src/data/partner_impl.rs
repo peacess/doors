@@ -1,10 +1,12 @@
 use redis_rocksdb::RrError;
 
-use crate::data::Partner;
-use crate::idl::Int128;
+use crate::data::{Id16, Partner};
 
 impl Partner {
-    pub fn get(id: &Int128) -> Result<Option<Partner>, RrError> {
+    pub fn get(id: &Id16) -> Result<Option<Partner>, RrError> {
+        todo!()
+    }
+    pub fn get_self() -> Result<Option<Partner>, RrError> {
         todo!()
     }
 }
