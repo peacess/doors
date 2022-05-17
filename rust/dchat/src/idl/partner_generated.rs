@@ -9,6 +9,16 @@ use std::cmp::Ordering;
 extern crate flatbuffers;
 use self::flatbuffers::{EndianScalar, Follow};
 
+#[allow(unused_imports, dead_code)]
+pub mod idl {
+
+  use crate::base_generated::*;
+  use std::mem;
+  use std::cmp::Ordering;
+
+  extern crate flatbuffers;
+  use self::flatbuffers::{EndianScalar, Follow};
+
 pub enum PartnerOffset {}
 #[derive(Copy, Clone, PartialEq)]
 
@@ -37,7 +47,7 @@ impl<'a> Partner<'a> {
       if let Some(x) = args.create_ts { builder.add_create_ts(x); }
       if let Some(x) = args.ip { builder.add_ip(x); }
       if let Some(x) = args.name { builder.add_name(x); }
-      if let Some(x) = args.parter_id { builder.add_parter_id(x); }
+      if let Some(x) = args.partner_id { builder.add_partner_id(x); }
       if let Some(x) = args.terminal_id { builder.add_terminal_id(x); }
       if let Some(x) = args.id { builder.add_id(x); }
       builder.add_port(args.port);
@@ -46,7 +56,7 @@ impl<'a> Partner<'a> {
 
     pub const VT_ID: flatbuffers::VOffsetT = 4;
     pub const VT_TERMINAL_ID: flatbuffers::VOffsetT = 6;
-    pub const VT_PARTER_ID: flatbuffers::VOffsetT = 8;
+    pub const VT_PARTNER_ID: flatbuffers::VOffsetT = 8;
     pub const VT_NAME: flatbuffers::VOffsetT = 10;
     pub const VT_IP: flatbuffers::VOffsetT = 12;
     pub const VT_PORT: flatbuffers::VOffsetT = 14;
@@ -61,8 +71,8 @@ impl<'a> Partner<'a> {
     self._tab.get::<Int128>(Partner::VT_TERMINAL_ID, None)
   }
   #[inline]
-  pub fn parter_id(&self) -> Option<&'a Int128> {
-    self._tab.get::<Int128>(Partner::VT_PARTER_ID, None)
+  pub fn partner_id(&self) -> Option<&'a Int128> {
+    self._tab.get::<Int128>(Partner::VT_PARTNER_ID, None)
   }
   #[inline]
   pub fn name(&self) -> Option<&'a str> {
@@ -91,7 +101,7 @@ impl flatbuffers::Verifiable for Partner<'_> {
     v.visit_table(pos)?
      .visit_field::<Int128>(&"id", Self::VT_ID, false)?
      .visit_field::<Int128>(&"terminal_id", Self::VT_TERMINAL_ID, false)?
-     .visit_field::<Int128>(&"parter_id", Self::VT_PARTER_ID, false)?
+     .visit_field::<Int128>(&"partner_id", Self::VT_PARTNER_ID, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>(&"name", Self::VT_NAME, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>(&"ip", Self::VT_IP, false)?
      .visit_field::<i16>(&"port", Self::VT_PORT, false)?
@@ -103,7 +113,7 @@ impl flatbuffers::Verifiable for Partner<'_> {
 pub struct PartnerArgs<'a> {
     pub id: Option<&'a Int128>,
     pub terminal_id: Option<&'a Int128>,
-    pub parter_id: Option<&'a Int128>,
+    pub partner_id: Option<&'a Int128>,
     pub name: Option<flatbuffers::WIPOffset<&'a str>>,
     pub ip: Option<flatbuffers::WIPOffset<&'a str>>,
     pub port: i16,
@@ -115,7 +125,7 @@ impl<'a> Default for PartnerArgs<'a> {
         PartnerArgs {
             id: None,
             terminal_id: None,
-            parter_id: None,
+            partner_id: None,
             name: None,
             ip: None,
             port: 0,
@@ -137,8 +147,8 @@ impl<'a: 'b, 'b> PartnerBuilder<'a, 'b> {
     self.fbb_.push_slot_always::<&Int128>(Partner::VT_TERMINAL_ID, terminal_id);
   }
   #[inline]
-  pub fn add_parter_id(&mut self, parter_id: &Int128) {
-    self.fbb_.push_slot_always::<&Int128>(Partner::VT_PARTER_ID, parter_id);
+  pub fn add_partner_id(&mut self, partner_id: &Int128) {
+    self.fbb_.push_slot_always::<&Int128>(Partner::VT_PARTNER_ID, partner_id);
   }
   #[inline]
   pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b  str>) {
@@ -176,7 +186,7 @@ impl std::fmt::Debug for Partner<'_> {
     let mut ds = f.debug_struct("Partner");
       ds.field("id", &self.id());
       ds.field("terminal_id", &self.terminal_id());
-      ds.field("parter_id", &self.parter_id());
+      ds.field("partner_id", &self.partner_id());
       ds.field("name", &self.name());
       ds.field("ip", &self.ip());
       ds.field("port", &self.port());
@@ -436,3 +446,5 @@ impl std::fmt::Debug for OnLineAck<'_> {
       ds.finish()
   }
 }
+}  // pub mod idl
+

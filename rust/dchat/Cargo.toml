@@ -10,6 +10,8 @@ opt-level = 2 # fast and small wasm
 [dependencies]
 log = "0.4.14"
 anyhow = "1.0.55"
+uuid = { version = "1.0.0", features=["v4"] }
+
 toml = "0.5.8"
 serde = { version = "1.0.136", features = ["derive"] }
 signal-hook = "0.3.13"
@@ -20,6 +22,10 @@ flatbuffers = "2.0.0"
 
 ckb-rocksdb = "0.16.2"
 redis_rocksdb = { version = "0.1.3", path = "../../../redis_rocksdb" }
+
+#security
+libsignal-protocol = { tag = "v0.17.0", git="https://github.com/signalapp/libsignal" }
+
 
 #[build-dependencies]
 #flatc = "0.2.1+2.0.0"

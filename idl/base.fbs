@@ -1,4 +1,4 @@
-//namespace idl;
+namespace idl;
 
 enum FrameType:int16{
     Message = 0, //发送消息

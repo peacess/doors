@@ -1,11 +1,11 @@
 
 include "base.fbs";
-//namespace idl;
+namespace idl;
 
 table Partner{
     id: Int128;//随机产生的一个唯一标识
     terminal_id: Int128;//终端id
-    parter_id: Int128;//parter
+    partner_id: Int128;//partner
     name: string;
     ip: string;
     port: int16;
