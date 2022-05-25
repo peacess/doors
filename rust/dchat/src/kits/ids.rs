@@ -1,5 +1,5 @@
 use uuid::Uuid;
-use x25519_dalek::{EphemeralSecret, PublicKey, StaticSecret, x25519};
+use x25519_dalek::{EphemeralSecret, StaticSecret};
 
 use crate::idl::UByte16;
 
@@ -18,6 +18,7 @@ pub fn generate_int128() -> UByte16 {
 pub fn generate_static_secret() -> StaticSecret {
     StaticSecret::new(rand_core::OsRng)
 }
+
 pub fn generate_ephemeral_secret() -> EphemeralSecret {
     EphemeralSecret::new(rand_core::OsRng)
 }

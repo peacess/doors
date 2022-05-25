@@ -23,7 +23,7 @@ impl Config {
             path: DataConfig::DEFAULT_PATH.to_owned(),
         }
     }
-    pub fn load(file: &str) -> Result<Config, io::Error> {
+    pub fn load(_file: &str) -> Result<Config, io::Error> {
         let mut config: Config = toml::from_str("").unwrap();
         Config::init_default(&mut config)?;
         Ok(config)

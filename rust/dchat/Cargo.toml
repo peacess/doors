@@ -8,17 +8,17 @@ edition = "2021"
 opt-level = 2 # fast and small wasm
 
 [dependencies]
-log = "0.4.14"
-anyhow = "1.0.55"
+log = "0.4.17"
+anyhow = "1.0.57"
 uuid = { version = "1.0.0", features = ["v4"] }
 
-toml = "0.5.8"
+toml = "0.5.9"
 serde = { version = "1.0.136", features = ["derive"] }
-signal-hook = "0.3.13"
-mio = { version = "0.8.0", features = ["os-poll", "net"] }
+signal-hook = "0.3.14"
+mio = { version = "0.8.3", features = ["os-poll", "net"] }
 #io-uring = "0.5.2"
-tokio = { version = "1.17.0", features = ["rt-multi-thread"] }
-flatbuffers = "2.0.0"
+tokio = { version = "1.18.2", features = ["rt-multi-thread"] }
+flatbuffers = "2.1.2"
 
 #data
 ckb-rocksdb = "0.18.0"

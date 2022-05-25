@@ -1,8 +1,18 @@
-use crate::{DchatUi, egui_entry};
+use crate::DchatUi;
 
 pub fn run() {
-    let app = DchatUi::new();
-    egui_entry(app);
+    let options = eframe::NativeOptions {
+        drag_and_drop_support: true,
+        // renderer: eframe::Renderer::Wgpu,
+        ..Default::default()
+    };
+    eframe::run_native(
+        "DChat",
+        options,
+        Box::new(|cc| {
+            Box::new(DchatUi::new(cc))
+        }),
+    );
 }
 
 

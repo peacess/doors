@@ -1,7 +1,7 @@
+pub use base_dao::*;
 pub use data::*;
 pub use db_config::*;
 pub use partner::*;
-pub use base_dao::*;
 pub use partner_dao::*;
 
 mod data;

@@ -4,7 +4,7 @@ use crate::server::Handle;
 pub(crate) struct HandleMessageAck {}
 
 impl Handle for HandleMessageAck {
-    fn handle(&self, bytes: Vec<u8>) {
+    fn handle(&self, _bytes: Vec<u8>) {
         todo!()
     }
 

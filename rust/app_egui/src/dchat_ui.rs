@@ -1,5 +1,4 @@
-use egui::CtxRef;
-use epi::{App, Frame};
+use eframe::{App, Frame};
 
 use crate::Bars;
 
@@ -9,7 +8,8 @@ pub struct DchatUi {
 }
 
 impl DchatUi {
-    pub fn new() -> Self {
+    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        cc.egui_ctx.set_visuals(egui::Visuals::dark());
         DchatUi {
             title: "DChat".to_owned(),
             bars: Bars::new(),
@@ -18,10 +18,11 @@ impl DchatUi {
 }
 
 impl App for DchatUi {
-    fn update(&mut self, ctx: &CtxRef, frame: &Frame) {
+    fn update(&mut self, ctx: &egui::Context, frame: &mut Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             #[cfg(debug_assertions)]
             ui.ctx().set_debug_on_hover(true);
+
             self.bars.show_inside(ui)
         });
     }
@@ -41,10 +42,6 @@ impl App for DchatUi {
     // fn on_exit(&mut self) {
     //     App::on_exit(self)
     // }
-
-    fn name(&self) -> &str {
-        "Dchat"
-    }
 
     // fn auto_save_interval(&self) -> Duration {
     //     App::auto_save_interval(self)

@@ -7,15 +7,11 @@ edition = "2021"
 
 [dependencies]
 
-# ui ui
-egui_wgpu_backend = "0.16"
+# ui
 chrono = "0.4"
 pollster = "0.2"
-egui = "0.16"
-epi = "0.16"
-egui_winit_platform = "0.13"
-wgpu = "0.12"
-winit = "0.26"
+eframe = "0.18"
+egui = "0.18"
 
 [target.'cfg(target_os = "android")'.dependencies]
 ndk = { git = "https://github.com/nikita-skobov/android-ndk-rs", branch = "miniglue" }
@@ -27,6 +23,8 @@ target_sdk_version = 30
 min_sdk_version = 19
 # ui ui
 
+[features]
+#default = ["eframe/wgpu"]
 
 [[bin]]
 name = "dchat_pc"

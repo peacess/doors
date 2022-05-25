@@ -1,5 +1,10 @@
 # build
 
+## ui
+[egui](https://github.com/emilk/egui)  
+[Vulkano](https://github.com/vulkano-rs/vulkano)  
+
+
 ## build android
 
 cargo apk build --bin dchat_android --target aarch64-linux-android

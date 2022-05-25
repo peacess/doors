@@ -11,11 +11,11 @@ pub struct PartnerDao {
 }
 
 impl BaseDao<Partner> for PartnerDao {
-    fn new(db: Arc<Data<RedisRocksdb>>) -> Self {
+    fn new(_db: Arc<Data<RedisRocksdb>>) -> Self {
         todo!()
     }
 
-    fn get(&self, id: &Id16) -> Result<Option<Partner>, RrError> {
+    fn get(&self, _id: &Id16) -> Result<Option<Partner>, RrError> {
         todo!()
     }
 }
