@@ -10,7 +10,7 @@ pub struct Partner {
     //partner
     name: String,
     ip: String,
-    port: i16,
+    port: i32,
     create_ts: i64,
 }
 

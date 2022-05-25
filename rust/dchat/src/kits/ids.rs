@@ -1,16 +1,16 @@
 use uuid::Uuid;
 use x25519_dalek::{EphemeralSecret, PublicKey, StaticSecret, x25519};
 
-use crate::idl::Int128;
+use crate::idl::UByte16;
 
 #[inline]
 pub fn generate_id() -> Uuid {
     Uuid::new_v4()
 }
 
-pub fn generate_int128() -> Int128 {
+pub fn generate_int128() -> UByte16 {
     let id = generate_id();
-    let mut re = Int128::default();
+    let mut re = UByte16::default();
     re.0.copy_from_slice(id.as_ref());
     re
 }

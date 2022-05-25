@@ -14,6 +14,7 @@ pub struct ChatServer {
     poll: Poll,
     //字段stop_status并不与其它字段或变量有先后关系，这里只需要可见性，但rust本身没有提供"volatile"可见性，所以这里使用 atomic类型
     stop_status: AtomicBool,
+    shared: Arc<Shared>,
     frame_handle: FrameHandles,
 }
 
@@ -32,6 +33,7 @@ impl ChatServer {
             udp_socket,
             poll,
             stop_status: AtomicBool::new(true),
+            shared: shared.clone(),
             frame_handle: FrameHandles::new(shared),
         })
     }
