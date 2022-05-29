@@ -8,10 +8,9 @@ edition = "2021"
 [dependencies]
 
 # ui
-chrono = "0.4"
-pollster = "0.2"
-eframe = "0.18"
-egui = "0.18"
+miniquad = { version = "=0.3.0-alpha.46", features = ["log-impl"] }
+egui = "0.18.0"
+egui-miniquad = "0.11.0"
 
 [target.'cfg(target_os = "android")'.dependencies]
 ndk = { git = "https://github.com/nikita-skobov/android-ndk-rs", branch = "miniglue" }
@@ -21,10 +20,12 @@ ndk-glue = { git = "https://github.com/nikita-skobov/android-ndk-rs", branch = "
 apk_label = "dchat"
 target_sdk_version = 30
 min_sdk_version = 19
+[package.metadata.android.application.activity]
+launch_mode = "singleTop"
 # ui ui
 
 [features]
-#default = ["eframe/wgpu"]
+default = []
 
 [[bin]]
 name = "dchat_pc"

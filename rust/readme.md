@@ -3,7 +3,9 @@
 ## ui
 [egui](https://github.com/emilk/egui)  
 [Vulkano](https://github.com/vulkano-rs/vulkano)  
-
+egui for android: [agdk-egui](https://github.com/rib/agdk-rust/tree/main/examples/agdk-egui)
+[egui-miniquad(include android)](https://github.com/not-fl3/egui-miniquad)  
+由于eframe不支持android，所以最后使用egui-miniquad  
 
 ## build android
 

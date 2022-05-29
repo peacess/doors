@@ -1,18 +1,13 @@
 use crate::DchatUi;
 
 pub fn run() {
-    let options = eframe::NativeOptions {
-        drag_and_drop_support: true,
-        // renderer: eframe::Renderer::Wgpu,
+    let conf = miniquad::conf::Conf {
+        high_dpi: true,
         ..Default::default()
     };
-    eframe::run_native(
-        "DChat",
-        options,
-        Box::new(|cc| {
-            Box::new(DchatUi::new(cc))
-        }),
-    );
+    miniquad::start(conf, |mut ctx| {
+        miniquad::UserData::owning(DchatUi::new(&mut ctx), ctx)
+    });
 }
 
 
