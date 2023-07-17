@@ -1,5 +1,5 @@
 [package]
-name = "dchat_egui"
+name = "doors"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,17 +8,17 @@ edition = "2021"
 [dependencies]
 
 # ui
-miniquad = { version = "=0.3.0-alpha.46", features = ["log-impl"] }
-egui = "0.18.0"
-egui-miniquad = "0.11.0"
+miniquad = { version = "0.3.12", features = ["log-impl"] }
+egui = "0.21.0"
+egui-miniquad = "0.14.0"
 
 [target.'cfg(target_os = "android")'.dependencies]
 ndk = { git = "https://github.com/nikita-skobov/android-ndk-rs", branch = "miniglue" }
 ndk-glue = { git = "https://github.com/nikita-skobov/android-ndk-rs", branch = "miniglue" }
 
 [package.metadata.android]
-apk_label = "dchat"
-target_sdk_version = 30
+apk_label = "doors"
+target_sdk_version = 33
 min_sdk_version = 19
 [package.metadata.android.application.activity]
 launch_mode = "singleTop"
@@ -28,11 +28,11 @@ launch_mode = "singleTop"
 default = []
 
 [[bin]]
-name = "dchat_pc"
-path = "src/app/dchat_pc.rs"
+name = "doors_pc"
+path = "src/app/pc.rs"
 [[bin]]
-name = "dchat_android"
-path = "src/app/dchat_android.rs"
+name = "doors_android"
+path = "src/app/android.rs"
 [[bin]]
-name = "dchat_web"
-path = "src/app/dchat_web.rs"
+name = "doors_web"
+path = "src/app/web.rs"

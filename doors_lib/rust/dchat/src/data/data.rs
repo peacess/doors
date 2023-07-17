@@ -1,4 +1,3 @@
-use ckb_rocksdb::prelude::*;
 use redis_rocksdb::{RedisList, RedisRocksdb, RrError};
 
 use crate::data::DataConfig;
@@ -17,8 +16,8 @@ impl Data<RedisRocksdb> {
         })
     }
 
-    pub fn make_db(config: &DataConfig) -> Result<ckb_rocksdb::TransactionDB, RrError> {
-        let db = ckb_rocksdb::TransactionDB::open_default(&config.path)?;
+    pub fn make_db(config: &DataConfig) -> Result<rocksdb::TransactionDB, RrError> {
+        let db = rocksdb::TransactionDB::open_default(&config.path)?;
         Ok(db)
     }
 }

@@ -27,7 +27,7 @@ impl FrameHandles {
     }
 
     fn handle_frame(bytes: Vec<u8>, handles: Arc<Handles>) {
-        let header = idl::Header::follow(&bytes, 0);
+        let header = unsafe { idl::Header::follow(&bytes, 0) };
         let handle = handles.get(header.type_());
         if handle.is_none() {
             log::warn!("can not find the handle_impl for {:?}", header.type_());

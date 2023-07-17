@@ -3,19 +3,19 @@ use miniquad::{Context, EventHandler, KeyCode, KeyMods, MouseButton, PassAction,
 
 use crate::Bars;
 
-pub struct DchatUi {
+pub struct DoorsUi {
     pub title: String,
     bars: Bars,
 
     egui_mq: EguiMq,
 }
 
-impl DchatUi {
+impl DoorsUi {
     pub fn new(ctx: &mut Context) -> Self {
         let egui_mq = EguiMq::new(ctx);
-        egui_mq.egui_ctx().set_visuals(egui::Visuals::dark());
-        DchatUi {
-            title: "DChat".to_owned(),
+        egui_mq.egui_ctx().set_visuals(egui::style::Visuals::dark());
+        DoorsUi {
+            title: "doors".to_owned(),
             bars: Bars::new(),
 
             egui_mq,
@@ -23,7 +23,7 @@ impl DchatUi {
     }
 }
 
-impl EventHandler for DchatUi {
+impl EventHandler for DoorsUi {
     fn update(&mut self, _ctx: &mut Context) {}
 
     fn draw(&mut self, ctx: &mut Context) {
@@ -31,7 +31,7 @@ impl EventHandler for DchatUi {
         ctx.begin_default_pass(PassAction::clear_color(0.0, 0.0, 0.0, 1.0));
         ctx.end_render_pass();
 
-        self.egui_mq.run(ctx, |egui_ctx| {
+        self.egui_mq.run(ctx, |_, egui_ctx| {
             egui::CentralPanel::default().show(egui_ctx, |ui| {
                 #[cfg(debug_assertions)]
                 ui.ctx().set_debug_on_hover(true);
@@ -56,11 +56,11 @@ impl EventHandler for DchatUi {
     }
 
     fn mouse_motion_event(&mut self, _ctx: &mut Context, _x: f32, _y: f32) {
-        self.egui_mq.mouse_motion_event(_ctx, _x, _y)
+        self.egui_mq.mouse_motion_event(_x, _y)
     }
 
     fn mouse_wheel_event(&mut self, _ctx: &mut Context, _x: f32, _y: f32) {
-        self.egui_mq.mouse_wheel_event(_ctx, _x, _y)
+        self.egui_mq.mouse_wheel_event(_x, _y)
     }
 
     fn mouse_button_down_event(&mut self, _ctx: &mut Context, _button: MouseButton, _x: f32, _y: f32) {

@@ -16,7 +16,7 @@ pub fn generate_int128() -> UByte16 {
 }
 
 pub fn generate_static_secret() -> StaticSecret {
-    StaticSecret::new(rand_core::OsRng)
+    StaticSecret::new(&mut rand_core::OsRng)
 }
 
 pub fn generate_ephemeral_secret() -> EphemeralSecret {

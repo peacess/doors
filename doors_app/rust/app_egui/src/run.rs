@@ -1,4 +1,4 @@
-use crate::DchatUi;
+use crate::DoorsUi;
 
 pub fn run() {
     let conf = miniquad::conf::Conf {
@@ -6,7 +6,7 @@ pub fn run() {
         ..Default::default()
     };
     miniquad::start(conf, |mut ctx| {
-        miniquad::UserData::owning(DchatUi::new(&mut ctx), ctx)
+        Box::new(DoorsUi::new(&mut ctx))
     });
 }
 

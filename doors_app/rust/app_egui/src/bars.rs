@@ -30,7 +30,7 @@ impl Bars {
     }
 
     pub fn show_inside(&mut self, ui: &mut Ui) {
-        let frame = egui::Frame::default().stroke(Stroke::none());
+        let frame = egui::Frame::default().stroke(Stroke::NONE);
         egui::TopBottomPanel::bottom("bottom_panel")
             .resizable(false)
             .min_height(0.0)
