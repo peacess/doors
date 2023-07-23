@@ -51,9 +51,9 @@ impl EventHandler for DoorsUi {
         ctx.commit_frame();
     }
 
-    fn resize_event(&mut self, _ctx: &mut Context, _width: f32, _height: f32) {
-        EventHandler::resize_event(self, _ctx, _width, _height)
-    }
+    // fn resize_event(&mut self, _ctx: &mut Context, _width: f32, _height: f32) {
+    //     EventHandler::resize_event(self, _ctx, _width, _height)
+    // }
 
     fn mouse_motion_event(&mut self, _ctx: &mut Context, _x: f32, _y: f32) {
         self.egui_mq.mouse_motion_event(_x, _y)
@@ -81,25 +81,5 @@ impl EventHandler for DoorsUi {
 
     fn key_up_event(&mut self, _ctx: &mut Context, _keycode: KeyCode, _keymods: KeyMods) {
         self.egui_mq.key_up_event(_keycode, _keymods)
-    }
-
-    fn touch_event(&mut self, ctx: &mut Context, phase: TouchPhase, _id: u64, x: f32, y: f32) {
-        EventHandler::touch_event(self, ctx, phase, _id, x, y)
-    }
-
-    fn raw_mouse_motion(&mut self, _ctx: &mut Context, _dx: f32, _dy: f32) {
-        EventHandler::raw_mouse_motion(self, _ctx, _dx, _dy)
-    }
-
-    fn window_minimized_event(&mut self, _ctx: &mut Context) {
-        EventHandler::window_minimized_event(self, _ctx)
-    }
-
-    fn window_restored_event(&mut self, _ctx: &mut Context) {
-        EventHandler::window_restored_event(self, _ctx)
-    }
-
-    fn quit_requested_event(&mut self, _ctx: &mut Context) {
-        EventHandler::quit_requested_event(self, _ctx)
     }
 }
