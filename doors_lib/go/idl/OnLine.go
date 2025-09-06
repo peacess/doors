@@ -17,11 +17,19 @@ func GetRootAsOnLine(buf []byte, offset flatbuffers.UOffsetT) *OnLine {
 	return x
 }
 
+func FinishOnLineBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.Finish(offset)
+}
+
 func GetSizePrefixedRootAsOnLine(buf []byte, offset flatbuffers.UOffsetT) *OnLine {
 	n := flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])
 	x := &OnLine{}
 	x.Init(buf, n+offset+flatbuffers.SizeUint32)
 	return x
+}
+
+func FinishSizePrefixedOnLineBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.FinishSizePrefixed(offset)
 }
 
 func (rcv *OnLine) Init(buf []byte, i flatbuffers.UOffsetT) {

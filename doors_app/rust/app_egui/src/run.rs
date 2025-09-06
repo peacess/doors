@@ -5,9 +5,5 @@ pub fn run() {
         high_dpi: true,
         ..Default::default()
     };
-    miniquad::start(conf, |mut ctx| {
-        Box::new(DoorsUi::new(&mut ctx))
-    });
+    miniquad::start(conf, move || Box::new(DoorsUi::new()));
 }
-
-

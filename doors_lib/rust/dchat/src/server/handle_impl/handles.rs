@@ -1,9 +1,7 @@
 use std::collections::BTreeMap;
 
+use super::{handle_message::HandleMessage, handle_message_ack::HandleMessageAck};
 use crate::idl::FrameType;
-
-use super::handle_message::HandleMessage;
-use super::handle_message_ack::HandleMessageAck;
 
 pub trait Handle {
     fn handle(&self, bytes: Vec<u8>);
@@ -19,9 +17,7 @@ pub struct Handles {
 
 impl Handles {
     pub fn new() -> Self {
-        let mut hs = Handles {
-            map_handles: BTreeMap::new(),
-        };
+        let mut hs = Handles { map_handles: BTreeMap::new() };
 
         hs.register_handles();
         hs

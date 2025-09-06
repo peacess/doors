@@ -4,8 +4,8 @@ pub(crate) use message::*;
 pub(crate) use partner::*;
 pub use run::*;
 
-mod run;
+mod bars;
 mod doors_ui;
 mod message;
 mod partner;
-mod bars;
+mod run;

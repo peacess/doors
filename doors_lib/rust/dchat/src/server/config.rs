@@ -14,10 +14,13 @@ pub struct Config {
     pub db: DataConfig,
 }
 
-
 impl Config {
-    fn default_port() -> i32 { 8699 }
-    fn default_ip() -> String { "::".to_string() }
+    fn default_port() -> i32 {
+        8699
+    }
+    fn default_ip() -> String {
+        "::".to_string()
+    }
     fn default_db() -> DataConfig {
         DataConfig {
             path: DataConfig::DEFAULT_PATH.to_owned(),

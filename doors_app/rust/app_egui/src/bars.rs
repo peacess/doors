@@ -40,9 +40,7 @@ impl Bars {
                     for (i, col) in cols.iter_mut().enumerate() {
                         let bar = &self.bar_list[i];
                         let layout = Layout::centered_and_justified(Direction::LeftToRight);
-                        col.with_layout(layout, |ui| {
-                            ui.selectable_value(&mut self.selected, bar.bar_type(), bar.name())
-                        });
+                        col.with_layout(layout, |ui| ui.selectable_value(&mut self.selected, bar.bar_type(), bar.name()));
                     }
                 });
             });

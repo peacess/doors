@@ -1,5 +1,4 @@
-use crate::idl::FrameType;
-use crate::server::Handle;
+use crate::{idl::FrameType, server::Handle};
 
 pub(crate) struct HandleMessageAck {}
 

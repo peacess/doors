@@ -1,6 +1,4 @@
-use std::io;
-use std::io::ErrorKind;
-use std::path::PathBuf;
+use std::{io, io::ErrorKind, path::PathBuf};
 
 pub struct Paths {}
 

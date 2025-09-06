@@ -17,11 +17,19 @@ func GetRootAsMessageAck(buf []byte, offset flatbuffers.UOffsetT) *MessageAck {
 	return x
 }
 
+func FinishMessageAckBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.Finish(offset)
+}
+
 func GetSizePrefixedRootAsMessageAck(buf []byte, offset flatbuffers.UOffsetT) *MessageAck {
 	n := flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])
 	x := &MessageAck{}
 	x.Init(buf, n+offset+flatbuffers.SizeUint32)
 	return x
+}
+
+func FinishSizePrefixedMessageAckBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.FinishSizePrefixed(offset)
 }
 
 func (rcv *MessageAck) Init(buf []byte, i flatbuffers.UOffsetT) {

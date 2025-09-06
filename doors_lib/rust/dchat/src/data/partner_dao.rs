@@ -2,9 +2,10 @@ use std::sync::Arc;
 
 use redis_rocksdb::{RedisRocksdb, RrError};
 
-use crate::data;
-use crate::data::{Data, Id16, Partner};
-use crate::data::base_dao::BaseDao;
+use crate::{
+    data,
+    data::{base_dao::BaseDao, Data, Id16, Partner},
+};
 
 pub struct PartnerDao {
     db: Arc<data::Data<RedisRocksdb>>,
@@ -25,4 +26,3 @@ impl PartnerDao {
         todo!()
     }
 }
-

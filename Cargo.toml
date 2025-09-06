@@ -1,0 +1,15 @@
+
+[workspace]
+resolver = "2"
+members = ["doors_app/rust/app_egui", "doors_lib/rust/dchat"
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+
+[workspace.dependencies]
+log = { version = "0.4.28", features = [
+    "max_level_debug",
+    "release_max_level_info",
+] }

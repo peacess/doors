@@ -2,8 +2,7 @@ use std::sync::Arc;
 
 use redis_rocksdb::{RedisRocksdb, RrError};
 
-use crate::data;
-use crate::data::Id16;
+use crate::{data, data::Id16};
 
 pub trait BaseDao<T> {
     fn new(db: Arc<data::Data<RedisRocksdb>>) -> Self;

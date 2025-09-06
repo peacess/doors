@@ -1,85 +1,34 @@
-use egui_miniquad::EguiMq;
-use miniquad::{Context, EventHandler, KeyCode, KeyMods, MouseButton, PassAction, TouchPhase};
+use miniquad::{window, EventHandler, PassAction, RenderingBackend};
 
 use crate::Bars;
 
 pub struct DoorsUi {
     pub title: String,
     bars: Bars,
-
-    egui_mq: EguiMq,
+    ctx: Box<dyn RenderingBackend>,
 }
 
 impl DoorsUi {
-    pub fn new(ctx: &mut Context) -> Self {
-        let egui_mq = EguiMq::new(ctx);
-        egui_mq.egui_ctx().set_visuals(egui::style::Visuals::dark());
+    pub fn new() -> Self {
+        let ctx: Box<dyn RenderingBackend> = window::new_rendering_backend();
+        // egui_mq.egui_ctx().set_visuals(egui::Visuals::dark());
         DoorsUi {
             title: "doors".to_owned(),
             bars: Bars::new(),
-
-            egui_mq,
+            ctx,
         }
     }
 }
 
 impl EventHandler for DoorsUi {
-    fn update(&mut self, _ctx: &mut Context) {}
+    fn update(&mut self) {}
 
-    fn draw(&mut self, ctx: &mut Context) {
-        ctx.clear(Some((1., 1., 1., 1.)), None, None);
-        ctx.begin_default_pass(PassAction::clear_color(0.0, 0.0, 0.0, 1.0));
-        ctx.end_render_pass();
+    fn draw(&mut self) {
+        self.ctx.clear(Some((1., 1., 1., 1.)), None, None);
+        self.ctx.begin_default_pass(PassAction::clear_color(0.0, 0.0, 0.0, 1.0));
+        self.ctx.end_render_pass();
 
-        self.egui_mq.run(ctx, |_, egui_ctx| {
-            egui::CentralPanel::default().show(egui_ctx, |ui| {
-                #[cfg(debug_assertions)]
-                ui.ctx().set_debug_on_hover(true);
-
-                self.bars.show_inside(ui)
-            });
-        });
-
-        // self.egui_mq.end_frame(ctx);
-
-        // Draw things behind egui here
-
-        self.egui_mq.draw(ctx);
-
-        // Draw things in front of egui here
-
-        ctx.commit_frame();
-    }
-
-    // fn resize_event(&mut self, _ctx: &mut Context, _width: f32, _height: f32) {
-    //     EventHandler::resize_event(self, _ctx, _width, _height)
-    // }
-
-    fn mouse_motion_event(&mut self, _ctx: &mut Context, _x: f32, _y: f32) {
-        self.egui_mq.mouse_motion_event(_x, _y)
-    }
-
-    fn mouse_wheel_event(&mut self, _ctx: &mut Context, _x: f32, _y: f32) {
-        self.egui_mq.mouse_wheel_event(_x, _y)
-    }
-
-    fn mouse_button_down_event(&mut self, _ctx: &mut Context, _button: MouseButton, _x: f32, _y: f32) {
-        self.egui_mq.mouse_button_down_event(_ctx, _button, _x, _y)
-    }
-
-    fn mouse_button_up_event(&mut self, _ctx: &mut Context, _button: MouseButton, _x: f32, _y: f32) {
-        self.egui_mq.mouse_button_up_event(_ctx, _button, _x, _y)
-    }
-
-    fn char_event(&mut self, _ctx: &mut Context, _character: char, _keymods: KeyMods, _repeat: bool) {
-        self.egui_mq.char_event(_character)
-    }
-
-    fn key_down_event(&mut self, _ctx: &mut Context, _keycode: KeyCode, _keymods: KeyMods, _repeat: bool) {
-        self.egui_mq.key_down_event(_ctx, _keycode, _keymods)
-    }
-
-    fn key_up_event(&mut self, _ctx: &mut Context, _keycode: KeyCode, _keymods: KeyMods) {
-        self.egui_mq.key_up_event(_keycode, _keymods)
+        self.ctx.end_render_pass();
+        self.ctx.commit_frame();
     }
 }

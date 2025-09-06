@@ -2,9 +2,11 @@ use std::sync::Arc;
 
 use redis_rocksdb::RedisRocksdb;
 
-use crate::data;
-use crate::data::{BaseDao, Data, PartnerDao};
-use crate::server::config::Config;
+use crate::{
+    data,
+    data::{BaseDao, Data, PartnerDao},
+    server::config::Config,
+};
 
 pub struct Shared {
     pub db: Arc<data::Data<RedisRocksdb>>,

@@ -1,9 +1,7 @@
 use std::time::SystemTime;
 
+use dchat::server::{ChatServer, Config};
 use signal_hook::consts::TERM_SIGNALS;
-
-use dchat::server::ChatServer;
-use dchat::server::Config;
 
 fn main() {
     log::info!("start chat server!");
@@ -34,7 +32,8 @@ fn main() {
         let mut t = None;
         for sig in TERM_SIGNALS {
             match t {
-                None => {//first push ctrl-c
+                None => {
+                    //first push ctrl-c
                     t = Some(SystemTime::now());
                 }
                 Some(pre) => {

@@ -17,11 +17,19 @@ func GetRootAsOnLineAck(buf []byte, offset flatbuffers.UOffsetT) *OnLineAck {
 	return x
 }
 
+func FinishOnLineAckBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.Finish(offset)
+}
+
 func GetSizePrefixedRootAsOnLineAck(buf []byte, offset flatbuffers.UOffsetT) *OnLineAck {
 	n := flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])
 	x := &OnLineAck{}
 	x.Init(buf, n+offset+flatbuffers.SizeUint32)
 	return x
+}
+
+func FinishSizePrefixedOnLineAckBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.FinishSizePrefixed(offset)
 }
 
 func (rcv *OnLineAck) Init(buf []byte, i flatbuffers.UOffsetT) {

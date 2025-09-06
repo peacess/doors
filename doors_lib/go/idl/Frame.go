@@ -17,11 +17,19 @@ func GetRootAsFrame(buf []byte, offset flatbuffers.UOffsetT) *Frame {
 	return x
 }
 
+func FinishFrameBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.Finish(offset)
+}
+
 func GetSizePrefixedRootAsFrame(buf []byte, offset flatbuffers.UOffsetT) *Frame {
 	n := flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])
 	x := &Frame{}
 	x.Init(buf, n+offset+flatbuffers.SizeUint32)
 	return x
+}
+
+func FinishSizePrefixedFrameBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.FinishSizePrefixed(offset)
 }
 
 func (rcv *Frame) Init(buf []byte, i flatbuffers.UOffsetT) {

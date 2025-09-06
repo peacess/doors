@@ -17,11 +17,19 @@ func GetRootAsPartner(buf []byte, offset flatbuffers.UOffsetT) *Partner {
 	return x
 }
 
+func FinishPartnerBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.Finish(offset)
+}
+
 func GetSizePrefixedRootAsPartner(buf []byte, offset flatbuffers.UOffsetT) *Partner {
 	n := flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])
 	x := &Partner{}
 	x.Init(buf, n+offset+flatbuffers.SizeUint32)
 	return x
+}
+
+func FinishSizePrefixedPartnerBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+	builder.FinishSizePrefixed(offset)
 }
 
 func (rcv *Partner) Init(buf []byte, i flatbuffers.UOffsetT) {

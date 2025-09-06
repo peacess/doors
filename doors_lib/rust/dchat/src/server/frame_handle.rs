@@ -2,8 +2,10 @@ use std::sync::Arc;
 
 use flatbuffers::Follow;
 
-use crate::idl;
-use crate::server::{Handles, Shared};
+use crate::{
+    idl,
+    server::{Handles, Shared},
+};
 
 pub struct FrameHandles {
     shared: Arc<Shared>,

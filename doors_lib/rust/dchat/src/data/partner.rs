@@ -13,6 +13,3 @@ pub struct Partner {
     port: i32,
     create_ts: i64,
 }
-
-
-

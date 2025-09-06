@@ -5,7 +5,7 @@ pub use handle_impl::*;
 pub use shared::*;
 
 mod chat_server;
-mod frame_handle;
-mod shared;
 mod config;
+mod frame_handle;
 mod handle_impl;
+mod shared;

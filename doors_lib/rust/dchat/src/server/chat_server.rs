@@ -1,13 +1,14 @@
-use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::time::Duration;
+use std::{
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
+    time::Duration,
+};
 
-use mio::{Events, Interest, Poll, Token};
-use mio::net::UdpSocket;
+use mio::{net::UdpSocket, Events, Interest, Poll, Token};
 
-use crate::server::config::Config;
-use crate::server::FrameHandles;
-use crate::server::Shared;
+use crate::server::{config::Config, FrameHandles, Shared};
 
 pub struct ChatServer {
     udp_socket: UdpSocket,
@@ -42,7 +43,11 @@ impl ChatServer {
         let mut events = Events::with_capacity(1024);
         let mut buf = [0; 65535];
         *self.stop_status.get_mut() = false;
-        let _ = self.poll.registry().register(&mut self.udp_socket, ChatServer::ECHOER, Interest::READABLE).expect("");
+        let _ = self
+            .poll
+            .registry()
+            .register(&mut self.udp_socket, ChatServer::ECHOER, Interest::READABLE)
+            .expect("");
 
         loop {
             //字段stop_status并不与其它字段或变量有先后关系，这里只需要可见性，但rust本身没有提供"volatile"可见性，所以这里使用 atomic类型
@@ -71,7 +76,7 @@ impl ChatServer {
     pub fn stop(&mut self) {
         self.stop_status.store(true, Ordering::Relaxed);
         if let Err(e) = self.poll.registry().deregister(&mut self.udp_socket) {
-            log::error!("{}",e);
+            log::error!("{}", e);
         }
     }
 
