@@ -27,7 +27,7 @@ class _CategoryState extends State<Category> {
                 TextButton.icon(
                   onPressed: () async {
                     Scaffold.of(context).openEndDrawer();
-                    DoorsApp.app.changeMainView(HomePage.make);
+                    DoorsApp.app.changeMainWidget(HomePage.make);
                   },
                   label: Text("Home"),
                   icon: Icon(Icons.home),
@@ -35,7 +35,7 @@ class _CategoryState extends State<Category> {
                 TextButton.icon(
                   onPressed: () async {
                     Scaffold.of(context).openEndDrawer();
-                    DoorsApp.app.changeMainView(ChatPage.make);
+                    DoorsApp.app.changeMainWidget(ChatPage.make);
                   },
                   label: Text("Chat"),
                   icon: Icon(Icons.chat),

@@ -9,7 +9,7 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 
-  static HomePage Function() make = () => HomePage();
+  static MakeWidget<HomePage> make = () => HomePage();
 }
 
 class _HomePageState extends State<HomePage> {

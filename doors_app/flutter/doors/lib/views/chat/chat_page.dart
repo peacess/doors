@@ -1,5 +1,4 @@
 import 'package:doors/views/doors_app.dart';
-import 'package:doors/views/title_bar.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
@@ -8,7 +7,7 @@ class ChatPage extends StatefulWidget {
   @override
   State<ChatPage> createState() => _ChatPageState();
 
-  static ChatPage Function() make = () => ChatPage();
+  static MakeWidget<ChatPage> make = () => ChatPage();
 }
 
 class _ChatPageState extends State<ChatPage> {
