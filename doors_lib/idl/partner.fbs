@@ -3,26 +3,26 @@ include "base.fbs";
 namespace idl;
 
 table Partner{
-    id: UByte16;//随机产生的一个唯一标识
-    terminal_id: UByte16;//终端id
-    partner_id: UByte16; //partner
+    id: idl.UByte16;//随机产生的一个唯一标识
+    terminal_id: idl.UByte16;//终端id
+    partner_id: idl.UByte16; //partner
     name: string;
     ip: string;
     port: int16;
-    create_ts: Timestamp;
+    create_ts: idl.Timestamp;
 }
 
 table OnLine{
-    header: Header;
-    partner: Partner;
-    ts: Timestamp;
+    header: idl.Header;
+    partner: idl.Partner;
+    ts: idl.Timestamp;
 }
 
 //确认收到消息
 table OnLineAck{
-    header: Header;
+    header: idl.Header;
     //OnLine中的 id
-    id: UByte16;
-    partner: Partner;
-    ts: Timestamp;
+    id: idl.UByte16;
+    partner: idl.Partner;
+    ts: idl.Timestamp;
 }
