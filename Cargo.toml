@@ -2,7 +2,7 @@
 [workspace]
 resolver = "2"
 members = ["doors_app/rust/app_egui", "doors_lib/rust/dchat"
-]
+, "doors_lib/rust/idl"]
 
 [workspace.package]
 version = "0.1.0"
@@ -13,3 +13,24 @@ log = { version = "0.4.28", features = [
     "max_level_debug",
     "release_max_level_info",
 ] }
+
+anyhow = "1.0.57"
+uuid = { version = "1.18.1", features = ["v4"] }
+
+toml = "0.9.5"
+serde = { version = "1.0.136", features = ["derive"] }
+signal-hook = "0.3.14"
+mio = { version = "1.0.4", features = ["os-poll", "net"] }
+#io-uring = "0.5.2"
+tokio = { version = "1.18.2", features = ["rt-multi-thread"] }
+flatbuffers = "25.2.10"
+
+#data
+# rocksdb = "0.24.0"
+redis_rocksdb = { version = "0.3.7", path = "../redis_rocksdb" }
+os_info = "3.4.0"
+
+#security
+libsignal-protocol = { git = "https://github.com/signalapp/libsignal", tag = "v0.17.0" }
+x25519-dalek = { version = "2.0.1", features = ["static_secrets","getrandom"] }
+curve25519-dalek = "4.1.3"

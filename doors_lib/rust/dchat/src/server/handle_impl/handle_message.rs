@@ -1,5 +1,6 @@
-use crate::{idl::FrameType, server::Handle};
+use idl::FrameType;
 
+use crate::server::Handle;
 pub(crate) struct HandleMessage {}
 
 impl Handle for HandleMessage {

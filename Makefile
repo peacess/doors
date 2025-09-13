@@ -1,4 +1,6 @@
-.PHONY: build clean format upgrade install
+.PHONY: build clean gen format upgrade install
+
+flutter := ${shell which flutter}
 
 format:
 	cd doors_app && make format
@@ -6,9 +8,13 @@ format:
 
 clean:
 	cargo clean
+	${flutter} clean
 	cd doors_app && make clean
 	cd doors_lib && make clean
-build:
+gen:
+	cd doors_lib/idl_fbs && make gen
+
+build: gen
 	cd doors_app && make build
 	cd doors_lib && make build
 

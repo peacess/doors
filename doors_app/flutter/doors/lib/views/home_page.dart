@@ -1,6 +1,4 @@
-import 'package:doors/views/category.dart';
 import 'package:doors/views/doors_app.dart';
-import 'package:doors/views/title_bar.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {

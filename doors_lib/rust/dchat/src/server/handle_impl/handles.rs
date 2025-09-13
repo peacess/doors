@@ -1,7 +1,8 @@
 use std::collections::BTreeMap;
 
+use idl::FrameType;
+
 use super::{handle_message::HandleMessage, handle_message_ack::HandleMessageAck};
-use crate::idl::FrameType;
 
 pub trait Handle {
     fn handle(&self, bytes: Vec<u8>);

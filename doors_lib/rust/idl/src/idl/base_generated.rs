@@ -8,7 +8,7 @@ extern crate flatbuffers;
 use self::flatbuffers::{EndianScalar, Follow};
 
 #[allow(unused_imports, dead_code)]
-pub mod idl {
+pub mod base {
 
     use core::{cmp::Ordering, mem};
 
@@ -139,8 +139,12 @@ pub mod idl {
         type Output = UByte8;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const UByte8 as *const u8, Self::size());
+            let src = ::core::slice::from_raw_parts(self as *const UByte8 as *const u8, <Self as flatbuffers::Push>::size());
             dst.copy_from_slice(src);
+        }
+        #[inline]
+        fn alignment() -> flatbuffers::PushAlignment {
+            flatbuffers::PushAlignment::new(1)
         }
     }
 
@@ -434,8 +438,12 @@ pub mod idl {
         type Output = UByte16;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const UByte16 as *const u8, Self::size());
+            let src = ::core::slice::from_raw_parts(self as *const UByte16 as *const u8, <Self as flatbuffers::Push>::size());
             dst.copy_from_slice(src);
+        }
+        #[inline]
+        fn alignment() -> flatbuffers::PushAlignment {
+            flatbuffers::PushAlignment::new(1)
         }
     }
 
@@ -520,8 +528,12 @@ pub mod idl {
         type Output = UByte32;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const UByte32 as *const u8, Self::size());
+            let src = ::core::slice::from_raw_parts(self as *const UByte32 as *const u8, <Self as flatbuffers::Push>::size());
             dst.copy_from_slice(src);
+        }
+        #[inline]
+        fn alignment() -> flatbuffers::PushAlignment {
+            flatbuffers::PushAlignment::new(1)
         }
     }
 
@@ -627,8 +639,12 @@ pub mod idl {
         type Output = Timestamp;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const Timestamp as *const u8, Self::size());
+            let src = ::core::slice::from_raw_parts(self as *const Timestamp as *const u8, <Self as flatbuffers::Push>::size());
             dst.copy_from_slice(src);
+        }
+        #[inline]
+        fn alignment() -> flatbuffers::PushAlignment {
+            flatbuffers::PushAlignment::new(8)
         }
     }
 
@@ -719,8 +735,12 @@ pub mod idl {
         type Output = Header;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const Header as *const u8, Self::size());
+            let src = ::core::slice::from_raw_parts(self as *const Header as *const u8, <Self as flatbuffers::Push>::size());
             dst.copy_from_slice(src);
+        }
+        #[inline]
+        fn alignment() -> flatbuffers::PushAlignment {
+            flatbuffers::PushAlignment::new(4)
         }
     }
 
@@ -895,8 +915,8 @@ pub mod idl {
             Frame { _tab: table }
         }
         #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr>,
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
             args: &'args FrameArgs<'args>,
         ) -> flatbuffers::WIPOffset<Frame<'bldr>> {
             let mut builder = FrameBuilder::new(_fbb);
@@ -950,11 +970,11 @@ pub mod idl {
         }
     }
 
-    pub struct FrameBuilder<'a: 'b, 'b> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a>,
+    pub struct FrameBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b> FrameBuilder<'a, 'b> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> FrameBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_header(&mut self, header: &Header) {
             self.fbb_.push_slot_always::<&Header>(Frame::VT_HEADER, header);
@@ -964,7 +984,7 @@ pub mod idl {
             self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Frame::VT_BYTES, bytes);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a>) -> FrameBuilder<'a, 'b> {
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> FrameBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
             FrameBuilder { fbb_: _fbb, start_: start }
         }
@@ -1011,8 +1031,8 @@ pub mod idl {
             MessageBody { _tab: table }
         }
         #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr>,
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
             args: &'args MessageBodyArgs<'args>,
         ) -> flatbuffers::WIPOffset<MessageBody<'bldr>> {
             let mut builder = MessageBodyBuilder::new(_fbb);
@@ -1092,11 +1112,11 @@ pub mod idl {
         }
     }
 
-    pub struct MessageBodyBuilder<'a: 'b, 'b> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a>,
+    pub struct MessageBodyBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b> MessageBodyBuilder<'a, 'b> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MessageBodyBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_id(&mut self, id: &UByte16) {
             self.fbb_.push_slot_always::<&UByte16>(MessageBody::VT_ID, id);
@@ -1114,7 +1134,7 @@ pub mod idl {
             self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(MessageBody::VT_TEXT, text);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a>) -> MessageBodyBuilder<'a, 'b> {
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MessageBodyBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
             MessageBodyBuilder { fbb_: _fbb, start_: start }
         }
@@ -1161,8 +1181,8 @@ pub mod idl {
             Message { _tab: table }
         }
         #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr>,
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
             args: &'args MessageArgs<'args>,
         ) -> flatbuffers::WIPOffset<Message<'bldr>> {
             let mut builder = MessageBuilder::new(_fbb);
@@ -1213,11 +1233,11 @@ pub mod idl {
         }
     }
 
-    pub struct MessageBuilder<'a: 'b, 'b> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a>,
+    pub struct MessageBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b> MessageBuilder<'a, 'b> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MessageBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_header(&mut self, header: &Header) {
             self.fbb_.push_slot_always::<&Header>(Message::VT_HEADER, header);
@@ -1227,7 +1247,7 @@ pub mod idl {
             self.fbb_.push_slot_always::<flatbuffers::WIPOffset<MessageBody>>(Message::VT_BODY, body);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a>) -> MessageBuilder<'a, 'b> {
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MessageBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
             MessageBuilder { fbb_: _fbb, start_: start }
         }
@@ -1273,8 +1293,8 @@ pub mod idl {
             MessageAck { _tab: table }
         }
         #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr>,
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
             args: &'args MessageAckArgs<'args>,
         ) -> flatbuffers::WIPOffset<MessageAck<'bldr>> {
             let mut builder = MessageAckBuilder::new(_fbb);
@@ -1341,11 +1361,11 @@ pub mod idl {
         }
     }
 
-    pub struct MessageAckBuilder<'a: 'b, 'b> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a>,
+    pub struct MessageAckBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b> MessageAckBuilder<'a, 'b> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MessageAckBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_header(&mut self, header: &Header) {
             self.fbb_.push_slot_always::<&Header>(MessageAck::VT_HEADER, header);
@@ -1359,7 +1379,7 @@ pub mod idl {
             self.fbb_.push_slot_always::<&Timestamp>(MessageAck::VT_TS, ts);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a>) -> MessageAckBuilder<'a, 'b> {
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MessageAckBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
             MessageAckBuilder { fbb_: _fbb, start_: start }
         }
@@ -1379,4 +1399,4 @@ pub mod idl {
             ds.finish()
         }
     }
-} // pub mod idl
+} // pub mod base
