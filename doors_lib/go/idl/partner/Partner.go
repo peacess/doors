@@ -5,7 +5,7 @@ package partner
 import (
 	flatbuffers "github.com/google/flatbuffers/go"
 
-	base "github.com/selfopen/chat_server/go/idl/base"
+	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
 type Partner struct {

@@ -9,7 +9,7 @@ edition = "2021"
 
 # ui
 miniquad = { version = "0.4.8", features = ["log-impl"] }
-egui = "0.32.2"
+egui = "0.32.3"
 egui-miniquad = "0.16.0"
 
 [target.'cfg(target_os = "android")'.dependencies]

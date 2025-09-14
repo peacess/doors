@@ -3,7 +3,7 @@
 go := ${shell which go}
 
 golang:
-	flatc --go --go-module-name "github.com/selfopen/chat_server/go/idl" -o ../go/idl base.fbs partner.fbs
+	flatc --go --go-module-name "github.com/peacess/doors/doors_lib/go/idl" -o ../go/idl base.fbs partner.fbs
 rust:
 	flatc --rust -o ../rust/idl/src/idl base.fbs partner.fbs
 dart:

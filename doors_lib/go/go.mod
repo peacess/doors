@@ -1,4 +1,4 @@
-module github.com/selfopen/chat_server/go
+module github.com/peacess/doors/doors_lib/go
 
 go 1.25.0
 
