@@ -10,6 +10,8 @@ class DoorsApp {
 
   final ValueNotifier<MakeWidget<Widget>> mainWidget = ValueNotifier(HomePage.make);
 
+  final ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.dark);
+
   void changeMainWidget(MakeWidget newWidget) {
     mainWidget.value = newWidget;
   }

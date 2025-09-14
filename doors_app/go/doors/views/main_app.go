@@ -13,8 +13,8 @@ func MainApp() {
 	w.CenterOnScreen()
 
 	content := container.NewStack()
-	setContent := func(c fyne.CanvasObject) {
-		content.Objects = []fyne.CanvasObject{c}
+	setContent := func(c *categoryItem) {
+		content.Objects = []fyne.CanvasObject{c.View(w)}
 		content.Refresh()
 	}
 	{

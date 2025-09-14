@@ -43,7 +43,21 @@ class _CategoryState extends State<Category> {
               ],
             ),
           ),
-          IconButton(onPressed: () => Scaffold.of(context).openEndDrawer(), icon: Icon(Icons.chevron_left)),
+          Row(
+            children: [
+              for (var mode in ThemeMode.values)
+                IconButton(
+                  onPressed: () {
+                    DoorsApp.app.themeMode.value = mode;
+                  },
+                  icon: Icon(switch (mode) {
+                    ThemeMode.system => Icons.brightness_auto,
+                    ThemeMode.light => Icons.brightness_7,
+                    ThemeMode.dark => Icons.brightness_2,
+                  }),
+                ),
+            ],
+          ),
         ],
       ),
     );

@@ -49,7 +49,7 @@ func (c *categoryItems) UpdateNode(uid string, branch bool, node fyne.CanvasObje
 	}
 }
 
-func categoryView(content func(c fyne.CanvasObject)) fyne.CanvasObject {
+func categoryView(content func(c *categoryItem)) fyne.CanvasObject {
 	a := fyne.CurrentApp()
 	items := &categoryItems{
 		items: []*categoryItem{
@@ -69,16 +69,13 @@ func categoryView(content func(c fyne.CanvasObject)) fyne.CanvasObject {
 		CreateNode: items.CreateNode,
 		UpdateNode: items.UpdateNode,
 		OnSelected: func(uid string) {
-			if t, ok := tutorials.Tutorials[uid]; ok {
-				for _, f := range tutorials.OnChangeFuncs {
-					f()
+			for _, item := range items.items {
+				if item.id == uid && item.View != nil {
+					content(item)
+					break
 				}
-				tutorials.OnChangeFuncs = nil // Loading a page registers a new cleanup.
-
-				a.Preferences().SetString(preferenceCurrentTutorial, uid)
-				setTutorial(t)
 			}
-		}
+		},
 	}
 	themes := container.NewGridWithColumns(2,
 		widget.NewButton("Dark", func() {
