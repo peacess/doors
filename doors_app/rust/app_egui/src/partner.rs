@@ -8,7 +8,9 @@ impl Partner {}
 
 impl BarView for Partner {
     fn show_inside(&mut self, ui: &mut Ui) {
-        egui::CentralPanel::default().show_inside(ui, |ui| {});
+        egui::CentralPanel::default().show_inside(ui, |ui| {
+            ui.label("coming soon...");
+        });
     }
 
     fn bar_type(&self) -> BarType {

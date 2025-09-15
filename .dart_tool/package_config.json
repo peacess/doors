@@ -92,6 +92,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "fixnum",
+      "rootUri": "file:///home/peace/.pub-cache/hosted/pub.flutter-io.cn/fixnum-1.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
       "name": "flat_buffers",
       "rootUri": "file:///home/peace/.pub-cache/hosted/pub.flutter-io.cn/flat_buffers-23.5.26",
       "packageUri": "lib/",
@@ -284,6 +290,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "sprintf",
+      "rootUri": "file:///home/peace/.pub-cache/hosted/pub.flutter-io.cn/sprintf-7.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "stack_trace",
       "rootUri": "file:///home/peace/.pub-cache/hosted/pub.flutter-io.cn/stack_trace-1.12.1",
       "packageUri": "lib/",
@@ -330,6 +342,12 @@
       "rootUri": "file:///home/peace/.pub-cache/hosted/pub.flutter-io.cn/typed_data-1.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
+    },
+    {
+      "name": "uuid",
+      "rootUri": "file:///home/peace/.pub-cache/hosted/pub.flutter-io.cn/uuid-4.5.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "vector_math",

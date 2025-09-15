@@ -511,4 +511,76 @@ pub mod partner {
             ds.finish()
         }
     }
+    #[inline]
+    /// Verifies that a buffer of bytes contains a `Partner`
+    /// and returns it.
+    /// Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `root_as_partner_unchecked`.
+    pub fn root_as_partner(buf: &[u8]) -> Result<Partner, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::root::<Partner>(buf)
+    }
+    #[inline]
+    /// Verifies that a buffer of bytes contains a size prefixed
+    /// `Partner` and returns it.
+    /// Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `size_prefixed_root_as_partner_unchecked`.
+    pub fn size_prefixed_root_as_partner(buf: &[u8]) -> Result<Partner, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::size_prefixed_root::<Partner>(buf)
+    }
+    #[inline]
+    /// Verifies, with the given options, that a buffer of bytes
+    /// contains a `Partner` and returns it.
+    /// Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `root_as_partner_unchecked`.
+    pub fn root_as_partner_with_opts<'b, 'o>(opts: &'o flatbuffers::VerifierOptions, buf: &'b [u8]) -> Result<Partner<'b>, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::root_with_opts::<Partner<'b>>(opts, buf)
+    }
+    #[inline]
+    /// Verifies, with the given verifier options, that a buffer of
+    /// bytes contains a size prefixed `Partner` and returns
+    /// it. Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `root_as_partner_unchecked`.
+    pub fn size_prefixed_root_as_partner_with_opts<'b, 'o>(
+        opts: &'o flatbuffers::VerifierOptions,
+        buf: &'b [u8],
+    ) -> Result<Partner<'b>, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::size_prefixed_root_with_opts::<Partner<'b>>(opts, buf)
+    }
+    #[inline]
+    /// Assumes, without verification, that a buffer of bytes contains a Partner and returns it.
+    /// # Safety
+    /// Callers must trust the given bytes do indeed contain a valid `Partner`.
+    pub unsafe fn root_as_partner_unchecked(buf: &[u8]) -> Partner {
+        flatbuffers::root_unchecked::<Partner>(buf)
+    }
+    #[inline]
+    /// Assumes, without verification, that a buffer of bytes contains a size prefixed Partner and returns it.
+    /// # Safety
+    /// Callers must trust the given bytes do indeed contain a valid size prefixed `Partner`.
+    pub unsafe fn size_prefixed_root_as_partner_unchecked(buf: &[u8]) -> Partner {
+        flatbuffers::size_prefixed_root_unchecked::<Partner>(buf)
+    }
+    #[inline]
+    pub fn finish_partner_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
+        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        root: flatbuffers::WIPOffset<Partner<'a>>,
+    ) {
+        fbb.finish(root, None);
+    }
+
+    #[inline]
+    pub fn finish_size_prefixed_partner_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
+        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        root: flatbuffers::WIPOffset<Partner<'a>>,
+    ) {
+        fbb.finish_size_prefixed(root, None);
+    }
 } // pub mod partner

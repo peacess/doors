@@ -19,40 +19,135 @@ func (rcv *UByte16) Table() flatbuffers.Table {
 	return rcv._tab.Table
 }
 
-func (rcv *UByte16) Ub1(obj *UByte8) *UByte8 {
-	if obj == nil {
-		obj = new(UByte8)
-	}
-	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+0)
-	return obj
+func (rcv *UByte16) Ub1() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(0))
 }
-func (rcv *UByte16) Ub2(obj *UByte8) *UByte8 {
-	if obj == nil {
-		obj = new(UByte8)
-	}
-	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+8)
-	return obj
+func (rcv *UByte16) MutateUb1(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
 }
 
-func CreateUByte16(builder *flatbuffers.Builder, ub1_ub1 byte, ub1_ub2 byte, ub1_ub3 byte, ub1_ub4 byte, ub1_ub5 byte, ub1_ub6 byte, ub1_ub7 byte, ub1_ub8 byte, ub2_ub1 byte, ub2_ub2 byte, ub2_ub3 byte, ub2_ub4 byte, ub2_ub5 byte, ub2_ub6 byte, ub2_ub7 byte, ub2_ub8 byte) flatbuffers.UOffsetT {
+func (rcv *UByte16) Ub2() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(1))
+}
+func (rcv *UByte16) MutateUb2(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(1), n)
+}
+
+func (rcv *UByte16) Ub3() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(2))
+}
+func (rcv *UByte16) MutateUb3(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(2), n)
+}
+
+func (rcv *UByte16) Ub4() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(3))
+}
+func (rcv *UByte16) MutateUb4(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(3), n)
+}
+
+func (rcv *UByte16) Ub5() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(4))
+}
+func (rcv *UByte16) MutateUb5(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(4), n)
+}
+
+func (rcv *UByte16) Ub6() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(5))
+}
+func (rcv *UByte16) MutateUb6(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(5), n)
+}
+
+func (rcv *UByte16) Ub7() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(6))
+}
+func (rcv *UByte16) MutateUb7(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(6), n)
+}
+
+func (rcv *UByte16) Ub8() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(7))
+}
+func (rcv *UByte16) MutateUb8(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(7), n)
+}
+
+func (rcv *UByte16) Ub9() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(8))
+}
+func (rcv *UByte16) MutateUb9(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(8), n)
+}
+
+func (rcv *UByte16) Ub10() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(9))
+}
+func (rcv *UByte16) MutateUb10(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(9), n)
+}
+
+func (rcv *UByte16) Ub11() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(10))
+}
+func (rcv *UByte16) MutateUb11(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(10), n)
+}
+
+func (rcv *UByte16) Ub12() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(11))
+}
+func (rcv *UByte16) MutateUb12(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(11), n)
+}
+
+func (rcv *UByte16) Ub13() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(12))
+}
+func (rcv *UByte16) MutateUb13(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(12), n)
+}
+
+func (rcv *UByte16) Ub14() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(13))
+}
+func (rcv *UByte16) MutateUb14(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(13), n)
+}
+
+func (rcv *UByte16) Ub15() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(14))
+}
+func (rcv *UByte16) MutateUb15(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(14), n)
+}
+
+func (rcv *UByte16) Ub16() byte {
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(15))
+}
+func (rcv *UByte16) MutateUb16(n byte) bool {
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(15), n)
+}
+
+func CreateUByte16(builder *flatbuffers.Builder, ub1 byte, ub2 byte, ub3 byte, ub4 byte, ub5 byte, ub6 byte, ub7 byte, ub8 byte, ub9 byte, ub10 byte, ub11 byte, ub12 byte, ub13 byte, ub14 byte, ub15 byte, ub16 byte) flatbuffers.UOffsetT {
 	builder.Prep(1, 16)
-	builder.Prep(1, 8)
-	builder.PrependByte(ub2_ub8)
-	builder.PrependByte(ub2_ub7)
-	builder.PrependByte(ub2_ub6)
-	builder.PrependByte(ub2_ub5)
-	builder.PrependByte(ub2_ub4)
-	builder.PrependByte(ub2_ub3)
-	builder.PrependByte(ub2_ub2)
-	builder.PrependByte(ub2_ub1)
-	builder.Prep(1, 8)
-	builder.PrependByte(ub1_ub8)
-	builder.PrependByte(ub1_ub7)
-	builder.PrependByte(ub1_ub6)
-	builder.PrependByte(ub1_ub5)
-	builder.PrependByte(ub1_ub4)
-	builder.PrependByte(ub1_ub3)
-	builder.PrependByte(ub1_ub2)
-	builder.PrependByte(ub1_ub1)
+	builder.PrependByte(ub16)
+	builder.PrependByte(ub15)
+	builder.PrependByte(ub14)
+	builder.PrependByte(ub13)
+	builder.PrependByte(ub12)
+	builder.PrependByte(ub11)
+	builder.PrependByte(ub10)
+	builder.PrependByte(ub9)
+	builder.PrependByte(ub8)
+	builder.PrependByte(ub7)
+	builder.PrependByte(ub6)
+	builder.PrependByte(ub5)
+	builder.PrependByte(ub4)
+	builder.PrependByte(ub3)
+	builder.PrependByte(ub2)
+	builder.PrependByte(ub1)
 	return builder.Offset()
 }

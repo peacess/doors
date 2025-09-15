@@ -1,0 +1,4 @@
+
+analyzer:
+  exclude:
+    - 'doors_lib/dart/lib/idl/**'

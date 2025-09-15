@@ -1,3 +1,4 @@
+
 namespace base;
 
 enum FrameType:int16{
@@ -25,15 +26,22 @@ struct UByte8{
 //flatbuffers使用小端字节序
 // 在编译为 go时，不支持 v:[ubyte:16],这样数组类型，所以才使用一个byte一个字段
 struct UByte16{
-    ub1: UByte8;
-    ub2: UByte8;
-}
-
-struct UByte32{
-    ub1: UByte8;
-    ub2: UByte8;
-    ub3: UByte8;
-    ub4: UByte8;
+    ub1: ubyte;
+    ub2: ubyte;
+    ub3: ubyte;
+    ub4: ubyte;
+    ub5: ubyte;
+    ub6: ubyte;
+    ub7: ubyte;
+    ub8: ubyte;
+    ub9: ubyte;
+    ub10: ubyte;
+    ub11: ubyte;
+    ub12: ubyte;
+    ub13: ubyte;
+    ub14: ubyte;
+    ub15: ubyte;
+    ub16: ubyte;
 }
 
 
@@ -77,3 +85,5 @@ table MessageAck{
     // message timestamp
     ts: Timestamp;
 }
+
+root_type Message;

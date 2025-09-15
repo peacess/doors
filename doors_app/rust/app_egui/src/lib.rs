@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub(crate) use bars::*;
 pub(crate) use doors_ui::*;
 pub(crate) use message::*;

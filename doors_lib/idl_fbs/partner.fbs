@@ -26,3 +26,5 @@ table OnLineAck{
     partner: Partner;
     ts: base.Timestamp;
 }
+
+root_type Partner;

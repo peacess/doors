@@ -6,4 +6,10 @@ environment:
   sdk: ^3.9.2
 resolution: workspace
 
+dependencies: 
+  flat_buffers:
+  uuid: 
 
+dev_dependencies:
+  lints: 
+  test: 

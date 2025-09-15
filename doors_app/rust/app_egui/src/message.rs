@@ -8,7 +8,7 @@ impl Message {}
 
 impl BarView for Message {
     fn show_inside(&mut self, ui: &mut Ui) {
-        egui::CentralPanel::default().show_inside(ui, |ui| {});
+        egui::CentralPanel::default().show_inside(ui, |_ui| {});
     }
 
     fn bar_type(&self) -> BarType {

@@ -1,34 +1,18 @@
-use miniquad::{window, EventHandler, PassAction, RenderingBackend};
-
-use crate::Bars;
-
 pub struct DoorsUi {
     pub title: String,
-    bars: Bars,
-    ctx: Box<dyn RenderingBackend>,
 }
 
 impl DoorsUi {
-    pub fn new() -> Self {
-        let ctx: Box<dyn RenderingBackend> = window::new_rendering_backend();
-        // egui_mq.egui_ctx().set_visuals(egui::Visuals::dark());
-        DoorsUi {
-            title: "doors".to_owned(),
-            bars: Bars::new(),
-            ctx,
-        }
+    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        egui_extras::install_image_loaders(&cc.egui_ctx);
+        Self { title: "Doors".to_owned() }
     }
 }
 
-impl EventHandler for DoorsUi {
-    fn update(&mut self) {}
-
-    fn draw(&mut self) {
-        self.ctx.clear(Some((1., 1., 1., 1.)), None, None);
-        self.ctx.begin_default_pass(PassAction::clear_color(0.0, 0.0, 0.0, 1.0));
-        self.ctx.end_render_pass();
-
-        self.ctx.end_render_pass();
-        self.ctx.commit_frame();
+impl eframe::App for DoorsUi {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.heading("Doors App");
+        });
     }
 }
