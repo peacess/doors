@@ -9,6 +9,7 @@
       "name": "_",
       "version": "0.0.0",
       "dependencies": [
+        "bluesky",
         "flat_buffers",
         "path",
         "uuid"
@@ -22,7 +23,7 @@
       "name": "doors",
       "version": "0.1.0",
       "dependencies": [
-        "cupertino_icons",
+        "bluesky",
         "flutter"
       ],
       "devDependencies": [
@@ -41,6 +42,11 @@
         "lints",
         "test"
       ]
+    },
+    {
+      "name": "characters",
+      "version": "1.4.1",
+      "dependencies": []
     },
     {
       "name": "test",
@@ -78,6 +84,17 @@
       "name": "lints",
       "version": "6.0.0",
       "dependencies": []
+    },
+    {
+      "name": "bluesky",
+      "version": "1.1.0",
+      "dependencies": [
+        "atproto",
+        "atproto_core",
+        "characters",
+        "freezed_annotation",
+        "json_annotation"
+      ]
     },
     {
       "name": "uuid",
@@ -123,11 +140,6 @@
         "test_api",
         "vector_math"
       ]
-    },
-    {
-      "name": "cupertino_icons",
-      "version": "1.0.8",
-      "dependencies": []
     },
     {
       "name": "flutter",
@@ -390,6 +402,44 @@
       ]
     },
     {
+      "name": "json_annotation",
+      "version": "4.9.0",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
+      "name": "freezed_annotation",
+      "version": "3.1.0",
+      "dependencies": [
+        "collection",
+        "json_annotation",
+        "meta"
+      ]
+    },
+    {
+      "name": "atproto",
+      "version": "1.1.0",
+      "dependencies": [
+        "atproto_core",
+        "freezed_annotation",
+        "json_annotation"
+      ]
+    },
+    {
+      "name": "atproto_core",
+      "version": "1.0.6",
+      "dependencies": [
+        "at_uri",
+        "atproto_oauth",
+        "cbor",
+        "freezed_annotation",
+        "json_annotation",
+        "multiformats",
+        "xrpc"
+      ]
+    },
+    {
       "name": "fixnum",
       "version": "1.1.1",
       "dependencies": []
@@ -451,11 +501,6 @@
       "dependencies": [
         "collection"
       ]
-    },
-    {
-      "name": "characters",
-      "version": "1.4.0",
-      "dependencies": []
     },
     {
       "name": "string_scanner",
@@ -584,6 +629,60 @@
       ]
     },
     {
+      "name": "atproto_oauth",
+      "version": "0.1.2",
+      "dependencies": [
+        "convert",
+        "crypto",
+        "freezed_annotation",
+        "http",
+        "json_annotation",
+        "pointycastle"
+      ]
+    },
+    {
+      "name": "multiformats",
+      "version": "1.0.2",
+      "dependencies": [
+        "base_codecs",
+        "crypto",
+        "dart_multihash"
+      ]
+    },
+    {
+      "name": "cbor",
+      "version": "6.3.7",
+      "dependencies": [
+        "characters",
+        "collection",
+        "convert",
+        "hex",
+        "ieee754",
+        "meta",
+        "typed_data"
+      ]
+    },
+    {
+      "name": "at_uri",
+      "version": "1.0.2",
+      "dependencies": [
+        "at_identifier",
+        "nsid"
+      ]
+    },
+    {
+      "name": "xrpc",
+      "version": "1.0.2",
+      "dependencies": [
+        "freezed_annotation",
+        "http",
+        "json_annotation",
+        "mime",
+        "nsid",
+        "web_socket_channel"
+      ]
+    },
+    {
       "name": "leak_tracker_testing",
       "version": "3.0.2",
       "dependencies": [
@@ -610,6 +709,66 @@
         "meta",
         "path"
       ]
+    },
+    {
+      "name": "pointycastle",
+      "version": "3.9.1",
+      "dependencies": [
+        "collection",
+        "convert",
+        "js"
+      ]
+    },
+    {
+      "name": "http",
+      "version": "1.5.0",
+      "dependencies": [
+        "async",
+        "http_parser",
+        "meta",
+        "web"
+      ]
+    },
+    {
+      "name": "dart_multihash",
+      "version": "1.0.1",
+      "dependencies": [
+        "buffer"
+      ]
+    },
+    {
+      "name": "base_codecs",
+      "version": "1.0.1",
+      "dependencies": [
+        "crypto"
+      ]
+    },
+    {
+      "name": "ieee754",
+      "version": "1.0.3",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
+      "name": "hex",
+      "version": "0.2.0",
+      "dependencies": []
+    },
+    {
+      "name": "nsid",
+      "version": "1.0.2",
+      "dependencies": []
+    },
+    {
+      "name": "at_identifier",
+      "version": "1.0.2",
+      "dependencies": []
+    },
+    {
+      "name": "buffer",
+      "version": "1.2.3",
+      "dependencies": []
     }
   ],
   "configVersion": 1

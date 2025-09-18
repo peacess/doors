@@ -1,5 +1,5 @@
 name: doors
-description: "lifedoor -- safe life tools"
+description: "life door -- safe life tools"
 version: "0.1.0"
 
 environment:
@@ -10,14 +10,13 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-
-  cupertino_icons: ^1.0.8
+  bluesky:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^6.0.0
+  flutter_lints:
 
 flutter:
   uses-material-design: true

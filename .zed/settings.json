@@ -1,0 +1,11 @@
+{
+  "buffer_ending": "crlf",
+  "default_line_ending": "crlf",
+  "lsp": {
+    "dart": {
+      "settings": {
+        "lineLength": 160
+      }
+    }
+  }
+}

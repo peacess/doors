@@ -1,3 +1,4 @@
+import 'package:doors/views/blue/blue_page.dart';
 import 'package:doors/views/home_page.dart';
 import 'package:doors/views/chat/chat_page.dart';
 import 'package:doors/views/doors_app.dart';
@@ -39,6 +40,14 @@ class _CategoryState extends State<Category> {
                   },
                   label: Text("Chat"),
                   icon: Icon(Icons.chat),
+                ),
+                TextButton.icon(
+                  onPressed: () async {
+                    Scaffold.of(context).openEndDrawer();
+                    DoorsApp.app.changeMainWidget(BluePage.make);
+                  },
+                  label: Text("Blue"),
+                  icon: Icon(Icons.bluetooth),
                 ),
               ],
             ),

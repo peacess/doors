@@ -43,6 +43,31 @@ struct UByte16{
     ub15: ubyte;
     ub16: ubyte;
 }
+// ulid,  ulid is big-endian, so can't use uint128 to store it directly. 
+// the flatbuffers is little-endian（see, https://flatbuffers.dev/internals/）, if machine is big-endian, flatbuffers will auto convert the byte order when serialize/deserialize
+struct Identifier{
+    ts1: ubyte;
+    ts2: ubyte;
+    ts3: ubyte;
+    ts4: ubyte;
+    ts5: ubyte;
+    ts6: ubyte;
+    rand7: ubyte;
+    rand8: ubyte;
+    rand9: ubyte;
+    rand10: ubyte;
+    rand11: ubyte;
+    rand12: ubyte;
+    rand13: ubyte;
+    rand14: ubyte;
+    rand15: ubyte;
+    rand16: ubyte;
+}
+
+struct Uint128{
+    low: uint64;
+    high: uint64;
+}
 
 
 struct Timestamp{

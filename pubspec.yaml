@@ -2,6 +2,7 @@ name: _
 publish_to: none
 environment:
   sdk: ^3.9.2
+  flutter: ^3.35.4
 workspace:
   - doors_app/flutter/doors
   - doors_lib/dart
@@ -11,6 +12,10 @@ dependencies:
   path: ^1.9.0
   flat_buffers: ^23.5.26
   uuid: ^4.5.1
+  bluesky: ^1.1.0
+
+dependency_overrides:
+  characters: ^1.4.1
 
 dev_dependencies:
   lints: ^6.0.0
