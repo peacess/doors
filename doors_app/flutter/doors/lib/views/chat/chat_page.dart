@@ -13,7 +13,16 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Chat Page"));
+    return Scaffold(
+      body: Center(child: Text("Chat Page")),
+      drawer: Drawer(
+        child: Column(
+          spacing: 10.0,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [IconButton(onPressed: () => Scaffold.of(context).openEndDrawer(), icon: Icon(Icons.chevron_left))],
+        ),
+      ),
+    );
   }
 
   @override

@@ -12,11 +12,24 @@ dependencies:
   path: ^1.9.0
   flat_buffers: ^23.5.26
   uuid: ^4.5.1
-  bluesky: ^1.1.0
+
+  isar: 
+  isar_flutter_libs: 
 
 dependency_overrides:
   characters: ^1.4.1
+  isar: 
+    git:
+      url: https://github.com/isar/isar.git
+      path: packages/isar
+      ref: 713001bf1615ea15460d9bc8d3fb9c8cb4150a2e
+  isar_flutter_libs: 
+    git:
+      url: https://github.com/isar/isar.git
+      path: packages/isar_flutter_libs
+      ref: 713001bf1615ea15460d9bc8d3fb9c8cb4150a2e
 
 dev_dependencies:
   lints: ^6.0.0
   test: ^1.25.6
+  build_runner: any

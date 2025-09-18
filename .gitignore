@@ -1,5 +1,7 @@
 .idea/
 .vscode/
+.gradle/
 .dart_tool/
 target/
 temp/
+
