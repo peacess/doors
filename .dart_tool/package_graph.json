@@ -10,6 +10,8 @@
       "version": "0.0.0",
       "dependencies": [
         "flat_buffers",
+        "flutter_gen",
+        "intl",
         "isar",
         "isar_flutter_libs",
         "path",
@@ -26,8 +28,8 @@
       "version": "0.1.0",
       "dependencies": [
         "flutter",
-        "isar",
-        "isar_flutter_libs"
+        "flutter_localizations",
+        "intl"
       ],
       "devDependencies": [
         "flutter_lints",
@@ -171,6 +173,24 @@
       "dependencies": []
     },
     {
+      "name": "flutter_gen",
+      "version": "5.11.0",
+      "dependencies": [
+        "args",
+        "flutter_gen_core",
+        "logging"
+      ]
+    },
+    {
+      "name": "intl",
+      "version": "0.20.2",
+      "dependencies": [
+        "clock",
+        "meta",
+        "path"
+      ]
+    },
+    {
       "name": "flutter",
       "version": "0.0.0",
       "dependencies": [
@@ -273,6 +293,15 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_localizations",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter",
+        "intl",
+        "path"
       ]
     },
     {
@@ -714,6 +743,35 @@
       "dependencies": []
     },
     {
+      "name": "flutter_gen_core",
+      "version": "5.11.0",
+      "dependencies": [
+        "archive",
+        "args",
+        "collection",
+        "color",
+        "dart_style",
+        "dartx",
+        "glob",
+        "image",
+        "image_size_getter",
+        "json_annotation",
+        "logging",
+        "meta",
+        "mime",
+        "path",
+        "pub_semver",
+        "vector_graphics_compiler",
+        "xml",
+        "yaml"
+      ]
+    },
+    {
+      "name": "clock",
+      "version": "1.1.2",
+      "dependencies": []
+    },
+    {
       "name": "sky_engine",
       "version": "0.0.0",
       "dependencies": []
@@ -769,11 +827,6 @@
         "matcher",
         "meta"
       ]
-    },
-    {
-      "name": "clock",
-      "version": "1.1.2",
-      "dependencies": []
     },
     {
       "name": "fake_async",
@@ -866,6 +919,71 @@
       ]
     },
     {
+      "name": "image",
+      "version": "4.5.4",
+      "dependencies": [
+        "archive",
+        "meta",
+        "xml"
+      ]
+    },
+    {
+      "name": "image_size_getter",
+      "version": "2.4.1",
+      "dependencies": [
+        "collection",
+        "hashcodes",
+        "meta"
+      ]
+    },
+    {
+      "name": "vector_graphics_compiler",
+      "version": "1.1.19",
+      "dependencies": [
+        "args",
+        "meta",
+        "path",
+        "path_parsing",
+        "vector_graphics_codec",
+        "xml"
+      ]
+    },
+    {
+      "name": "archive",
+      "version": "4.0.7",
+      "dependencies": [
+        "crypto",
+        "path",
+        "posix"
+      ]
+    },
+    {
+      "name": "color",
+      "version": "3.0.0",
+      "dependencies": []
+    },
+    {
+      "name": "dartx",
+      "version": "1.2.0",
+      "dependencies": [
+        "characters",
+        "collection",
+        "crypto",
+        "meta",
+        "path",
+        "time"
+      ]
+    },
+    {
+      "name": "xml",
+      "version": "6.6.1",
+      "dependencies": [
+        "collection",
+        "meta",
+        "petitparser"
+      ]
+    },
+    {
       "name": "leak_tracker_testing",
       "version": "3.0.2",
       "dependencies": [
@@ -883,6 +1001,48 @@
         "meta",
         "path",
         "vm_service"
+      ]
+    },
+    {
+      "name": "hashcodes",
+      "version": "2.0.0",
+      "dependencies": []
+    },
+    {
+      "name": "vector_graphics_codec",
+      "version": "1.1.13",
+      "dependencies": []
+    },
+    {
+      "name": "path_parsing",
+      "version": "1.1.0",
+      "dependencies": [
+        "meta",
+        "vector_math"
+      ]
+    },
+    {
+      "name": "posix",
+      "version": "6.0.3",
+      "dependencies": [
+        "ffi",
+        "meta",
+        "path"
+      ]
+    },
+    {
+      "name": "time",
+      "version": "2.1.5",
+      "dependencies": [
+        "clock"
+      ]
+    },
+    {
+      "name": "petitparser",
+      "version": "7.0.1",
+      "dependencies": [
+        "collection",
+        "meta"
       ]
     }
   ],

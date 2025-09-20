@@ -1,4 +1,4 @@
-.PHONY: build clean format
+.PHONY: build clean format install gen
 
 flutter := ${shell which flutter}
 
@@ -8,3 +8,7 @@ clean:
 	${flutter} clean
 build:
 	${flutter} analyze
+gen:
+	flutter gen-l10n
+install:
+# 	dart pub global activate flutter_gen

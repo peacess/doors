@@ -1,3 +1,4 @@
+import 'package:doors/views/category.dart';
 import 'package:doors/views/doors_app.dart';
 import 'package:flutter/material.dart';
 
@@ -8,12 +9,19 @@ class BluePage extends StatefulWidget {
   State<BluePage> createState() => _BluePageState();
 
   static MakeWidget<BluePage> make = () => BluePage();
+  static void open() {
+    DoorsApp.app.navigatorKey.currentState?.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => BluePage()), (route) => false);
+  }
 }
 
 class _BluePageState extends State<BluePage> {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Blue Page"));
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(child: Text("Blue Page")),
+      drawer: Category(),
+    );
   }
 
   @override

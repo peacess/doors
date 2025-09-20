@@ -1,7 +1,8 @@
-import 'package:doors/views/category.dart';
+import 'package:doors/l10n/gen_code/app_localizations.dart';
 import 'package:doors/views/doors_app.dart';
-import 'package:doors/views/title_bar.dart';
+import 'package:doors/views/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class DoorsMainApp extends StatefulWidget {
   const DoorsMainApp({super.key});
@@ -17,6 +18,12 @@ class _DoorsMainApp extends State<DoorsMainApp> {
   void initState() {
     super.initState();
     themeMode.addListener(_refresh);
+  }
+
+  @override
+  void didChangeDependencies() {
+    DoorsApp.app.mediaQueryData = MediaQuery.of(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -59,16 +66,20 @@ class _DoorsMainApp extends State<DoorsMainApp> {
 
       themeMode: themeMode.value,
 
-      home: Scaffold(
-        appBar: TitleBar(),
-        body: ValueListenableBuilder(
-          valueListenable: DoorsApp.app.mainWidget,
-          builder: (context, makeWidget, child) {
-            return makeWidget();
-          },
-        ),
-        drawer: Category(),
-      ),
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      // 支持的语言列表
+      supportedLocales: [
+        const Locale('en', ''), // English
+      ],
+
+      // 指定默认语言（可选）
+      // locale: const Locale('zh', ''),
+      home: HomePage(),
     );
   }
 }

@@ -1,0 +1,4 @@
+arb-dir: lib/l10n # .arb 文件存放目录
+template-arb-file: app_en.arb # 默认模板文件
+output-localization-file: app_localizations.dart # 生成的 dart 文件名
+output-dir: lib/l10n/gen_code
