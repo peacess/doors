@@ -2,9 +2,10 @@ import 'package:doors/views/doors_app.dart';
 import 'package:flutter/material.dart';
 
 class ChatTitleBar extends StatefulWidget implements PreferredSizeWidget {
-  ChatTitleBar({super.key});
+  ChatTitleBar(this.showLeft, {super.key});
   final ValueNotifier<String> title = DoorsApp.app.title;
   final ValueNotifier<String> subTitle = DoorsApp.app.subTitle;
+  final ValueNotifier<bool> showLeft;
 
   @override
   State<ChatTitleBar> createState() => _ChatTitleBarState();
@@ -28,26 +29,21 @@ class _ChatTitleBarState extends State<ChatTitleBar> {
               Scaffold.of(context).openDrawer();
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.arrow_forward),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
           ValueListenableBuilder(
-            valueListenable: widget.title,
-            builder: (_, _, _) {
-              return Text(widget.title.value);
+            valueListenable: widget.showLeft,
+            builder: (_, value, _) {
+              return IconButton(
+                icon: Icon(value ? Icons.arrow_back : Icons.arrow_forward),
+                onPressed: () {
+                  widget.showLeft.value = !widget.showLeft.value;
+                },
+              );
             },
           ),
           ValueListenableBuilder(
             valueListenable: widget.subTitle,
-            builder: (_, _, _) {
-              var t = "";
-              if (widget.subTitle.value.isNotEmpty) {
-                t = " - ${widget.subTitle.value}";
-              }
-              return Text(t);
+            builder: (_, value, _) {
+              return Text(value);
             },
           ),
         ],

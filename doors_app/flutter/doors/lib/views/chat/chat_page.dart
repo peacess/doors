@@ -4,7 +4,8 @@ import 'package:doors/views/doors_app.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  ChatPage({super.key});
+  final ValueNotifier<bool> showLeft = ValueNotifier(true);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -19,10 +20,35 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ChatTitleBar(),
-      body: Center(child: Text("Chat Page")),
+      appBar: ChatTitleBar(widget.showLeft),
+      body: SizedBox.expand(
+        child: Row(
+          children: [
+            if (!DoorsApp.app.widthIsMobile()) makeLeft(),
+            Expanded(child: Text("chat")),
+          ],
+        ),
+      ),
+      bottomNavigationBar: makeBotton(),
       drawer: Category(),
     );
+  }
+
+  Widget makeLeft() {
+    return ValueListenableBuilder(
+      valueListenable: widget.showLeft,
+      builder: (context, value, child) {
+        return Visibility(
+          visible: value,
+          child: Container(width: 60, padding: EdgeInsets.only(left: 6), child: const Text("left ")),
+        );
+      },
+    );
+  }
+
+  Widget? makeBotton() {
+    if (DoorsApp.app.widthIsMobile()) {}
+    return null;
   }
 
   @override
