@@ -5,3 +5,5 @@
 target/
 temp/
 
+doors_lib/zig/ffi_rpc/.zig-cache/
+doors_lib/zig/ffi_rpc/.zig-out/

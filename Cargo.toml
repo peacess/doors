@@ -2,7 +2,7 @@
 [workspace]
 resolver = "2"
 members = ["doors_app/rust/app_egui", "doors_lib/rust/dchat"
-, "doors_lib/rust/idl"]
+, "doors_lib/rust/ffi_rpc", "doors_lib/rust/idl"]
 
 [workspace.package]
 version = "0.1.0"
@@ -14,11 +14,11 @@ log = { version = "0.4.28", features = [
     "release_max_level_info",
 ] }
 
-anyhow = "1.0.57"
+anyhow = "1.0.100"
 uuid = { version = "1.18.1", features = ["v4"] }
 
-toml = "0.9.5"
-serde = { version = "1.0.223", features = ["derive"] }
+toml = "0.9.7"
+serde = { version = "1.0.226", features = ["derive"] }
 signal-hook = "0.3.14"
 mio = { version = "1.0.4", features = ["os-poll", "net"] }
 #io-uring = "0.5.2"

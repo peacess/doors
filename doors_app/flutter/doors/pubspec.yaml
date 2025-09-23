@@ -13,13 +13,18 @@ dependencies:
   flutter_localizations: 
     sdk: flutter
   intl:
-# isar: 
-  # isar_flutter_libs:
+  ulid:
+
+  isar_community:
+  isar_community_flutter_libs:
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints:
+  isar_community_generator: 
+  build_runner:
 
 flutter:
   uses-material-design: true

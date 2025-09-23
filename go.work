@@ -3,4 +3,5 @@ go 1.25.1
 use (
     ./doors_app/go/doors
     ./doors_lib/go
+    ./doors_lib/go/gen_ffi_rpc
 )

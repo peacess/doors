@@ -8,6 +8,7 @@ format:
 	cd dart && dart format ./ -l 160
 	cd rust/dchat && cargo +nightly fmt
 	cd rust/idl && cargo +nightly fmt
+	cd zig/ffi_rpc && zig fmt ./
 
 clean:
 	cd go && ${go} clean

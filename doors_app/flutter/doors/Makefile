@@ -9,6 +9,7 @@ clean:
 build:
 	${flutter} analyze
 gen:
-	flutter gen-l10n
+	${flutter} gen-l10n
+	${flutter} pub run build_runner build
 install:
 # 	dart pub global activate flutter_gen
