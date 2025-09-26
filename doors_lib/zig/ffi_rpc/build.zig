@@ -11,16 +11,15 @@ pub fn build(b: *std.Build) void {
             .root_source_file = b.path("src/ffi.zig"),
             .target = target,
             .optimize = optimize,
+            .link_libc = true,
         }),
     });
     {
-        // const libc = b.dependency("libc", .{ .target = target, .optimize = optimize });
-        // lib.linkLibrary(libc.artifact("c"));
-        // lib.linkSystemLibrary("c");
         lib.linkLibC();
+        b.installArtifact(lib);
+        // const install_lib = b.addInstallFile(lib.getEmittedH(), "");
+        // b.getInstallStep().dependOn(&install_lib.step);
     }
-    b.installArtifact(lib);
-
     const mod = b.addModule("ffi_rpc", .{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
