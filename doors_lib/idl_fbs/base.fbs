@@ -45,7 +45,7 @@ struct UByte16{
 }
 // ulid,  ulid is big-endian, so can't use uint128 to store it directly. 
 // the flatbuffers is little-endian（see, https://flatbuffers.dev/internals/）, if machine is big-endian, flatbuffers will auto convert the byte order when serialize/deserialize
-struct Identifier{
+struct UlidBytes{
     ts1: ubyte;
     ts2: ubyte;
     ts3: ubyte;
@@ -65,6 +65,11 @@ struct Identifier{
 }
 
 struct Uint128{
+    low: uint64;
+    high: uint64;
+}
+
+struct PartnerId{
     low: uint64;
     high: uint64;
 }

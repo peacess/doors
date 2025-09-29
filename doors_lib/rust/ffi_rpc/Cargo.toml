@@ -3,4 +3,13 @@ name = "ffi_rpc"
 version.workspace = true
 edition.workspace = true
 
+[lib]
+name = "ffi_rpc"
+crate-type = ["cdylib"]
+
 [dependencies]
+log.workspace = true
+flatbuffers.workspace = true
+
+[build-dependencies]
+cbindgen.workspace = true

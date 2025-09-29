@@ -1,0 +1,27 @@
+
+language = "C"
+include_guard = "DOORS_LIB_FFI_RCP_HEADER"
+documentation = true
+no_includes = true
+sys_includes = [
+#    "stdarg.h",
+#    "stdbool.h",
+    "stdint.h",
+#    "stdlib.h"
+]
+line_length = 160
+line_endings = "CRLF" # also "CR", "CRLF", "Native"
+
+[struct]
+rename_fields = "None"
+# must_use = "MUST_USE_STRUCT"
+# deprecated = "DEPRECATED_STRUCT"
+# deprecated_with_note = "DEPRECATED_STRUCT_WITH_NOTE"
+rename_associated_constant = "None"
+derive_constructor = false
+derive_eq = false
+derive_neq = false
+derive_lt = false
+derive_lte = false
+derive_gt = false
+derive_gte = false

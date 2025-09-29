@@ -17,9 +17,8 @@ pub fn build(b: *std.Build) void {
     {
         lib.linkLibC();
         b.installArtifact(lib);
-        // const install_lib = b.addInstallFile(lib.getEmittedH(), "");
-        // b.getInstallStep().dependOn(&install_lib.step);
     }
+
     const mod = b.addModule("ffi_rpc", .{
         .root_source_file = b.path("src/root.zig"),
         .target = target,

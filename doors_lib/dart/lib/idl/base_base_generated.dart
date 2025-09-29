@@ -316,6 +316,297 @@ class Ubyte16ObjectBuilder extends fb.ObjectBuilder {
   }
 }
 
+class UlidBytes {
+  UlidBytes._(this._bc, this._bcOffset);
+
+  static const fb.Reader<UlidBytes> reader = _UlidBytesReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  int get ts1 => const fb.Uint8Reader().read(_bc, _bcOffset + 0);
+  int get ts2 => const fb.Uint8Reader().read(_bc, _bcOffset + 1);
+  int get ts3 => const fb.Uint8Reader().read(_bc, _bcOffset + 2);
+  int get ts4 => const fb.Uint8Reader().read(_bc, _bcOffset + 3);
+  int get ts5 => const fb.Uint8Reader().read(_bc, _bcOffset + 4);
+  int get ts6 => const fb.Uint8Reader().read(_bc, _bcOffset + 5);
+  int get rand7 => const fb.Uint8Reader().read(_bc, _bcOffset + 6);
+  int get rand8 => const fb.Uint8Reader().read(_bc, _bcOffset + 7);
+  int get rand9 => const fb.Uint8Reader().read(_bc, _bcOffset + 8);
+  int get rand10 => const fb.Uint8Reader().read(_bc, _bcOffset + 9);
+  int get rand11 => const fb.Uint8Reader().read(_bc, _bcOffset + 10);
+  int get rand12 => const fb.Uint8Reader().read(_bc, _bcOffset + 11);
+  int get rand13 => const fb.Uint8Reader().read(_bc, _bcOffset + 12);
+  int get rand14 => const fb.Uint8Reader().read(_bc, _bcOffset + 13);
+  int get rand15 => const fb.Uint8Reader().read(_bc, _bcOffset + 14);
+  int get rand16 => const fb.Uint8Reader().read(_bc, _bcOffset + 15);
+
+  @override
+  String toString() {
+    return 'UlidBytes{ts1: ${ts1}, ts2: ${ts2}, ts3: ${ts3}, ts4: ${ts4}, ts5: ${ts5}, ts6: ${ts6}, rand7: ${rand7}, rand8: ${rand8}, rand9: ${rand9}, rand10: ${rand10}, rand11: ${rand11}, rand12: ${rand12}, rand13: ${rand13}, rand14: ${rand14}, rand15: ${rand15}, rand16: ${rand16}}';
+  }
+}
+
+class _UlidBytesReader extends fb.StructReader<UlidBytes> {
+  const _UlidBytesReader();
+
+  @override
+  int get size => 16;
+
+  @override
+  UlidBytes createObject(fb.BufferContext bc, int offset) => UlidBytes._(bc, offset);
+}
+
+class UlidBytesBuilder {
+  UlidBytesBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  int finish(
+    int ts1,
+    int ts2,
+    int ts3,
+    int ts4,
+    int ts5,
+    int ts6,
+    int rand7,
+    int rand8,
+    int rand9,
+    int rand10,
+    int rand11,
+    int rand12,
+    int rand13,
+    int rand14,
+    int rand15,
+    int rand16,
+  ) {
+    fbBuilder.putUint8(rand16);
+    fbBuilder.putUint8(rand15);
+    fbBuilder.putUint8(rand14);
+    fbBuilder.putUint8(rand13);
+    fbBuilder.putUint8(rand12);
+    fbBuilder.putUint8(rand11);
+    fbBuilder.putUint8(rand10);
+    fbBuilder.putUint8(rand9);
+    fbBuilder.putUint8(rand8);
+    fbBuilder.putUint8(rand7);
+    fbBuilder.putUint8(ts6);
+    fbBuilder.putUint8(ts5);
+    fbBuilder.putUint8(ts4);
+    fbBuilder.putUint8(ts3);
+    fbBuilder.putUint8(ts2);
+    fbBuilder.putUint8(ts1);
+    return fbBuilder.offset;
+  }
+}
+
+class UlidBytesObjectBuilder extends fb.ObjectBuilder {
+  final int _ts1;
+  final int _ts2;
+  final int _ts3;
+  final int _ts4;
+  final int _ts5;
+  final int _ts6;
+  final int _rand7;
+  final int _rand8;
+  final int _rand9;
+  final int _rand10;
+  final int _rand11;
+  final int _rand12;
+  final int _rand13;
+  final int _rand14;
+  final int _rand15;
+  final int _rand16;
+
+  UlidBytesObjectBuilder({
+    required int ts1,
+    required int ts2,
+    required int ts3,
+    required int ts4,
+    required int ts5,
+    required int ts6,
+    required int rand7,
+    required int rand8,
+    required int rand9,
+    required int rand10,
+    required int rand11,
+    required int rand12,
+    required int rand13,
+    required int rand14,
+    required int rand15,
+    required int rand16,
+  }) : _ts1 = ts1,
+       _ts2 = ts2,
+       _ts3 = ts3,
+       _ts4 = ts4,
+       _ts5 = ts5,
+       _ts6 = ts6,
+       _rand7 = rand7,
+       _rand8 = rand8,
+       _rand9 = rand9,
+       _rand10 = rand10,
+       _rand11 = rand11,
+       _rand12 = rand12,
+       _rand13 = rand13,
+       _rand14 = rand14,
+       _rand15 = rand15,
+       _rand16 = rand16;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    fbBuilder.putUint8(_rand16);
+    fbBuilder.putUint8(_rand15);
+    fbBuilder.putUint8(_rand14);
+    fbBuilder.putUint8(_rand13);
+    fbBuilder.putUint8(_rand12);
+    fbBuilder.putUint8(_rand11);
+    fbBuilder.putUint8(_rand10);
+    fbBuilder.putUint8(_rand9);
+    fbBuilder.putUint8(_rand8);
+    fbBuilder.putUint8(_rand7);
+    fbBuilder.putUint8(_ts6);
+    fbBuilder.putUint8(_ts5);
+    fbBuilder.putUint8(_ts4);
+    fbBuilder.putUint8(_ts3);
+    fbBuilder.putUint8(_ts2);
+    fbBuilder.putUint8(_ts1);
+    return fbBuilder.offset;
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class Uint128 {
+  Uint128._(this._bc, this._bcOffset);
+
+  static const fb.Reader<Uint128> reader = _Uint128Reader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  int get low => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
+  int get high => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
+
+  @override
+  String toString() {
+    return 'Uint128{low: ${low}, high: ${high}}';
+  }
+}
+
+class _Uint128Reader extends fb.StructReader<Uint128> {
+  const _Uint128Reader();
+
+  @override
+  int get size => 16;
+
+  @override
+  Uint128 createObject(fb.BufferContext bc, int offset) => Uint128._(bc, offset);
+}
+
+class Uint128Builder {
+  Uint128Builder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  int finish(int low, int high) {
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
+    return fbBuilder.offset;
+  }
+}
+
+class Uint128ObjectBuilder extends fb.ObjectBuilder {
+  final int _low;
+  final int _high;
+
+  Uint128ObjectBuilder({required int low, required int high}) : _low = low, _high = high;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(_high);
+    fbBuilder.putUint64(_low);
+    return fbBuilder.offset;
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class PartnerId {
+  PartnerId._(this._bc, this._bcOffset);
+
+  static const fb.Reader<PartnerId> reader = _PartnerIdReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  int get low => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
+  int get high => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
+
+  @override
+  String toString() {
+    return 'PartnerId{low: ${low}, high: ${high}}';
+  }
+}
+
+class _PartnerIdReader extends fb.StructReader<PartnerId> {
+  const _PartnerIdReader();
+
+  @override
+  int get size => 16;
+
+  @override
+  PartnerId createObject(fb.BufferContext bc, int offset) => PartnerId._(bc, offset);
+}
+
+class PartnerIdBuilder {
+  PartnerIdBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  int finish(int low, int high) {
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
+    return fbBuilder.offset;
+  }
+}
+
+class PartnerIdObjectBuilder extends fb.ObjectBuilder {
+  final int _low;
+  final int _high;
+
+  PartnerIdObjectBuilder({required int low, required int high}) : _low = low, _high = high;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(_high);
+    fbBuilder.putUint64(_low);
+    return fbBuilder.offset;
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
 class Timestamp {
   Timestamp._(this._bc, this._bcOffset);
 

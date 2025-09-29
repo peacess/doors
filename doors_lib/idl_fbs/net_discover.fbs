@@ -1,0 +1,6 @@
+include "base.fbs";
+namespace net_discovery;
+
+table Regestry {
+    parterId: base.PartnerId;
+}
