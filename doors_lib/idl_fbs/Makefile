@@ -3,15 +3,15 @@
 go := ${shell which go}
 
 golang:
-	flatc --go --go-module-name "github.com/peacess/doors/doors_lib/go/idl" -o ../go/idl base.fbs net_discover.fbs partner.fbs
+	flatc --go --go-module-name "github.com/peacess/doors/doors_lib/go/idl" -o ../go/idl base.fbs net_discovery.fbs partner.fbs
 rust:
-	flatc --rust -o ../rust/idl/src/idl base.fbs net_discover.fbs partner.fbs
+	flatc --rust -o ../rust/idl/src/idl base.fbs net_discovery.fbs partner.fbs
 dart:
 	#flatc --dart --gen-object-api -o ../dart/lib/idl base.fbs partner.fbs
-	flatc --dart -o ../dart/lib/idl base.fbs net_discover.fbs partner.fbs
+	flatc --dart -o ../dart/lib/idl base.fbs net_discovery.fbs partner.fbs
 
 kotlin:
-	flatc --kotlin -o ../kotlin/src/idl base.fbs net_discover.fbs partner.fbs
+	flatc --kotlin -o ../kotlin/src/idl base.fbs net_discovery.fbs partner.fbs
 
 clean:
 	rm -rf ../go/idl/*
