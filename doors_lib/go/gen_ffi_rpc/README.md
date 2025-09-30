@@ -1,0 +1,1 @@
+# parse fbs file and generate are faster in go
