@@ -4,7 +4,7 @@ use redis_rocksdb::{RedisRocksdb, RrError};
 
 use crate::{
     data,
-    data::{base_dao::BaseDao, Data, Id16, Partner},
+    data::{Data, Id16, Partner, base_dao::BaseDao},
 };
 
 pub struct PartnerDao {

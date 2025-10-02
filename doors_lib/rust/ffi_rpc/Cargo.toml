@@ -9,10 +9,18 @@ crate-type = ["cdylib"]
 
 [dependencies]
 log.workspace = true
+env_logger.workspace = true
+anyhow.workspace = true
+
+tokio.workspace = true
+
 flatbuffers.workspace = true
 network-interface.workspace = true
 netwatcher.workspace = true
 libmdns.workspace = true
+mdns-sd.workspace = true
+
+idl = { path = "../idl" }
 
 [build-dependencies]
 cbindgen.workspace = true

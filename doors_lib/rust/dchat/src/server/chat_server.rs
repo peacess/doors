@@ -1,14 +1,14 @@
 use std::{
     sync::{
-        atomic::{AtomicBool, Ordering},
         Arc,
+        atomic::{AtomicBool, Ordering},
     },
     time::Duration,
 };
 
-use mio::{net::UdpSocket, Events, Interest, Poll, Token};
+use mio::{Events, Interest, Poll, Token, net::UdpSocket};
 
-use crate::server::{config::Config, FrameHandles, Shared};
+use crate::server::{FrameHandles, Shared, config::Config};
 
 pub struct ChatServer {
     udp_socket: UdpSocket,

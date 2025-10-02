@@ -9,6 +9,10 @@ typedef struct Bytes {
   uint64_t capacity;
 } Bytes;
 
+struct Bytes init(void);
+
+struct Bytes un_init(void);
+
 struct Bytes call(uint64_t method_idd, const struct Bytes *_in_parameter);
 
 void bytes_free(struct Bytes *bytes);

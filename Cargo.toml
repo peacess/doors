@@ -6,28 +6,32 @@ members = ["doors_app/rust/app_egui", "doors_lib/rust/dchat"
 
 [workspace.package]
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [workspace.dependencies]
 log = { version = "0.4.28", features = [
     "max_level_debug",
     "release_max_level_info",
 ] }
+env_logger = "0.11.8"
 
 anyhow = "1.0.100"
 uuid = { version = "1.18.1", features = ["v7"] }
 
 toml = "0.9.7"
 serde = { version = "1.0.227", features = ["derive"] }
+flatbuffers = "25.9.23"
+
+#io-uring = "0.5.2"
 signal-hook = "0.3.18"
 mio = { version = "1.0.4", features = ["os-poll", "net"] }
-#io-uring = "0.5.2"
 tokio = { version = "1.47.1", features = ["rt-multi-thread"] }
-flatbuffers = "25.9.23"
 
 network-interface = "2.0.3"
 netwatcher = "0.4.0"
 libmdns = "0.10.1"
+mdns = "3.0.0"
+mdns-sd = "0.15.1"
 
 #data
 # rocksdb = "0.24.0"
