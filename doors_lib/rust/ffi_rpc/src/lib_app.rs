@@ -1,7 +1,9 @@
 use tokio::runtime::Handle;
 
 pub struct LibApp {
-    handle: Handle
+    handle: Handle,
+    shutdown_sender: tokio::sync::broadcast::Sender<()>,
+    // shutdown_receiver: tokio::sync::broadcast::Receiver<()>,
 }
 
 static LIB_APP: std::sync::OnceLock<LibApp> = std::sync::OnceLock::new();
@@ -10,8 +12,11 @@ impl LibApp {
     pub fn make_app() -> Result<Self, anyhow::Error> {
         let rt = tokio::runtime::Builder::new_multi_thread().worker_threads(4).enable_all().build()?;
         let handle = rt.handle().clone();
+        let (shutdown_sender, _shutdown_receiver) = tokio::sync::broadcast::channel::<()>(1);
         Ok(Self {
             handle,
+            shutdown_sender,
+            // shutdown_receiver,
         })
     }
 

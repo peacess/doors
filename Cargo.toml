@@ -25,13 +25,11 @@ flatbuffers = "25.9.23"
 #io-uring = "0.5.2"
 signal-hook = "0.3.18"
 mio = { version = "1.0.4", features = ["os-poll", "net"] }
-tokio = { version = "1.47.1", features = ["rt-multi-thread"] }
+tokio = { version = "1.47.1", features = ["rt-multi-thread","macros","net","sync","time"] }
 
 network-interface = "2.0.3"
 netwatcher = "0.4.0"
-libmdns = "0.10.1"
-mdns = "3.0.0"
-mdns-sd = "0.15.1"
+socket2 = "0.6.0"
 
 #data
 # rocksdb = "0.24.0"
