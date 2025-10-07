@@ -20,8 +20,8 @@ class Partner {
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  base.Ubyte16? get id => base.Ubyte16.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  base.Ubyte16? get terminalId => base.Ubyte16.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  List<base.TerminalId>? get terminalIds => const fb.ListReader<base.TerminalId>(base.TerminalId.reader).vTableGetNullable(_bc, _bcOffset, 6);
   base.Ubyte16? get partnerId => base.Ubyte16.reader.vTableGetNullable(_bc, _bcOffset, 8);
   String? get name => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
   String? get ip => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 12);
@@ -30,7 +30,7 @@ class Partner {
 
   @override
   String toString() {
-    return 'Partner{id: ${id}, terminalId: ${terminalId}, partnerId: ${partnerId}, name: ${name}, ip: ${ip}, port: ${port}, createTs: ${createTs}}';
+    return 'Partner{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, name: ${name}, ip: ${ip}, port: ${port}, createTs: ${createTs}}';
   }
 }
 
@@ -55,8 +55,8 @@ class PartnerBuilder {
     return fbBuilder.offset;
   }
 
-  int addTerminalId(int offset) {
-    fbBuilder.addStruct(1, offset);
+  int addTerminalIdsOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
   }
 
@@ -91,8 +91,8 @@ class PartnerBuilder {
 }
 
 class PartnerObjectBuilder extends fb.ObjectBuilder {
-  final base.Ubyte16ObjectBuilder? _id;
-  final base.Ubyte16ObjectBuilder? _terminalId;
+  final base.UlidBytesObjectBuilder? _id;
+  final List<base.TerminalIdObjectBuilder>? _terminalIds;
   final base.Ubyte16ObjectBuilder? _partnerId;
   final String? _name;
   final String? _ip;
@@ -100,15 +100,15 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
   final base.TimestampObjectBuilder? _createTs;
 
   PartnerObjectBuilder({
-    base.Ubyte16ObjectBuilder? id,
-    base.Ubyte16ObjectBuilder? terminalId,
+    base.UlidBytesObjectBuilder? id,
+    List<base.TerminalIdObjectBuilder>? terminalIds,
     base.Ubyte16ObjectBuilder? partnerId,
     String? name,
     String? ip,
     int? port,
     base.TimestampObjectBuilder? createTs,
   }) : _id = id,
-       _terminalId = terminalId,
+       _terminalIds = terminalIds,
        _partnerId = partnerId,
        _name = name,
        _ip = ip,
@@ -118,15 +118,14 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
+    final int? terminalIdsOffset = _terminalIds == null ? null : fbBuilder.writeListOfStructs(_terminalIds!);
     final int? nameOffset = _name == null ? null : fbBuilder.writeString(_name!);
     final int? ipOffset = _ip == null ? null : fbBuilder.writeString(_ip!);
     fbBuilder.startTable(7);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
-    if (_terminalId != null) {
-      fbBuilder.addStruct(1, _terminalId!.finish(fbBuilder));
-    }
+    fbBuilder.addOffset(1, terminalIdsOffset);
     if (_partnerId != null) {
       fbBuilder.addStruct(2, _partnerId!.finish(fbBuilder));
     }
@@ -135,201 +134,6 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
     fbBuilder.addInt16(5, _port);
     if (_createTs != null) {
       fbBuilder.addStruct(6, _createTs!.finish(fbBuilder));
-    }
-    return fbBuilder.endTable();
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class OnLine {
-  OnLine._(this._bc, this._bcOffset);
-  factory OnLine(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
-
-  static const fb.Reader<OnLine> reader = _OnLineReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  Partner? get partner => Partner.reader.vTableGetNullable(_bc, _bcOffset, 6);
-  base.Timestamp? get ts => base.Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 8);
-
-  @override
-  String toString() {
-    return 'OnLine{header: ${header}, partner: ${partner}, ts: ${ts}}';
-  }
-}
-
-class _OnLineReader extends fb.TableReader<OnLine> {
-  const _OnLineReader();
-
-  @override
-  OnLine createObject(fb.BufferContext bc, int offset) => OnLine._(bc, offset);
-}
-
-class OnLineBuilder {
-  OnLineBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  void begin() {
-    fbBuilder.startTable(3);
-  }
-
-  int addHeader(int offset) {
-    fbBuilder.addStruct(0, offset);
-    return fbBuilder.offset;
-  }
-
-  int addPartnerOffset(int? offset) {
-    fbBuilder.addOffset(1, offset);
-    return fbBuilder.offset;
-  }
-
-  int addTs(int offset) {
-    fbBuilder.addStruct(2, offset);
-    return fbBuilder.offset;
-  }
-
-  int finish() {
-    return fbBuilder.endTable();
-  }
-}
-
-class OnLineObjectBuilder extends fb.ObjectBuilder {
-  final base.HeaderObjectBuilder? _header;
-  final PartnerObjectBuilder? _partner;
-  final base.TimestampObjectBuilder? _ts;
-
-  OnLineObjectBuilder({base.HeaderObjectBuilder? header, PartnerObjectBuilder? partner, base.TimestampObjectBuilder? ts})
-    : _header = header,
-      _partner = partner,
-      _ts = ts;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    final int? partnerOffset = _partner?.getOrCreateOffset(fbBuilder);
-    fbBuilder.startTable(3);
-    if (_header != null) {
-      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(1, partnerOffset);
-    if (_ts != null) {
-      fbBuilder.addStruct(2, _ts!.finish(fbBuilder));
-    }
-    return fbBuilder.endTable();
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class OnLineAck {
-  OnLineAck._(this._bc, this._bcOffset);
-  factory OnLineAck(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
-
-  static const fb.Reader<OnLineAck> reader = _OnLineAckReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  base.Ubyte16? get id => base.Ubyte16.reader.vTableGetNullable(_bc, _bcOffset, 6);
-  Partner? get partner => Partner.reader.vTableGetNullable(_bc, _bcOffset, 8);
-  base.Timestamp? get ts => base.Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 10);
-
-  @override
-  String toString() {
-    return 'OnLineAck{header: ${header}, id: ${id}, partner: ${partner}, ts: ${ts}}';
-  }
-}
-
-class _OnLineAckReader extends fb.TableReader<OnLineAck> {
-  const _OnLineAckReader();
-
-  @override
-  OnLineAck createObject(fb.BufferContext bc, int offset) => OnLineAck._(bc, offset);
-}
-
-class OnLineAckBuilder {
-  OnLineAckBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  void begin() {
-    fbBuilder.startTable(4);
-  }
-
-  int addHeader(int offset) {
-    fbBuilder.addStruct(0, offset);
-    return fbBuilder.offset;
-  }
-
-  int addId(int offset) {
-    fbBuilder.addStruct(1, offset);
-    return fbBuilder.offset;
-  }
-
-  int addPartnerOffset(int? offset) {
-    fbBuilder.addOffset(2, offset);
-    return fbBuilder.offset;
-  }
-
-  int addTs(int offset) {
-    fbBuilder.addStruct(3, offset);
-    return fbBuilder.offset;
-  }
-
-  int finish() {
-    return fbBuilder.endTable();
-  }
-}
-
-class OnLineAckObjectBuilder extends fb.ObjectBuilder {
-  final base.HeaderObjectBuilder? _header;
-  final base.Ubyte16ObjectBuilder? _id;
-  final PartnerObjectBuilder? _partner;
-  final base.TimestampObjectBuilder? _ts;
-
-  OnLineAckObjectBuilder({base.HeaderObjectBuilder? header, base.Ubyte16ObjectBuilder? id, PartnerObjectBuilder? partner, base.TimestampObjectBuilder? ts})
-    : _header = header,
-      _id = id,
-      _partner = partner,
-      _ts = ts;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    final int? partnerOffset = _partner?.getOrCreateOffset(fbBuilder);
-    fbBuilder.startTable(4);
-    if (_header != null) {
-      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
-    }
-    if (_id != null) {
-      fbBuilder.addStruct(1, _id!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(2, partnerOffset);
-    if (_ts != null) {
-      fbBuilder.addStruct(3, _ts!.finish(fbBuilder));
     }
     return fbBuilder.endTable();
   }

@@ -38,7 +38,7 @@ pub mod partner {
 
     impl<'a> Partner<'a> {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_TERMINAL_ID: flatbuffers::VOffsetT = 6;
+        pub const VT_TERMINAL_IDS: flatbuffers::VOffsetT = 6;
         pub const VT_PARTNER_ID: flatbuffers::VOffsetT = 8;
         pub const VT_NAME: flatbuffers::VOffsetT = 10;
         pub const VT_IP: flatbuffers::VOffsetT = 12;
@@ -67,8 +67,8 @@ pub mod partner {
             if let Some(x) = args.partner_id {
                 builder.add_partner_id(x);
             }
-            if let Some(x) = args.terminal_id {
-                builder.add_terminal_id(x);
+            if let Some(x) = args.terminal_ids {
+                builder.add_terminal_ids(x);
             }
             if let Some(x) = args.id {
                 builder.add_id(x);
@@ -78,18 +78,21 @@ pub mod partner {
         }
 
         #[inline]
-        pub fn id(&self) -> Option<&'a super::base::UByte16> {
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UByte16>(Partner::VT_ID, None) }
+            unsafe { self._tab.get::<super::base::UlidBytes>(Partner::VT_ID, None) }
         }
         #[inline]
-        pub fn terminal_id(&self) -> Option<&'a super::base::UByte16> {
+        pub fn terminal_ids(&self) -> Option<flatbuffers::Vector<'a, super::base::TerminalId>> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UByte16>(Partner::VT_TERMINAL_ID, None) }
+            unsafe {
+                self._tab
+                    .get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, super::base::TerminalId>>>(Partner::VT_TERMINAL_IDS, None)
+            }
         }
         #[inline]
         pub fn partner_id(&self) -> Option<&'a super::base::UByte16> {
@@ -133,8 +136,8 @@ pub mod partner {
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
-                .visit_field::<super::base::UByte16>("id", Self::VT_ID, false)?
-                .visit_field::<super::base::UByte16>("terminal_id", Self::VT_TERMINAL_ID, false)?
+                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, super::base::TerminalId>>>("terminal_ids", Self::VT_TERMINAL_IDS, false)?
                 .visit_field::<super::base::UByte16>("partner_id", Self::VT_PARTNER_ID, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("ip", Self::VT_IP, false)?
@@ -145,8 +148,8 @@ pub mod partner {
         }
     }
     pub struct PartnerArgs<'a> {
-        pub id: Option<&'a super::base::UByte16>,
-        pub terminal_id: Option<&'a super::base::UByte16>,
+        pub id: Option<&'a super::base::UlidBytes>,
+        pub terminal_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, super::base::TerminalId>>>,
         pub partner_id: Option<&'a super::base::UByte16>,
         pub name: Option<flatbuffers::WIPOffset<&'a str>>,
         pub ip: Option<flatbuffers::WIPOffset<&'a str>>,
@@ -158,7 +161,7 @@ pub mod partner {
         fn default() -> Self {
             PartnerArgs {
                 id: None,
-                terminal_id: None,
+                terminal_ids: None,
                 partner_id: None,
                 name: None,
                 ip: None,
@@ -174,12 +177,12 @@ pub mod partner {
     }
     impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> PartnerBuilder<'a, 'b, A> {
         #[inline]
-        pub fn add_id(&mut self, id: &super::base::UByte16) {
-            self.fbb_.push_slot_always::<&super::base::UByte16>(Partner::VT_ID, id);
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(Partner::VT_ID, id);
         }
         #[inline]
-        pub fn add_terminal_id(&mut self, terminal_id: &super::base::UByte16) {
-            self.fbb_.push_slot_always::<&super::base::UByte16>(Partner::VT_TERMINAL_ID, terminal_id);
+        pub fn add_terminal_ids(&mut self, terminal_ids: flatbuffers::WIPOffset<flatbuffers::Vector<'b, super::base::TerminalId>>) {
+            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Partner::VT_TERMINAL_IDS, terminal_ids);
         }
         #[inline]
         pub fn add_partner_id(&mut self, partner_id: &super::base::UByte16) {
@@ -217,297 +220,12 @@ pub mod partner {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             let mut ds = f.debug_struct("Partner");
             ds.field("id", &self.id());
-            ds.field("terminal_id", &self.terminal_id());
+            ds.field("terminal_ids", &self.terminal_ids());
             ds.field("partner_id", &self.partner_id());
             ds.field("name", &self.name());
             ds.field("ip", &self.ip());
             ds.field("port", &self.port());
             ds.field("create_ts", &self.create_ts());
-            ds.finish()
-        }
-    }
-    pub enum OnLineOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct OnLine<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for OnLine<'a> {
-        type Inner = OnLine<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: flatbuffers::Table::new(buf, loc),
-            }
-        }
-    }
-
-    impl<'a> OnLine<'a> {
-        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
-        pub const VT_PARTNER: flatbuffers::VOffsetT = 6;
-        pub const VT_TS: flatbuffers::VOffsetT = 8;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            OnLine { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args OnLineArgs<'args>,
-        ) -> flatbuffers::WIPOffset<OnLine<'bldr>> {
-            let mut builder = OnLineBuilder::new(_fbb);
-            if let Some(x) = args.ts {
-                builder.add_ts(x);
-            }
-            if let Some(x) = args.partner {
-                builder.add_partner(x);
-            }
-            if let Some(x) = args.header {
-                builder.add_header(x);
-            }
-            builder.finish()
-        }
-
-        #[inline]
-        pub fn header(&self) -> Option<&'a super::base::Header> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::Header>(OnLine::VT_HEADER, None) }
-        }
-        #[inline]
-        pub fn partner(&self) -> Option<Partner<'a>> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<Partner>>(OnLine::VT_PARTNER, None) }
-        }
-        #[inline]
-        pub fn ts(&self) -> Option<&'a super::base::Timestamp> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::Timestamp>(OnLine::VT_TS, None) }
-        }
-    }
-
-    impl flatbuffers::Verifiable for OnLine<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?
-                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<Partner>>("partner", Self::VT_PARTNER, false)?
-                .visit_field::<super::base::Timestamp>("ts", Self::VT_TS, false)?
-                .finish();
-            Ok(())
-        }
-    }
-    pub struct OnLineArgs<'a> {
-        pub header: Option<&'a super::base::Header>,
-        pub partner: Option<flatbuffers::WIPOffset<Partner<'a>>>,
-        pub ts: Option<&'a super::base::Timestamp>,
-    }
-    impl<'a> Default for OnLineArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            OnLineArgs {
-                header: None,
-                partner: None,
-                ts: None,
-            }
-        }
-    }
-
-    pub struct OnLineBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> OnLineBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_header(&mut self, header: &super::base::Header) {
-            self.fbb_.push_slot_always::<&super::base::Header>(OnLine::VT_HEADER, header);
-        }
-        #[inline]
-        pub fn add_partner(&mut self, partner: flatbuffers::WIPOffset<Partner<'b>>) {
-            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<Partner>>(OnLine::VT_PARTNER, partner);
-        }
-        #[inline]
-        pub fn add_ts(&mut self, ts: &super::base::Timestamp) {
-            self.fbb_.push_slot_always::<&super::base::Timestamp>(OnLine::VT_TS, ts);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> OnLineBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            OnLineBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<OnLine<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for OnLine<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("OnLine");
-            ds.field("header", &self.header());
-            ds.field("partner", &self.partner());
-            ds.field("ts", &self.ts());
-            ds.finish()
-        }
-    }
-    pub enum OnLineAckOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct OnLineAck<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for OnLineAck<'a> {
-        type Inner = OnLineAck<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: flatbuffers::Table::new(buf, loc),
-            }
-        }
-    }
-
-    impl<'a> OnLineAck<'a> {
-        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
-        pub const VT_ID: flatbuffers::VOffsetT = 6;
-        pub const VT_PARTNER: flatbuffers::VOffsetT = 8;
-        pub const VT_TS: flatbuffers::VOffsetT = 10;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            OnLineAck { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args OnLineAckArgs<'args>,
-        ) -> flatbuffers::WIPOffset<OnLineAck<'bldr>> {
-            let mut builder = OnLineAckBuilder::new(_fbb);
-            if let Some(x) = args.ts {
-                builder.add_ts(x);
-            }
-            if let Some(x) = args.partner {
-                builder.add_partner(x);
-            }
-            if let Some(x) = args.id {
-                builder.add_id(x);
-            }
-            if let Some(x) = args.header {
-                builder.add_header(x);
-            }
-            builder.finish()
-        }
-
-        #[inline]
-        pub fn header(&self) -> Option<&'a super::base::Header> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::Header>(OnLineAck::VT_HEADER, None) }
-        }
-        #[inline]
-        pub fn id(&self) -> Option<&'a super::base::UByte16> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UByte16>(OnLineAck::VT_ID, None) }
-        }
-        #[inline]
-        pub fn partner(&self) -> Option<Partner<'a>> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<Partner>>(OnLineAck::VT_PARTNER, None) }
-        }
-        #[inline]
-        pub fn ts(&self) -> Option<&'a super::base::Timestamp> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::Timestamp>(OnLineAck::VT_TS, None) }
-        }
-    }
-
-    impl flatbuffers::Verifiable for OnLineAck<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?
-                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
-                .visit_field::<super::base::UByte16>("id", Self::VT_ID, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<Partner>>("partner", Self::VT_PARTNER, false)?
-                .visit_field::<super::base::Timestamp>("ts", Self::VT_TS, false)?
-                .finish();
-            Ok(())
-        }
-    }
-    pub struct OnLineAckArgs<'a> {
-        pub header: Option<&'a super::base::Header>,
-        pub id: Option<&'a super::base::UByte16>,
-        pub partner: Option<flatbuffers::WIPOffset<Partner<'a>>>,
-        pub ts: Option<&'a super::base::Timestamp>,
-    }
-    impl<'a> Default for OnLineAckArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            OnLineAckArgs {
-                header: None,
-                id: None,
-                partner: None,
-                ts: None,
-            }
-        }
-    }
-
-    pub struct OnLineAckBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> OnLineAckBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_header(&mut self, header: &super::base::Header) {
-            self.fbb_.push_slot_always::<&super::base::Header>(OnLineAck::VT_HEADER, header);
-        }
-        #[inline]
-        pub fn add_id(&mut self, id: &super::base::UByte16) {
-            self.fbb_.push_slot_always::<&super::base::UByte16>(OnLineAck::VT_ID, id);
-        }
-        #[inline]
-        pub fn add_partner(&mut self, partner: flatbuffers::WIPOffset<Partner<'b>>) {
-            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<Partner>>(OnLineAck::VT_PARTNER, partner);
-        }
-        #[inline]
-        pub fn add_ts(&mut self, ts: &super::base::Timestamp) {
-            self.fbb_.push_slot_always::<&super::base::Timestamp>(OnLineAck::VT_TS, ts);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> OnLineAckBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            OnLineAckBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<OnLineAck<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for OnLineAck<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("OnLineAck");
-            ds.field("header", &self.header());
-            ds.field("id", &self.id());
-            ds.field("partner", &self.partner());
-            ds.field("ts", &self.ts());
             ds.finish()
         }
     }

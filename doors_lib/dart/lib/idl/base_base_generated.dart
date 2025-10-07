@@ -817,13 +817,12 @@ class Header {
   int get len => const fb.Int32Reader().read(_bc, _bcOffset + 0);
   FrameType get type => FrameType.fromValue(const fb.Int16Reader().read(_bc, _bcOffset + 4));
   int get version => const fb.Int16Reader().read(_bc, _bcOffset + 6);
-  Ubyte16 get fromId => Ubyte16.reader.read(_bc, _bcOffset + 8);
-  Ubyte16 get toId => Ubyte16.reader.read(_bc, _bcOffset + 24);
-  Ubyte16 get forwardId => Ubyte16.reader.read(_bc, _bcOffset + 40);
+  TerminalId get toTerminalId => TerminalId.reader.read(_bc, _bcOffset + 8);
+  Uint128 get key => Uint128.reader.read(_bc, _bcOffset + 24);
 
   @override
   String toString() {
-    return 'Header{len: ${len}, type: ${type}, version: ${version}, fromId: ${fromId}, toId: ${toId}, forwardId: ${forwardId}}';
+    return 'Header{len: ${len}, type: ${type}, version: ${version}, toTerminalId: ${toTerminalId}, key: ${key}}';
   }
 }
 
@@ -831,7 +830,7 @@ class _HeaderReader extends fb.StructReader<Header> {
   const _HeaderReader();
 
   @override
-  int get size => 56;
+  int get size => 40;
 
   @override
   Header createObject(fb.BufferContext bc, int offset) => Header._(bc, offset);
@@ -842,10 +841,9 @@ class HeaderBuilder {
 
   final fb.Builder fbBuilder;
 
-  int finish(int len, FrameType type, int version, fb.StructBuilder fromId, fb.StructBuilder toId, fb.StructBuilder forwardId) {
-    forwardId();
-    toId();
-    fromId();
+  int finish(int len, FrameType type, int version, fb.StructBuilder toTerminalId, fb.StructBuilder key) {
+    key();
+    toTerminalId();
     fbBuilder.putInt16(version);
     fbBuilder.putInt16(type.value);
     fbBuilder.putInt32(len);
@@ -857,30 +855,26 @@ class HeaderObjectBuilder extends fb.ObjectBuilder {
   final int _len;
   final FrameType _type;
   final int _version;
-  final Ubyte16ObjectBuilder _fromId;
-  final Ubyte16ObjectBuilder _toId;
-  final Ubyte16ObjectBuilder _forwardId;
+  final TerminalIdObjectBuilder _toTerminalId;
+  final Uint128ObjectBuilder _key;
 
   HeaderObjectBuilder({
     required int len,
     required FrameType type,
     required int version,
-    required Ubyte16ObjectBuilder fromId,
-    required Ubyte16ObjectBuilder toId,
-    required Ubyte16ObjectBuilder forwardId,
+    required TerminalIdObjectBuilder toTerminalId,
+    required Uint128ObjectBuilder key,
   }) : _len = len,
        _type = type,
        _version = version,
-       _fromId = fromId,
-       _toId = toId,
-       _forwardId = forwardId;
+       _toTerminalId = toTerminalId,
+       _key = key;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    _forwardId.finish(fbBuilder);
-    _toId.finish(fbBuilder);
-    _fromId.finish(fbBuilder);
+    _key.finish(fbBuilder);
+    _toTerminalId.finish(fbBuilder);
     fbBuilder.putInt16(_version);
     fbBuilder.putInt16(_type.value);
     fbBuilder.putInt32(_len);
@@ -896,267 +890,57 @@ class HeaderObjectBuilder extends fb.ObjectBuilder {
   }
 }
 
-class MessageBody {
-  MessageBody._(this._bc, this._bcOffset);
-  factory MessageBody(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
+class FrameConfirm {
+  FrameConfirm._(this._bc, this._bcOffset);
 
-  static const fb.Reader<MessageBody> reader = _MessageBodyReader();
+  static const fb.Reader<FrameConfirm> reader = _FrameConfirmReader();
 
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  Ubyte16? get id => Ubyte16.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  Ubyte16? get fromId => Ubyte16.reader.vTableGetNullable(_bc, _bcOffset, 6);
-  Timestamp? get ts => Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 8);
-  String? get text => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
+  UlidBytes get id => UlidBytes.reader.read(_bc, _bcOffset + 0);
+  UlidBytes get frameId => UlidBytes.reader.read(_bc, _bcOffset + 16);
 
   @override
   String toString() {
-    return 'MessageBody{id: ${id}, fromId: ${fromId}, ts: ${ts}, text: ${text}}';
+    return 'FrameConfirm{id: ${id}, frameId: ${frameId}}';
   }
 }
 
-class _MessageBodyReader extends fb.TableReader<MessageBody> {
-  const _MessageBodyReader();
+class _FrameConfirmReader extends fb.StructReader<FrameConfirm> {
+  const _FrameConfirmReader();
 
   @override
-  MessageBody createObject(fb.BufferContext bc, int offset) => MessageBody._(bc, offset);
+  int get size => 32;
+
+  @override
+  FrameConfirm createObject(fb.BufferContext bc, int offset) => FrameConfirm._(bc, offset);
 }
 
-class MessageBodyBuilder {
-  MessageBodyBuilder(this.fbBuilder);
+class FrameConfirmBuilder {
+  FrameConfirmBuilder(this.fbBuilder);
 
   final fb.Builder fbBuilder;
 
-  void begin() {
-    fbBuilder.startTable(4);
-  }
-
-  int addId(int offset) {
-    fbBuilder.addStruct(0, offset);
+  int finish(fb.StructBuilder id, fb.StructBuilder frameId) {
+    frameId();
+    id();
     return fbBuilder.offset;
-  }
-
-  int addFromId(int offset) {
-    fbBuilder.addStruct(1, offset);
-    return fbBuilder.offset;
-  }
-
-  int addTs(int offset) {
-    fbBuilder.addStruct(2, offset);
-    return fbBuilder.offset;
-  }
-
-  int addTextOffset(int? offset) {
-    fbBuilder.addOffset(3, offset);
-    return fbBuilder.offset;
-  }
-
-  int finish() {
-    return fbBuilder.endTable();
   }
 }
 
-class MessageBodyObjectBuilder extends fb.ObjectBuilder {
-  final Ubyte16ObjectBuilder? _id;
-  final Ubyte16ObjectBuilder? _fromId;
-  final TimestampObjectBuilder? _ts;
-  final String? _text;
+class FrameConfirmObjectBuilder extends fb.ObjectBuilder {
+  final UlidBytesObjectBuilder _id;
+  final UlidBytesObjectBuilder _frameId;
 
-  MessageBodyObjectBuilder({Ubyte16ObjectBuilder? id, Ubyte16ObjectBuilder? fromId, TimestampObjectBuilder? ts, String? text})
-    : _id = id,
-      _fromId = fromId,
-      _ts = ts,
-      _text = text;
+  FrameConfirmObjectBuilder({required UlidBytesObjectBuilder id, required UlidBytesObjectBuilder frameId}) : _id = id, _frameId = frameId;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    final int? textOffset = _text == null ? null : fbBuilder.writeString(_text!);
-    fbBuilder.startTable(4);
-    if (_id != null) {
-      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
-    }
-    if (_fromId != null) {
-      fbBuilder.addStruct(1, _fromId!.finish(fbBuilder));
-    }
-    if (_ts != null) {
-      fbBuilder.addStruct(2, _ts!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(3, textOffset);
-    return fbBuilder.endTable();
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class Message {
-  Message._(this._bc, this._bcOffset);
-  factory Message(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
-
-  static const fb.Reader<Message> reader = _MessageReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  Header? get header => Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  MessageBody? get body => MessageBody.reader.vTableGetNullable(_bc, _bcOffset, 6);
-
-  @override
-  String toString() {
-    return 'Message{header: ${header}, body: ${body}}';
-  }
-}
-
-class _MessageReader extends fb.TableReader<Message> {
-  const _MessageReader();
-
-  @override
-  Message createObject(fb.BufferContext bc, int offset) => Message._(bc, offset);
-}
-
-class MessageBuilder {
-  MessageBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  void begin() {
-    fbBuilder.startTable(2);
-  }
-
-  int addHeader(int offset) {
-    fbBuilder.addStruct(0, offset);
+    _frameId.finish(fbBuilder);
+    _id.finish(fbBuilder);
     return fbBuilder.offset;
-  }
-
-  int addBodyOffset(int? offset) {
-    fbBuilder.addOffset(1, offset);
-    return fbBuilder.offset;
-  }
-
-  int finish() {
-    return fbBuilder.endTable();
-  }
-}
-
-class MessageObjectBuilder extends fb.ObjectBuilder {
-  final HeaderObjectBuilder? _header;
-  final MessageBodyObjectBuilder? _body;
-
-  MessageObjectBuilder({HeaderObjectBuilder? header, MessageBodyObjectBuilder? body}) : _header = header, _body = body;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    final int? bodyOffset = _body?.getOrCreateOffset(fbBuilder);
-    fbBuilder.startTable(2);
-    if (_header != null) {
-      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(1, bodyOffset);
-    return fbBuilder.endTable();
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class MessageAck {
-  MessageAck._(this._bc, this._bcOffset);
-  factory MessageAck(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
-
-  static const fb.Reader<MessageAck> reader = _MessageAckReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  Header? get header => Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  Ubyte16? get id => Ubyte16.reader.vTableGetNullable(_bc, _bcOffset, 6);
-  Timestamp? get ts => Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 8);
-
-  @override
-  String toString() {
-    return 'MessageAck{header: ${header}, id: ${id}, ts: ${ts}}';
-  }
-}
-
-class _MessageAckReader extends fb.TableReader<MessageAck> {
-  const _MessageAckReader();
-
-  @override
-  MessageAck createObject(fb.BufferContext bc, int offset) => MessageAck._(bc, offset);
-}
-
-class MessageAckBuilder {
-  MessageAckBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  void begin() {
-    fbBuilder.startTable(3);
-  }
-
-  int addHeader(int offset) {
-    fbBuilder.addStruct(0, offset);
-    return fbBuilder.offset;
-  }
-
-  int addId(int offset) {
-    fbBuilder.addStruct(1, offset);
-    return fbBuilder.offset;
-  }
-
-  int addTs(int offset) {
-    fbBuilder.addStruct(2, offset);
-    return fbBuilder.offset;
-  }
-
-  int finish() {
-    return fbBuilder.endTable();
-  }
-}
-
-class MessageAckObjectBuilder extends fb.ObjectBuilder {
-  final HeaderObjectBuilder? _header;
-  final Ubyte16ObjectBuilder? _id;
-  final TimestampObjectBuilder? _ts;
-
-  MessageAckObjectBuilder({HeaderObjectBuilder? header, Ubyte16ObjectBuilder? id, TimestampObjectBuilder? ts}) : _header = header, _id = id, _ts = ts;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    fbBuilder.startTable(3);
-    if (_header != null) {
-      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
-    }
-    if (_id != null) {
-      fbBuilder.addStruct(1, _id!.finish(fbBuilder));
-    }
-    if (_ts != null) {
-      fbBuilder.addStruct(2, _ts!.finish(fbBuilder));
-    }
-    return fbBuilder.endTable();
   }
 
   /// Convenience method to serialize to byte list.

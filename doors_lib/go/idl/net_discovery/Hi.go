@@ -56,12 +56,12 @@ func (rcv *Hi) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *Hi) DnsPartner(obj *DnsPartner) *DnsPartner {
+func (rcv *Hi) DnsPartner(obj *DnsTerminal) *DnsTerminal {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		x := rcv._tab.Indirect(o + rcv._tab.Pos)
 		if obj == nil {
-			obj = new(DnsPartner)
+			obj = new(DnsTerminal)
 		}
 		obj.Init(rcv._tab.Bytes, x)
 		return obj

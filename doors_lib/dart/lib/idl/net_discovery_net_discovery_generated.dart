@@ -8,68 +8,86 @@ import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import './base_base_generated.dart' as base;
 
-class DnsPartner {
-  DnsPartner._(this._bc, this._bcOffset);
-  factory DnsPartner(List<int> bytes) {
+class DnsTerminal {
+  DnsTerminal._(this._bc, this._bcOffset);
+  factory DnsTerminal(List<int> bytes) {
     final rootRef = fb.BufferContext.fromBytes(bytes);
     return reader.read(rootRef, 0);
   }
 
-  static const fb.Reader<DnsPartner> reader = _DnsPartnerReader();
+  static const fb.Reader<DnsTerminal> reader = _DnsTerminalReader();
 
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  base.PartnerId? get parterId => base.PartnerId.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  base.TerminalId? get terminalId => base.TerminalId.reader.vTableGetNullable(_bc, _bcOffset, 6);
-  String? get hostName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 8);
-  String? get ip => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
-  int get port => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 12, 0);
+  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  base.PartnerId? get parterId => base.PartnerId.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  base.TerminalId? get terminalId => base.TerminalId.reader.vTableGetNullable(_bc, _bcOffset, 8);
+  String? get hostName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
+  int get ipV4 => const fb.Uint32Reader().vTableGet(_bc, _bcOffset, 12, 0);
+  int get portV4 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 14, 0);
+  int get ipV6 => const fb.Uint64Reader().vTableGet(_bc, _bcOffset, 16, 0);
+  int get portV6 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 18, 0);
 
   @override
   String toString() {
-    return 'DnsPartner{parterId: ${parterId}, terminalId: ${terminalId}, hostName: ${hostName}, ip: ${ip}, port: ${port}}';
+    return 'DnsTerminal{id: ${id}, parterId: ${parterId}, terminalId: ${terminalId}, hostName: ${hostName}, ipV4: ${ipV4}, portV4: ${portV4}, ipV6: ${ipV6}, portV6: ${portV6}}';
   }
 }
 
-class _DnsPartnerReader extends fb.TableReader<DnsPartner> {
-  const _DnsPartnerReader();
+class _DnsTerminalReader extends fb.TableReader<DnsTerminal> {
+  const _DnsTerminalReader();
 
   @override
-  DnsPartner createObject(fb.BufferContext bc, int offset) => DnsPartner._(bc, offset);
+  DnsTerminal createObject(fb.BufferContext bc, int offset) => DnsTerminal._(bc, offset);
 }
 
-class DnsPartnerBuilder {
-  DnsPartnerBuilder(this.fbBuilder);
+class DnsTerminalBuilder {
+  DnsTerminalBuilder(this.fbBuilder);
 
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(5);
+    fbBuilder.startTable(8);
   }
 
-  int addParterId(int offset) {
+  int addId(int offset) {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
 
-  int addTerminalId(int offset) {
+  int addParterId(int offset) {
     fbBuilder.addStruct(1, offset);
     return fbBuilder.offset;
   }
 
-  int addHostNameOffset(int? offset) {
-    fbBuilder.addOffset(2, offset);
+  int addTerminalId(int offset) {
+    fbBuilder.addStruct(2, offset);
     return fbBuilder.offset;
   }
 
-  int addIpOffset(int? offset) {
+  int addHostNameOffset(int? offset) {
     fbBuilder.addOffset(3, offset);
     return fbBuilder.offset;
   }
 
-  int addPort(int? port) {
-    fbBuilder.addUint16(4, port);
+  int addIpV4(int? ipV4) {
+    fbBuilder.addUint32(4, ipV4);
+    return fbBuilder.offset;
+  }
+
+  int addPortV4(int? portV4) {
+    fbBuilder.addUint16(5, portV4);
+    return fbBuilder.offset;
+  }
+
+  int addIpV6(int? ipV6) {
+    fbBuilder.addUint64(6, ipV6);
+    return fbBuilder.offset;
+  }
+
+  int addPortV6(int? portV6) {
+    fbBuilder.addUint16(7, portV6);
     return fbBuilder.offset;
   }
 
@@ -78,35 +96,53 @@ class DnsPartnerBuilder {
   }
 }
 
-class DnsPartnerObjectBuilder extends fb.ObjectBuilder {
+class DnsTerminalObjectBuilder extends fb.ObjectBuilder {
+  final base.UlidBytesObjectBuilder? _id;
   final base.PartnerIdObjectBuilder? _parterId;
   final base.TerminalIdObjectBuilder? _terminalId;
   final String? _hostName;
-  final String? _ip;
-  final int? _port;
+  final int? _ipV4;
+  final int? _portV4;
+  final int? _ipV6;
+  final int? _portV6;
 
-  DnsPartnerObjectBuilder({base.PartnerIdObjectBuilder? parterId, base.TerminalIdObjectBuilder? terminalId, String? hostName, String? ip, int? port})
-    : _parterId = parterId,
-      _terminalId = terminalId,
-      _hostName = hostName,
-      _ip = ip,
-      _port = port;
+  DnsTerminalObjectBuilder({
+    base.UlidBytesObjectBuilder? id,
+    base.PartnerIdObjectBuilder? parterId,
+    base.TerminalIdObjectBuilder? terminalId,
+    String? hostName,
+    int? ipV4,
+    int? portV4,
+    int? ipV6,
+    int? portV6,
+  }) : _id = id,
+       _parterId = parterId,
+       _terminalId = terminalId,
+       _hostName = hostName,
+       _ipV4 = ipV4,
+       _portV4 = portV4,
+       _ipV6 = ipV6,
+       _portV6 = portV6;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
     final int? hostNameOffset = _hostName == null ? null : fbBuilder.writeString(_hostName!);
-    final int? ipOffset = _ip == null ? null : fbBuilder.writeString(_ip!);
-    fbBuilder.startTable(5);
+    fbBuilder.startTable(8);
+    if (_id != null) {
+      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
+    }
     if (_parterId != null) {
-      fbBuilder.addStruct(0, _parterId!.finish(fbBuilder));
+      fbBuilder.addStruct(1, _parterId!.finish(fbBuilder));
     }
     if (_terminalId != null) {
-      fbBuilder.addStruct(1, _terminalId!.finish(fbBuilder));
+      fbBuilder.addStruct(2, _terminalId!.finish(fbBuilder));
     }
-    fbBuilder.addOffset(2, hostNameOffset);
-    fbBuilder.addOffset(3, ipOffset);
-    fbBuilder.addUint16(4, _port);
+    fbBuilder.addOffset(3, hostNameOffset);
+    fbBuilder.addUint32(4, _ipV4);
+    fbBuilder.addUint16(5, _portV4);
+    fbBuilder.addUint64(6, _ipV6);
+    fbBuilder.addUint16(7, _portV6);
     return fbBuilder.endTable();
   }
 
@@ -132,7 +168,7 @@ class Hi {
   final int _bcOffset;
 
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  DnsPartner? get dnsPartner => DnsPartner.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  DnsTerminal? get dnsPartner => DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 6);
 
   @override
   String toString() {
@@ -173,9 +209,9 @@ class HiBuilder {
 
 class HiObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
-  final DnsPartnerObjectBuilder? _dnsPartner;
+  final DnsTerminalObjectBuilder? _dnsPartner;
 
-  HiObjectBuilder({base.UlidBytesObjectBuilder? id, DnsPartnerObjectBuilder? dnsPartner}) : _id = id, _dnsPartner = dnsPartner;
+  HiObjectBuilder({base.UlidBytesObjectBuilder? id, DnsTerminalObjectBuilder? dnsPartner}) : _id = id, _dnsPartner = dnsPartner;
 
   /// Finish building, and store into the [fbBuilder].
   @override
@@ -211,7 +247,7 @@ class DsnPartners {
   final int _bcOffset;
 
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  List<DnsPartner>? get dnsPartners => const fb.ListReader<DnsPartner>(DnsPartner.reader).vTableGetNullable(_bc, _bcOffset, 6);
+  List<DnsTerminal>? get dnsPartners => const fb.ListReader<DnsTerminal>(DnsTerminal.reader).vTableGetNullable(_bc, _bcOffset, 6);
 
   @override
   String toString() {
@@ -252,9 +288,9 @@ class DsnPartnersBuilder {
 
 class DsnPartnersObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
-  final List<DnsPartnerObjectBuilder>? _dnsPartners;
+  final List<DnsTerminalObjectBuilder>? _dnsPartners;
 
-  DsnPartnersObjectBuilder({base.UlidBytesObjectBuilder? id, List<DnsPartnerObjectBuilder>? dnsPartners}) : _id = id, _dnsPartners = dnsPartners;
+  DsnPartnersObjectBuilder({base.UlidBytesObjectBuilder? id, List<DnsTerminalObjectBuilder>? dnsPartners}) : _id = id, _dnsPartners = dnsPartners;
 
   /// Finish building, and store into the [fbBuilder].
   @override
@@ -290,7 +326,7 @@ class QueryPartners {
   final int _bcOffset;
 
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  DnsPartner? get dnsPartner => DnsPartner.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  DnsTerminal? get dnsPartner => DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 6);
 
   @override
   String toString() {
@@ -331,9 +367,9 @@ class QueryPartnersBuilder {
 
 class QueryPartnersObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
-  final DnsPartnerObjectBuilder? _dnsPartner;
+  final DnsTerminalObjectBuilder? _dnsPartner;
 
-  QueryPartnersObjectBuilder({base.UlidBytesObjectBuilder? id, DnsPartnerObjectBuilder? dnsPartner}) : _id = id, _dnsPartner = dnsPartner;
+  QueryPartnersObjectBuilder({base.UlidBytesObjectBuilder? id, DnsTerminalObjectBuilder? dnsPartner}) : _id = id, _dnsPartner = dnsPartner;
 
   /// Finish building, and store into the [fbBuilder].
   @override

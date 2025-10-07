@@ -43,12 +43,12 @@ func (rcv *Partner) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *Partner) Id(obj *base.UByte16) *base.UByte16 {
+func (rcv *Partner) Id(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
-			obj = new(base.UByte16)
+			obj = new(base.UlidBytes)
 		}
 		obj.Init(rcv._tab.Bytes, x)
 		return obj
@@ -56,17 +56,23 @@ func (rcv *Partner) Id(obj *base.UByte16) *base.UByte16 {
 	return nil
 }
 
-func (rcv *Partner) TerminalId(obj *base.UByte16) *base.UByte16 {
+func (rcv *Partner) TerminalIds(obj *base.TerminalId, j int) bool {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
-		x := o + rcv._tab.Pos
-		if obj == nil {
-			obj = new(base.UByte16)
-		}
+		x := rcv._tab.Vector(o)
+		x += flatbuffers.UOffsetT(j) * 16
 		obj.Init(rcv._tab.Bytes, x)
-		return obj
+		return true
 	}
-	return nil
+	return false
+}
+
+func (rcv *Partner) TerminalIdsLength() int {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
+	if o != 0 {
+		return rcv._tab.VectorLen(o)
+	}
+	return 0
 }
 
 func (rcv *Partner) PartnerId(obj *base.UByte16) *base.UByte16 {
@@ -129,8 +135,11 @@ func PartnerStart(builder *flatbuffers.Builder) {
 func PartnerAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
-func PartnerAddTerminalId(builder *flatbuffers.Builder, terminalId flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(1, flatbuffers.UOffsetT(terminalId), 0)
+func PartnerAddTerminalIds(builder *flatbuffers.Builder, terminalIds flatbuffers.UOffsetT) {
+	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(terminalIds), 0)
+}
+func PartnerStartTerminalIdsVector(builder *flatbuffers.Builder, numElems int) flatbuffers.UOffsetT {
+	return builder.StartVector(16, numElems, 8)
 }
 func PartnerAddPartnerId(builder *flatbuffers.Builder, partnerId flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(2, flatbuffers.UOffsetT(partnerId), 0)

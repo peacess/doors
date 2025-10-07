@@ -81,7 +81,6 @@ struct TerminalId{
     high: uint64;
 }
 
-
 struct Timestamp{
     ts: int64;
 }
@@ -95,32 +94,16 @@ struct Header{
     len:int32;
     type: FrameType;
     version: int16;
-    from_id: UByte16;
-    to_id: UByte16;
-    forward_id: UByte16;
+    to_terminal_id: TerminalId;
+    key: Uint128;
 }
 
-table MessageBody{
+//确认收到
+struct FrameConfirm{
     //message id
-    id: UByte16;
-    from_id: UByte16;
-    // message timestamp
-    ts: Timestamp;
-    text: string;
+    id: UlidBytes;
+    // the frame id is confirmed
+    frame_id: UlidBytes;
 }
 
-table Message{
-    header: Header;
-    body: MessageBody;
-}
-
-//确认收到消息
-table MessageAck{
-    header: Header;
-    //message id
-    id: UByte16;
-    // message timestamp
-    ts: Timestamp;
-}
-
-root_type Message;
+root_type Frame;

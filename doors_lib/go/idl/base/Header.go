@@ -40,81 +40,29 @@ func (rcv *Header) MutateVersion(n int16) bool {
 	return rcv._tab.MutateInt16(rcv._tab.Pos+flatbuffers.UOffsetT(6), n)
 }
 
-func (rcv *Header) FromId(obj *UByte16) *UByte16 {
+func (rcv *Header) ToTerminalId(obj *TerminalId) *TerminalId {
 	if obj == nil {
-		obj = new(UByte16)
+		obj = new(TerminalId)
 	}
 	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+8)
 	return obj
 }
-func (rcv *Header) ToId(obj *UByte16) *UByte16 {
+func (rcv *Header) Key(obj *Uint128) *Uint128 {
 	if obj == nil {
-		obj = new(UByte16)
+		obj = new(Uint128)
 	}
 	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+24)
 	return obj
 }
-func (rcv *Header) ForwardId(obj *UByte16) *UByte16 {
-	if obj == nil {
-		obj = new(UByte16)
-	}
-	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+40)
-	return obj
-}
 
-func CreateHeader(builder *flatbuffers.Builder, len int32, type_ FrameType, version int16, from_id_ub1 byte, from_id_ub2 byte, from_id_ub3 byte, from_id_ub4 byte, from_id_ub5 byte, from_id_ub6 byte, from_id_ub7 byte, from_id_ub8 byte, from_id_ub9 byte, from_id_ub10 byte, from_id_ub11 byte, from_id_ub12 byte, from_id_ub13 byte, from_id_ub14 byte, from_id_ub15 byte, from_id_ub16 byte, to_id_ub1 byte, to_id_ub2 byte, to_id_ub3 byte, to_id_ub4 byte, to_id_ub5 byte, to_id_ub6 byte, to_id_ub7 byte, to_id_ub8 byte, to_id_ub9 byte, to_id_ub10 byte, to_id_ub11 byte, to_id_ub12 byte, to_id_ub13 byte, to_id_ub14 byte, to_id_ub15 byte, to_id_ub16 byte, forward_id_ub1 byte, forward_id_ub2 byte, forward_id_ub3 byte, forward_id_ub4 byte, forward_id_ub5 byte, forward_id_ub6 byte, forward_id_ub7 byte, forward_id_ub8 byte, forward_id_ub9 byte, forward_id_ub10 byte, forward_id_ub11 byte, forward_id_ub12 byte, forward_id_ub13 byte, forward_id_ub14 byte, forward_id_ub15 byte, forward_id_ub16 byte) flatbuffers.UOffsetT {
-	builder.Prep(4, 56)
-	builder.Prep(1, 16)
-	builder.PrependByte(forward_id_ub16)
-	builder.PrependByte(forward_id_ub15)
-	builder.PrependByte(forward_id_ub14)
-	builder.PrependByte(forward_id_ub13)
-	builder.PrependByte(forward_id_ub12)
-	builder.PrependByte(forward_id_ub11)
-	builder.PrependByte(forward_id_ub10)
-	builder.PrependByte(forward_id_ub9)
-	builder.PrependByte(forward_id_ub8)
-	builder.PrependByte(forward_id_ub7)
-	builder.PrependByte(forward_id_ub6)
-	builder.PrependByte(forward_id_ub5)
-	builder.PrependByte(forward_id_ub4)
-	builder.PrependByte(forward_id_ub3)
-	builder.PrependByte(forward_id_ub2)
-	builder.PrependByte(forward_id_ub1)
-	builder.Prep(1, 16)
-	builder.PrependByte(to_id_ub16)
-	builder.PrependByte(to_id_ub15)
-	builder.PrependByte(to_id_ub14)
-	builder.PrependByte(to_id_ub13)
-	builder.PrependByte(to_id_ub12)
-	builder.PrependByte(to_id_ub11)
-	builder.PrependByte(to_id_ub10)
-	builder.PrependByte(to_id_ub9)
-	builder.PrependByte(to_id_ub8)
-	builder.PrependByte(to_id_ub7)
-	builder.PrependByte(to_id_ub6)
-	builder.PrependByte(to_id_ub5)
-	builder.PrependByte(to_id_ub4)
-	builder.PrependByte(to_id_ub3)
-	builder.PrependByte(to_id_ub2)
-	builder.PrependByte(to_id_ub1)
-	builder.Prep(1, 16)
-	builder.PrependByte(from_id_ub16)
-	builder.PrependByte(from_id_ub15)
-	builder.PrependByte(from_id_ub14)
-	builder.PrependByte(from_id_ub13)
-	builder.PrependByte(from_id_ub12)
-	builder.PrependByte(from_id_ub11)
-	builder.PrependByte(from_id_ub10)
-	builder.PrependByte(from_id_ub9)
-	builder.PrependByte(from_id_ub8)
-	builder.PrependByte(from_id_ub7)
-	builder.PrependByte(from_id_ub6)
-	builder.PrependByte(from_id_ub5)
-	builder.PrependByte(from_id_ub4)
-	builder.PrependByte(from_id_ub3)
-	builder.PrependByte(from_id_ub2)
-	builder.PrependByte(from_id_ub1)
+func CreateHeader(builder *flatbuffers.Builder, len int32, type_ FrameType, version int16, to_terminal_id_low uint64, to_terminal_id_high uint64, key_low uint64, key_high uint64) flatbuffers.UOffsetT {
+	builder.Prep(8, 40)
+	builder.Prep(8, 16)
+	builder.PrependUint64(key_high)
+	builder.PrependUint64(key_low)
+	builder.Prep(8, 16)
+	builder.PrependUint64(to_terminal_id_high)
+	builder.PrependUint64(to_terminal_id_low)
 	builder.PrependInt16(version)
 	builder.PrependInt16(int16(type_))
 	builder.PrependInt32(len)

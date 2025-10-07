@@ -1,26 +1,31 @@
 include "base.fbs";
 namespace net_discovery;
-table DnsPartner {
+table DnsTerminal {
+    id: base.UlidBytes;
     parter_id: base.PartnerId;
     terminal_id: base.TerminalId;
     host_name: string;
-    ip: string;
-    port: uint16;
+    ip_v4: uint32;
+    port_v4: uint16;
+    ip_v6: uint64;
+    port_v6: uint16;
 }
 
 //
 table Hi {
     // 消息的唯一标识
     id: base.UlidBytes;
-    dns_partner: DnsPartner;
+    dns_partner: DnsTerminal;
 }
 
 table DsnPartners {
     id: base.UlidBytes;
-    dns_partners: [DnsPartner];
+    dns_partners: [DnsTerminal];
 }
 
 table QueryPartners {
     id: base.UlidBytes;
-    dns_partner: DnsPartner;
+    dns_partner: DnsTerminal;
 }
+
+

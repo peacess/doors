@@ -28,8 +28,8 @@ class Partner : Table() {
         __init(_i, _bb)
         return this
     }
-    val id : base.UByte16? get() = id(base.UByte16())
-    fun id(obj: base.UByte16) : base.UByte16? {
+    val id : base.UlidBytes? get() = id(base.UlidBytes())
+    fun id(obj: base.UlidBytes) : base.UlidBytes? {
         val o = __offset(4)
         return if (o != 0) {
             obj.__assign(o + bb_pos, bb)
@@ -37,15 +37,19 @@ class Partner : Table() {
             null
         }
     }
-    val terminalId : base.UByte16? get() = terminalId(base.UByte16())
-    fun terminalId(obj: base.UByte16) : base.UByte16? {
+    fun terminalIds(j: Int) : base.TerminalId? = terminalIds(base.TerminalId(), j)
+    fun terminalIds(obj: base.TerminalId, j: Int) : base.TerminalId? {
         val o = __offset(6)
         return if (o != 0) {
-            obj.__assign(o + bb_pos, bb)
+            obj.__assign(__vector(o) + j * 16, bb)
         } else {
             null
         }
     }
+    val terminalIdsLength : Int
+        get() {
+            val o = __offset(6); return if (o != 0) __vector_len(o) else 0
+        }
     val partnerId : base.UByte16? get() = partnerId(base.UByte16())
     fun partnerId(obj: base.UByte16) : base.UByte16? {
         val o = __offset(8)
@@ -100,7 +104,8 @@ class Partner : Table() {
         }
         fun startPartner(builder: FlatBufferBuilder) = builder.startTable(7)
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
-        fun addTerminalId(builder: FlatBufferBuilder, terminalId: Int) = builder.addStruct(1, terminalId, 0)
+        fun addTerminalIds(builder: FlatBufferBuilder, terminalIds: Int) = builder.addOffset(1, terminalIds, 0)
+        fun startTerminalIdsVector(builder: FlatBufferBuilder, numElems: Int) = builder.startVector(16, numElems, 8)
         fun addPartnerId(builder: FlatBufferBuilder, partnerId: Int) = builder.addStruct(2, partnerId, 0)
         fun addName(builder: FlatBufferBuilder, name: Int) = builder.addOffset(3, name, 0)
         fun addIp(builder: FlatBufferBuilder, ip: Int) = builder.addOffset(4, ip, 0)
@@ -110,5 +115,7 @@ class Partner : Table() {
             val o = builder.endTable()
             return o
         }
+        fun finishPartnerBuffer(builder: FlatBufferBuilder, offset: Int) = builder.finish(offset)
+        fun finishSizePrefixedPartnerBuffer(builder: FlatBufferBuilder, offset: Int) = builder.finishSizePrefixed(offset)
     }
 }

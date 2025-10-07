@@ -1,0 +1,21 @@
+include "base.fbs";
+namespace chat;
+
+table TextMessage{
+    //message id
+    id: base.UlidBytes;
+    from_partner_id: base.PartnerId;
+    to_partner_id: base.PartnerId;
+    from_terminal_id: base.TerminalId;
+    to_terminal_id: base.TerminalId;
+    ts: base.Timestamp;
+    text: string;
+}
+
+//确认收到消息
+table TextMessageAck{
+    //message id
+    id: base.UlidBytes;
+    // message timestamp
+    ts: base.Timestamp;
+}

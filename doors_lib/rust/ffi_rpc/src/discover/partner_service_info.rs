@@ -7,7 +7,6 @@ pub struct PartnerServiceInfo {
 }
 
 impl PartnerServiceInfo {
-
     pub fn new() -> PartnerServiceInfo {
         PartnerServiceInfo{
             id: idl::ids::generate_id().to_u128_le(),

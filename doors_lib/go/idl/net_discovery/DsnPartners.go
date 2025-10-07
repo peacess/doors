@@ -56,7 +56,7 @@ func (rcv *DsnPartners) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *DsnPartners) DnsPartners(obj *DnsPartner, j int) bool {
+func (rcv *DsnPartners) DnsPartners(obj *DnsTerminal, j int) bool {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		x := rcv._tab.Vector(o)

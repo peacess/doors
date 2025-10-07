@@ -1996,13 +1996,13 @@ pub mod base {
         }
     }
 
-    // struct Header, aligned to 4
+    // struct Header, aligned to 8
     #[repr(transparent)]
     #[derive(Clone, Copy, PartialEq)]
-    pub struct Header(pub [u8; 56]);
+    pub struct Header(pub [u8; 40]);
     impl Default for Header {
         fn default() -> Self {
-            Self([0; 56])
+            Self([0; 40])
         }
     }
     impl core::fmt::Debug for Header {
@@ -2011,9 +2011,8 @@ pub mod base {
                 .field("len", &self.len())
                 .field("type_", &self.type_())
                 .field("version", &self.version())
-                .field("from_id", &self.from_id())
-                .field("to_id", &self.to_id())
-                .field("forward_id", &self.forward_id())
+                .field("to_terminal_id", &self.to_terminal_id())
+                .field("key", &self.key())
                 .finish()
         }
     }
@@ -2042,7 +2041,7 @@ pub mod base {
         }
         #[inline]
         fn alignment() -> flatbuffers::PushAlignment {
-            flatbuffers::PushAlignment::new(4)
+            flatbuffers::PushAlignment::new(8)
         }
     }
 
@@ -2056,14 +2055,13 @@ pub mod base {
 
     impl<'a> Header {
         #[allow(clippy::too_many_arguments)]
-        pub fn new(len: i32, type_: FrameType, version: i16, from_id: &UByte16, to_id: &UByte16, forward_id: &UByte16) -> Self {
-            let mut s = Self([0; 56]);
+        pub fn new(len: i32, type_: FrameType, version: i16, to_terminal_id: &TerminalId, key: &Uint128) -> Self {
+            let mut s = Self([0; 40]);
             s.set_len(len);
             s.set_type_(type_);
             s.set_version(version);
-            s.set_from_id(from_id);
-            s.set_to_id(to_id);
-            s.set_forward_id(forward_id);
+            s.set_to_terminal_id(to_terminal_id);
+            s.set_key(key);
             s
         }
 
@@ -2154,40 +2152,116 @@ pub mod base {
             }
         }
 
-        pub fn from_id(&self) -> &UByte16 {
+        pub fn to_terminal_id(&self) -> &TerminalId {
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid struct in this slot
-            unsafe { &*(self.0[8..].as_ptr() as *const UByte16) }
+            unsafe { &*(self.0[8..].as_ptr() as *const TerminalId) }
         }
 
         #[allow(clippy::identity_op)]
-        pub fn set_from_id(&mut self, x: &UByte16) {
+        pub fn set_to_terminal_id(&mut self, x: &TerminalId) {
             self.0[8..8 + 16].copy_from_slice(&x.0)
         }
 
-        pub fn to_id(&self) -> &UByte16 {
+        pub fn key(&self) -> &Uint128 {
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid struct in this slot
-            unsafe { &*(self.0[24..].as_ptr() as *const UByte16) }
+            unsafe { &*(self.0[24..].as_ptr() as *const Uint128) }
         }
 
         #[allow(clippy::identity_op)]
-        pub fn set_to_id(&mut self, x: &UByte16) {
+        pub fn set_key(&mut self, x: &Uint128) {
             self.0[24..24 + 16].copy_from_slice(&x.0)
         }
+    }
 
-        pub fn forward_id(&self) -> &UByte16 {
+    // struct FrameConfirm, aligned to 1
+    #[repr(transparent)]
+    #[derive(Clone, Copy, PartialEq)]
+    pub struct FrameConfirm(pub [u8; 32]);
+    impl Default for FrameConfirm {
+        fn default() -> Self {
+            Self([0; 32])
+        }
+    }
+    impl core::fmt::Debug for FrameConfirm {
+        fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+            f.debug_struct("FrameConfirm")
+                .field("id", &self.id())
+                .field("frame_id", &self.frame_id())
+                .finish()
+        }
+    }
+
+    impl flatbuffers::SimpleToVerifyInSlice for FrameConfirm {}
+    impl<'a> flatbuffers::Follow<'a> for FrameConfirm {
+        type Inner = &'a FrameConfirm;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            <&'a FrameConfirm>::follow(buf, loc)
+        }
+    }
+    impl<'a> flatbuffers::Follow<'a> for &'a FrameConfirm {
+        type Inner = &'a FrameConfirm;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            flatbuffers::follow_cast_ref::<FrameConfirm>(buf, loc)
+        }
+    }
+    impl<'b> flatbuffers::Push for FrameConfirm {
+        type Output = FrameConfirm;
+        #[inline]
+        unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+            let src = ::core::slice::from_raw_parts(self as *const FrameConfirm as *const u8, <Self as flatbuffers::Push>::size());
+            dst.copy_from_slice(src);
+        }
+        #[inline]
+        fn alignment() -> flatbuffers::PushAlignment {
+            flatbuffers::PushAlignment::new(1)
+        }
+    }
+
+    impl<'a> flatbuffers::Verifiable for FrameConfirm {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.in_buffer::<Self>(pos)
+        }
+    }
+
+    impl<'a> FrameConfirm {
+        #[allow(clippy::too_many_arguments)]
+        pub fn new(id: &UlidBytes, frame_id: &UlidBytes) -> Self {
+            let mut s = Self([0; 32]);
+            s.set_id(id);
+            s.set_frame_id(frame_id);
+            s
+        }
+
+        pub fn id(&self) -> &UlidBytes {
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid struct in this slot
-            unsafe { &*(self.0[40..].as_ptr() as *const UByte16) }
+            unsafe { &*(self.0[0..].as_ptr() as *const UlidBytes) }
         }
 
         #[allow(clippy::identity_op)]
-        pub fn set_forward_id(&mut self, x: &UByte16) {
-            self.0[40..40 + 16].copy_from_slice(&x.0)
+        pub fn set_id(&mut self, x: &UlidBytes) {
+            self.0[0..0 + 16].copy_from_slice(&x.0)
+        }
+
+        pub fn frame_id(&self) -> &UlidBytes {
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid struct in this slot
+            unsafe { &*(self.0[16..].as_ptr() as *const UlidBytes) }
+        }
+
+        #[allow(clippy::identity_op)]
+        pub fn set_frame_id(&mut self, x: &UlidBytes) {
+            self.0[16..16 + 16].copy_from_slice(&x.0)
         }
     }
 
@@ -2305,471 +2379,75 @@ pub mod base {
             ds.finish()
         }
     }
-    pub enum MessageBodyOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct MessageBody<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for MessageBody<'a> {
-        type Inner = MessageBody<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: flatbuffers::Table::new(buf, loc),
-            }
-        }
-    }
-
-    impl<'a> MessageBody<'a> {
-        pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_FROM_ID: flatbuffers::VOffsetT = 6;
-        pub const VT_TS: flatbuffers::VOffsetT = 8;
-        pub const VT_TEXT: flatbuffers::VOffsetT = 10;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            MessageBody { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args MessageBodyArgs<'args>,
-        ) -> flatbuffers::WIPOffset<MessageBody<'bldr>> {
-            let mut builder = MessageBodyBuilder::new(_fbb);
-            if let Some(x) = args.text {
-                builder.add_text(x);
-            }
-            if let Some(x) = args.ts {
-                builder.add_ts(x);
-            }
-            if let Some(x) = args.from_id {
-                builder.add_from_id(x);
-            }
-            if let Some(x) = args.id {
-                builder.add_id(x);
-            }
-            builder.finish()
-        }
-
-        #[inline]
-        pub fn id(&self) -> Option<&'a UByte16> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<UByte16>(MessageBody::VT_ID, None) }
-        }
-        #[inline]
-        pub fn from_id(&self) -> Option<&'a UByte16> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<UByte16>(MessageBody::VT_FROM_ID, None) }
-        }
-        #[inline]
-        pub fn ts(&self) -> Option<&'a Timestamp> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<Timestamp>(MessageBody::VT_TS, None) }
-        }
-        #[inline]
-        pub fn text(&self) -> Option<&'a str> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(MessageBody::VT_TEXT, None) }
-        }
-    }
-
-    impl flatbuffers::Verifiable for MessageBody<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?
-                .visit_field::<UByte16>("id", Self::VT_ID, false)?
-                .visit_field::<UByte16>("from_id", Self::VT_FROM_ID, false)?
-                .visit_field::<Timestamp>("ts", Self::VT_TS, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("text", Self::VT_TEXT, false)?
-                .finish();
-            Ok(())
-        }
-    }
-    pub struct MessageBodyArgs<'a> {
-        pub id: Option<&'a UByte16>,
-        pub from_id: Option<&'a UByte16>,
-        pub ts: Option<&'a Timestamp>,
-        pub text: Option<flatbuffers::WIPOffset<&'a str>>,
-    }
-    impl<'a> Default for MessageBodyArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            MessageBodyArgs {
-                id: None,
-                from_id: None,
-                ts: None,
-                text: None,
-            }
-        }
-    }
-
-    pub struct MessageBodyBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MessageBodyBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_id(&mut self, id: &UByte16) {
-            self.fbb_.push_slot_always::<&UByte16>(MessageBody::VT_ID, id);
-        }
-        #[inline]
-        pub fn add_from_id(&mut self, from_id: &UByte16) {
-            self.fbb_.push_slot_always::<&UByte16>(MessageBody::VT_FROM_ID, from_id);
-        }
-        #[inline]
-        pub fn add_ts(&mut self, ts: &Timestamp) {
-            self.fbb_.push_slot_always::<&Timestamp>(MessageBody::VT_TS, ts);
-        }
-        #[inline]
-        pub fn add_text(&mut self, text: flatbuffers::WIPOffset<&'b str>) {
-            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(MessageBody::VT_TEXT, text);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MessageBodyBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            MessageBodyBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<MessageBody<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for MessageBody<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("MessageBody");
-            ds.field("id", &self.id());
-            ds.field("from_id", &self.from_id());
-            ds.field("ts", &self.ts());
-            ds.field("text", &self.text());
-            ds.finish()
-        }
-    }
-    pub enum MessageOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct Message<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for Message<'a> {
-        type Inner = Message<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: flatbuffers::Table::new(buf, loc),
-            }
-        }
-    }
-
-    impl<'a> Message<'a> {
-        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
-        pub const VT_BODY: flatbuffers::VOffsetT = 6;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            Message { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args MessageArgs<'args>,
-        ) -> flatbuffers::WIPOffset<Message<'bldr>> {
-            let mut builder = MessageBuilder::new(_fbb);
-            if let Some(x) = args.body {
-                builder.add_body(x);
-            }
-            if let Some(x) = args.header {
-                builder.add_header(x);
-            }
-            builder.finish()
-        }
-
-        #[inline]
-        pub fn header(&self) -> Option<&'a Header> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<Header>(Message::VT_HEADER, None) }
-        }
-        #[inline]
-        pub fn body(&self) -> Option<MessageBody<'a>> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<MessageBody>>(Message::VT_BODY, None) }
-        }
-    }
-
-    impl flatbuffers::Verifiable for Message<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?
-                .visit_field::<Header>("header", Self::VT_HEADER, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<MessageBody>>("body", Self::VT_BODY, false)?
-                .finish();
-            Ok(())
-        }
-    }
-    pub struct MessageArgs<'a> {
-        pub header: Option<&'a Header>,
-        pub body: Option<flatbuffers::WIPOffset<MessageBody<'a>>>,
-    }
-    impl<'a> Default for MessageArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            MessageArgs { header: None, body: None }
-        }
-    }
-
-    pub struct MessageBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MessageBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_header(&mut self, header: &Header) {
-            self.fbb_.push_slot_always::<&Header>(Message::VT_HEADER, header);
-        }
-        #[inline]
-        pub fn add_body(&mut self, body: flatbuffers::WIPOffset<MessageBody<'b>>) {
-            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<MessageBody>>(Message::VT_BODY, body);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MessageBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            MessageBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<Message<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for Message<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("Message");
-            ds.field("header", &self.header());
-            ds.field("body", &self.body());
-            ds.finish()
-        }
-    }
-    pub enum MessageAckOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct MessageAck<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for MessageAck<'a> {
-        type Inner = MessageAck<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: flatbuffers::Table::new(buf, loc),
-            }
-        }
-    }
-
-    impl<'a> MessageAck<'a> {
-        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
-        pub const VT_ID: flatbuffers::VOffsetT = 6;
-        pub const VT_TS: flatbuffers::VOffsetT = 8;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            MessageAck { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args MessageAckArgs<'args>,
-        ) -> flatbuffers::WIPOffset<MessageAck<'bldr>> {
-            let mut builder = MessageAckBuilder::new(_fbb);
-            if let Some(x) = args.ts {
-                builder.add_ts(x);
-            }
-            if let Some(x) = args.id {
-                builder.add_id(x);
-            }
-            if let Some(x) = args.header {
-                builder.add_header(x);
-            }
-            builder.finish()
-        }
-
-        #[inline]
-        pub fn header(&self) -> Option<&'a Header> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<Header>(MessageAck::VT_HEADER, None) }
-        }
-        #[inline]
-        pub fn id(&self) -> Option<&'a UByte16> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<UByte16>(MessageAck::VT_ID, None) }
-        }
-        #[inline]
-        pub fn ts(&self) -> Option<&'a Timestamp> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<Timestamp>(MessageAck::VT_TS, None) }
-        }
-    }
-
-    impl flatbuffers::Verifiable for MessageAck<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?
-                .visit_field::<Header>("header", Self::VT_HEADER, false)?
-                .visit_field::<UByte16>("id", Self::VT_ID, false)?
-                .visit_field::<Timestamp>("ts", Self::VT_TS, false)?
-                .finish();
-            Ok(())
-        }
-    }
-    pub struct MessageAckArgs<'a> {
-        pub header: Option<&'a Header>,
-        pub id: Option<&'a UByte16>,
-        pub ts: Option<&'a Timestamp>,
-    }
-    impl<'a> Default for MessageAckArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            MessageAckArgs {
-                header: None,
-                id: None,
-                ts: None,
-            }
-        }
-    }
-
-    pub struct MessageAckBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MessageAckBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_header(&mut self, header: &Header) {
-            self.fbb_.push_slot_always::<&Header>(MessageAck::VT_HEADER, header);
-        }
-        #[inline]
-        pub fn add_id(&mut self, id: &UByte16) {
-            self.fbb_.push_slot_always::<&UByte16>(MessageAck::VT_ID, id);
-        }
-        #[inline]
-        pub fn add_ts(&mut self, ts: &Timestamp) {
-            self.fbb_.push_slot_always::<&Timestamp>(MessageAck::VT_TS, ts);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MessageAckBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            MessageAckBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<MessageAck<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for MessageAck<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("MessageAck");
-            ds.field("header", &self.header());
-            ds.field("id", &self.id());
-            ds.field("ts", &self.ts());
-            ds.finish()
-        }
-    }
     #[inline]
-    /// Verifies that a buffer of bytes contains a `Message`
+    /// Verifies that a buffer of bytes contains a `Frame`
     /// and returns it.
     /// Note that verification is still experimental and may not
     /// catch every error, or be maximally performant. For the
     /// previous, unchecked, behavior use
-    /// `root_as_message_unchecked`.
-    pub fn root_as_message(buf: &[u8]) -> Result<Message, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::root::<Message>(buf)
+    /// `root_as_frame_unchecked`.
+    pub fn root_as_frame(buf: &[u8]) -> Result<Frame, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::root::<Frame>(buf)
     }
     #[inline]
     /// Verifies that a buffer of bytes contains a size prefixed
-    /// `Message` and returns it.
+    /// `Frame` and returns it.
     /// Note that verification is still experimental and may not
     /// catch every error, or be maximally performant. For the
     /// previous, unchecked, behavior use
-    /// `size_prefixed_root_as_message_unchecked`.
-    pub fn size_prefixed_root_as_message(buf: &[u8]) -> Result<Message, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::size_prefixed_root::<Message>(buf)
+    /// `size_prefixed_root_as_frame_unchecked`.
+    pub fn size_prefixed_root_as_frame(buf: &[u8]) -> Result<Frame, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::size_prefixed_root::<Frame>(buf)
     }
     #[inline]
     /// Verifies, with the given options, that a buffer of bytes
-    /// contains a `Message` and returns it.
+    /// contains a `Frame` and returns it.
     /// Note that verification is still experimental and may not
     /// catch every error, or be maximally performant. For the
     /// previous, unchecked, behavior use
-    /// `root_as_message_unchecked`.
-    pub fn root_as_message_with_opts<'b, 'o>(opts: &'o flatbuffers::VerifierOptions, buf: &'b [u8]) -> Result<Message<'b>, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::root_with_opts::<Message<'b>>(opts, buf)
+    /// `root_as_frame_unchecked`.
+    pub fn root_as_frame_with_opts<'b, 'o>(opts: &'o flatbuffers::VerifierOptions, buf: &'b [u8]) -> Result<Frame<'b>, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::root_with_opts::<Frame<'b>>(opts, buf)
     }
     #[inline]
     /// Verifies, with the given verifier options, that a buffer of
-    /// bytes contains a size prefixed `Message` and returns
+    /// bytes contains a size prefixed `Frame` and returns
     /// it. Note that verification is still experimental and may not
     /// catch every error, or be maximally performant. For the
     /// previous, unchecked, behavior use
-    /// `root_as_message_unchecked`.
-    pub fn size_prefixed_root_as_message_with_opts<'b, 'o>(
+    /// `root_as_frame_unchecked`.
+    pub fn size_prefixed_root_as_frame_with_opts<'b, 'o>(
         opts: &'o flatbuffers::VerifierOptions,
         buf: &'b [u8],
-    ) -> Result<Message<'b>, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::size_prefixed_root_with_opts::<Message<'b>>(opts, buf)
+    ) -> Result<Frame<'b>, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::size_prefixed_root_with_opts::<Frame<'b>>(opts, buf)
     }
     #[inline]
-    /// Assumes, without verification, that a buffer of bytes contains a Message and returns it.
+    /// Assumes, without verification, that a buffer of bytes contains a Frame and returns it.
     /// # Safety
-    /// Callers must trust the given bytes do indeed contain a valid `Message`.
-    pub unsafe fn root_as_message_unchecked(buf: &[u8]) -> Message {
-        flatbuffers::root_unchecked::<Message>(buf)
+    /// Callers must trust the given bytes do indeed contain a valid `Frame`.
+    pub unsafe fn root_as_frame_unchecked(buf: &[u8]) -> Frame {
+        flatbuffers::root_unchecked::<Frame>(buf)
     }
     #[inline]
-    /// Assumes, without verification, that a buffer of bytes contains a size prefixed Message and returns it.
+    /// Assumes, without verification, that a buffer of bytes contains a size prefixed Frame and returns it.
     /// # Safety
-    /// Callers must trust the given bytes do indeed contain a valid size prefixed `Message`.
-    pub unsafe fn size_prefixed_root_as_message_unchecked(buf: &[u8]) -> Message {
-        flatbuffers::size_prefixed_root_unchecked::<Message>(buf)
+    /// Callers must trust the given bytes do indeed contain a valid size prefixed `Frame`.
+    pub unsafe fn size_prefixed_root_as_frame_unchecked(buf: &[u8]) -> Frame {
+        flatbuffers::size_prefixed_root_unchecked::<Frame>(buf)
     }
     #[inline]
-    pub fn finish_message_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
+    pub fn finish_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
         fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        root: flatbuffers::WIPOffset<Message<'a>>,
+        root: flatbuffers::WIPOffset<Frame<'a>>,
     ) {
         fbb.finish(root, None);
     }
 
     #[inline]
-    pub fn finish_size_prefixed_message_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
+    pub fn finish_size_prefixed_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
         fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        root: flatbuffers::WIPOffset<Message<'a>>,
+        root: flatbuffers::WIPOffset<Frame<'a>>,
     ) {
         fbb.finish_size_prefixed(root, None);
     }
