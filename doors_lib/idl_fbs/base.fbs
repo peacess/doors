@@ -69,7 +69,14 @@ struct Uint128{
     high: uint64;
 }
 
+// like a user
 struct PartnerId{
+    low: uint64;
+    high: uint64;
+}
+
+// a partner can run in many terminals
+struct TerminalId{
     low: uint64;
     high: uint64;
 }

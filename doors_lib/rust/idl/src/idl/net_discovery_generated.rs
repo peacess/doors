@@ -19,15 +19,15 @@ pub mod net_discovery {
     extern crate flatbuffers;
     use self::flatbuffers::{EndianScalar, Follow};
 
-    pub enum RegestryOffset {}
+    pub enum DnsPartnerOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
-    pub struct Regestry<'a> {
+    pub struct DnsPartner<'a> {
         pub _tab: flatbuffers::Table<'a>,
     }
 
-    impl<'a> flatbuffers::Follow<'a> for Regestry<'a> {
-        type Inner = Regestry<'a>;
+    impl<'a> flatbuffers::Follow<'a> for DnsPartner<'a> {
+        type Inner = DnsPartner<'a>;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
@@ -36,22 +36,36 @@ pub mod net_discovery {
         }
     }
 
-    impl<'a> Regestry<'a> {
+    impl<'a> DnsPartner<'a> {
         pub const VT_PARTER_ID: flatbuffers::VOffsetT = 4;
+        pub const VT_TERMINAL_ID: flatbuffers::VOffsetT = 6;
+        pub const VT_HOST_NAME: flatbuffers::VOffsetT = 8;
+        pub const VT_IP: flatbuffers::VOffsetT = 10;
+        pub const VT_PORT: flatbuffers::VOffsetT = 12;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            Regestry { _tab: table }
+            DnsPartner { _tab: table }
         }
         #[allow(unused_mut)]
         pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
             _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args RegestryArgs<'args>,
-        ) -> flatbuffers::WIPOffset<Regestry<'bldr>> {
-            let mut builder = RegestryBuilder::new(_fbb);
+            args: &'args DnsPartnerArgs<'args>,
+        ) -> flatbuffers::WIPOffset<DnsPartner<'bldr>> {
+            let mut builder = DnsPartnerBuilder::new(_fbb);
+            if let Some(x) = args.ip {
+                builder.add_ip(x);
+            }
+            if let Some(x) = args.host_name {
+                builder.add_host_name(x);
+            }
+            if let Some(x) = args.terminal_id {
+                builder.add_terminal_id(x);
+            }
             if let Some(x) = args.parter_id {
                 builder.add_parter_id(x);
             }
+            builder.add_port(args.port);
             builder.finish()
         }
 
@@ -60,55 +74,460 @@ pub mod net_discovery {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::PartnerId>(Regestry::VT_PARTER_ID, None) }
+            unsafe { self._tab.get::<super::base::PartnerId>(DnsPartner::VT_PARTER_ID, None) }
+        }
+        #[inline]
+        pub fn terminal_id(&self) -> Option<&'a super::base::TerminalId> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::TerminalId>(DnsPartner::VT_TERMINAL_ID, None) }
+        }
+        #[inline]
+        pub fn host_name(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DnsPartner::VT_HOST_NAME, None) }
+        }
+        #[inline]
+        pub fn ip(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DnsPartner::VT_IP, None) }
+        }
+        #[inline]
+        pub fn port(&self) -> u16 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u16>(DnsPartner::VT_PORT, Some(0)).unwrap() }
         }
     }
 
-    impl flatbuffers::Verifiable for Regestry<'_> {
+    impl flatbuffers::Verifiable for DnsPartner<'_> {
         #[inline]
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
                 .visit_field::<super::base::PartnerId>("parter_id", Self::VT_PARTER_ID, false)?
+                .visit_field::<super::base::TerminalId>("terminal_id", Self::VT_TERMINAL_ID, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("host_name", Self::VT_HOST_NAME, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("ip", Self::VT_IP, false)?
+                .visit_field::<u16>("port", Self::VT_PORT, false)?
                 .finish();
             Ok(())
         }
     }
-    pub struct RegestryArgs<'a> {
+    pub struct DnsPartnerArgs<'a> {
         pub parter_id: Option<&'a super::base::PartnerId>,
+        pub terminal_id: Option<&'a super::base::TerminalId>,
+        pub host_name: Option<flatbuffers::WIPOffset<&'a str>>,
+        pub ip: Option<flatbuffers::WIPOffset<&'a str>>,
+        pub port: u16,
     }
-    impl<'a> Default for RegestryArgs<'a> {
+    impl<'a> Default for DnsPartnerArgs<'a> {
         #[inline]
         fn default() -> Self {
-            RegestryArgs { parter_id: None }
+            DnsPartnerArgs {
+                parter_id: None,
+                terminal_id: None,
+                host_name: None,
+                ip: None,
+                port: 0,
+            }
         }
     }
 
-    pub struct RegestryBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+    pub struct DnsPartnerBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
         fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> RegestryBuilder<'a, 'b, A> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DnsPartnerBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_parter_id(&mut self, parter_id: &super::base::PartnerId) {
-            self.fbb_.push_slot_always::<&super::base::PartnerId>(Regestry::VT_PARTER_ID, parter_id);
+            self.fbb_.push_slot_always::<&super::base::PartnerId>(DnsPartner::VT_PARTER_ID, parter_id);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> RegestryBuilder<'a, 'b, A> {
+        pub fn add_terminal_id(&mut self, terminal_id: &super::base::TerminalId) {
+            self.fbb_.push_slot_always::<&super::base::TerminalId>(DnsPartner::VT_TERMINAL_ID, terminal_id);
+        }
+        #[inline]
+        pub fn add_host_name(&mut self, host_name: flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DnsPartner::VT_HOST_NAME, host_name);
+        }
+        #[inline]
+        pub fn add_ip(&mut self, ip: flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DnsPartner::VT_IP, ip);
+        }
+        #[inline]
+        pub fn add_port(&mut self, port: u16) {
+            self.fbb_.push_slot::<u16>(DnsPartner::VT_PORT, port, 0);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DnsPartnerBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
-            RegestryBuilder { fbb_: _fbb, start_: start }
+            DnsPartnerBuilder { fbb_: _fbb, start_: start }
         }
         #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<Regestry<'a>> {
+        pub fn finish(self) -> flatbuffers::WIPOffset<DnsPartner<'a>> {
             let o = self.fbb_.end_table(self.start_);
             flatbuffers::WIPOffset::new(o.value())
         }
     }
 
-    impl core::fmt::Debug for Regestry<'_> {
+    impl core::fmt::Debug for DnsPartner<'_> {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("Regestry");
+            let mut ds = f.debug_struct("DnsPartner");
             ds.field("parter_id", &self.parter_id());
+            ds.field("terminal_id", &self.terminal_id());
+            ds.field("host_name", &self.host_name());
+            ds.field("ip", &self.ip());
+            ds.field("port", &self.port());
+            ds.finish()
+        }
+    }
+    pub enum HiOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct Hi<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for Hi<'a> {
+        type Inner = Hi<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: flatbuffers::Table::new(buf, loc),
+            }
+        }
+    }
+
+    impl<'a> Hi<'a> {
+        pub const VT_ID: flatbuffers::VOffsetT = 4;
+        pub const VT_DNS_PARTNER: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            Hi { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args HiArgs<'args>,
+        ) -> flatbuffers::WIPOffset<Hi<'bldr>> {
+            let mut builder = HiBuilder::new(_fbb);
+            if let Some(x) = args.dns_partner {
+                builder.add_dns_partner(x);
+            }
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(Hi::VT_ID, None) }
+        }
+        #[inline]
+        pub fn dns_partner(&self) -> Option<DnsPartner<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsPartner>>(Hi::VT_DNS_PARTNER, None) }
+        }
+    }
+
+    impl flatbuffers::Verifiable for Hi<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<DnsPartner>>("dns_partner", Self::VT_DNS_PARTNER, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct HiArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+        pub dns_partner: Option<flatbuffers::WIPOffset<DnsPartner<'a>>>,
+    }
+    impl<'a> Default for HiArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            HiArgs { id: None, dns_partner: None }
+        }
+    }
+
+    pub struct HiBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> HiBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(Hi::VT_ID, id);
+        }
+        #[inline]
+        pub fn add_dns_partner(&mut self, dns_partner: flatbuffers::WIPOffset<DnsPartner<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<DnsPartner>>(Hi::VT_DNS_PARTNER, dns_partner);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> HiBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            HiBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<Hi<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for Hi<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("Hi");
+            ds.field("id", &self.id());
+            ds.field("dns_partner", &self.dns_partner());
+            ds.finish()
+        }
+    }
+    pub enum DsnPartnersOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct DsnPartners<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for DsnPartners<'a> {
+        type Inner = DsnPartners<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: flatbuffers::Table::new(buf, loc),
+            }
+        }
+    }
+
+    impl<'a> DsnPartners<'a> {
+        pub const VT_ID: flatbuffers::VOffsetT = 4;
+        pub const VT_DNS_PARTNERS: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            DsnPartners { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args DsnPartnersArgs<'args>,
+        ) -> flatbuffers::WIPOffset<DsnPartners<'bldr>> {
+            let mut builder = DsnPartnersBuilder::new(_fbb);
+            if let Some(x) = args.dns_partners {
+                builder.add_dns_partners(x);
+            }
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(DsnPartners::VT_ID, None) }
+        }
+        #[inline]
+        pub fn dns_partners(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsPartner<'a>>>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsPartner>>>>(DsnPartners::VT_DNS_PARTNERS, None)
+            }
+        }
+    }
+
+    impl flatbuffers::Verifiable for DsnPartners<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DnsPartner>>>>(
+                    "dns_partners",
+                    Self::VT_DNS_PARTNERS,
+                    false,
+                )?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct DsnPartnersArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+        pub dns_partners: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsPartner<'a>>>>>,
+    }
+    impl<'a> Default for DsnPartnersArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            DsnPartnersArgs { id: None, dns_partners: None }
+        }
+    }
+
+    pub struct DsnPartnersBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DsnPartnersBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(DsnPartners::VT_ID, id);
+        }
+        #[inline]
+        pub fn add_dns_partners(&mut self, dns_partners: flatbuffers::WIPOffset<flatbuffers::Vector<'b, flatbuffers::ForwardsUOffset<DnsPartner<'b>>>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<_>>(DsnPartners::VT_DNS_PARTNERS, dns_partners);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DsnPartnersBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            DsnPartnersBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<DsnPartners<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for DsnPartners<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("DsnPartners");
+            ds.field("id", &self.id());
+            ds.field("dns_partners", &self.dns_partners());
+            ds.finish()
+        }
+    }
+    pub enum QueryPartnersOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct QueryPartners<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for QueryPartners<'a> {
+        type Inner = QueryPartners<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: flatbuffers::Table::new(buf, loc),
+            }
+        }
+    }
+
+    impl<'a> QueryPartners<'a> {
+        pub const VT_ID: flatbuffers::VOffsetT = 4;
+        pub const VT_DNS_PARTNER: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            QueryPartners { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args QueryPartnersArgs<'args>,
+        ) -> flatbuffers::WIPOffset<QueryPartners<'bldr>> {
+            let mut builder = QueryPartnersBuilder::new(_fbb);
+            if let Some(x) = args.dns_partner {
+                builder.add_dns_partner(x);
+            }
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(QueryPartners::VT_ID, None) }
+        }
+        #[inline]
+        pub fn dns_partner(&self) -> Option<DnsPartner<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsPartner>>(QueryPartners::VT_DNS_PARTNER, None) }
+        }
+    }
+
+    impl flatbuffers::Verifiable for QueryPartners<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<DnsPartner>>("dns_partner", Self::VT_DNS_PARTNER, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct QueryPartnersArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+        pub dns_partner: Option<flatbuffers::WIPOffset<DnsPartner<'a>>>,
+    }
+    impl<'a> Default for QueryPartnersArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            QueryPartnersArgs { id: None, dns_partner: None }
+        }
+    }
+
+    pub struct QueryPartnersBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryPartnersBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryPartners::VT_ID, id);
+        }
+        #[inline]
+        pub fn add_dns_partner(&mut self, dns_partner: flatbuffers::WIPOffset<DnsPartner<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<DnsPartner>>(QueryPartners::VT_DNS_PARTNER, dns_partner);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryPartnersBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            QueryPartnersBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<QueryPartners<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for QueryPartners<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("QueryPartners");
+            ds.field("id", &self.id());
+            ds.field("dns_partner", &self.dns_partner());
             ds.finish()
         }
     }

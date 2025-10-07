@@ -8,44 +8,68 @@ import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import './base_base_generated.dart' as base;
 
-class Regestry {
-  Regestry._(this._bc, this._bcOffset);
-  factory Regestry(List<int> bytes) {
+class DnsPartner {
+  DnsPartner._(this._bc, this._bcOffset);
+  factory DnsPartner(List<int> bytes) {
     final rootRef = fb.BufferContext.fromBytes(bytes);
     return reader.read(rootRef, 0);
   }
 
-  static const fb.Reader<Regestry> reader = _RegestryReader();
+  static const fb.Reader<DnsPartner> reader = _DnsPartnerReader();
 
   final fb.BufferContext _bc;
   final int _bcOffset;
 
   base.PartnerId? get parterId => base.PartnerId.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  base.TerminalId? get terminalId => base.TerminalId.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  String? get hostName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 8);
+  String? get ip => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
+  int get port => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 12, 0);
 
   @override
   String toString() {
-    return 'Regestry{parterId: ${parterId}}';
+    return 'DnsPartner{parterId: ${parterId}, terminalId: ${terminalId}, hostName: ${hostName}, ip: ${ip}, port: ${port}}';
   }
 }
 
-class _RegestryReader extends fb.TableReader<Regestry> {
-  const _RegestryReader();
+class _DnsPartnerReader extends fb.TableReader<DnsPartner> {
+  const _DnsPartnerReader();
 
   @override
-  Regestry createObject(fb.BufferContext bc, int offset) => Regestry._(bc, offset);
+  DnsPartner createObject(fb.BufferContext bc, int offset) => DnsPartner._(bc, offset);
 }
 
-class RegestryBuilder {
-  RegestryBuilder(this.fbBuilder);
+class DnsPartnerBuilder {
+  DnsPartnerBuilder(this.fbBuilder);
 
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(1);
+    fbBuilder.startTable(5);
   }
 
   int addParterId(int offset) {
     fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addTerminalId(int offset) {
+    fbBuilder.addStruct(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int addHostNameOffset(int? offset) {
+    fbBuilder.addOffset(2, offset);
+    return fbBuilder.offset;
+  }
+
+  int addIpOffset(int? offset) {
+    fbBuilder.addOffset(3, offset);
+    return fbBuilder.offset;
+  }
+
+  int addPort(int? port) {
+    fbBuilder.addUint16(4, port);
     return fbBuilder.offset;
   }
 
@@ -54,18 +78,272 @@ class RegestryBuilder {
   }
 }
 
-class RegestryObjectBuilder extends fb.ObjectBuilder {
+class DnsPartnerObjectBuilder extends fb.ObjectBuilder {
   final base.PartnerIdObjectBuilder? _parterId;
+  final base.TerminalIdObjectBuilder? _terminalId;
+  final String? _hostName;
+  final String? _ip;
+  final int? _port;
 
-  RegestryObjectBuilder({base.PartnerIdObjectBuilder? parterId}) : _parterId = parterId;
+  DnsPartnerObjectBuilder({base.PartnerIdObjectBuilder? parterId, base.TerminalIdObjectBuilder? terminalId, String? hostName, String? ip, int? port})
+    : _parterId = parterId,
+      _terminalId = terminalId,
+      _hostName = hostName,
+      _ip = ip,
+      _port = port;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    fbBuilder.startTable(1);
+    final int? hostNameOffset = _hostName == null ? null : fbBuilder.writeString(_hostName!);
+    final int? ipOffset = _ip == null ? null : fbBuilder.writeString(_ip!);
+    fbBuilder.startTable(5);
     if (_parterId != null) {
       fbBuilder.addStruct(0, _parterId!.finish(fbBuilder));
     }
+    if (_terminalId != null) {
+      fbBuilder.addStruct(1, _terminalId!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(2, hostNameOffset);
+    fbBuilder.addOffset(3, ipOffset);
+    fbBuilder.addUint16(4, _port);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class Hi {
+  Hi._(this._bc, this._bcOffset);
+  factory Hi(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<Hi> reader = _HiReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  DnsPartner? get dnsPartner => DnsPartner.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'Hi{id: ${id}, dnsPartner: ${dnsPartner}}';
+  }
+}
+
+class _HiReader extends fb.TableReader<Hi> {
+  const _HiReader();
+
+  @override
+  Hi createObject(fb.BufferContext bc, int offset) => Hi._(bc, offset);
+}
+
+class HiBuilder {
+  HiBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addId(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addDnsPartnerOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class HiObjectBuilder extends fb.ObjectBuilder {
+  final base.UlidBytesObjectBuilder? _id;
+  final DnsPartnerObjectBuilder? _dnsPartner;
+
+  HiObjectBuilder({base.UlidBytesObjectBuilder? id, DnsPartnerObjectBuilder? dnsPartner}) : _id = id, _dnsPartner = dnsPartner;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? dnsPartnerOffset = _dnsPartner?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_id != null) {
+      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, dnsPartnerOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class DsnPartners {
+  DsnPartners._(this._bc, this._bcOffset);
+  factory DsnPartners(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<DsnPartners> reader = _DsnPartnersReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  List<DnsPartner>? get dnsPartners => const fb.ListReader<DnsPartner>(DnsPartner.reader).vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'DsnPartners{id: ${id}, dnsPartners: ${dnsPartners}}';
+  }
+}
+
+class _DsnPartnersReader extends fb.TableReader<DsnPartners> {
+  const _DsnPartnersReader();
+
+  @override
+  DsnPartners createObject(fb.BufferContext bc, int offset) => DsnPartners._(bc, offset);
+}
+
+class DsnPartnersBuilder {
+  DsnPartnersBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addId(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addDnsPartnersOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class DsnPartnersObjectBuilder extends fb.ObjectBuilder {
+  final base.UlidBytesObjectBuilder? _id;
+  final List<DnsPartnerObjectBuilder>? _dnsPartners;
+
+  DsnPartnersObjectBuilder({base.UlidBytesObjectBuilder? id, List<DnsPartnerObjectBuilder>? dnsPartners}) : _id = id, _dnsPartners = dnsPartners;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? dnsPartnersOffset = _dnsPartners == null ? null : fbBuilder.writeList(_dnsPartners!.map((b) => b.getOrCreateOffset(fbBuilder)).toList());
+    fbBuilder.startTable(2);
+    if (_id != null) {
+      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, dnsPartnersOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class QueryPartners {
+  QueryPartners._(this._bc, this._bcOffset);
+  factory QueryPartners(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<QueryPartners> reader = _QueryPartnersReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  DnsPartner? get dnsPartner => DnsPartner.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'QueryPartners{id: ${id}, dnsPartner: ${dnsPartner}}';
+  }
+}
+
+class _QueryPartnersReader extends fb.TableReader<QueryPartners> {
+  const _QueryPartnersReader();
+
+  @override
+  QueryPartners createObject(fb.BufferContext bc, int offset) => QueryPartners._(bc, offset);
+}
+
+class QueryPartnersBuilder {
+  QueryPartnersBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addId(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addDnsPartnerOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class QueryPartnersObjectBuilder extends fb.ObjectBuilder {
+  final base.UlidBytesObjectBuilder? _id;
+  final DnsPartnerObjectBuilder? _dnsPartner;
+
+  QueryPartnersObjectBuilder({base.UlidBytesObjectBuilder? id, DnsPartnerObjectBuilder? dnsPartner}) : _id = id, _dnsPartner = dnsPartner;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? dnsPartnerOffset = _dnsPartner?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_id != null) {
+      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, dnsPartnerOffset);
     return fbBuilder.endTable();
   }
 

@@ -607,6 +607,68 @@ class PartnerIdObjectBuilder extends fb.ObjectBuilder {
   }
 }
 
+class TerminalId {
+  TerminalId._(this._bc, this._bcOffset);
+
+  static const fb.Reader<TerminalId> reader = _TerminalIdReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  int get low => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
+  int get high => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
+
+  @override
+  String toString() {
+    return 'TerminalId{low: ${low}, high: ${high}}';
+  }
+}
+
+class _TerminalIdReader extends fb.StructReader<TerminalId> {
+  const _TerminalIdReader();
+
+  @override
+  int get size => 16;
+
+  @override
+  TerminalId createObject(fb.BufferContext bc, int offset) => TerminalId._(bc, offset);
+}
+
+class TerminalIdBuilder {
+  TerminalIdBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  int finish(int low, int high) {
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
+    return fbBuilder.offset;
+  }
+}
+
+class TerminalIdObjectBuilder extends fb.ObjectBuilder {
+  final int _low;
+  final int _high;
+
+  TerminalIdObjectBuilder({required int low, required int high}) : _low = low, _high = high;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(_high);
+    fbBuilder.putUint64(_low);
+    return fbBuilder.offset;
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
 class Timestamp {
   Timestamp._(this._bc, this._bcOffset);
 

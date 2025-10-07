@@ -1,6 +1,26 @@
 include "base.fbs";
 namespace net_discovery;
-
-table Regestry {
+table DnsPartner {
     parter_id: base.PartnerId;
+    terminal_id: base.TerminalId;
+    host_name: string;
+    ip: string;
+    port: uint16;
+}
+
+//
+table Hi {
+    // 消息的唯一标识
+    id: base.UlidBytes;
+    dns_partner: DnsPartner;
+}
+
+table DsnPartners {
+    id: base.UlidBytes;
+    dns_partners: [DnsPartner];
+}
+
+table QueryPartners {
+    id: base.UlidBytes;
+    dns_partner: DnsPartner;
 }

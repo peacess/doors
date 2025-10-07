@@ -1788,6 +1788,125 @@ pub mod base {
         }
     }
 
+    // struct TerminalId, aligned to 8
+    #[repr(transparent)]
+    #[derive(Clone, Copy, PartialEq)]
+    pub struct TerminalId(pub [u8; 16]);
+    impl Default for TerminalId {
+        fn default() -> Self {
+            Self([0; 16])
+        }
+    }
+    impl core::fmt::Debug for TerminalId {
+        fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+            f.debug_struct("TerminalId").field("low", &self.low()).field("high", &self.high()).finish()
+        }
+    }
+
+    impl flatbuffers::SimpleToVerifyInSlice for TerminalId {}
+    impl<'a> flatbuffers::Follow<'a> for TerminalId {
+        type Inner = &'a TerminalId;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            <&'a TerminalId>::follow(buf, loc)
+        }
+    }
+    impl<'a> flatbuffers::Follow<'a> for &'a TerminalId {
+        type Inner = &'a TerminalId;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            flatbuffers::follow_cast_ref::<TerminalId>(buf, loc)
+        }
+    }
+    impl<'b> flatbuffers::Push for TerminalId {
+        type Output = TerminalId;
+        #[inline]
+        unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+            let src = ::core::slice::from_raw_parts(self as *const TerminalId as *const u8, <Self as flatbuffers::Push>::size());
+            dst.copy_from_slice(src);
+        }
+        #[inline]
+        fn alignment() -> flatbuffers::PushAlignment {
+            flatbuffers::PushAlignment::new(8)
+        }
+    }
+
+    impl<'a> flatbuffers::Verifiable for TerminalId {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.in_buffer::<Self>(pos)
+        }
+    }
+
+    impl<'a> TerminalId {
+        #[allow(clippy::too_many_arguments)]
+        pub fn new(low: u64, high: u64) -> Self {
+            let mut s = Self([0; 16]);
+            s.set_low(low);
+            s.set_high(high);
+            s
+        }
+
+        pub fn low(&self) -> u64 {
+            let mut mem = core::mem::MaybeUninit::<<u64 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[0..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_low(&mut self, x: u64) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[0..].as_mut_ptr(),
+                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn high(&self) -> u64 {
+            let mut mem = core::mem::MaybeUninit::<<u64 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[8..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_high(&mut self, x: u64) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[8..].as_mut_ptr(),
+                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+    }
+
     // struct Timestamp, aligned to 8
     #[repr(transparent)]
     #[derive(Clone, Copy, PartialEq)]

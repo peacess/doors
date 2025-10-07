@@ -17,7 +17,7 @@ clean:
 	cd rust/idl && cargo clean
 	cd idl_fbs && make clean
 build:
-	cd go && ${go} build  ./...
+	cd go && ${go} build -ldflags="-s -w" ./...
 	cd rust/dchat && cargo build --release
 	cd rust/idl && cargo build --release
 	${flutter} analyze
