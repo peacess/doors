@@ -1,0 +1,19 @@
+# Run with `dart run ffigen --config ffigen.yaml`.
+name: IdlBindings
+description: |
+  Bindings for `../rust/ffi_rpc/include/ffi_rpc.h`.
+
+  Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
+output: 'lib/idl_bindings_generated.dart'
+headers:
+  entry-points:
+    - '../rust/ffi_rpc/include/ffi_rpc.h'
+  include-directives:
+    - '../rust/ffi_rpc/include/ffi_rpc.h'
+preamble: |
+  // ignore_for_file: always_specify_types
+  // ignore_for_file: camel_case_types
+  // ignore_for_file: non_constant_identifier_names
+comments:
+  style: any
+  length: full

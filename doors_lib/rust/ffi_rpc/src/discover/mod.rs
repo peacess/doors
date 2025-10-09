@@ -1,4 +1,3 @@
-
 mod mdns;
-mod partner_service_info;
 mod multicast;
+mod partner_service_info;

@@ -1,0 +1,21 @@
+
+namespace ffi_rpc;
+//
+attribute FfiRpcParameter;
+//
+attribute FfiRpcRetrun;
+
+attribute FfiRpcCallback;
+
+table FfiRpcFrame {
+    header: FfiRpcHeader;
+    bytes: [byte];
+}
+
+struct FfiRpcHeader {
+    len:uint64;
+    rpc_type: uint32;
+    version: uint16;
+}
+
+root_type FfiRpcFrame;

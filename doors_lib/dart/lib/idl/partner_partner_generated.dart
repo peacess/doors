@@ -7,6 +7,7 @@ import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import './base_base_generated.dart' as base;
+import './ffi_rpc_ffi_rpc_generated.dart' as ffi_rpc;
 
 class Partner {
   Partner._(this._bc, this._bcOffset);
@@ -24,13 +25,14 @@ class Partner {
   List<base.TerminalId>? get terminalIds => const fb.ListReader<base.TerminalId>(base.TerminalId.reader).vTableGetNullable(_bc, _bcOffset, 6);
   base.Ubyte16? get partnerId => base.Ubyte16.reader.vTableGetNullable(_bc, _bcOffset, 8);
   String? get name => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
-  String? get ip => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 12);
-  int get port => const fb.Int16Reader().vTableGet(_bc, _bcOffset, 14, 0);
-  base.Timestamp? get createTs => base.Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 16);
+  String? get showName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 12);
+  String? get ip => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 14);
+  int get port => const fb.Int16Reader().vTableGet(_bc, _bcOffset, 16, 0);
+  base.Timestamp? get createTs => base.Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 18);
 
   @override
   String toString() {
-    return 'Partner{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, name: ${name}, ip: ${ip}, port: ${port}, createTs: ${createTs}}';
+    return 'Partner{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, name: ${name}, showName: ${showName}, ip: ${ip}, port: ${port}, createTs: ${createTs}}';
   }
 }
 
@@ -47,7 +49,7 @@ class PartnerBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(7);
+    fbBuilder.startTable(8);
   }
 
   int addId(int offset) {
@@ -70,18 +72,23 @@ class PartnerBuilder {
     return fbBuilder.offset;
   }
 
-  int addIpOffset(int? offset) {
+  int addShowNameOffset(int? offset) {
     fbBuilder.addOffset(4, offset);
     return fbBuilder.offset;
   }
 
+  int addIpOffset(int? offset) {
+    fbBuilder.addOffset(5, offset);
+    return fbBuilder.offset;
+  }
+
   int addPort(int? port) {
-    fbBuilder.addInt16(5, port);
+    fbBuilder.addInt16(6, port);
     return fbBuilder.offset;
   }
 
   int addCreateTs(int offset) {
-    fbBuilder.addStruct(6, offset);
+    fbBuilder.addStruct(7, offset);
     return fbBuilder.offset;
   }
 
@@ -95,6 +102,7 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
   final List<base.TerminalIdObjectBuilder>? _terminalIds;
   final base.Ubyte16ObjectBuilder? _partnerId;
   final String? _name;
+  final String? _showName;
   final String? _ip;
   final int? _port;
   final base.TimestampObjectBuilder? _createTs;
@@ -104,6 +112,7 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
     List<base.TerminalIdObjectBuilder>? terminalIds,
     base.Ubyte16ObjectBuilder? partnerId,
     String? name,
+    String? showName,
     String? ip,
     int? port,
     base.TimestampObjectBuilder? createTs,
@@ -111,6 +120,7 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
        _terminalIds = terminalIds,
        _partnerId = partnerId,
        _name = name,
+       _showName = showName,
        _ip = ip,
        _port = port,
        _createTs = createTs;
@@ -120,8 +130,9 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
   int finish(fb.Builder fbBuilder) {
     final int? terminalIdsOffset = _terminalIds == null ? null : fbBuilder.writeListOfStructs(_terminalIds!);
     final int? nameOffset = _name == null ? null : fbBuilder.writeString(_name!);
+    final int? showNameOffset = _showName == null ? null : fbBuilder.writeString(_showName!);
     final int? ipOffset = _ip == null ? null : fbBuilder.writeString(_ip!);
-    fbBuilder.startTable(7);
+    fbBuilder.startTable(8);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
@@ -130,10 +141,11 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
       fbBuilder.addStruct(2, _partnerId!.finish(fbBuilder));
     }
     fbBuilder.addOffset(3, nameOffset);
-    fbBuilder.addOffset(4, ipOffset);
-    fbBuilder.addInt16(5, _port);
+    fbBuilder.addOffset(4, showNameOffset);
+    fbBuilder.addOffset(5, ipOffset);
+    fbBuilder.addInt16(6, _port);
     if (_createTs != null) {
-      fbBuilder.addStruct(6, _createTs!.finish(fbBuilder));
+      fbBuilder.addStruct(7, _createTs!.finish(fbBuilder));
     }
     return fbBuilder.endTable();
   }

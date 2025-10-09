@@ -96,7 +96,7 @@ func (rcv *Partner) Name() []byte {
 	return nil
 }
 
-func (rcv *Partner) Ip() []byte {
+func (rcv *Partner) ShowName() []byte {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(12))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
@@ -104,8 +104,16 @@ func (rcv *Partner) Ip() []byte {
 	return nil
 }
 
-func (rcv *Partner) Port() int16 {
+func (rcv *Partner) Ip() []byte {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
+	if o != 0 {
+		return rcv._tab.ByteVector(o + rcv._tab.Pos)
+	}
+	return nil
+}
+
+func (rcv *Partner) Port() int16 {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
 	if o != 0 {
 		return rcv._tab.GetInt16(o + rcv._tab.Pos)
 	}
@@ -113,11 +121,11 @@ func (rcv *Partner) Port() int16 {
 }
 
 func (rcv *Partner) MutatePort(n int16) bool {
-	return rcv._tab.MutateInt16Slot(14, n)
+	return rcv._tab.MutateInt16Slot(16, n)
 }
 
 func (rcv *Partner) CreateTs(obj *base.Timestamp) *base.Timestamp {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(18))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
@@ -130,7 +138,7 @@ func (rcv *Partner) CreateTs(obj *base.Timestamp) *base.Timestamp {
 }
 
 func PartnerStart(builder *flatbuffers.Builder) {
-	builder.StartObject(7)
+	builder.StartObject(8)
 }
 func PartnerAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
@@ -147,14 +155,17 @@ func PartnerAddPartnerId(builder *flatbuffers.Builder, partnerId flatbuffers.UOf
 func PartnerAddName(builder *flatbuffers.Builder, name flatbuffers.UOffsetT) {
 	builder.PrependUOffsetTSlot(3, flatbuffers.UOffsetT(name), 0)
 }
+func PartnerAddShowName(builder *flatbuffers.Builder, showName flatbuffers.UOffsetT) {
+	builder.PrependUOffsetTSlot(4, flatbuffers.UOffsetT(showName), 0)
+}
 func PartnerAddIp(builder *flatbuffers.Builder, ip flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(4, flatbuffers.UOffsetT(ip), 0)
+	builder.PrependUOffsetTSlot(5, flatbuffers.UOffsetT(ip), 0)
 }
 func PartnerAddPort(builder *flatbuffers.Builder, port int16) {
-	builder.PrependInt16Slot(5, port, 0)
+	builder.PrependInt16Slot(6, port, 0)
 }
 func PartnerAddCreateTs(builder *flatbuffers.Builder, createTs flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(6, flatbuffers.UOffsetT(createTs), 0)
+	builder.PrependStructSlot(7, flatbuffers.UOffsetT(createTs), 0)
 }
 func PartnerEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

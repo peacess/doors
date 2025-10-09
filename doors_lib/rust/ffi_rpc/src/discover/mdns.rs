@@ -1,9 +1,8 @@
-use std::str::FromStr;
-use std::sync::Arc;
-use std::time::Duration;
+use std::{str::FromStr, sync::Arc, time::Duration};
+
 use network_interface::{Addr, NetworkInterface, NetworkInterfaceConfig};
-use crate::discover::multicast::MulticastService;
-use crate::discover::partner_service_info::PartnerServiceInfo;
+
+use crate::discover::{multicast::MulticastService, partner_service_info::PartnerServiceInfo};
 
 pub struct Mdns {
     nets: Vec<NetworkInterface>,
@@ -13,9 +12,8 @@ pub struct Mdns {
 }
 
 impl Mdns {
-
-    pub fn new() -> Result<Self, anyhow::Error   > {
-        Ok(Self{
+    pub fn new() -> Result<Self, anyhow::Error> {
+        Ok(Self {
             nets: Vec::new(),
             len_addr: 0,
             service_info: PartnerServiceInfo::new(),
@@ -27,19 +25,19 @@ impl Mdns {
             Err(e) => {
                 log::error!("Error showing network interfaces: {}", e);
                 return;
-            },
+            }
             Ok(nets) => {
                 self.nets.clear();
-                'NETS:for net in nets {
-                    if let Some(mac) =  &net.mac_addr {
-                       if mac == "00:00:00:00:00:00"{
-                           continue 'NETS;
-                       }
+                'NETS: for net in nets {
+                    if let Some(mac) = &net.mac_addr {
+                        if mac == "00:00:00:00:00:00" {
+                            continue 'NETS;
+                        }
                     }
                     if net.addr.is_empty() {
                         continue 'NETS;
                     }
-                    let local = std::net::Ipv4Addr::new(127,0,0,1);
+                    let local = std::net::Ipv4Addr::new(127, 0, 0, 1);
                     let local_v6 = std::net::Ipv6Addr::from_str("::1").unwrap();
                     for addr in &net.addr {
                         match addr {
@@ -61,7 +59,7 @@ impl Mdns {
             }
         }
     }
-    pub fn register_service(&mut self)-> Result<(),anyhow::Error> {
+    pub fn register_service(&mut self) -> Result<(), anyhow::Error> {
         // let mut addrs = Vec::<std::net::IpAddr>::with_capacity(self.nets.len() *2);
         // for net in &self.nets {
         //     for addr in &net.addr {
@@ -81,7 +79,7 @@ impl Mdns {
         Ok(())
     }
 
-    pub fn discover_service(&mut self) -> Result<(),anyhow::Error> {
+    pub fn discover_service(&mut self) -> Result<(), anyhow::Error> {
         // let service = mdns_sd::ServiceDaemon::new()?;
         // let discover = service.browse("._udp.local.")?;
         // loop {
@@ -105,13 +103,10 @@ impl Mdns {
         // }
         Ok(())
     }
-
 }
 
-
-
 #[cfg(test)]
-mod test{
+mod test {
     // use crate::net::mdns::Mdns;
     //
     // #[tokio::test]
@@ -132,4 +127,3 @@ mod test{
     //     }
     // }
 }
-

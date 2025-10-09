@@ -1,7 +1,8 @@
 include "base.fbs";
+include "ffi_rpc.fbs";
 namespace chat;
 
-table TextMessage{
+table TextMessage(FrameType){
     //message id
     id: base.UlidBytes;
     from_partner_id: base.PartnerId;
@@ -13,9 +14,16 @@ table TextMessage{
 }
 
 //确认收到消息
-table TextMessageAck{
+table TextMessageAck(FrameType){
     //message id
     id: base.UlidBytes;
     // message timestamp
     ts: base.Timestamp;
 }
+
+table TextMessageRpc(FfiRpcParameter){
+    //message id
+    id: base.UlidBytes;
+    text_message: TextMessage;
+}
+

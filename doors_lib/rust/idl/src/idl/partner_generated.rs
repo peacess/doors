@@ -4,7 +4,7 @@
 
 use core::{cmp::Ordering, mem};
 
-use crate::base_generated::*;
+use crate::{base_generated::*, ffi_rpc_generated::*};
 
 extern crate flatbuffers;
 use self::flatbuffers::{EndianScalar, Follow};
@@ -14,7 +14,7 @@ pub mod partner {
 
     use core::{cmp::Ordering, mem};
 
-    use crate::base_generated::*;
+    use crate::{base_generated::*, ffi_rpc_generated::*};
 
     extern crate flatbuffers;
     use self::flatbuffers::{EndianScalar, Follow};
@@ -41,9 +41,10 @@ pub mod partner {
         pub const VT_TERMINAL_IDS: flatbuffers::VOffsetT = 6;
         pub const VT_PARTNER_ID: flatbuffers::VOffsetT = 8;
         pub const VT_NAME: flatbuffers::VOffsetT = 10;
-        pub const VT_IP: flatbuffers::VOffsetT = 12;
-        pub const VT_PORT: flatbuffers::VOffsetT = 14;
-        pub const VT_CREATE_TS: flatbuffers::VOffsetT = 16;
+        pub const VT_SHOW_NAME: flatbuffers::VOffsetT = 12;
+        pub const VT_IP: flatbuffers::VOffsetT = 14;
+        pub const VT_PORT: flatbuffers::VOffsetT = 16;
+        pub const VT_CREATE_TS: flatbuffers::VOffsetT = 18;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -60,6 +61,9 @@ pub mod partner {
             }
             if let Some(x) = args.ip {
                 builder.add_ip(x);
+            }
+            if let Some(x) = args.show_name {
+                builder.add_show_name(x);
             }
             if let Some(x) = args.name {
                 builder.add_name(x);
@@ -109,6 +113,13 @@ pub mod partner {
             unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(Partner::VT_NAME, None) }
         }
         #[inline]
+        pub fn show_name(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(Partner::VT_SHOW_NAME, None) }
+        }
+        #[inline]
         pub fn ip(&self) -> Option<&'a str> {
             // Safety:
             // Created from valid Table for this object
@@ -140,6 +151,7 @@ pub mod partner {
                 .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, super::base::TerminalId>>>("terminal_ids", Self::VT_TERMINAL_IDS, false)?
                 .visit_field::<super::base::UByte16>("partner_id", Self::VT_PARTNER_ID, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("show_name", Self::VT_SHOW_NAME, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("ip", Self::VT_IP, false)?
                 .visit_field::<i16>("port", Self::VT_PORT, false)?
                 .visit_field::<super::base::Timestamp>("create_ts", Self::VT_CREATE_TS, false)?
@@ -152,6 +164,7 @@ pub mod partner {
         pub terminal_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, super::base::TerminalId>>>,
         pub partner_id: Option<&'a super::base::UByte16>,
         pub name: Option<flatbuffers::WIPOffset<&'a str>>,
+        pub show_name: Option<flatbuffers::WIPOffset<&'a str>>,
         pub ip: Option<flatbuffers::WIPOffset<&'a str>>,
         pub port: i16,
         pub create_ts: Option<&'a super::base::Timestamp>,
@@ -164,6 +177,7 @@ pub mod partner {
                 terminal_ids: None,
                 partner_id: None,
                 name: None,
+                show_name: None,
                 ip: None,
                 port: 0,
                 create_ts: None,
@@ -191,6 +205,10 @@ pub mod partner {
         #[inline]
         pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b str>) {
             self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Partner::VT_NAME, name);
+        }
+        #[inline]
+        pub fn add_show_name(&mut self, show_name: flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Partner::VT_SHOW_NAME, show_name);
         }
         #[inline]
         pub fn add_ip(&mut self, ip: flatbuffers::WIPOffset<&'b str>) {
@@ -223,6 +241,7 @@ pub mod partner {
             ds.field("terminal_ids", &self.terminal_ids());
             ds.field("partner_id", &self.partner_id());
             ds.field("name", &self.name());
+            ds.field("show_name", &self.show_name());
             ds.field("ip", &self.ip());
             ds.field("port", &self.port());
             ds.field("create_ts", &self.create_ts());

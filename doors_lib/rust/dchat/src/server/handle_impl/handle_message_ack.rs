@@ -1,6 +1,4 @@
-use idl::FrameType;
-
-use crate::server::Handle;
+use crate::server::{Handle, handle_impl::FrameType};
 
 pub(crate) struct HandleMessageAck {}
 
@@ -10,6 +8,6 @@ impl Handle for HandleMessageAck {
     }
 
     fn frame_type(&self) -> FrameType {
-        FrameType::MessageAck
+        FrameType::None
     }
 }

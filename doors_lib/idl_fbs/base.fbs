@@ -1,13 +1,8 @@
 
 namespace base;
+//
+attribute FrameType;
 
-enum FrameType:int16{
-    Message = 0, //发送消息
-    MessageAck = 1, //发送消息的响应
-
-    OnLine = 100, //parter的上线
-    OnLineAck = 101,//响应,
-}
 // 在编译为 go时，不支持 v:[ubyte:8],这样数组类型，所以才使用一个byte一个字段
 struct UByte8{
     ub1: ubyte;
@@ -91,15 +86,15 @@ table Frame{
 }
 
 struct Header{
-    len:int32;
-    type: FrameType;
-    version: int16;
+    len:uint64;
+    frame_type: uint32;
+    version: uint16;
     to_terminal_id: TerminalId;
     key: Uint128;
 }
 
 //确认收到
-struct FrameConfirm{
+struct FrameConfirm(FrameType){
     //message id
     id: UlidBytes;
     // the frame id is confirmed

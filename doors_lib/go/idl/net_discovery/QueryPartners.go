@@ -56,7 +56,7 @@ func (rcv *QueryPartners) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *QueryPartners) DnsPartner(obj *DnsTerminal) *DnsTerminal {
+func (rcv *QueryPartners) Terminal(obj *DnsTerminal) *DnsTerminal {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		x := rcv._tab.Indirect(o + rcv._tab.Pos)
@@ -75,8 +75,8 @@ func QueryPartnersStart(builder *flatbuffers.Builder) {
 func QueryPartnersAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
-func QueryPartnersAddDnsPartner(builder *flatbuffers.Builder, dnsPartner flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(dnsPartner), 0)
+func QueryPartnersAddTerminal(builder *flatbuffers.Builder, terminal flatbuffers.UOffsetT) {
+	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(terminal), 0)
 }
 func QueryPartnersEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

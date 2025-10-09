@@ -37,8 +37,8 @@ class Hi : Table() {
             null
         }
     }
-    val dnsPartner : net_discovery.DnsTerminal? get() = dnsPartner(net_discovery.DnsTerminal())
-    fun dnsPartner(obj: net_discovery.DnsTerminal) : net_discovery.DnsTerminal? {
+    val dnsTerminal : net_discovery.DnsTerminal? get() = dnsTerminal(net_discovery.DnsTerminal())
+    fun dnsTerminal(obj: net_discovery.DnsTerminal) : net_discovery.DnsTerminal? {
         val o = __offset(6)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -55,7 +55,7 @@ class Hi : Table() {
         }
         fun startHi(builder: FlatBufferBuilder) = builder.startTable(2)
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
-        fun addDnsPartner(builder: FlatBufferBuilder, dnsPartner: Int) = builder.addOffset(1, dnsPartner, 0)
+        fun addDnsTerminal(builder: FlatBufferBuilder, dnsTerminal: Int) = builder.addOffset(1, dnsTerminal, 0)
         fun endHi(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o

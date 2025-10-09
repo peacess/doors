@@ -15,87 +15,6 @@ pub mod base {
     extern crate flatbuffers;
     use self::flatbuffers::{EndianScalar, Follow};
 
-    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-    pub const ENUM_MIN_FRAME_TYPE: i16 = 0;
-    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-    pub const ENUM_MAX_FRAME_TYPE: i16 = 101;
-    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-    #[allow(non_camel_case_types)]
-    pub const ENUM_VALUES_FRAME_TYPE: [FrameType; 4] = [FrameType::Message, FrameType::MessageAck, FrameType::OnLine, FrameType::OnLineAck];
-
-    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
-    #[repr(transparent)]
-    pub struct FrameType(pub i16);
-    #[allow(non_upper_case_globals)]
-    impl FrameType {
-        pub const Message: Self = Self(0);
-        pub const MessageAck: Self = Self(1);
-        pub const OnLine: Self = Self(100);
-        pub const OnLineAck: Self = Self(101);
-
-        pub const ENUM_MIN: i16 = 0;
-        pub const ENUM_MAX: i16 = 101;
-        pub const ENUM_VALUES: &'static [Self] = &[Self::Message, Self::MessageAck, Self::OnLine, Self::OnLineAck];
-        /// Returns the variant's name or "" if unknown.
-        pub fn variant_name(self) -> Option<&'static str> {
-            match self {
-                Self::Message => Some("Message"),
-                Self::MessageAck => Some("MessageAck"),
-                Self::OnLine => Some("OnLine"),
-                Self::OnLineAck => Some("OnLineAck"),
-                _ => None,
-            }
-        }
-    }
-    impl core::fmt::Debug for FrameType {
-        fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-            if let Some(name) = self.variant_name() {
-                f.write_str(name)
-            } else {
-                f.write_fmt(format_args!("<UNKNOWN {:?}>", self.0))
-            }
-        }
-    }
-    impl<'a> flatbuffers::Follow<'a> for FrameType {
-        type Inner = Self;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            let b = flatbuffers::read_scalar_at::<i16>(buf, loc);
-            Self(b)
-        }
-    }
-
-    impl flatbuffers::Push for FrameType {
-        type Output = FrameType;
-        #[inline]
-        unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            flatbuffers::emplace_scalar::<i16>(dst, self.0);
-        }
-    }
-
-    impl flatbuffers::EndianScalar for FrameType {
-        type Scalar = i16;
-        #[inline]
-        fn to_little_endian(self) -> i16 {
-            self.0.to_le()
-        }
-        #[inline]
-        #[allow(clippy::wrong_self_convention)]
-        fn from_little_endian(v: i16) -> Self {
-            let b = i16::from_le(v);
-            Self(b)
-        }
-    }
-
-    impl<'a> flatbuffers::Verifiable for FrameType {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            i16::run_verifier(v, pos)
-        }
-    }
-
-    impl flatbuffers::SimpleToVerifyInSlice for FrameType {}
     // struct UByte8, aligned to 1
     #[repr(transparent)]
     #[derive(Clone, Copy, PartialEq)]
@@ -1999,17 +1918,17 @@ pub mod base {
     // struct Header, aligned to 8
     #[repr(transparent)]
     #[derive(Clone, Copy, PartialEq)]
-    pub struct Header(pub [u8; 40]);
+    pub struct Header(pub [u8; 48]);
     impl Default for Header {
         fn default() -> Self {
-            Self([0; 40])
+            Self([0; 48])
         }
     }
     impl core::fmt::Debug for Header {
         fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
             f.debug_struct("Header")
                 .field("len", &self.len())
-                .field("type_", &self.type_())
+                .field("frame_type", &self.frame_type())
                 .field("version", &self.version())
                 .field("to_terminal_id", &self.to_terminal_id())
                 .field("key", &self.key())
@@ -2055,18 +1974,18 @@ pub mod base {
 
     impl<'a> Header {
         #[allow(clippy::too_many_arguments)]
-        pub fn new(len: i32, type_: FrameType, version: i16, to_terminal_id: &TerminalId, key: &Uint128) -> Self {
-            let mut s = Self([0; 40]);
+        pub fn new(len: u64, frame_type: u32, version: u16, to_terminal_id: &TerminalId, key: &Uint128) -> Self {
+            let mut s = Self([0; 48]);
             s.set_len(len);
-            s.set_type_(type_);
+            s.set_frame_type(frame_type);
             s.set_version(version);
             s.set_to_terminal_id(to_terminal_id);
             s.set_key(key);
             s
         }
 
-        pub fn len(&self) -> i32 {
-            let mut mem = core::mem::MaybeUninit::<<i32 as EndianScalar>::Scalar>::uninit();
+        pub fn len(&self) -> u64 {
+            let mut mem = core::mem::MaybeUninit::<<u64 as EndianScalar>::Scalar>::uninit();
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid value in this slot
@@ -2074,13 +1993,13 @@ pub mod base {
                 core::ptr::copy_nonoverlapping(
                     self.0[0..].as_ptr(),
                     mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
                 );
                 mem.assume_init()
             })
         }
 
-        pub fn set_len(&mut self, x: i32) {
+        pub fn set_len(&mut self, x: u64) {
             let x_le = x.to_little_endian();
             // Safety:
             // Created from a valid Table for this object
@@ -2089,27 +2008,27 @@ pub mod base {
                 core::ptr::copy_nonoverlapping(
                     &x_le as *const _ as *const u8,
                     self.0[0..].as_mut_ptr(),
-                    core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
                 );
             }
         }
 
-        pub fn type_(&self) -> FrameType {
-            let mut mem = core::mem::MaybeUninit::<<FrameType as EndianScalar>::Scalar>::uninit();
+        pub fn frame_type(&self) -> u32 {
+            let mut mem = core::mem::MaybeUninit::<<u32 as EndianScalar>::Scalar>::uninit();
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid value in this slot
             EndianScalar::from_little_endian(unsafe {
                 core::ptr::copy_nonoverlapping(
-                    self.0[4..].as_ptr(),
+                    self.0[8..].as_ptr(),
                     mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<FrameType as EndianScalar>::Scalar>(),
+                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
                 );
                 mem.assume_init()
             })
         }
 
-        pub fn set_type_(&mut self, x: FrameType) {
+        pub fn set_frame_type(&mut self, x: u32) {
             let x_le = x.to_little_endian();
             // Safety:
             // Created from a valid Table for this object
@@ -2117,28 +2036,28 @@ pub mod base {
             unsafe {
                 core::ptr::copy_nonoverlapping(
                     &x_le as *const _ as *const u8,
-                    self.0[4..].as_mut_ptr(),
-                    core::mem::size_of::<<FrameType as EndianScalar>::Scalar>(),
+                    self.0[8..].as_mut_ptr(),
+                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
                 );
             }
         }
 
-        pub fn version(&self) -> i16 {
-            let mut mem = core::mem::MaybeUninit::<<i16 as EndianScalar>::Scalar>::uninit();
+        pub fn version(&self) -> u16 {
+            let mut mem = core::mem::MaybeUninit::<<u16 as EndianScalar>::Scalar>::uninit();
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid value in this slot
             EndianScalar::from_little_endian(unsafe {
                 core::ptr::copy_nonoverlapping(
-                    self.0[6..].as_ptr(),
+                    self.0[12..].as_ptr(),
                     mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<i16 as EndianScalar>::Scalar>(),
+                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
                 );
                 mem.assume_init()
             })
         }
 
-        pub fn set_version(&mut self, x: i16) {
+        pub fn set_version(&mut self, x: u16) {
             let x_le = x.to_little_endian();
             // Safety:
             // Created from a valid Table for this object
@@ -2146,8 +2065,8 @@ pub mod base {
             unsafe {
                 core::ptr::copy_nonoverlapping(
                     &x_le as *const _ as *const u8,
-                    self.0[6..].as_mut_ptr(),
-                    core::mem::size_of::<<i16 as EndianScalar>::Scalar>(),
+                    self.0[12..].as_mut_ptr(),
+                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
                 );
             }
         }
@@ -2156,24 +2075,24 @@ pub mod base {
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid struct in this slot
-            unsafe { &*(self.0[8..].as_ptr() as *const TerminalId) }
+            unsafe { &*(self.0[16..].as_ptr() as *const TerminalId) }
         }
 
         #[allow(clippy::identity_op)]
         pub fn set_to_terminal_id(&mut self, x: &TerminalId) {
-            self.0[8..8 + 16].copy_from_slice(&x.0)
+            self.0[16..16 + 16].copy_from_slice(&x.0)
         }
 
         pub fn key(&self) -> &Uint128 {
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid struct in this slot
-            unsafe { &*(self.0[24..].as_ptr() as *const Uint128) }
+            unsafe { &*(self.0[32..].as_ptr() as *const Uint128) }
         }
 
         #[allow(clippy::identity_op)]
         pub fn set_key(&mut self, x: &Uint128) {
-            self.0[24..24 + 16].copy_from_slice(&x.0)
+            self.0[32..32 + 16].copy_from_slice(&x.0)
         }
     }
 

@@ -1,5 +1,6 @@
 
 include "base.fbs";
+include "ffi_rpc.fbs";
 namespace partner;
 
 table Partner{
@@ -7,9 +8,11 @@ table Partner{
     terminal_ids: [base.TerminalId];//终端id
     partner_id: base.UByte16; //partner
     name: string;
+    show_name: string;
     ip: string;
     port: int16;
     create_ts: base.Timestamp;
 }
+
 
 root_type Partner;

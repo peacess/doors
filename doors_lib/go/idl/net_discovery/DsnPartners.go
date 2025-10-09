@@ -56,8 +56,21 @@ func (rcv *DsnPartners) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *DsnPartners) DnsPartners(obj *DnsTerminal, j int) bool {
+func (rcv *DsnPartners) AueryId(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
+	if o != 0 {
+		x := o + rcv._tab.Pos
+		if obj == nil {
+			obj = new(base.UlidBytes)
+		}
+		obj.Init(rcv._tab.Bytes, x)
+		return obj
+	}
+	return nil
+}
+
+func (rcv *DsnPartners) DnsPartners(obj *DnsTerminal, j int) bool {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		x := rcv._tab.Vector(o)
 		x += flatbuffers.UOffsetT(j) * 4
@@ -69,7 +82,7 @@ func (rcv *DsnPartners) DnsPartners(obj *DnsTerminal, j int) bool {
 }
 
 func (rcv *DsnPartners) DnsPartnersLength() int {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		return rcv._tab.VectorLen(o)
 	}
@@ -77,13 +90,16 @@ func (rcv *DsnPartners) DnsPartnersLength() int {
 }
 
 func DsnPartnersStart(builder *flatbuffers.Builder) {
-	builder.StartObject(2)
+	builder.StartObject(3)
 }
 func DsnPartnersAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
+func DsnPartnersAddAueryId(builder *flatbuffers.Builder, aueryId flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(1, flatbuffers.UOffsetT(aueryId), 0)
+}
 func DsnPartnersAddDnsPartners(builder *flatbuffers.Builder, dnsPartners flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(dnsPartners), 0)
+	builder.PrependUOffsetTSlot(2, flatbuffers.UOffsetT(dnsPartners), 0)
 }
 func DsnPartnersStartDnsPartnersVector(builder *flatbuffers.Builder, numElems int) flatbuffers.UOffsetT {
 	return builder.StartVector(4, numElems, 4)

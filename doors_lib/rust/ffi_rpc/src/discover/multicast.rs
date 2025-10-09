@@ -14,8 +14,8 @@ pub struct MulticastService {
 impl MulticastService {
     // ipv4 multicast： 239.255.0.0 - 239.255.255.255
     // ipv6 multicast： FF05::/16
-    const GROUP_IPV4: &'static str = "239.255.0.66:5996";
-    const GROUP_IPV6: &'static str = "FF05::66:5996";
+    // const GROUP_IPV4: &'static str = "239.255.0.66:5996";
+    // const GROUP_IPV6: &'static str = "FF05::66:5996";
     const MULTICAST_GROUP_PORT: u16 = 5996;
 
     const MULTICAST_IPV4: Ipv4Addr = Ipv4Addr::new(239, 255, 0, 66);

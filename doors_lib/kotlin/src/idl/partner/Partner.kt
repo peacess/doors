@@ -70,7 +70,7 @@ class Partner : Table() {
         }
     val nameAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(10, 1)
     fun nameInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 10, 1)
-    val ip : String?
+    val showName : String?
         get() {
             val o = __offset(12)
             return if (o != 0) {
@@ -79,16 +79,27 @@ class Partner : Table() {
                 null
             }
         }
-    val ipAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(12, 1)
-    fun ipInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 12, 1)
-    val port : Short
+    val showNameAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(12, 1)
+    fun showNameInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 12, 1)
+    val ip : String?
         get() {
             val o = __offset(14)
+            return if (o != 0) {
+                __string(o + bb_pos)
+            } else {
+                null
+            }
+        }
+    val ipAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(14, 1)
+    fun ipInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 14, 1)
+    val port : Short
+        get() {
+            val o = __offset(16)
             return if(o != 0) bb.getShort(o + bb_pos) else 0
         }
     val createTs : base.Timestamp? get() = createTs(base.Timestamp())
     fun createTs(obj: base.Timestamp) : base.Timestamp? {
-        val o = __offset(16)
+        val o = __offset(18)
         return if (o != 0) {
             obj.__assign(o + bb_pos, bb)
         } else {
@@ -102,15 +113,16 @@ class Partner : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun startPartner(builder: FlatBufferBuilder) = builder.startTable(7)
+        fun startPartner(builder: FlatBufferBuilder) = builder.startTable(8)
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
         fun addTerminalIds(builder: FlatBufferBuilder, terminalIds: Int) = builder.addOffset(1, terminalIds, 0)
         fun startTerminalIdsVector(builder: FlatBufferBuilder, numElems: Int) = builder.startVector(16, numElems, 8)
         fun addPartnerId(builder: FlatBufferBuilder, partnerId: Int) = builder.addStruct(2, partnerId, 0)
         fun addName(builder: FlatBufferBuilder, name: Int) = builder.addOffset(3, name, 0)
-        fun addIp(builder: FlatBufferBuilder, ip: Int) = builder.addOffset(4, ip, 0)
-        fun addPort(builder: FlatBufferBuilder, port: Short) = builder.addShort(5, port, 0)
-        fun addCreateTs(builder: FlatBufferBuilder, createTs: Int) = builder.addStruct(6, createTs, 0)
+        fun addShowName(builder: FlatBufferBuilder, showName: Int) = builder.addOffset(4, showName, 0)
+        fun addIp(builder: FlatBufferBuilder, ip: Int) = builder.addOffset(5, ip, 0)
+        fun addPort(builder: FlatBufferBuilder, port: Short) = builder.addShort(6, port, 0)
+        fun addCreateTs(builder: FlatBufferBuilder, createTs: Int) = builder.addStruct(7, createTs, 0)
         fun endPartner(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o

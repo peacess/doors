@@ -6,47 +6,6 @@ library base;
 import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
-enum FrameType {
-  Message(0),
-  MessageAck(1),
-  OnLine(100),
-  OnLineAck(101);
-
-  final int value;
-  const FrameType(this.value);
-
-  factory FrameType.fromValue(int value) {
-    switch (value) {
-      case 0:
-        return FrameType.Message;
-      case 1:
-        return FrameType.MessageAck;
-      case 100:
-        return FrameType.OnLine;
-      case 101:
-        return FrameType.OnLineAck;
-      default:
-        throw StateError('Invalid value $value for bit flag enum');
-    }
-  }
-
-  static FrameType? _createOrNull(int? value) => value == null ? null : FrameType.fromValue(value);
-
-  static const int minValue = 0;
-  static const int maxValue = 101;
-  static const fb.Reader<FrameType> reader = _FrameTypeReader();
-}
-
-class _FrameTypeReader extends fb.Reader<FrameType> {
-  const _FrameTypeReader();
-
-  @override
-  int get size => 2;
-
-  @override
-  FrameType read(fb.BufferContext bc, int offset) => FrameType.fromValue(const fb.Int16Reader().read(bc, offset));
-}
-
 class Ubyte8 {
   Ubyte8._(this._bc, this._bcOffset);
 
@@ -814,15 +773,15 @@ class Header {
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  int get len => const fb.Int32Reader().read(_bc, _bcOffset + 0);
-  FrameType get type => FrameType.fromValue(const fb.Int16Reader().read(_bc, _bcOffset + 4));
-  int get version => const fb.Int16Reader().read(_bc, _bcOffset + 6);
-  TerminalId get toTerminalId => TerminalId.reader.read(_bc, _bcOffset + 8);
-  Uint128 get key => Uint128.reader.read(_bc, _bcOffset + 24);
+  int get len => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
+  int get frameType => const fb.Uint32Reader().read(_bc, _bcOffset + 8);
+  int get version => const fb.Uint16Reader().read(_bc, _bcOffset + 12);
+  TerminalId get toTerminalId => TerminalId.reader.read(_bc, _bcOffset + 16);
+  Uint128 get key => Uint128.reader.read(_bc, _bcOffset + 32);
 
   @override
   String toString() {
-    return 'Header{len: ${len}, type: ${type}, version: ${version}, toTerminalId: ${toTerminalId}, key: ${key}}';
+    return 'Header{len: ${len}, frameType: ${frameType}, version: ${version}, toTerminalId: ${toTerminalId}, key: ${key}}';
   }
 }
 
@@ -830,7 +789,7 @@ class _HeaderReader extends fb.StructReader<Header> {
   const _HeaderReader();
 
   @override
-  int get size => 40;
+  int get size => 48;
 
   @override
   Header createObject(fb.BufferContext bc, int offset) => Header._(bc, offset);
@@ -841,31 +800,32 @@ class HeaderBuilder {
 
   final fb.Builder fbBuilder;
 
-  int finish(int len, FrameType type, int version, fb.StructBuilder toTerminalId, fb.StructBuilder key) {
+  int finish(int len, int frameType, int version, fb.StructBuilder toTerminalId, fb.StructBuilder key) {
     key();
     toTerminalId();
-    fbBuilder.putInt16(version);
-    fbBuilder.putInt16(type.value);
-    fbBuilder.putInt32(len);
+    fbBuilder.pad(2);
+    fbBuilder.putUint16(version);
+    fbBuilder.putUint32(frameType);
+    fbBuilder.putUint64(len);
     return fbBuilder.offset;
   }
 }
 
 class HeaderObjectBuilder extends fb.ObjectBuilder {
   final int _len;
-  final FrameType _type;
+  final int _frameType;
   final int _version;
   final TerminalIdObjectBuilder _toTerminalId;
   final Uint128ObjectBuilder _key;
 
   HeaderObjectBuilder({
     required int len,
-    required FrameType type,
+    required int frameType,
     required int version,
     required TerminalIdObjectBuilder toTerminalId,
     required Uint128ObjectBuilder key,
   }) : _len = len,
-       _type = type,
+       _frameType = frameType,
        _version = version,
        _toTerminalId = toTerminalId,
        _key = key;
@@ -875,9 +835,10 @@ class HeaderObjectBuilder extends fb.ObjectBuilder {
   int finish(fb.Builder fbBuilder) {
     _key.finish(fbBuilder);
     _toTerminalId.finish(fbBuilder);
-    fbBuilder.putInt16(_version);
-    fbBuilder.putInt16(_type.value);
-    fbBuilder.putInt32(_len);
+    fbBuilder.pad(2);
+    fbBuilder.putUint16(_version);
+    fbBuilder.putUint32(_frameType);
+    fbBuilder.putUint64(_len);
     return fbBuilder.offset;
   }
 

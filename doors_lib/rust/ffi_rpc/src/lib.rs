@@ -1,4 +1,5 @@
-mod ffi;
-mod net;
-mod lib_app;
 mod discover;
+mod lib_app;
+mod net;
+
+mod ffi;

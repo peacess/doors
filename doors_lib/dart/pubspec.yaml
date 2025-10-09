@@ -1,15 +1,37 @@
 name: idl
-description: idl of doors in dart.
-version: 1.0.0
+description: "A new Flutter FFI plugin project."
+version: 0.0.1
+homepage:
 
 environment:
   sdk: ^3.9.2
+
 resolution: workspace
 
-dependencies: 
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface:
   flat_buffers:
-  uuid: 
+  uuid:
+  ulid:
 
 dev_dependencies:
-  lints: 
-  test: 
+  ffi:
+  ffigen:
+  test:
+  flutter_lints:
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        ffiPlugin: true
+      ios:
+        ffiPlugin: true
+      linux:
+        ffiPlugin: true
+      macos:
+        ffiPlugin: true
+      windows:
+        ffiPlugin: true

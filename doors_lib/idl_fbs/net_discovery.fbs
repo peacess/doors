@@ -1,5 +1,9 @@
 include "base.fbs";
+include "ffi_rpc.fbs";
 namespace net_discovery;
+
+attribute NetDiscovery;
+
 table DnsTerminal {
     id: base.UlidBytes;
     parter_id: base.PartnerId;
@@ -11,21 +15,41 @@ table DnsTerminal {
     port_v6: uint16;
 }
 
+struct DiscoveryHeader{
+    len:uint64;
+    discovery_type: uint32;
+    version: uint16;
+    to_terminal_id: base.TerminalId;
+    key: base.Uint128;
+}
+
+table DiscoveryFrame {
+    header: DiscoveryHeader;
+    bytes: [byte];
+}
+
 //
-table Hi {
+table Hi(NetDiscovery) {
     // 消息的唯一标识
     id: base.UlidBytes;
-    dns_partner: DnsTerminal;
+    dns_terminal: DnsTerminal;
 }
 
-table DsnPartners {
+table HiCallBack(FfiRpcCallback) {
     id: base.UlidBytes;
+    hi_id: base.UlidBytes;
+    dns_terminal: DnsTerminal;
+}
+
+table DsnPartners(FfiRpcCallback) {
+    id: base.UlidBytes;
+    auery_id: base.UlidBytes;
     dns_partners: [DnsTerminal];
 }
-
-table QueryPartners {
+// query parameters just send request, dont return partners, the result will get from the "FfiRpcCallback"
+table QueryPartners(FfiRpcParameter:"DsnPartners") {
     id: base.UlidBytes;
-    dns_partner: DnsTerminal;
+    terminal: DnsTerminal;
 }
 
 

@@ -22,27 +22,25 @@ impl LibApp {
 
     pub fn init() -> Result<(), anyhow::Error> {
         let result = std::panic::catch_unwind(|| {
-            LIB_APP.get_or_init(|| {
-                match Self::make_app() {
-                    Ok(app) => app,
-                    Err(e) => {
-                        log::error!("Failed to initialize Door's library: {}", e);
-                        panic!("Failed to initialize Door's library: {}", e);
-                    }
+            LIB_APP.get_or_init(|| match Self::make_app() {
+                Ok(app) => app,
+                Err(e) => {
+                    log::error!("Failed to initialize Door's library: {}", e);
+                    panic!("Failed to initialize Door's library: {}", e);
                 }
             });
         });
         result.map_err(|e| {
-                let message = {
-                    if let Some(err_str) = e.downcast_ref::<&str>() {
-                        err_str.to_string()
-                    } else if let Some(err_str) = e.downcast_ref::<String>() {
-                        err_str.to_string()
-                    } else {
-                        "Unknown panic".into()
-                    }
-                };
-                anyhow::anyhow!("LibApp panicked: {}", message)
-            })
+            let message = {
+                if let Some(err_str) = e.downcast_ref::<&str>() {
+                    err_str.to_string()
+                } else if let Some(err_str) = e.downcast_ref::<String>() {
+                    err_str.to_string()
+                } else {
+                    "Unknown panic".into()
+                }
+            };
+            anyhow::anyhow!("LibApp panicked: {}", message)
+        })
     }
 }

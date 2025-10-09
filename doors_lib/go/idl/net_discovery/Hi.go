@@ -56,7 +56,7 @@ func (rcv *Hi) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *Hi) DnsPartner(obj *DnsTerminal) *DnsTerminal {
+func (rcv *Hi) DnsTerminal(obj *DnsTerminal) *DnsTerminal {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		x := rcv._tab.Indirect(o + rcv._tab.Pos)
@@ -75,8 +75,8 @@ func HiStart(builder *flatbuffers.Builder) {
 func HiAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
-func HiAddDnsPartner(builder *flatbuffers.Builder, dnsPartner flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(dnsPartner), 0)
+func HiAddDnsTerminal(builder *flatbuffers.Builder, dnsTerminal flatbuffers.UOffsetT) {
+	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(dnsTerminal), 0)
 }
 func HiEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

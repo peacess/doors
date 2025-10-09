@@ -37,8 +37,8 @@ class QueryPartners : Table() {
             null
         }
     }
-    val dnsPartner : net_discovery.DnsTerminal? get() = dnsPartner(net_discovery.DnsTerminal())
-    fun dnsPartner(obj: net_discovery.DnsTerminal) : net_discovery.DnsTerminal? {
+    val terminal : net_discovery.DnsTerminal? get() = terminal(net_discovery.DnsTerminal())
+    fun terminal(obj: net_discovery.DnsTerminal) : net_discovery.DnsTerminal? {
         val o = __offset(6)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -55,7 +55,7 @@ class QueryPartners : Table() {
         }
         fun startQueryPartners(builder: FlatBufferBuilder) = builder.startTable(2)
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
-        fun addDnsPartner(builder: FlatBufferBuilder, dnsPartner: Int) = builder.addOffset(1, dnsPartner, 0)
+        fun addTerminal(builder: FlatBufferBuilder, terminal: Int) = builder.addOffset(1, terminal, 0)
         fun endQueryPartners(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o

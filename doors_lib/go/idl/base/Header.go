@@ -19,52 +19,53 @@ func (rcv *Header) Table() flatbuffers.Table {
 	return rcv._tab.Table
 }
 
-func (rcv *Header) Len() int32 {
-	return rcv._tab.GetInt32(rcv._tab.Pos + flatbuffers.UOffsetT(0))
+func (rcv *Header) Len() uint64 {
+	return rcv._tab.GetUint64(rcv._tab.Pos + flatbuffers.UOffsetT(0))
 }
-func (rcv *Header) MutateLen(n int32) bool {
-	return rcv._tab.MutateInt32(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
-}
-
-func (rcv *Header) Type() FrameType {
-	return FrameType(rcv._tab.GetInt16(rcv._tab.Pos + flatbuffers.UOffsetT(4)))
-}
-func (rcv *Header) MutateType(n FrameType) bool {
-	return rcv._tab.MutateInt16(rcv._tab.Pos+flatbuffers.UOffsetT(4), int16(n))
+func (rcv *Header) MutateLen(n uint64) bool {
+	return rcv._tab.MutateUint64(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
 }
 
-func (rcv *Header) Version() int16 {
-	return rcv._tab.GetInt16(rcv._tab.Pos + flatbuffers.UOffsetT(6))
+func (rcv *Header) FrameType() uint32 {
+	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(8))
 }
-func (rcv *Header) MutateVersion(n int16) bool {
-	return rcv._tab.MutateInt16(rcv._tab.Pos+flatbuffers.UOffsetT(6), n)
+func (rcv *Header) MutateFrameType(n uint32) bool {
+	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(8), n)
+}
+
+func (rcv *Header) Version() uint16 {
+	return rcv._tab.GetUint16(rcv._tab.Pos + flatbuffers.UOffsetT(12))
+}
+func (rcv *Header) MutateVersion(n uint16) bool {
+	return rcv._tab.MutateUint16(rcv._tab.Pos+flatbuffers.UOffsetT(12), n)
 }
 
 func (rcv *Header) ToTerminalId(obj *TerminalId) *TerminalId {
 	if obj == nil {
 		obj = new(TerminalId)
 	}
-	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+8)
+	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+16)
 	return obj
 }
 func (rcv *Header) Key(obj *Uint128) *Uint128 {
 	if obj == nil {
 		obj = new(Uint128)
 	}
-	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+24)
+	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+32)
 	return obj
 }
 
-func CreateHeader(builder *flatbuffers.Builder, len int32, type_ FrameType, version int16, to_terminal_id_low uint64, to_terminal_id_high uint64, key_low uint64, key_high uint64) flatbuffers.UOffsetT {
-	builder.Prep(8, 40)
+func CreateHeader(builder *flatbuffers.Builder, len uint64, frameType uint32, version uint16, to_terminal_id_low uint64, to_terminal_id_high uint64, key_low uint64, key_high uint64) flatbuffers.UOffsetT {
+	builder.Prep(8, 48)
 	builder.Prep(8, 16)
 	builder.PrependUint64(key_high)
 	builder.PrependUint64(key_low)
 	builder.Prep(8, 16)
 	builder.PrependUint64(to_terminal_id_high)
 	builder.PrependUint64(to_terminal_id_low)
-	builder.PrependInt16(version)
-	builder.PrependInt16(int16(type_))
-	builder.PrependInt32(len)
+	builder.Pad(2)
+	builder.PrependUint16(version)
+	builder.PrependUint32(frameType)
+	builder.PrependUint64(len)
 	return builder.Offset()
 }

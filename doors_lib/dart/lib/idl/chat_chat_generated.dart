@@ -7,6 +7,7 @@ import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import './base_base_generated.dart' as base;
+import './ffi_rpc_ffi_rpc_generated.dart' as ffi_rpc;
 
 class TextMessage {
   TextMessage._(this._bc, this._bcOffset);
@@ -219,6 +220,85 @@ class TextMessageAckObjectBuilder extends fb.ObjectBuilder {
     if (_ts != null) {
       fbBuilder.addStruct(1, _ts!.finish(fbBuilder));
     }
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class TextMessageRpc {
+  TextMessageRpc._(this._bc, this._bcOffset);
+  factory TextMessageRpc(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<TextMessageRpc> reader = _TextMessageRpcReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  TextMessage? get textMessage => TextMessage.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'TextMessageRpc{id: ${id}, textMessage: ${textMessage}}';
+  }
+}
+
+class _TextMessageRpcReader extends fb.TableReader<TextMessageRpc> {
+  const _TextMessageRpcReader();
+
+  @override
+  TextMessageRpc createObject(fb.BufferContext bc, int offset) => TextMessageRpc._(bc, offset);
+}
+
+class TextMessageRpcBuilder {
+  TextMessageRpcBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addId(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addTextMessageOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class TextMessageRpcObjectBuilder extends fb.ObjectBuilder {
+  final base.UlidBytesObjectBuilder? _id;
+  final TextMessageObjectBuilder? _textMessage;
+
+  TextMessageRpcObjectBuilder({base.UlidBytesObjectBuilder? id, TextMessageObjectBuilder? textMessage}) : _id = id, _textMessage = textMessage;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? textMessageOffset = _textMessage?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_id != null) {
+      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, textMessageOffset);
     return fbBuilder.endTable();
   }
 
