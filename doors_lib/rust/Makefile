@@ -22,7 +22,6 @@ upgrade:
 OS_NAME=$(shell uname | tr '[:upper:]' '[:lower:]')
 ANDROID_AARCH64_LINKER=$(ANDROID_NDK)/toolchains/llvm/prebuilt/$(OS_NAME)-x86_64/bin/aarch64-linux-android35-clang
 ANDROID_ARMV7_LINKER=$(ANDROID_NDK)/toolchains/llvm/prebuilt/$(OS_NAME)-x86_64/bin/armv7a-linux-androideabi35-clang
-ANDROID_I686_LINKER=$(ANDROID_NDK)/toolchains/llvm/prebuilt/$(OS_NAME)-x86_64/bin/i686-linux-android35-clang
 ANDROID_X86_64_LINKER=$(ANDROID_NDK)/toolchains/llvm/prebuilt/$(OS_NAME)-x86_64/bin/x86_64-linux-android35-clang
 PATH := $(ANDROID_NDK)/toolchains/llvm/prebuilt/$(OS_NAME)-x86_64/bin:$(PATH)
 target=../../target
@@ -46,12 +45,6 @@ build_android:
 	cp -rf ${target}/armv7-linux-androideabi/release/libffi_rpc.so ${dart_android}/armeabi-v7a/
 	@echo "[DONE] $@"
 
-	cd ffi_rpc && CC_i686_linux_android=$(ANDROID_I686_LINKER) \
-		CARGO_TARGET_I686_LINUX_ANDROID_LINKER=$(ANDROID_I686_LINKER) \
-		cargo  build --target i686-linux-android --release
-	cp -f ${target}/i686-linux-android/release/libffi_rpc.so ${dart_android}/x86/
-	@echo "[DONE] $@"
-
 	cd ffi_rpc && CC_x86_64_linux_android=$(ANDROID_X86_64_LINKER) \
 		CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$(ANDROID_X86_64_LINKER) \
 		cargo build --target x86_64-linux-android --release
@@ -62,6 +55,6 @@ build_android:
 init:
 	rustup target add aarch64-apple-ios x86_64-apple-ios
 	rustup target add aarch64-apple-darwin x86_64-apple-darwin
-	rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+	rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
 	@if [ $$(uname) == "Darwin" ] ; then cargo install cargo-lipo ; fi
 	cargo install cbindgen

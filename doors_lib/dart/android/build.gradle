@@ -26,15 +26,7 @@ apply plugin: "com.android.library"
 
 android {
     namespace = "com.doors.idl"
-
-    // Bumping the plugin compileSdk version requires all clients of this plugin
-    // to bump the version in their app.
     compileSdk = 36
-
-    // Use the NDK version
-    // declared in /android/app/build.gradle file of the Flutter project.
-    // Replace it with a version number if this plugin requires a specific NDK version.
-    // (e.g. ndkVersion "23.1.7779620")
     ndkVersion = android.ndkVersion
 
     // Invoke the shared CMake build with the Android Gradle Plugin.
