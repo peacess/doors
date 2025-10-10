@@ -1,6 +1,7 @@
 #![allow(unused_imports)]
 #![allow(mismatched_lifetime_syntaxes)]
 #![allow(unsafe_op_in_unsafe_fn)]
+#![allow(clippy::all)]
 
 pub mod base_generated;
 pub mod chat_generated;

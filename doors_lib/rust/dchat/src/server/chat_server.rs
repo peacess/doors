@@ -43,8 +43,7 @@ impl ChatServer {
         let mut events = Events::with_capacity(1024);
         let mut buf = [0; 65535];
         *self.stop_status.get_mut() = false;
-        let _ = self
-            .poll
+        self.poll
             .registry()
             .register(&mut self.udp_socket, ChatServer::ECHOER, Interest::READABLE)
             .expect("");
@@ -65,7 +64,7 @@ impl ChatServer {
                         let bytes = buf[..n].to_vec();
                         self.frame_handle.handle(bytes);
                     }
-                    not_token @ _ => {
+                    not_token => {
                         log::error!("'{:?}' is not poll event", not_token);
                     }
                 }

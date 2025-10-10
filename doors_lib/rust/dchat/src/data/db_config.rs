@@ -32,7 +32,7 @@ impl DataConfig {
                 }
             }
             if !p.exists() {
-                let _ = std::fs::create_dir_all(p)?;
+                std::fs::create_dir_all(p)?;
             }
         }
 

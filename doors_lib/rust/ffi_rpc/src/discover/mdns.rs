@@ -1,4 +1,4 @@
-use std::{str::FromStr, sync::Arc, time::Duration};
+use std::{str::FromStr, sync::Arc};
 
 use network_interface::{Addr, NetworkInterface, NetworkInterfaceConfig};
 
@@ -24,15 +24,14 @@ impl Mdns {
         match NetworkInterface::show() {
             Err(e) => {
                 log::error!("Error showing network interfaces: {}", e);
-                return;
             }
             Ok(nets) => {
                 self.nets.clear();
                 'NETS: for net in nets {
-                    if let Some(mac) = &net.mac_addr {
-                        if mac == "00:00:00:00:00:00" {
-                            continue 'NETS;
-                        }
+                    if let Some(mac) = &net.mac_addr
+                        && mac == "00:00:00:00:00:00"
+                    {
+                        continue 'NETS;
                     }
                     if net.addr.is_empty() {
                         continue 'NETS;

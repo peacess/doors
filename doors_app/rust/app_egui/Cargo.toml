@@ -12,6 +12,8 @@ egui.workspace = true
 eframe.workspace = true
 egui_extras.workspace = true
 # ui ui
+[target.'cfg(target_os = "android")'.dependencies]
+android_logger.workspace = true
 
 [package.metadata.android]
 build_targets = ["aarch64-linux-android"]

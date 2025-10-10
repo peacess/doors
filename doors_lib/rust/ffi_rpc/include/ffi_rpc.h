@@ -19,7 +19,7 @@ struct Bytes init(void);
 
 struct Bytes un_init(void);
 
-struct Bytes call(uint64_t method_idd, const struct Bytes *_in_parameter);
+struct Bytes call(uint64_t method_idd, const struct Bytes *in_parameter);
 
 int32_t bytes_free(struct Bytes bytes);
 

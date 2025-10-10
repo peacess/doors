@@ -35,7 +35,7 @@ impl LibApp {
 
     pub fn init() -> Result<(), anyhow::Error> {
         let result = std::panic::catch_unwind(|| {
-            LIB_APP.get_or_init(|| match Self::make_app() {
+            let _ = LIB_APP.get_or_init(|| match Self::make_app() {
                 Ok(app) => app,
                 Err(e) => {
                     log::error!("Failed to initialize Door's library: {}", e);
@@ -58,12 +58,17 @@ impl LibApp {
         })
     }
 
-    pub fn uninit(&self) {
-        if self.running_handle.load(std::sync::atomic::Ordering::Relaxed) {
-            if let Err(e) = self.shutdown_sender.send(()) {
-                log::error!("{}", e);
-            }
+    pub fn uninit() {
+        if let Some(app) = LIB_APP.get()
+            && app.running_handle.load(std::sync::atomic::Ordering::Relaxed)
+            && let Err(e) = app.shutdown_sender.send(())
+        {
+            log::error!("{}", e);
         }
+    }
+
+    pub fn app() -> Option<&'static Self> {
+        LIB_APP.get()
     }
 
     pub fn handle(&self) -> Option<&Handle> {
@@ -77,14 +82,14 @@ impl LibApp {
 
 #[cfg(test)]
 mod tests {
-    use crate::lib_app::{LIB_APP, LibApp};
+    use crate::lib_app::LibApp;
 
     #[test]
     fn it_works() {
         LibApp::init().unwrap();
-        if let Some(app) = LIB_APP.get() {
+        if let Some(app) = LibApp::app() {
             app.handle.spawn(async {});
-            app.uninit();
         }
+        LibApp::uninit();
     }
 }

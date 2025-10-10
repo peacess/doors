@@ -87,16 +87,15 @@ impl MulticastService {
         }))
     }
     pub fn init(self: Arc<Self>, mut shutdown_receiver: tokio::sync::broadcast::Receiver<()>) -> tokio::task::JoinHandle<Result<(), anyhow::Error>> {
-        let rr = tokio::spawn(async move {
+        tokio::spawn(async move {
             let mut buf = [0u8; 1024];
             let mut buf_v6 = [0u8; 1024];
-            let has_ipv6 = self.ips.iter().any(|ip| ip.is_ipv6());
             if let Some(receiver_ipv6) = &self.receiver_ipv6 {
                 loop {
                     tokio::select! {
                         data_ipv4 = self.receiver_ipv4.recv_from(&mut buf) => {
                             match data_ipv4 {
-                                Ok((len, src_addr)) => {
+                                Ok((len, _src_addr)) => {
                                     let msg = String::from_utf8_lossy(&buf[..len]);
                                     if msg.trim() == "EXIT" {
                                         println!("[Receiver] 收到退出指令，退出。");
@@ -111,7 +110,7 @@ impl MulticastService {
                         }
                         data_ipv6 = receiver_ipv6.recv_from(&mut buf_v6) => {
                             match data_ipv6 {
-                                Ok((len, src_addr)) => {
+                                Ok((len, _src_addr)) => {
                                     let msg = String::from_utf8_lossy(&buf_v6[..len]);
                                     if msg.trim() == "EXIT" {
                                         println!("[Receiver] 收到退出指令，退出。");
@@ -134,7 +133,7 @@ impl MulticastService {
                     tokio::select! {
                     data_ipv4 = self.receiver_ipv4.recv_from(&mut buf) => {
                         match data_ipv4 {
-                            Ok((len, src_addr)) => {
+                            Ok((len, _src_addr)) => {
                                 let msg = String::from_utf8_lossy(&buf[..len]);
                                 if msg.trim() == "EXIT" {
                                     println!("[Receiver] 收到退出指令，退出。");
@@ -153,8 +152,7 @@ impl MulticastService {
                     }
                 }
             }
-        });
-        rr
+        })
     }
 
     pub fn uninit(&mut self) -> Result<(), anyhow::Error> {

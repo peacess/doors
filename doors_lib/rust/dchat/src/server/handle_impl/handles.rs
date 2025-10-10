@@ -14,6 +14,12 @@ pub struct Handles {
     map_handles: MapHandles,
 }
 
+impl Default for Handles {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Handles {
     pub fn new() -> Self {
         let mut hs = Handles { map_handles: BTreeMap::new() };

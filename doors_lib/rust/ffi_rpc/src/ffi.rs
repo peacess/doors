@@ -1,5 +1,3 @@
-use std::ffi::{c_int, c_void};
-
 use crate::lib_app::LibApp;
 
 #[repr(C)]
@@ -45,9 +43,9 @@ pub extern "C" fn un_init() -> Bytes {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn call(method_idd: u64, _in_parameter: &Bytes) -> Bytes {
+pub extern "C" fn call(method_idd: u64, in_parameter: &Bytes) -> Bytes {
     if method_idd < 10 {
-        println!("");
+        println!();
     }
     let c = vec![0u8];
     let mut v = core::mem::ManuallyDrop::new(c);
@@ -60,7 +58,7 @@ pub extern "C" fn call(method_idd: u64, _in_parameter: &Bytes) -> Bytes {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn bytes_free(mut bytes: Bytes) -> i32 {
+pub extern "C" fn bytes_free(bytes: Bytes) -> i32 {
     let _ = unsafe { Vec::from_raw_parts(bytes.bytes, bytes.len as usize, bytes.capacity as usize) };
     0
 }
@@ -73,12 +71,6 @@ type CallBack = extern "C" fn(Bytes);
 pub extern "C" fn set_call_back(call_back: CallBack) -> i32 {
     //todo
     let c = vec![0u8];
-    let mut v = core::mem::ManuallyDrop::new(c);
+    let _v = core::mem::ManuallyDrop::new(c);
     0
-    // Bytes{
-    //     len: v.len() as u64,
-    //     capacity: v.capacity() as u64,
-    //     offset: 0,
-    //     bytes: v.as_mut_ptr(),
-    // }
 }

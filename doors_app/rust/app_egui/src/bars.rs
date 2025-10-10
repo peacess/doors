@@ -22,11 +22,11 @@ pub struct Bars {
 impl Bars {
     pub fn new() -> Bars {
         let bar_list: Vec<Box<dyn BarView>> = vec![Box::new(Message {}), Box::new(Partner {})];
-        let bars = Bars {
-            bar_list: bar_list,
+
+        Bars {
+            bar_list,
             selected: BarType::Message,
-        };
-        bars
+        }
     }
 
     pub fn show_inside(&mut self, ui: &mut Ui) {

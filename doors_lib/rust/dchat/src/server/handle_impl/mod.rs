@@ -10,7 +10,7 @@ pub enum FrameType {
 }
 
 impl From<u32> for FrameType {
-    fn from(value: u32) -> Self {
+    fn from(_value: u32) -> Self {
         //todo
         FrameType::None
     }

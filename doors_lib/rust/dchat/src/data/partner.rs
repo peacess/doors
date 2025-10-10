@@ -1,7 +1,6 @@
 use crate::data::Id16;
 
-///
-
+/// Partner
 pub struct Partner {
     id: Id16,
     terminal_id: Id16,
