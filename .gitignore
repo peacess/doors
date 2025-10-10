@@ -11,3 +11,4 @@ doors_lib/zig/ffi_rpc/.zig-out/
 doors_lib/zig/ffi_rpc/zig-out/
 doors_lib/zig/ffi_rpc/*.a
 doors_lib/zig/ffi_rpc/*.so
+/doors_lib/dart/build/
