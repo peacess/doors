@@ -4,6 +4,8 @@ namespace net_discovery;
 
 attribute NetDiscovery;
 
+attribute NetDiscoveryCallback;
+
 table DnsTerminal {
     id: base.UlidBytes;
     parter_id: base.PartnerId;
@@ -13,14 +15,14 @@ table DnsTerminal {
     port_v4: uint16;
     ip_v6: uint64;
     port_v6: uint16;
+    key: base.X25519Public;
 }
 
 struct DiscoveryHeader{
+    header_type: uint16;
     len:uint64;
     discovery_type: uint32;
-    version: uint16;
-    to_terminal_id: base.TerminalId;
-    key: base.Uint128;
+    key: base.X25519Public;
 }
 
 table DiscoveryFrame {
@@ -35,21 +37,32 @@ table Hi(NetDiscovery) {
     dns_terminal: DnsTerminal;
 }
 
-table HiCallBack(FfiRpcCallback) {
+table HiRecv(NetDiscoveryCallback) {
     id: base.UlidBytes;
     hi_id: base.UlidBytes;
     dns_terminal: DnsTerminal;
 }
 
-table DsnPartners(FfiRpcCallback) {
+table QueryDnsTerminalOut(FfiRpcRetrun) {
     id: base.UlidBytes;
-    auery_id: base.UlidBytes;
+    in_id: base.UlidBytes;
+    dns_terminal: DnsTerminal;
+}
+// query parameters just send request, dont return partners, the result will get from the "FfiRpcCallback"
+table QueryDnsTerminalIn(FfiRpcParameter:"QueryDnsTerminalOut") {
+    id: base.UlidBytes;
+}
+
+table QueryPartnersOut(FfiRpcRetrun) {
+    id: base.UlidBytes;
+    in_id: base.UlidBytes;
     dns_partners: [DnsTerminal];
 }
 // query parameters just send request, dont return partners, the result will get from the "FfiRpcCallback"
-table QueryPartners(FfiRpcParameter:"DsnPartners") {
+table QueryPartnersIn(FfiRpcParameter:"QueryPartnersOut") {
     id: base.UlidBytes;
     terminal: DnsTerminal;
 }
 
+root_type DiscoveryFrame;
 

@@ -13,13 +13,25 @@ env_logger.workspace = true
 anyhow.workspace = true
 
 tokio.workspace = true
+tokio-util.workspace = true
+parking_lot.workspace = true
 
 flatbuffers.workspace = true
 network-interface.workspace = true
 netwatcher.workspace = true
 socket2.workspace = true
 
+x25519-dalek.workspace = true
+curve25519-dalek.workspace = true
+rand_core.workspace = true
+ulid.workspace = true
+
+
 idl = { path = "../idl" }
 
 [build-dependencies]
 cbindgen.workspace = true
+
+[[bin]]
+name = "build_rs"
+path = "src/bin/just_build.rs"

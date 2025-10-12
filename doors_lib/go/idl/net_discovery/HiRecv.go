@@ -8,42 +8,42 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
-type HiCallBack struct {
+type HiRecv struct {
 	_tab flatbuffers.Table
 }
 
-func GetRootAsHiCallBack(buf []byte, offset flatbuffers.UOffsetT) *HiCallBack {
+func GetRootAsHiRecv(buf []byte, offset flatbuffers.UOffsetT) *HiRecv {
 	n := flatbuffers.GetUOffsetT(buf[offset:])
-	x := &HiCallBack{}
+	x := &HiRecv{}
 	x.Init(buf, n+offset)
 	return x
 }
 
-func FinishHiCallBackBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+func FinishHiRecvBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
 	builder.Finish(offset)
 }
 
-func GetSizePrefixedRootAsHiCallBack(buf []byte, offset flatbuffers.UOffsetT) *HiCallBack {
+func GetSizePrefixedRootAsHiRecv(buf []byte, offset flatbuffers.UOffsetT) *HiRecv {
 	n := flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])
-	x := &HiCallBack{}
+	x := &HiRecv{}
 	x.Init(buf, n+offset+flatbuffers.SizeUint32)
 	return x
 }
 
-func FinishSizePrefixedHiCallBackBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+func FinishSizePrefixedHiRecvBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
 	builder.FinishSizePrefixed(offset)
 }
 
-func (rcv *HiCallBack) Init(buf []byte, i flatbuffers.UOffsetT) {
+func (rcv *HiRecv) Init(buf []byte, i flatbuffers.UOffsetT) {
 	rcv._tab.Bytes = buf
 	rcv._tab.Pos = i
 }
 
-func (rcv *HiCallBack) Table() flatbuffers.Table {
+func (rcv *HiRecv) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *HiCallBack) Id(obj *base.UlidBytes) *base.UlidBytes {
+func (rcv *HiRecv) Id(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		x := o + rcv._tab.Pos
@@ -56,7 +56,7 @@ func (rcv *HiCallBack) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *HiCallBack) HiId(obj *base.UlidBytes) *base.UlidBytes {
+func (rcv *HiRecv) HiId(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		x := o + rcv._tab.Pos
@@ -69,7 +69,7 @@ func (rcv *HiCallBack) HiId(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *HiCallBack) DnsTerminal(obj *DnsTerminal) *DnsTerminal {
+func (rcv *HiRecv) DnsTerminal(obj *DnsTerminal) *DnsTerminal {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		x := rcv._tab.Indirect(o + rcv._tab.Pos)
@@ -82,18 +82,18 @@ func (rcv *HiCallBack) DnsTerminal(obj *DnsTerminal) *DnsTerminal {
 	return nil
 }
 
-func HiCallBackStart(builder *flatbuffers.Builder) {
+func HiRecvStart(builder *flatbuffers.Builder) {
 	builder.StartObject(3)
 }
-func HiCallBackAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
+func HiRecvAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
-func HiCallBackAddHiId(builder *flatbuffers.Builder, hiId flatbuffers.UOffsetT) {
+func HiRecvAddHiId(builder *flatbuffers.Builder, hiId flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(1, flatbuffers.UOffsetT(hiId), 0)
 }
-func HiCallBackAddDnsTerminal(builder *flatbuffers.Builder, dnsTerminal flatbuffers.UOffsetT) {
+func HiRecvAddDnsTerminal(builder *flatbuffers.Builder, dnsTerminal flatbuffers.UOffsetT) {
 	builder.PrependUOffsetTSlot(2, flatbuffers.UOffsetT(dnsTerminal), 0)
 }
-func HiCallBackEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+func HiRecvEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()
 }

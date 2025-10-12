@@ -442,6 +442,80 @@ class UlidBytesObjectBuilder extends fb.ObjectBuilder {
   }
 }
 
+class X25519Public {
+  X25519Public._(this._bc, this._bcOffset);
+
+  static const fb.Reader<X25519Public> reader = _X25519PublicReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  int get key1 => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
+  int get key2 => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
+  int get key3 => const fb.Uint64Reader().read(_bc, _bcOffset + 16);
+  int get key4 => const fb.Uint64Reader().read(_bc, _bcOffset + 24);
+
+  @override
+  String toString() {
+    return 'X25519Public{key1: ${key1}, key2: ${key2}, key3: ${key3}, key4: ${key4}}';
+  }
+}
+
+class _X25519PublicReader extends fb.StructReader<X25519Public> {
+  const _X25519PublicReader();
+
+  @override
+  int get size => 32;
+
+  @override
+  X25519Public createObject(fb.BufferContext bc, int offset) => X25519Public._(bc, offset);
+}
+
+class X25519PublicBuilder {
+  X25519PublicBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  int finish(int key1, int key2, int key3, int key4) {
+    fbBuilder.putUint64(key4);
+    fbBuilder.putUint64(key3);
+    fbBuilder.putUint64(key2);
+    fbBuilder.putUint64(key1);
+    return fbBuilder.offset;
+  }
+}
+
+class X25519PublicObjectBuilder extends fb.ObjectBuilder {
+  final int _key1;
+  final int _key2;
+  final int _key3;
+  final int _key4;
+
+  X25519PublicObjectBuilder({required int key1, required int key2, required int key3, required int key4})
+    : _key1 = key1,
+      _key2 = key2,
+      _key3 = key3,
+      _key4 = key4;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(_key4);
+    fbBuilder.putUint64(_key3);
+    fbBuilder.putUint64(_key2);
+    fbBuilder.putUint64(_key1);
+    return fbBuilder.offset;
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
 class Uint128 {
   Uint128._(this._bc, this._bcOffset);
 
@@ -773,15 +847,15 @@ class Header {
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  int get len => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
-  int get frameType => const fb.Uint32Reader().read(_bc, _bcOffset + 8);
-  int get version => const fb.Uint16Reader().read(_bc, _bcOffset + 12);
+  int get headerType => const fb.Uint32Reader().read(_bc, _bcOffset + 0);
+  int get frameType => const fb.Uint32Reader().read(_bc, _bcOffset + 4);
+  int get len => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
   TerminalId get toTerminalId => TerminalId.reader.read(_bc, _bcOffset + 16);
   Uint128 get key => Uint128.reader.read(_bc, _bcOffset + 32);
 
   @override
   String toString() {
-    return 'Header{len: ${len}, frameType: ${frameType}, version: ${version}, toTerminalId: ${toTerminalId}, key: ${key}}';
+    return 'Header{headerType: ${headerType}, frameType: ${frameType}, len: ${len}, toTerminalId: ${toTerminalId}, key: ${key}}';
   }
 }
 
@@ -800,33 +874,32 @@ class HeaderBuilder {
 
   final fb.Builder fbBuilder;
 
-  int finish(int len, int frameType, int version, fb.StructBuilder toTerminalId, fb.StructBuilder key) {
+  int finish(int headerType, int frameType, int len, fb.StructBuilder toTerminalId, fb.StructBuilder key) {
     key();
     toTerminalId();
-    fbBuilder.pad(2);
-    fbBuilder.putUint16(version);
-    fbBuilder.putUint32(frameType);
     fbBuilder.putUint64(len);
+    fbBuilder.putUint32(frameType);
+    fbBuilder.putUint32(headerType);
     return fbBuilder.offset;
   }
 }
 
 class HeaderObjectBuilder extends fb.ObjectBuilder {
-  final int _len;
+  final int _headerType;
   final int _frameType;
-  final int _version;
+  final int _len;
   final TerminalIdObjectBuilder _toTerminalId;
   final Uint128ObjectBuilder _key;
 
   HeaderObjectBuilder({
-    required int len,
+    required int headerType,
     required int frameType,
-    required int version,
+    required int len,
     required TerminalIdObjectBuilder toTerminalId,
     required Uint128ObjectBuilder key,
-  }) : _len = len,
+  }) : _headerType = headerType,
        _frameType = frameType,
-       _version = version,
+       _len = len,
        _toTerminalId = toTerminalId,
        _key = key;
 
@@ -835,10 +908,9 @@ class HeaderObjectBuilder extends fb.ObjectBuilder {
   int finish(fb.Builder fbBuilder) {
     _key.finish(fbBuilder);
     _toTerminalId.finish(fbBuilder);
-    fbBuilder.pad(2);
-    fbBuilder.putUint16(_version);
-    fbBuilder.putUint32(_frameType);
     fbBuilder.putUint64(_len);
+    fbBuilder.putUint32(_frameType);
+    fbBuilder.putUint32(_headerType);
     return fbBuilder.offset;
   }
 

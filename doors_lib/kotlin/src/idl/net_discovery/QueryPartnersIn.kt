@@ -19,12 +19,12 @@ import java.nio.ByteOrder
 import kotlin.math.sign
 
 @Suppress("unused")
-class QueryPartners : Table() {
+class QueryPartnersIn : Table() {
 
     fun __init(_i: Int, _bb: ByteBuffer)  {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : QueryPartners {
+    fun __assign(_i: Int, _bb: ByteBuffer) : QueryPartnersIn {
         __init(_i, _bb)
         return this
     }
@@ -48,15 +48,15 @@ class QueryPartners : Table() {
     }
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_25_2_10()
-        fun getRootAsQueryPartners(_bb: ByteBuffer): QueryPartners = getRootAsQueryPartners(_bb, QueryPartners())
-        fun getRootAsQueryPartners(_bb: ByteBuffer, obj: QueryPartners): QueryPartners {
+        fun getRootAsQueryPartnersIn(_bb: ByteBuffer): QueryPartnersIn = getRootAsQueryPartnersIn(_bb, QueryPartnersIn())
+        fun getRootAsQueryPartnersIn(_bb: ByteBuffer, obj: QueryPartnersIn): QueryPartnersIn {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun startQueryPartners(builder: FlatBufferBuilder) = builder.startTable(2)
+        fun startQueryPartnersIn(builder: FlatBufferBuilder) = builder.startTable(2)
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
         fun addTerminal(builder: FlatBufferBuilder, terminal: Int) = builder.addOffset(1, terminal, 0)
-        fun endQueryPartners(builder: FlatBufferBuilder) : Int {
+        fun endQueryPartnersIn(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o
         }

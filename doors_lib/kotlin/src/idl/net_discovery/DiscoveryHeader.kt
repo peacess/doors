@@ -28,26 +28,24 @@ class DiscoveryHeader : Struct() {
         __init(_i, _bb)
         return this
     }
-    val len : ULong get() = bb.getLong(bb_pos + 0).toULong()
-    val discoveryType : UInt get() = bb.getInt(bb_pos + 8).toUInt()
-    val version : UShort get() = bb.getShort(bb_pos + 12).toUShort()
-    val toTerminalId : base.TerminalId? get() = toTerminalId(base.TerminalId())
-    fun toTerminalId(obj: base.TerminalId) : base.TerminalId? = obj.__assign(bb_pos + 16, bb)
-    val key : base.Uint128? get() = key(base.Uint128())
-    fun key(obj: base.Uint128) : base.Uint128? = obj.__assign(bb_pos + 32, bb)
+    val headerType : UShort get() = bb.getShort(bb_pos + 0).toUShort()
+    val len : ULong get() = bb.getLong(bb_pos + 8).toULong()
+    val discoveryType : UInt get() = bb.getInt(bb_pos + 16).toUInt()
+    val key : base.X25519Public? get() = key(base.X25519Public())
+    fun key(obj: base.X25519Public) : base.X25519Public? = obj.__assign(bb_pos + 24, bb)
     companion object {
-        fun createDiscoveryHeader(builder: FlatBufferBuilder, len: ULong, discoveryType: UInt, version: UShort, toTerminalId_low: ULong, toTerminalId_high: ULong, key_low: ULong, key_high: ULong) : Int {
-            builder.prep(8, 48)
-            builder.prep(8, 16)
-            builder.putLong(key_high.toLong())
-            builder.putLong(key_low.toLong())
-            builder.prep(8, 16)
-            builder.putLong(to_terminal_id_high.toLong())
-            builder.putLong(to_terminal_id_low.toLong())
-            builder.pad(2)
-            builder.putShort(version.toShort())
+        fun createDiscoveryHeader(builder: FlatBufferBuilder, headerType: UShort, len: ULong, discoveryType: UInt, key_key1: ULong, key_key2: ULong, key_key3: ULong, key_key4: ULong) : Int {
+            builder.prep(8, 56)
+            builder.prep(8, 32)
+            builder.putLong(key_key4.toLong())
+            builder.putLong(key_key3.toLong())
+            builder.putLong(key_key2.toLong())
+            builder.putLong(key_key1.toLong())
+            builder.pad(4)
             builder.putInt(discoveryType.toInt())
             builder.putLong(len.toLong())
+            builder.pad(6)
+            builder.putShort(headerType.toShort())
             return builder.offset()
         }
     }

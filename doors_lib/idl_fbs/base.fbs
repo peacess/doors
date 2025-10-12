@@ -59,6 +59,13 @@ struct UlidBytes{
     rand16: ubyte;
 }
 
+struct X25519Public{
+    key1: uint64;
+    key2: uint64;
+    key3: uint64;
+    key4: uint64;
+}
+
 struct Uint128{
     low: uint64;
     high: uint64;
@@ -86,9 +93,9 @@ table Frame{
 }
 
 struct Header{
-    len:uint64;
+    header_type: uint32;
     frame_type: uint32;
-    version: uint16;
+    len:uint64;
     to_terminal_id: TerminalId;
     key: Uint128;
 }

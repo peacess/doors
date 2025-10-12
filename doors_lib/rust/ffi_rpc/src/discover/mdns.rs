@@ -17,7 +17,7 @@ impl Mdns {
             nets: Vec::new(),
             len_addr: 0,
             service_info: PartnerServiceInfo::new(),
-            multicast_service: MulticastService::new(vec![])?,
+            multicast_service: MulticastService::new()?,
         })
     }
     pub fn list(&mut self) {

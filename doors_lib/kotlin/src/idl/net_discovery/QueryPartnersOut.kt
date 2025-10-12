@@ -19,12 +19,12 @@ import java.nio.ByteOrder
 import kotlin.math.sign
 
 @Suppress("unused")
-class DsnPartners : Table() {
+class QueryPartnersOut : Table() {
 
     fun __init(_i: Int, _bb: ByteBuffer)  {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : DsnPartners {
+    fun __assign(_i: Int, _bb: ByteBuffer) : QueryPartnersOut {
         __init(_i, _bb)
         return this
     }
@@ -37,8 +37,8 @@ class DsnPartners : Table() {
             null
         }
     }
-    val aueryId : base.UlidBytes? get() = aueryId(base.UlidBytes())
-    fun aueryId(obj: base.UlidBytes) : base.UlidBytes? {
+    val inId : base.UlidBytes? get() = inId(base.UlidBytes())
+    fun inId(obj: base.UlidBytes) : base.UlidBytes? {
         val o = __offset(6)
         return if (o != 0) {
             obj.__assign(o + bb_pos, bb)
@@ -61,14 +61,14 @@ class DsnPartners : Table() {
         }
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_25_2_10()
-        fun getRootAsDsnPartners(_bb: ByteBuffer): DsnPartners = getRootAsDsnPartners(_bb, DsnPartners())
-        fun getRootAsDsnPartners(_bb: ByteBuffer, obj: DsnPartners): DsnPartners {
+        fun getRootAsQueryPartnersOut(_bb: ByteBuffer): QueryPartnersOut = getRootAsQueryPartnersOut(_bb, QueryPartnersOut())
+        fun getRootAsQueryPartnersOut(_bb: ByteBuffer, obj: QueryPartnersOut): QueryPartnersOut {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun startDsnPartners(builder: FlatBufferBuilder) = builder.startTable(3)
+        fun startQueryPartnersOut(builder: FlatBufferBuilder) = builder.startTable(3)
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
-        fun addAueryId(builder: FlatBufferBuilder, aueryId: Int) = builder.addStruct(1, aueryId, 0)
+        fun addInId(builder: FlatBufferBuilder, inId: Int) = builder.addStruct(1, inId, 0)
         fun addDnsPartners(builder: FlatBufferBuilder, dnsPartners: Int) = builder.addOffset(2, dnsPartners, 0)
         fun createDnsPartnersVector(builder: FlatBufferBuilder, data: IntArray) : Int {
             builder.startVector(4, data.size, 4)
@@ -78,7 +78,7 @@ class DsnPartners : Table() {
             return builder.endVector()
         }
         fun startDnsPartnersVector(builder: FlatBufferBuilder, numElems: Int) = builder.startVector(4, numElems, 4)
-        fun endDsnPartners(builder: FlatBufferBuilder) : Int {
+        fun endQueryPartnersOut(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o
         }

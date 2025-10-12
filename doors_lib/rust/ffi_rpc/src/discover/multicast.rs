@@ -3,6 +3,8 @@ use std::{
     sync::Arc,
 };
 
+use crate::discover::net::NetHelper;
+
 pub struct MulticastService {
     ips: Vec<std::net::IpAddr>,
     sender_ipv4: tokio::net::UdpSocket,
@@ -23,7 +25,11 @@ impl MulticastService {
     const MULTICAST_IPV6: Ipv6Addr = Ipv6Addr::new(0xFF05, 0, 0, 0, 0, 0, 0, 66);
     const MULTICAST_GROUP_IPV6: SocketAddrV6 = SocketAddrV6::new(Self::MULTICAST_IPV6, Self::MULTICAST_GROUP_PORT, 0, 0);
 
-    pub fn new(ips: Vec<std::net::IpAddr>) -> Result<Arc<Self>, anyhow::Error> {
+    pub fn new() -> Result<Arc<Self>, anyhow::Error> {
+        Self::new_with_ips(NetHelper::list())
+    }
+
+    pub fn new_with_ips(ips: Vec<std::net::IpAddr>) -> Result<Arc<Self>, anyhow::Error> {
         let has_ipv6 = ips.iter().any(|ip| ip.is_ipv6());
         let receiver_ipv4 = {
             let listen_addr = SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, Self::MULTICAST_GROUP_PORT);
@@ -86,7 +92,7 @@ impl MulticastService {
             receiver_ipv6,
         }))
     }
-    pub fn init(self: Arc<Self>, mut shutdown_receiver: tokio::sync::broadcast::Receiver<()>) -> tokio::task::JoinHandle<Result<(), anyhow::Error>> {
+    pub fn init(self: Arc<Self>, cancel_token: tokio_util::sync::CancellationToken) -> tokio::task::JoinHandle<Result<(), anyhow::Error>> {
         tokio::spawn(async move {
             let mut buf = [0u8; 1024];
             let mut buf_v6 = [0u8; 1024];
@@ -123,7 +129,7 @@ impl MulticastService {
                                 }
                             }
                         }
-                        _ = shutdown_receiver.recv() => {
+                        _ = cancel_token.cancelled() => {
                             break Ok(());
                         }
                     }
@@ -146,7 +152,7 @@ impl MulticastService {
                             }
                         }
                     }
-                    _ = shutdown_receiver.recv() => {
+                    _ = cancel_token.cancelled() => {
                         break Ok(());
                     }
                     }
@@ -155,7 +161,7 @@ impl MulticastService {
         })
     }
 
-    pub fn uninit(&mut self) -> Result<(), anyhow::Error> {
+    pub fn uninit(&self) -> Result<(), anyhow::Error> {
         self.receiver_ipv4.leave_multicast_v4(Self::MULTICAST_IPV4, Ipv4Addr::UNSPECIFIED)?;
         if let Some(receiver_ipv6) = &self.receiver_ipv6 {
             receiver_ipv6.leave_multicast_v6(&Self::MULTICAST_IPV6, 0)?;

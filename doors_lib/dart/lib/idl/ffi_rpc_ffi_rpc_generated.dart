@@ -93,13 +93,13 @@ class FfiRpcHeader {
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  int get len => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
-  int get rpcType => const fb.Uint32Reader().read(_bc, _bcOffset + 8);
-  int get version => const fb.Uint16Reader().read(_bc, _bcOffset + 12);
+  int get headerType => const fb.Uint32Reader().read(_bc, _bcOffset + 0);
+  int get rpcType => const fb.Uint32Reader().read(_bc, _bcOffset + 4);
+  int get len => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
 
   @override
   String toString() {
-    return 'FfiRpcHeader{len: ${len}, rpcType: ${rpcType}, version: ${version}}';
+    return 'FfiRpcHeader{headerType: ${headerType}, rpcType: ${rpcType}, len: ${len}}';
   }
 }
 
@@ -118,29 +118,27 @@ class FfiRpcHeaderBuilder {
 
   final fb.Builder fbBuilder;
 
-  int finish(int len, int rpcType, int version) {
-    fbBuilder.pad(2);
-    fbBuilder.putUint16(version);
-    fbBuilder.putUint32(rpcType);
+  int finish(int headerType, int rpcType, int len) {
     fbBuilder.putUint64(len);
+    fbBuilder.putUint32(rpcType);
+    fbBuilder.putUint32(headerType);
     return fbBuilder.offset;
   }
 }
 
 class FfiRpcHeaderObjectBuilder extends fb.ObjectBuilder {
-  final int _len;
+  final int _headerType;
   final int _rpcType;
-  final int _version;
+  final int _len;
 
-  FfiRpcHeaderObjectBuilder({required int len, required int rpcType, required int version}) : _len = len, _rpcType = rpcType, _version = version;
+  FfiRpcHeaderObjectBuilder({required int headerType, required int rpcType, required int len}) : _headerType = headerType, _rpcType = rpcType, _len = len;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    fbBuilder.pad(2);
-    fbBuilder.putUint16(_version);
-    fbBuilder.putUint32(_rpcType);
     fbBuilder.putUint64(_len);
+    fbBuilder.putUint32(_rpcType);
+    fbBuilder.putUint32(_headerType);
     return fbBuilder.offset;
   }
 

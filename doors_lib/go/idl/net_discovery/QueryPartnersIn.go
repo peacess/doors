@@ -8,42 +8,42 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
-type QueryPartners struct {
+type QueryPartnersIn struct {
 	_tab flatbuffers.Table
 }
 
-func GetRootAsQueryPartners(buf []byte, offset flatbuffers.UOffsetT) *QueryPartners {
+func GetRootAsQueryPartnersIn(buf []byte, offset flatbuffers.UOffsetT) *QueryPartnersIn {
 	n := flatbuffers.GetUOffsetT(buf[offset:])
-	x := &QueryPartners{}
+	x := &QueryPartnersIn{}
 	x.Init(buf, n+offset)
 	return x
 }
 
-func FinishQueryPartnersBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+func FinishQueryPartnersInBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
 	builder.Finish(offset)
 }
 
-func GetSizePrefixedRootAsQueryPartners(buf []byte, offset flatbuffers.UOffsetT) *QueryPartners {
+func GetSizePrefixedRootAsQueryPartnersIn(buf []byte, offset flatbuffers.UOffsetT) *QueryPartnersIn {
 	n := flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])
-	x := &QueryPartners{}
+	x := &QueryPartnersIn{}
 	x.Init(buf, n+offset+flatbuffers.SizeUint32)
 	return x
 }
 
-func FinishSizePrefixedQueryPartnersBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+func FinishSizePrefixedQueryPartnersInBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
 	builder.FinishSizePrefixed(offset)
 }
 
-func (rcv *QueryPartners) Init(buf []byte, i flatbuffers.UOffsetT) {
+func (rcv *QueryPartnersIn) Init(buf []byte, i flatbuffers.UOffsetT) {
 	rcv._tab.Bytes = buf
 	rcv._tab.Pos = i
 }
 
-func (rcv *QueryPartners) Table() flatbuffers.Table {
+func (rcv *QueryPartnersIn) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *QueryPartners) Id(obj *base.UlidBytes) *base.UlidBytes {
+func (rcv *QueryPartnersIn) Id(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		x := o + rcv._tab.Pos
@@ -56,7 +56,7 @@ func (rcv *QueryPartners) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *QueryPartners) Terminal(obj *DnsTerminal) *DnsTerminal {
+func (rcv *QueryPartnersIn) Terminal(obj *DnsTerminal) *DnsTerminal {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		x := rcv._tab.Indirect(o + rcv._tab.Pos)
@@ -69,15 +69,15 @@ func (rcv *QueryPartners) Terminal(obj *DnsTerminal) *DnsTerminal {
 	return nil
 }
 
-func QueryPartnersStart(builder *flatbuffers.Builder) {
+func QueryPartnersInStart(builder *flatbuffers.Builder) {
 	builder.StartObject(2)
 }
-func QueryPartnersAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
+func QueryPartnersInAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
-func QueryPartnersAddTerminal(builder *flatbuffers.Builder, terminal flatbuffers.UOffsetT) {
+func QueryPartnersInAddTerminal(builder *flatbuffers.Builder, terminal flatbuffers.UOffsetT) {
 	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(terminal), 0)
 }
-func QueryPartnersEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+func QueryPartnersInEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()
 }

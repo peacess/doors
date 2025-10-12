@@ -16,7 +16,6 @@ log = { version = "0.4.28", features = [
 env_logger = "0.11.8"
 
 anyhow = "1.0.100"
-uuid = { version = "1.18.1", features = ["v7"] }
 
 toml = "0.9.7"
 serde = { version = "1.0.227", features = ["derive"] }
@@ -26,6 +25,8 @@ flatbuffers = "25.9.23"
 signal-hook = "0.3.18"
 mio = { version = "1.0.4", features = ["os-poll", "net"] }
 tokio = { version = "1.47.1", features = ["rt-multi-thread","macros","net","sync","time"] }
+tokio-util = "0.7.16"
+parking_lot = "0.12.5"
 
 network-interface = "2.0.3"
 netwatcher = "0.4.0"
@@ -40,11 +41,14 @@ os_info = "3.12.0"
 libsignal-protocol = { git = "https://github.com/signalapp/libsignal", tag = "v0.17.0" }
 x25519-dalek = { version = "2.0.1", features = ["static_secrets","getrandom"] }
 curve25519-dalek = "4.1.3"
+rand_core = "0.9.3"
+uuid = { version = "1.18.1", features = ["v7"] }
+ulid = "1.2.1"
 
 #ui
-egui = { version = "0.32.3" }
-eframe = { version = "0.32.3", features = ["wgpu","android-native-activity","default_fonts"] }
-egui_extras = "0.32.3"
+egui = { version = "0.33.0" }
+eframe = { version = "0.33.0", features = ["wgpu","android-native-activity","default_fonts"] }
+egui_extras = "0.33.0"
 android_logger = "0.15.1"
 #ui
 

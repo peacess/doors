@@ -1,4 +1,4 @@
-name: doors
+name: _
 publish_to: none
 environment:
   sdk: ^3.9.2
@@ -6,8 +6,11 @@ environment:
 workspace:
   - doors_app/flutter/doors
   - doors_lib/dart
+  - doors_lib/dart/example
 
 dependencies:
+  logger: ^2.6.2
+
   plugin_platform_interface: ^2.0.2
 
   intl: 0.20.2

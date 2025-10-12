@@ -7,15 +7,24 @@ attribute FfiRpcRetrun;
 
 attribute FfiRpcCallback;
 
+
+
+attribute ChatCallback;
+
 table FfiRpcFrame {
     header: FfiRpcHeader;
     bytes: [byte];
 }
 
 struct FfiRpcHeader {
-    len:uint64;
+    header_type: uint32;
     rpc_type: uint32;
-    version: uint16;
+    len:uint64;
 }
+
+// enum HeaderType: uint16{
+//    net_discovery = 1,
+//    chat = 2,
+//}
 
 root_type FfiRpcFrame;

@@ -9,8 +9,8 @@ pub struct Bytes {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn init() -> Bytes {
-    if let Err(e) = LibApp::init() {
+pub extern "C" fn init(callback: CallBack) -> Bytes {
+    if let Err(e) = LibApp::init(callback) {
         log::error!("Error building tokio runtime: {}", e);
         let mut info = format!("{}", e).as_bytes().to_vec();
         let bytes = info.as_mut_ptr();
@@ -34,6 +34,7 @@ pub extern "C" fn init() -> Bytes {
 
 #[unsafe(no_mangle)]
 pub extern "C" fn un_init() -> Bytes {
+    LibApp::uninit();
     Bytes {
         len: 0,
         capacity: 0,
@@ -64,13 +65,12 @@ pub extern "C" fn bytes_free(bytes: Bytes) -> i32 {
 }
 
 /// 回调用函数的返回值在dart中并不支持，所以没有返回值
-type CallBack = extern "C" fn(Bytes);
+pub type CallBack = extern "C" fn(Bytes);
 
-/// if the parameter call_back is null, then cancel the callback
-#[unsafe(no_mangle)]
-pub extern "C" fn set_call_back(call_back: CallBack) -> i32 {
-    //todo
-    let c = vec![0u8];
-    let _v = core::mem::ManuallyDrop::new(c);
-    0
-}
+// /// if the parameter call_back is null, then cancel the callback
+// #[unsafe(no_mangle)]
+// pub extern "C" fn set_call_back(callback: Option<CallBack>) -> i32 {
+//     let c = vec![0u8];
+//     let _v = core::mem::ManuallyDrop::new(c);
+//     0
+// }

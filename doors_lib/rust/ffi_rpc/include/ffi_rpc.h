@@ -15,17 +15,12 @@ typedef struct Bytes {
  */
 typedef void (*CallBack)(struct Bytes);
 
-struct Bytes init(void);
+struct Bytes init(CallBack callback);
 
 struct Bytes un_init(void);
 
 struct Bytes call(uint64_t method_idd, const struct Bytes *in_parameter);
 
 int32_t bytes_free(struct Bytes bytes);
-
-/**
- * if the parameter call_back is null, then cancel the callback
- */
-int32_t set_call_back(CallBack call_back);
 
 #endif  /* DOORS_LIB_FFI_RCP_HEADER */

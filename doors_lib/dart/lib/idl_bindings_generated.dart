@@ -22,12 +22,12 @@ class IdlBindings {
   /// The symbols are looked up with [lookup].
   IdlBindings.fromLookup(ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup) : _lookup = lookup;
 
-  Bytes init() {
-    return _init();
+  Bytes init(CallBack callback) {
+    return _init(callback);
   }
 
-  late final _initPtr = _lookup<ffi.NativeFunction<Bytes Function()>>('init');
-  late final _init = _initPtr.asFunction<Bytes Function()>();
+  late final _initPtr = _lookup<ffi.NativeFunction<Bytes Function(CallBack)>>('init');
+  late final _init = _initPtr.asFunction<Bytes Function(CallBack)>();
 
   Bytes un_init() {
     return _un_init();
@@ -36,8 +36,8 @@ class IdlBindings {
   late final _un_initPtr = _lookup<ffi.NativeFunction<Bytes Function()>>('un_init');
   late final _un_init = _un_initPtr.asFunction<Bytes Function()>();
 
-  Bytes call(int method_idd, ffi.Pointer<Bytes> _in_parameter) {
-    return _call(method_idd, _in_parameter);
+  Bytes call(int method_idd, ffi.Pointer<Bytes> in_parameter) {
+    return _call(method_idd, in_parameter);
   }
 
   late final _callPtr = _lookup<ffi.NativeFunction<Bytes Function(ffi.Uint64, ffi.Pointer<Bytes>)>>('call');
@@ -49,14 +49,6 @@ class IdlBindings {
 
   late final _bytes_freePtr = _lookup<ffi.NativeFunction<ffi.Int32 Function(Bytes)>>('bytes_free');
   late final _bytes_free = _bytes_freePtr.asFunction<int Function(Bytes)>();
-
-  /// if the parameter call_back is null, then cancel the callback
-  int set_call_back(CallBack call_back) {
-    return _set_call_back(call_back);
-  }
-
-  late final _set_call_backPtr = _lookup<ffi.NativeFunction<ffi.Int32 Function(CallBack)>>('set_call_back');
-  late final _set_call_back = _set_call_backPtr.asFunction<int Function(CallBack)>();
 }
 
 final class Bytes extends ffi.Struct {

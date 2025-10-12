@@ -27,9 +27,9 @@ pub mod ffi_rpc {
     impl core::fmt::Debug for FfiRpcHeader {
         fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
             f.debug_struct("FfiRpcHeader")
-                .field("len", &self.len())
+                .field("header_type", &self.header_type())
                 .field("rpc_type", &self.rpc_type())
-                .field("version", &self.version())
+                .field("len", &self.len())
                 .finish()
         }
     }
@@ -72,16 +72,16 @@ pub mod ffi_rpc {
 
     impl<'a> FfiRpcHeader {
         #[allow(clippy::too_many_arguments)]
-        pub fn new(len: u64, rpc_type: u32, version: u16) -> Self {
+        pub fn new(header_type: u32, rpc_type: u32, len: u64) -> Self {
             let mut s = Self([0; 16]);
-            s.set_len(len);
+            s.set_header_type(header_type);
             s.set_rpc_type(rpc_type);
-            s.set_version(version);
+            s.set_len(len);
             s
         }
 
-        pub fn len(&self) -> u64 {
-            let mut mem = core::mem::MaybeUninit::<<u64 as EndianScalar>::Scalar>::uninit();
+        pub fn header_type(&self) -> u32 {
+            let mut mem = core::mem::MaybeUninit::<<u32 as EndianScalar>::Scalar>::uninit();
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid value in this slot
@@ -89,13 +89,13 @@ pub mod ffi_rpc {
                 core::ptr::copy_nonoverlapping(
                     self.0[0..].as_ptr(),
                     mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
+                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
                 );
                 mem.assume_init()
             })
         }
 
-        pub fn set_len(&mut self, x: u64) {
+        pub fn set_header_type(&mut self, x: u32) {
             let x_le = x.to_little_endian();
             // Safety:
             // Created from a valid Table for this object
@@ -104,7 +104,7 @@ pub mod ffi_rpc {
                 core::ptr::copy_nonoverlapping(
                     &x_le as *const _ as *const u8,
                     self.0[0..].as_mut_ptr(),
-                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
+                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
                 );
             }
         }
@@ -116,7 +116,7 @@ pub mod ffi_rpc {
             // Which contains a valid value in this slot
             EndianScalar::from_little_endian(unsafe {
                 core::ptr::copy_nonoverlapping(
-                    self.0[8..].as_ptr(),
+                    self.0[4..].as_ptr(),
                     mem.as_mut_ptr() as *mut u8,
                     core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
                 );
@@ -132,28 +132,28 @@ pub mod ffi_rpc {
             unsafe {
                 core::ptr::copy_nonoverlapping(
                     &x_le as *const _ as *const u8,
-                    self.0[8..].as_mut_ptr(),
+                    self.0[4..].as_mut_ptr(),
                     core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
                 );
             }
         }
 
-        pub fn version(&self) -> u16 {
-            let mut mem = core::mem::MaybeUninit::<<u16 as EndianScalar>::Scalar>::uninit();
+        pub fn len(&self) -> u64 {
+            let mut mem = core::mem::MaybeUninit::<<u64 as EndianScalar>::Scalar>::uninit();
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid value in this slot
             EndianScalar::from_little_endian(unsafe {
                 core::ptr::copy_nonoverlapping(
-                    self.0[12..].as_ptr(),
+                    self.0[8..].as_ptr(),
                     mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
+                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
                 );
                 mem.assume_init()
             })
         }
 
-        pub fn set_version(&mut self, x: u16) {
+        pub fn set_len(&mut self, x: u64) {
             let x_le = x.to_little_endian();
             // Safety:
             // Created from a valid Table for this object
@@ -161,8 +161,8 @@ pub mod ffi_rpc {
             unsafe {
                 core::ptr::copy_nonoverlapping(
                     &x_le as *const _ as *const u8,
-                    self.0[12..].as_mut_ptr(),
-                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
+                    self.0[8..].as_mut_ptr(),
+                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
                 );
             }
         }

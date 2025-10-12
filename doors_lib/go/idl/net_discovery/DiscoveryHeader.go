@@ -21,53 +21,46 @@ func (rcv *DiscoveryHeader) Table() flatbuffers.Table {
 	return rcv._tab.Table
 }
 
+func (rcv *DiscoveryHeader) HeaderType() uint16 {
+	return rcv._tab.GetUint16(rcv._tab.Pos + flatbuffers.UOffsetT(0))
+}
+func (rcv *DiscoveryHeader) MutateHeaderType(n uint16) bool {
+	return rcv._tab.MutateUint16(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
+}
+
 func (rcv *DiscoveryHeader) Len() uint64 {
-	return rcv._tab.GetUint64(rcv._tab.Pos + flatbuffers.UOffsetT(0))
+	return rcv._tab.GetUint64(rcv._tab.Pos + flatbuffers.UOffsetT(8))
 }
 func (rcv *DiscoveryHeader) MutateLen(n uint64) bool {
-	return rcv._tab.MutateUint64(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
+	return rcv._tab.MutateUint64(rcv._tab.Pos+flatbuffers.UOffsetT(8), n)
 }
 
 func (rcv *DiscoveryHeader) DiscoveryType() uint32 {
-	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(8))
+	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(16))
 }
 func (rcv *DiscoveryHeader) MutateDiscoveryType(n uint32) bool {
-	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(8), n)
+	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(16), n)
 }
 
-func (rcv *DiscoveryHeader) Version() uint16 {
-	return rcv._tab.GetUint16(rcv._tab.Pos + flatbuffers.UOffsetT(12))
-}
-func (rcv *DiscoveryHeader) MutateVersion(n uint16) bool {
-	return rcv._tab.MutateUint16(rcv._tab.Pos+flatbuffers.UOffsetT(12), n)
-}
-
-func (rcv *DiscoveryHeader) ToTerminalId(obj *base.TerminalId) *base.TerminalId {
+func (rcv *DiscoveryHeader) Key(obj *base.X25519Public) *base.X25519Public {
 	if obj == nil {
-		obj = new(base.TerminalId)
+		obj = new(base.X25519Public)
 	}
-	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+16)
-	return obj
-}
-func (rcv *DiscoveryHeader) Key(obj *base.Uint128) *base.Uint128 {
-	if obj == nil {
-		obj = new(base.Uint128)
-	}
-	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+32)
+	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+24)
 	return obj
 }
 
-func CreateDiscoveryHeader(builder *flatbuffers.Builder, len uint64, discoveryType uint32, version uint16, to_terminal_id_low uint64, to_terminal_id_high uint64, key_low uint64, key_high uint64) flatbuffers.UOffsetT {
-	builder.Prep(8, 48)
-	builder.Prep(8, 16)
-	builder.PrependUint64(key_high)
-	builder.PrependUint64(key_low)
-	builder.Prep(8, 16)
-	builder.PrependUint64(to_terminal_id_high)
-	builder.PrependUint64(to_terminal_id_low)
-	builder.Pad(2)
-	builder.PrependUint16(version)
+func CreateDiscoveryHeader(builder *flatbuffers.Builder, headerType uint16, len uint64, discoveryType uint32, key_key1 uint64, key_key2 uint64, key_key3 uint64, key_key4 uint64) flatbuffers.UOffsetT {
+	builder.Prep(8, 56)
+	builder.Prep(8, 32)
+	builder.PrependUint64(key_key4)
+	builder.PrependUint64(key_key3)
+	builder.PrependUint64(key_key2)
+	builder.PrependUint64(key_key1)
+	builder.Pad(4)
 	builder.PrependUint32(discoveryType)
 	builder.PrependUint64(len)
+	builder.Pad(6)
+	builder.PrependUint16(headerType)
 	return builder.Offset()
 }

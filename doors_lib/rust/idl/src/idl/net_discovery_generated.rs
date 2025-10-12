@@ -22,19 +22,18 @@ pub mod net_discovery {
     // struct DiscoveryHeader, aligned to 8
     #[repr(transparent)]
     #[derive(Clone, Copy, PartialEq)]
-    pub struct DiscoveryHeader(pub [u8; 48]);
+    pub struct DiscoveryHeader(pub [u8; 56]);
     impl Default for DiscoveryHeader {
         fn default() -> Self {
-            Self([0; 48])
+            Self([0; 56])
         }
     }
     impl core::fmt::Debug for DiscoveryHeader {
         fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
             f.debug_struct("DiscoveryHeader")
+                .field("header_type", &self.header_type())
                 .field("len", &self.len())
                 .field("discovery_type", &self.discovery_type())
-                .field("version", &self.version())
-                .field("to_terminal_id", &self.to_terminal_id())
                 .field("key", &self.key())
                 .finish()
         }
@@ -78,14 +77,42 @@ pub mod net_discovery {
 
     impl<'a> DiscoveryHeader {
         #[allow(clippy::too_many_arguments)]
-        pub fn new(len: u64, discovery_type: u32, version: u16, to_terminal_id: &super::base::TerminalId, key: &super::base::Uint128) -> Self {
-            let mut s = Self([0; 48]);
+        pub fn new(header_type: u16, len: u64, discovery_type: u32, key: &super::base::X25519Public) -> Self {
+            let mut s = Self([0; 56]);
+            s.set_header_type(header_type);
             s.set_len(len);
             s.set_discovery_type(discovery_type);
-            s.set_version(version);
-            s.set_to_terminal_id(to_terminal_id);
             s.set_key(key);
             s
+        }
+
+        pub fn header_type(&self) -> u16 {
+            let mut mem = core::mem::MaybeUninit::<<u16 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[0..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_header_type(&mut self, x: u16) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[0..].as_mut_ptr(),
+                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
+                );
+            }
         }
 
         pub fn len(&self) -> u64 {
@@ -95,7 +122,7 @@ pub mod net_discovery {
             // Which contains a valid value in this slot
             EndianScalar::from_little_endian(unsafe {
                 core::ptr::copy_nonoverlapping(
-                    self.0[0..].as_ptr(),
+                    self.0[8..].as_ptr(),
                     mem.as_mut_ptr() as *mut u8,
                     core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
                 );
@@ -111,7 +138,7 @@ pub mod net_discovery {
             unsafe {
                 core::ptr::copy_nonoverlapping(
                     &x_le as *const _ as *const u8,
-                    self.0[0..].as_mut_ptr(),
+                    self.0[8..].as_mut_ptr(),
                     core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
                 );
             }
@@ -124,7 +151,7 @@ pub mod net_discovery {
             // Which contains a valid value in this slot
             EndianScalar::from_little_endian(unsafe {
                 core::ptr::copy_nonoverlapping(
-                    self.0[8..].as_ptr(),
+                    self.0[16..].as_ptr(),
                     mem.as_mut_ptr() as *mut u8,
                     core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
                 );
@@ -140,63 +167,22 @@ pub mod net_discovery {
             unsafe {
                 core::ptr::copy_nonoverlapping(
                     &x_le as *const _ as *const u8,
-                    self.0[8..].as_mut_ptr(),
+                    self.0[16..].as_mut_ptr(),
                     core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
                 );
             }
         }
 
-        pub fn version(&self) -> u16 {
-            let mut mem = core::mem::MaybeUninit::<<u16 as EndianScalar>::Scalar>::uninit();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            EndianScalar::from_little_endian(unsafe {
-                core::ptr::copy_nonoverlapping(
-                    self.0[12..].as_ptr(),
-                    mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
-                );
-                mem.assume_init()
-            })
-        }
-
-        pub fn set_version(&mut self, x: u16) {
-            let x_le = x.to_little_endian();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    &x_le as *const _ as *const u8,
-                    self.0[12..].as_mut_ptr(),
-                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
-                );
-            }
-        }
-
-        pub fn to_terminal_id(&self) -> &super::base::TerminalId {
+        pub fn key(&self) -> &super::base::X25519Public {
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid struct in this slot
-            unsafe { &*(self.0[16..].as_ptr() as *const super::base::TerminalId) }
+            unsafe { &*(self.0[24..].as_ptr() as *const super::base::X25519Public) }
         }
 
         #[allow(clippy::identity_op)]
-        pub fn set_to_terminal_id(&mut self, x: &super::base::TerminalId) {
-            self.0[16..16 + 16].copy_from_slice(&x.0)
-        }
-
-        pub fn key(&self) -> &super::base::Uint128 {
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid struct in this slot
-            unsafe { &*(self.0[32..].as_ptr() as *const super::base::Uint128) }
-        }
-
-        #[allow(clippy::identity_op)]
-        pub fn set_key(&mut self, x: &super::base::Uint128) {
-            self.0[32..32 + 16].copy_from_slice(&x.0)
+        pub fn set_key(&mut self, x: &super::base::X25519Public) {
+            self.0[24..24 + 32].copy_from_slice(&x.0)
         }
     }
 
@@ -226,6 +212,7 @@ pub mod net_discovery {
         pub const VT_PORT_V4: flatbuffers::VOffsetT = 14;
         pub const VT_IP_V6: flatbuffers::VOffsetT = 16;
         pub const VT_PORT_V6: flatbuffers::VOffsetT = 18;
+        pub const VT_KEY: flatbuffers::VOffsetT = 20;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -238,6 +225,9 @@ pub mod net_discovery {
         ) -> flatbuffers::WIPOffset<DnsTerminal<'bldr>> {
             let mut builder = DnsTerminalBuilder::new(_fbb);
             builder.add_ip_v6(args.ip_v6);
+            if let Some(x) = args.key {
+                builder.add_key(x);
+            }
             builder.add_ip_v4(args.ip_v4);
             if let Some(x) = args.host_name {
                 builder.add_host_name(x);
@@ -312,6 +302,13 @@ pub mod net_discovery {
             // which contains a valid value in this slot
             unsafe { self._tab.get::<u16>(DnsTerminal::VT_PORT_V6, Some(0)).unwrap() }
         }
+        #[inline]
+        pub fn key(&self) -> Option<&'a super::base::X25519Public> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::X25519Public>(DnsTerminal::VT_KEY, None) }
+        }
     }
 
     impl flatbuffers::Verifiable for DnsTerminal<'_> {
@@ -327,6 +324,7 @@ pub mod net_discovery {
                 .visit_field::<u16>("port_v4", Self::VT_PORT_V4, false)?
                 .visit_field::<u64>("ip_v6", Self::VT_IP_V6, false)?
                 .visit_field::<u16>("port_v6", Self::VT_PORT_V6, false)?
+                .visit_field::<super::base::X25519Public>("key", Self::VT_KEY, false)?
                 .finish();
             Ok(())
         }
@@ -340,6 +338,7 @@ pub mod net_discovery {
         pub port_v4: u16,
         pub ip_v6: u64,
         pub port_v6: u16,
+        pub key: Option<&'a super::base::X25519Public>,
     }
     impl<'a> Default for DnsTerminalArgs<'a> {
         #[inline]
@@ -353,6 +352,7 @@ pub mod net_discovery {
                 port_v4: 0,
                 ip_v6: 0,
                 port_v6: 0,
+                key: None,
             }
         }
     }
@@ -395,6 +395,10 @@ pub mod net_discovery {
             self.fbb_.push_slot::<u16>(DnsTerminal::VT_PORT_V6, port_v6, 0);
         }
         #[inline]
+        pub fn add_key(&mut self, key: &super::base::X25519Public) {
+            self.fbb_.push_slot_always::<&super::base::X25519Public>(DnsTerminal::VT_KEY, key);
+        }
+        #[inline]
         pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DnsTerminalBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
             DnsTerminalBuilder { fbb_: _fbb, start_: start }
@@ -417,6 +421,7 @@ pub mod net_discovery {
             ds.field("port_v4", &self.port_v4());
             ds.field("ip_v6", &self.ip_v6());
             ds.field("port_v6", &self.port_v6());
+            ds.field("key", &self.key());
             ds.finish()
         }
     }
@@ -646,15 +651,15 @@ pub mod net_discovery {
             ds.finish()
         }
     }
-    pub enum HiCallBackOffset {}
+    pub enum HiRecvOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
-    pub struct HiCallBack<'a> {
+    pub struct HiRecv<'a> {
         pub _tab: flatbuffers::Table<'a>,
     }
 
-    impl<'a> flatbuffers::Follow<'a> for HiCallBack<'a> {
-        type Inner = HiCallBack<'a>;
+    impl<'a> flatbuffers::Follow<'a> for HiRecv<'a> {
+        type Inner = HiRecv<'a>;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
@@ -663,21 +668,21 @@ pub mod net_discovery {
         }
     }
 
-    impl<'a> HiCallBack<'a> {
+    impl<'a> HiRecv<'a> {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
         pub const VT_HI_ID: flatbuffers::VOffsetT = 6;
         pub const VT_DNS_TERMINAL: flatbuffers::VOffsetT = 8;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            HiCallBack { _tab: table }
+            HiRecv { _tab: table }
         }
         #[allow(unused_mut)]
         pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
             _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args HiCallBackArgs<'args>,
-        ) -> flatbuffers::WIPOffset<HiCallBack<'bldr>> {
-            let mut builder = HiCallBackBuilder::new(_fbb);
+            args: &'args HiRecvArgs<'args>,
+        ) -> flatbuffers::WIPOffset<HiRecv<'bldr>> {
+            let mut builder = HiRecvBuilder::new(_fbb);
             if let Some(x) = args.dns_terminal {
                 builder.add_dns_terminal(x);
             }
@@ -695,25 +700,25 @@ pub mod net_discovery {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(HiCallBack::VT_ID, None) }
+            unsafe { self._tab.get::<super::base::UlidBytes>(HiRecv::VT_ID, None) }
         }
         #[inline]
         pub fn hi_id(&self) -> Option<&'a super::base::UlidBytes> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(HiCallBack::VT_HI_ID, None) }
+            unsafe { self._tab.get::<super::base::UlidBytes>(HiRecv::VT_HI_ID, None) }
         }
         #[inline]
         pub fn dns_terminal(&self) -> Option<DnsTerminal<'a>> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(HiCallBack::VT_DNS_TERMINAL, None) }
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(HiRecv::VT_DNS_TERMINAL, None) }
         }
     }
 
-    impl flatbuffers::Verifiable for HiCallBack<'_> {
+    impl flatbuffers::Verifiable for HiRecv<'_> {
         #[inline]
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
@@ -725,15 +730,15 @@ pub mod net_discovery {
             Ok(())
         }
     }
-    pub struct HiCallBackArgs<'a> {
+    pub struct HiRecvArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
         pub hi_id: Option<&'a super::base::UlidBytes>,
         pub dns_terminal: Option<flatbuffers::WIPOffset<DnsTerminal<'a>>>,
     }
-    impl<'a> Default for HiCallBackArgs<'a> {
+    impl<'a> Default for HiRecvArgs<'a> {
         #[inline]
         fn default() -> Self {
-            HiCallBackArgs {
+            HiRecvArgs {
                 id: None,
                 hi_id: None,
                 dns_terminal: None,
@@ -741,54 +746,54 @@ pub mod net_discovery {
         }
     }
 
-    pub struct HiCallBackBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+    pub struct HiRecvBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
         fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> HiCallBackBuilder<'a, 'b, A> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> HiRecvBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(HiCallBack::VT_ID, id);
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(HiRecv::VT_ID, id);
         }
         #[inline]
         pub fn add_hi_id(&mut self, hi_id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(HiCallBack::VT_HI_ID, hi_id);
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(HiRecv::VT_HI_ID, hi_id);
         }
         #[inline]
         pub fn add_dns_terminal(&mut self, dns_terminal: flatbuffers::WIPOffset<DnsTerminal<'b>>) {
             self.fbb_
-                .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(HiCallBack::VT_DNS_TERMINAL, dns_terminal);
+                .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(HiRecv::VT_DNS_TERMINAL, dns_terminal);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> HiCallBackBuilder<'a, 'b, A> {
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> HiRecvBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
-            HiCallBackBuilder { fbb_: _fbb, start_: start }
+            HiRecvBuilder { fbb_: _fbb, start_: start }
         }
         #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<HiCallBack<'a>> {
+        pub fn finish(self) -> flatbuffers::WIPOffset<HiRecv<'a>> {
             let o = self.fbb_.end_table(self.start_);
             flatbuffers::WIPOffset::new(o.value())
         }
     }
 
-    impl core::fmt::Debug for HiCallBack<'_> {
+    impl core::fmt::Debug for HiRecv<'_> {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("HiCallBack");
+            let mut ds = f.debug_struct("HiRecv");
             ds.field("id", &self.id());
             ds.field("hi_id", &self.hi_id());
             ds.field("dns_terminal", &self.dns_terminal());
             ds.finish()
         }
     }
-    pub enum DsnPartnersOffset {}
+    pub enum QueryDnsTerminalOutOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
-    pub struct DsnPartners<'a> {
+    pub struct QueryDnsTerminalOut<'a> {
         pub _tab: flatbuffers::Table<'a>,
     }
 
-    impl<'a> flatbuffers::Follow<'a> for DsnPartners<'a> {
-        type Inner = DsnPartners<'a>;
+    impl<'a> flatbuffers::Follow<'a> for QueryDnsTerminalOut<'a> {
+        type Inner = QueryDnsTerminalOut<'a>;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
@@ -797,26 +802,26 @@ pub mod net_discovery {
         }
     }
 
-    impl<'a> DsnPartners<'a> {
+    impl<'a> QueryDnsTerminalOut<'a> {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_AUERY_ID: flatbuffers::VOffsetT = 6;
-        pub const VT_DNS_PARTNERS: flatbuffers::VOffsetT = 8;
+        pub const VT_IN_ID: flatbuffers::VOffsetT = 6;
+        pub const VT_DNS_TERMINAL: flatbuffers::VOffsetT = 8;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            DsnPartners { _tab: table }
+            QueryDnsTerminalOut { _tab: table }
         }
         #[allow(unused_mut)]
         pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
             _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args DsnPartnersArgs<'args>,
-        ) -> flatbuffers::WIPOffset<DsnPartners<'bldr>> {
-            let mut builder = DsnPartnersBuilder::new(_fbb);
-            if let Some(x) = args.dns_partners {
-                builder.add_dns_partners(x);
+            args: &'args QueryDnsTerminalOutArgs<'args>,
+        ) -> flatbuffers::WIPOffset<QueryDnsTerminalOut<'bldr>> {
+            let mut builder = QueryDnsTerminalOutBuilder::new(_fbb);
+            if let Some(x) = args.dns_terminal {
+                builder.add_dns_terminal(x);
             }
-            if let Some(x) = args.auery_id {
-                builder.add_auery_id(x);
+            if let Some(x) = args.in_id {
+                builder.add_in_id(x);
             }
             if let Some(x) = args.id {
                 builder.add_id(x);
@@ -829,14 +834,242 @@ pub mod net_discovery {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(DsnPartners::VT_ID, None) }
+            unsafe { self._tab.get::<super::base::UlidBytes>(QueryDnsTerminalOut::VT_ID, None) }
         }
         #[inline]
-        pub fn auery_id(&self) -> Option<&'a super::base::UlidBytes> {
+        pub fn in_id(&self) -> Option<&'a super::base::UlidBytes> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(DsnPartners::VT_AUERY_ID, None) }
+            unsafe { self._tab.get::<super::base::UlidBytes>(QueryDnsTerminalOut::VT_IN_ID, None) }
+        }
+        #[inline]
+        pub fn dns_terminal(&self) -> Option<DnsTerminal<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(QueryDnsTerminalOut::VT_DNS_TERMINAL, None)
+            }
+        }
+    }
+
+    impl flatbuffers::Verifiable for QueryDnsTerminalOut<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<super::base::UlidBytes>("in_id", Self::VT_IN_ID, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<DnsTerminal>>("dns_terminal", Self::VT_DNS_TERMINAL, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct QueryDnsTerminalOutArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+        pub in_id: Option<&'a super::base::UlidBytes>,
+        pub dns_terminal: Option<flatbuffers::WIPOffset<DnsTerminal<'a>>>,
+    }
+    impl<'a> Default for QueryDnsTerminalOutArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            QueryDnsTerminalOutArgs {
+                id: None,
+                in_id: None,
+                dns_terminal: None,
+            }
+        }
+    }
+
+    pub struct QueryDnsTerminalOutBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryDnsTerminalOutBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryDnsTerminalOut::VT_ID, id);
+        }
+        #[inline]
+        pub fn add_in_id(&mut self, in_id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryDnsTerminalOut::VT_IN_ID, in_id);
+        }
+        #[inline]
+        pub fn add_dns_terminal(&mut self, dns_terminal: flatbuffers::WIPOffset<DnsTerminal<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(QueryDnsTerminalOut::VT_DNS_TERMINAL, dns_terminal);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryDnsTerminalOutBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            QueryDnsTerminalOutBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<QueryDnsTerminalOut<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for QueryDnsTerminalOut<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("QueryDnsTerminalOut");
+            ds.field("id", &self.id());
+            ds.field("in_id", &self.in_id());
+            ds.field("dns_terminal", &self.dns_terminal());
+            ds.finish()
+        }
+    }
+    pub enum QueryDnsTerminalInOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct QueryDnsTerminalIn<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for QueryDnsTerminalIn<'a> {
+        type Inner = QueryDnsTerminalIn<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: flatbuffers::Table::new(buf, loc),
+            }
+        }
+    }
+
+    impl<'a> QueryDnsTerminalIn<'a> {
+        pub const VT_ID: flatbuffers::VOffsetT = 4;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            QueryDnsTerminalIn { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args QueryDnsTerminalInArgs<'args>,
+        ) -> flatbuffers::WIPOffset<QueryDnsTerminalIn<'bldr>> {
+            let mut builder = QueryDnsTerminalInBuilder::new(_fbb);
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(QueryDnsTerminalIn::VT_ID, None) }
+        }
+    }
+
+    impl flatbuffers::Verifiable for QueryDnsTerminalIn<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?.visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?.finish();
+            Ok(())
+        }
+    }
+    pub struct QueryDnsTerminalInArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+    }
+    impl<'a> Default for QueryDnsTerminalInArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            QueryDnsTerminalInArgs { id: None }
+        }
+    }
+
+    pub struct QueryDnsTerminalInBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryDnsTerminalInBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryDnsTerminalIn::VT_ID, id);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryDnsTerminalInBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            QueryDnsTerminalInBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<QueryDnsTerminalIn<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for QueryDnsTerminalIn<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("QueryDnsTerminalIn");
+            ds.field("id", &self.id());
+            ds.finish()
+        }
+    }
+    pub enum QueryPartnersOutOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct QueryPartnersOut<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for QueryPartnersOut<'a> {
+        type Inner = QueryPartnersOut<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: flatbuffers::Table::new(buf, loc),
+            }
+        }
+    }
+
+    impl<'a> QueryPartnersOut<'a> {
+        pub const VT_ID: flatbuffers::VOffsetT = 4;
+        pub const VT_IN_ID: flatbuffers::VOffsetT = 6;
+        pub const VT_DNS_PARTNERS: flatbuffers::VOffsetT = 8;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            QueryPartnersOut { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args QueryPartnersOutArgs<'args>,
+        ) -> flatbuffers::WIPOffset<QueryPartnersOut<'bldr>> {
+            let mut builder = QueryPartnersOutBuilder::new(_fbb);
+            if let Some(x) = args.dns_partners {
+                builder.add_dns_partners(x);
+            }
+            if let Some(x) = args.in_id {
+                builder.add_in_id(x);
+            }
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(QueryPartnersOut::VT_ID, None) }
+        }
+        #[inline]
+        pub fn in_id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(QueryPartnersOut::VT_IN_ID, None) }
         }
         #[inline]
         pub fn dns_partners(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsTerminal<'a>>>> {
@@ -845,18 +1078,21 @@ pub mod net_discovery {
             // which contains a valid value in this slot
             unsafe {
                 self._tab
-                    .get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsTerminal>>>>(DsnPartners::VT_DNS_PARTNERS, None)
+                    .get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsTerminal>>>>(
+                        QueryPartnersOut::VT_DNS_PARTNERS,
+                        None,
+                    )
             }
         }
     }
 
-    impl flatbuffers::Verifiable for DsnPartners<'_> {
+    impl flatbuffers::Verifiable for QueryPartnersOut<'_> {
         #[inline]
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
                 .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-                .visit_field::<super::base::UlidBytes>("auery_id", Self::VT_AUERY_ID, false)?
+                .visit_field::<super::base::UlidBytes>("in_id", Self::VT_IN_ID, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DnsTerminal>>>>(
                     "dns_partners",
                     Self::VT_DNS_PARTNERS,
@@ -866,70 +1102,70 @@ pub mod net_discovery {
             Ok(())
         }
     }
-    pub struct DsnPartnersArgs<'a> {
+    pub struct QueryPartnersOutArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
-        pub auery_id: Option<&'a super::base::UlidBytes>,
+        pub in_id: Option<&'a super::base::UlidBytes>,
         pub dns_partners: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsTerminal<'a>>>>>,
     }
-    impl<'a> Default for DsnPartnersArgs<'a> {
+    impl<'a> Default for QueryPartnersOutArgs<'a> {
         #[inline]
         fn default() -> Self {
-            DsnPartnersArgs {
+            QueryPartnersOutArgs {
                 id: None,
-                auery_id: None,
+                in_id: None,
                 dns_partners: None,
             }
         }
     }
 
-    pub struct DsnPartnersBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+    pub struct QueryPartnersOutBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
         fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DsnPartnersBuilder<'a, 'b, A> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryPartnersOutBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(DsnPartners::VT_ID, id);
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryPartnersOut::VT_ID, id);
         }
         #[inline]
-        pub fn add_auery_id(&mut self, auery_id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(DsnPartners::VT_AUERY_ID, auery_id);
+        pub fn add_in_id(&mut self, in_id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryPartnersOut::VT_IN_ID, in_id);
         }
         #[inline]
         pub fn add_dns_partners(&mut self, dns_partners: flatbuffers::WIPOffset<flatbuffers::Vector<'b, flatbuffers::ForwardsUOffset<DnsTerminal<'b>>>>) {
             self.fbb_
-                .push_slot_always::<flatbuffers::WIPOffset<_>>(DsnPartners::VT_DNS_PARTNERS, dns_partners);
+                .push_slot_always::<flatbuffers::WIPOffset<_>>(QueryPartnersOut::VT_DNS_PARTNERS, dns_partners);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DsnPartnersBuilder<'a, 'b, A> {
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryPartnersOutBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
-            DsnPartnersBuilder { fbb_: _fbb, start_: start }
+            QueryPartnersOutBuilder { fbb_: _fbb, start_: start }
         }
         #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<DsnPartners<'a>> {
+        pub fn finish(self) -> flatbuffers::WIPOffset<QueryPartnersOut<'a>> {
             let o = self.fbb_.end_table(self.start_);
             flatbuffers::WIPOffset::new(o.value())
         }
     }
 
-    impl core::fmt::Debug for DsnPartners<'_> {
+    impl core::fmt::Debug for QueryPartnersOut<'_> {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("DsnPartners");
+            let mut ds = f.debug_struct("QueryPartnersOut");
             ds.field("id", &self.id());
-            ds.field("auery_id", &self.auery_id());
+            ds.field("in_id", &self.in_id());
             ds.field("dns_partners", &self.dns_partners());
             ds.finish()
         }
     }
-    pub enum QueryPartnersOffset {}
+    pub enum QueryPartnersInOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
-    pub struct QueryPartners<'a> {
+    pub struct QueryPartnersIn<'a> {
         pub _tab: flatbuffers::Table<'a>,
     }
 
-    impl<'a> flatbuffers::Follow<'a> for QueryPartners<'a> {
-        type Inner = QueryPartners<'a>;
+    impl<'a> flatbuffers::Follow<'a> for QueryPartnersIn<'a> {
+        type Inner = QueryPartnersIn<'a>;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
@@ -938,20 +1174,20 @@ pub mod net_discovery {
         }
     }
 
-    impl<'a> QueryPartners<'a> {
+    impl<'a> QueryPartnersIn<'a> {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
         pub const VT_TERMINAL: flatbuffers::VOffsetT = 6;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            QueryPartners { _tab: table }
+            QueryPartnersIn { _tab: table }
         }
         #[allow(unused_mut)]
         pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
             _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args QueryPartnersArgs<'args>,
-        ) -> flatbuffers::WIPOffset<QueryPartners<'bldr>> {
-            let mut builder = QueryPartnersBuilder::new(_fbb);
+            args: &'args QueryPartnersInArgs<'args>,
+        ) -> flatbuffers::WIPOffset<QueryPartnersIn<'bldr>> {
+            let mut builder = QueryPartnersInBuilder::new(_fbb);
             if let Some(x) = args.terminal {
                 builder.add_terminal(x);
             }
@@ -966,18 +1202,18 @@ pub mod net_discovery {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(QueryPartners::VT_ID, None) }
+            unsafe { self._tab.get::<super::base::UlidBytes>(QueryPartnersIn::VT_ID, None) }
         }
         #[inline]
         pub fn terminal(&self) -> Option<DnsTerminal<'a>> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(QueryPartners::VT_TERMINAL, None) }
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(QueryPartnersIn::VT_TERMINAL, None) }
         }
     }
 
-    impl flatbuffers::Verifiable for QueryPartners<'_> {
+    impl flatbuffers::Verifiable for QueryPartnersIn<'_> {
         #[inline]
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
@@ -988,49 +1224,124 @@ pub mod net_discovery {
             Ok(())
         }
     }
-    pub struct QueryPartnersArgs<'a> {
+    pub struct QueryPartnersInArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
         pub terminal: Option<flatbuffers::WIPOffset<DnsTerminal<'a>>>,
     }
-    impl<'a> Default for QueryPartnersArgs<'a> {
+    impl<'a> Default for QueryPartnersInArgs<'a> {
         #[inline]
         fn default() -> Self {
-            QueryPartnersArgs { id: None, terminal: None }
+            QueryPartnersInArgs { id: None, terminal: None }
         }
     }
 
-    pub struct QueryPartnersBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+    pub struct QueryPartnersInBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
         fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryPartnersBuilder<'a, 'b, A> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryPartnersInBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryPartners::VT_ID, id);
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryPartnersIn::VT_ID, id);
         }
         #[inline]
         pub fn add_terminal(&mut self, terminal: flatbuffers::WIPOffset<DnsTerminal<'b>>) {
             self.fbb_
-                .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(QueryPartners::VT_TERMINAL, terminal);
+                .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(QueryPartnersIn::VT_TERMINAL, terminal);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryPartnersBuilder<'a, 'b, A> {
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryPartnersInBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
-            QueryPartnersBuilder { fbb_: _fbb, start_: start }
+            QueryPartnersInBuilder { fbb_: _fbb, start_: start }
         }
         #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<QueryPartners<'a>> {
+        pub fn finish(self) -> flatbuffers::WIPOffset<QueryPartnersIn<'a>> {
             let o = self.fbb_.end_table(self.start_);
             flatbuffers::WIPOffset::new(o.value())
         }
     }
 
-    impl core::fmt::Debug for QueryPartners<'_> {
+    impl core::fmt::Debug for QueryPartnersIn<'_> {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("QueryPartners");
+            let mut ds = f.debug_struct("QueryPartnersIn");
             ds.field("id", &self.id());
             ds.field("terminal", &self.terminal());
             ds.finish()
         }
+    }
+    #[inline]
+    /// Verifies that a buffer of bytes contains a `DiscoveryFrame`
+    /// and returns it.
+    /// Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `root_as_discovery_frame_unchecked`.
+    pub fn root_as_discovery_frame(buf: &[u8]) -> Result<DiscoveryFrame, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::root::<DiscoveryFrame>(buf)
+    }
+    #[inline]
+    /// Verifies that a buffer of bytes contains a size prefixed
+    /// `DiscoveryFrame` and returns it.
+    /// Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `size_prefixed_root_as_discovery_frame_unchecked`.
+    pub fn size_prefixed_root_as_discovery_frame(buf: &[u8]) -> Result<DiscoveryFrame, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::size_prefixed_root::<DiscoveryFrame>(buf)
+    }
+    #[inline]
+    /// Verifies, with the given options, that a buffer of bytes
+    /// contains a `DiscoveryFrame` and returns it.
+    /// Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `root_as_discovery_frame_unchecked`.
+    pub fn root_as_discovery_frame_with_opts<'b, 'o>(
+        opts: &'o flatbuffers::VerifierOptions,
+        buf: &'b [u8],
+    ) -> Result<DiscoveryFrame<'b>, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::root_with_opts::<DiscoveryFrame<'b>>(opts, buf)
+    }
+    #[inline]
+    /// Verifies, with the given verifier options, that a buffer of
+    /// bytes contains a size prefixed `DiscoveryFrame` and returns
+    /// it. Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `root_as_discovery_frame_unchecked`.
+    pub fn size_prefixed_root_as_discovery_frame_with_opts<'b, 'o>(
+        opts: &'o flatbuffers::VerifierOptions,
+        buf: &'b [u8],
+    ) -> Result<DiscoveryFrame<'b>, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::size_prefixed_root_with_opts::<DiscoveryFrame<'b>>(opts, buf)
+    }
+    #[inline]
+    /// Assumes, without verification, that a buffer of bytes contains a DiscoveryFrame and returns it.
+    /// # Safety
+    /// Callers must trust the given bytes do indeed contain a valid `DiscoveryFrame`.
+    pub unsafe fn root_as_discovery_frame_unchecked(buf: &[u8]) -> DiscoveryFrame {
+        flatbuffers::root_unchecked::<DiscoveryFrame>(buf)
+    }
+    #[inline]
+    /// Assumes, without verification, that a buffer of bytes contains a size prefixed DiscoveryFrame and returns it.
+    /// # Safety
+    /// Callers must trust the given bytes do indeed contain a valid size prefixed `DiscoveryFrame`.
+    pub unsafe fn size_prefixed_root_as_discovery_frame_unchecked(buf: &[u8]) -> DiscoveryFrame {
+        flatbuffers::size_prefixed_root_unchecked::<DiscoveryFrame>(buf)
+    }
+    #[inline]
+    pub fn finish_discovery_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
+        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        root: flatbuffers::WIPOffset<DiscoveryFrame<'a>>,
+    ) {
+        fbb.finish(root, None);
+    }
+
+    #[inline]
+    pub fn finish_size_prefixed_discovery_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
+        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        root: flatbuffers::WIPOffset<DiscoveryFrame<'a>>,
+    ) {
+        fbb.finish_size_prefixed(root, None);
     }
 } // pub mod net_discovery

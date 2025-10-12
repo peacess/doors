@@ -19,12 +19,12 @@ import java.nio.ByteOrder
 import kotlin.math.sign
 
 @Suppress("unused")
-class HiCallBack : Table() {
+class QueryDnsTerminalOut : Table() {
 
     fun __init(_i: Int, _bb: ByteBuffer)  {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : HiCallBack {
+    fun __assign(_i: Int, _bb: ByteBuffer) : QueryDnsTerminalOut {
         __init(_i, _bb)
         return this
     }
@@ -37,8 +37,8 @@ class HiCallBack : Table() {
             null
         }
     }
-    val hiId : base.UlidBytes? get() = hiId(base.UlidBytes())
-    fun hiId(obj: base.UlidBytes) : base.UlidBytes? {
+    val inId : base.UlidBytes? get() = inId(base.UlidBytes())
+    fun inId(obj: base.UlidBytes) : base.UlidBytes? {
         val o = __offset(6)
         return if (o != 0) {
             obj.__assign(o + bb_pos, bb)
@@ -57,16 +57,16 @@ class HiCallBack : Table() {
     }
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_25_2_10()
-        fun getRootAsHiCallBack(_bb: ByteBuffer): HiCallBack = getRootAsHiCallBack(_bb, HiCallBack())
-        fun getRootAsHiCallBack(_bb: ByteBuffer, obj: HiCallBack): HiCallBack {
+        fun getRootAsQueryDnsTerminalOut(_bb: ByteBuffer): QueryDnsTerminalOut = getRootAsQueryDnsTerminalOut(_bb, QueryDnsTerminalOut())
+        fun getRootAsQueryDnsTerminalOut(_bb: ByteBuffer, obj: QueryDnsTerminalOut): QueryDnsTerminalOut {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun startHiCallBack(builder: FlatBufferBuilder) = builder.startTable(3)
+        fun startQueryDnsTerminalOut(builder: FlatBufferBuilder) = builder.startTable(3)
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
-        fun addHiId(builder: FlatBufferBuilder, hiId: Int) = builder.addStruct(1, hiId, 0)
+        fun addInId(builder: FlatBufferBuilder, inId: Int) = builder.addStruct(1, inId, 0)
         fun addDnsTerminal(builder: FlatBufferBuilder, dnsTerminal: Int) = builder.addOffset(2, dnsTerminal, 0)
-        fun endHiCallBack(builder: FlatBufferBuilder) : Int {
+        fun endQueryDnsTerminalOut(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o
         }

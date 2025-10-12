@@ -73,5 +73,7 @@ class DiscoveryFrame : Table() {
             val o = builder.endTable()
             return o
         }
+        fun finishDiscoveryFrameBuffer(builder: FlatBufferBuilder, offset: Int) = builder.finish(offset)
+        fun finishSizePrefixedDiscoveryFrameBuffer(builder: FlatBufferBuilder, offset: Int) = builder.finishSizePrefixed(offset)
     }
 }

@@ -86,6 +86,15 @@ class DnsTerminal : Table() {
             val o = __offset(18)
             return if(o != 0) bb.getShort(o + bb_pos).toUShort() else 0u
         }
+    val key : base.X25519Public? get() = key(base.X25519Public())
+    fun key(obj: base.X25519Public) : base.X25519Public? {
+        val o = __offset(20)
+        return if (o != 0) {
+            obj.__assign(o + bb_pos, bb)
+        } else {
+            null
+        }
+    }
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_25_2_10()
         fun getRootAsDnsTerminal(_bb: ByteBuffer): DnsTerminal = getRootAsDnsTerminal(_bb, DnsTerminal())
@@ -93,7 +102,7 @@ class DnsTerminal : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun startDnsTerminal(builder: FlatBufferBuilder) = builder.startTable(8)
+        fun startDnsTerminal(builder: FlatBufferBuilder) = builder.startTable(9)
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
         fun addParterId(builder: FlatBufferBuilder, parterId: Int) = builder.addStruct(1, parterId, 0)
         fun addTerminalId(builder: FlatBufferBuilder, terminalId: Int) = builder.addStruct(2, terminalId, 0)
@@ -102,6 +111,7 @@ class DnsTerminal : Table() {
         fun addPortV4(builder: FlatBufferBuilder, portV4: UShort) = builder.addShort(5, portV4.toShort(), 0)
         fun addIpV6(builder: FlatBufferBuilder, ipV6: ULong) = builder.addLong(6, ipV6.toLong(), 0)
         fun addPortV6(builder: FlatBufferBuilder, portV6: UShort) = builder.addShort(7, portV6.toShort(), 0)
+        fun addKey(builder: FlatBufferBuilder, key: Int) = builder.addStruct(8, key, 0)
         fun endDnsTerminal(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o

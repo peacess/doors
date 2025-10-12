@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface:
+  logger:
   flat_buffers:
   uuid:
   ulid:

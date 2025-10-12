@@ -19,32 +19,31 @@ func (rcv *FfiRpcHeader) Table() flatbuffers.Table {
 	return rcv._tab.Table
 }
 
-func (rcv *FfiRpcHeader) Len() uint64 {
-	return rcv._tab.GetUint64(rcv._tab.Pos + flatbuffers.UOffsetT(0))
+func (rcv *FfiRpcHeader) HeaderType() uint32 {
+	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(0))
 }
-func (rcv *FfiRpcHeader) MutateLen(n uint64) bool {
-	return rcv._tab.MutateUint64(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
+func (rcv *FfiRpcHeader) MutateHeaderType(n uint32) bool {
+	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
 }
 
 func (rcv *FfiRpcHeader) RpcType() uint32 {
-	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(8))
+	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(4))
 }
 func (rcv *FfiRpcHeader) MutateRpcType(n uint32) bool {
-	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(8), n)
+	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(4), n)
 }
 
-func (rcv *FfiRpcHeader) Version() uint16 {
-	return rcv._tab.GetUint16(rcv._tab.Pos + flatbuffers.UOffsetT(12))
+func (rcv *FfiRpcHeader) Len() uint64 {
+	return rcv._tab.GetUint64(rcv._tab.Pos + flatbuffers.UOffsetT(8))
 }
-func (rcv *FfiRpcHeader) MutateVersion(n uint16) bool {
-	return rcv._tab.MutateUint16(rcv._tab.Pos+flatbuffers.UOffsetT(12), n)
+func (rcv *FfiRpcHeader) MutateLen(n uint64) bool {
+	return rcv._tab.MutateUint64(rcv._tab.Pos+flatbuffers.UOffsetT(8), n)
 }
 
-func CreateFfiRpcHeader(builder *flatbuffers.Builder, len uint64, rpcType uint32, version uint16) flatbuffers.UOffsetT {
+func CreateFfiRpcHeader(builder *flatbuffers.Builder, headerType uint32, rpcType uint32, len uint64) flatbuffers.UOffsetT {
 	builder.Prep(8, 16)
-	builder.Pad(2)
-	builder.PrependUint16(version)
-	builder.PrependUint32(rpcType)
 	builder.PrependUint64(len)
+	builder.PrependUint32(rpcType)
+	builder.PrependUint32(headerType)
 	return builder.Offset()
 }

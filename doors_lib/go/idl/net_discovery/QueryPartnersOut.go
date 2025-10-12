@@ -8,42 +8,42 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
-type DsnPartners struct {
+type QueryPartnersOut struct {
 	_tab flatbuffers.Table
 }
 
-func GetRootAsDsnPartners(buf []byte, offset flatbuffers.UOffsetT) *DsnPartners {
+func GetRootAsQueryPartnersOut(buf []byte, offset flatbuffers.UOffsetT) *QueryPartnersOut {
 	n := flatbuffers.GetUOffsetT(buf[offset:])
-	x := &DsnPartners{}
+	x := &QueryPartnersOut{}
 	x.Init(buf, n+offset)
 	return x
 }
 
-func FinishDsnPartnersBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+func FinishQueryPartnersOutBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
 	builder.Finish(offset)
 }
 
-func GetSizePrefixedRootAsDsnPartners(buf []byte, offset flatbuffers.UOffsetT) *DsnPartners {
+func GetSizePrefixedRootAsQueryPartnersOut(buf []byte, offset flatbuffers.UOffsetT) *QueryPartnersOut {
 	n := flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])
-	x := &DsnPartners{}
+	x := &QueryPartnersOut{}
 	x.Init(buf, n+offset+flatbuffers.SizeUint32)
 	return x
 }
 
-func FinishSizePrefixedDsnPartnersBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
+func FinishSizePrefixedQueryPartnersOutBuffer(builder *flatbuffers.Builder, offset flatbuffers.UOffsetT) {
 	builder.FinishSizePrefixed(offset)
 }
 
-func (rcv *DsnPartners) Init(buf []byte, i flatbuffers.UOffsetT) {
+func (rcv *QueryPartnersOut) Init(buf []byte, i flatbuffers.UOffsetT) {
 	rcv._tab.Bytes = buf
 	rcv._tab.Pos = i
 }
 
-func (rcv *DsnPartners) Table() flatbuffers.Table {
+func (rcv *QueryPartnersOut) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *DsnPartners) Id(obj *base.UlidBytes) *base.UlidBytes {
+func (rcv *QueryPartnersOut) Id(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		x := o + rcv._tab.Pos
@@ -56,7 +56,7 @@ func (rcv *DsnPartners) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *DsnPartners) AueryId(obj *base.UlidBytes) *base.UlidBytes {
+func (rcv *QueryPartnersOut) InId(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		x := o + rcv._tab.Pos
@@ -69,7 +69,7 @@ func (rcv *DsnPartners) AueryId(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *DsnPartners) DnsPartners(obj *DnsTerminal, j int) bool {
+func (rcv *QueryPartnersOut) DnsPartners(obj *DnsTerminal, j int) bool {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		x := rcv._tab.Vector(o)
@@ -81,7 +81,7 @@ func (rcv *DsnPartners) DnsPartners(obj *DnsTerminal, j int) bool {
 	return false
 }
 
-func (rcv *DsnPartners) DnsPartnersLength() int {
+func (rcv *QueryPartnersOut) DnsPartnersLength() int {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		return rcv._tab.VectorLen(o)
@@ -89,21 +89,21 @@ func (rcv *DsnPartners) DnsPartnersLength() int {
 	return 0
 }
 
-func DsnPartnersStart(builder *flatbuffers.Builder) {
+func QueryPartnersOutStart(builder *flatbuffers.Builder) {
 	builder.StartObject(3)
 }
-func DsnPartnersAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
+func QueryPartnersOutAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
-func DsnPartnersAddAueryId(builder *flatbuffers.Builder, aueryId flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(1, flatbuffers.UOffsetT(aueryId), 0)
+func QueryPartnersOutAddInId(builder *flatbuffers.Builder, inId flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(1, flatbuffers.UOffsetT(inId), 0)
 }
-func DsnPartnersAddDnsPartners(builder *flatbuffers.Builder, dnsPartners flatbuffers.UOffsetT) {
+func QueryPartnersOutAddDnsPartners(builder *flatbuffers.Builder, dnsPartners flatbuffers.UOffsetT) {
 	builder.PrependUOffsetTSlot(2, flatbuffers.UOffsetT(dnsPartners), 0)
 }
-func DsnPartnersStartDnsPartnersVector(builder *flatbuffers.Builder, numElems int) flatbuffers.UOffsetT {
+func QueryPartnersOutStartDnsPartnersVector(builder *flatbuffers.Builder, numElems int) flatbuffers.UOffsetT {
 	return builder.StartVector(4, numElems, 4)
 }
-func DsnPartnersEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+func QueryPartnersOutEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()
 }

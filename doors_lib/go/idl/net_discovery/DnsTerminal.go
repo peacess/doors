@@ -138,8 +138,21 @@ func (rcv *DnsTerminal) MutatePortV6(n uint16) bool {
 	return rcv._tab.MutateUint16Slot(18, n)
 }
 
+func (rcv *DnsTerminal) Key(obj *base.X25519Public) *base.X25519Public {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(20))
+	if o != 0 {
+		x := o + rcv._tab.Pos
+		if obj == nil {
+			obj = new(base.X25519Public)
+		}
+		obj.Init(rcv._tab.Bytes, x)
+		return obj
+	}
+	return nil
+}
+
 func DnsTerminalStart(builder *flatbuffers.Builder) {
-	builder.StartObject(8)
+	builder.StartObject(9)
 }
 func DnsTerminalAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
@@ -164,6 +177,9 @@ func DnsTerminalAddIpV6(builder *flatbuffers.Builder, ipV6 uint64) {
 }
 func DnsTerminalAddPortV6(builder *flatbuffers.Builder, portV6 uint16) {
 	builder.PrependUint16Slot(7, portV6, 0)
+}
+func DnsTerminalAddKey(builder *flatbuffers.Builder, key flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(8, flatbuffers.UOffsetT(key), 0)
 }
 func DnsTerminalEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

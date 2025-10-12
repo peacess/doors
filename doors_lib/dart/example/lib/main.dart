@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:idl/idl.dart' as idl;
+import 'package:idl/idl/net_discovery_net_discovery_generated.dart';
+import 'package:logger/logger.dart';
 
+final logger = Logger();
 void main() {
   runApp(const MyApp());
 }
@@ -20,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     sumResult = 0;
-    idl.ffiRpc.init();
+    idl.ffiRpc.init(netDiscoveryCallback: Net());
   }
 
   @override
@@ -62,5 +65,12 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+}
+
+final class Net extends idl.NetDiscoveryCallback {
+  @override
+  void hiRecv(HiRecv hi) {
+    logger.i("call back data");
   }
 }

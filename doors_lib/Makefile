@@ -1,4 +1,4 @@
-.PHONY: build clean format upgrade
+.PHONY: build clean format upgrade gen
 
 go := ${shell which go}
 flutter := ${shell which flutter}
@@ -25,5 +25,7 @@ upgrade:
 	cd rust && make upgrade
 	cd dart && ${flutter} pub upgrade
 
-
+gen:
+	cd rust/ffi_rpc && cargo build --bin build_rs
+	cd dart && dart run ffigen --config=ffigen.yaml
 	
