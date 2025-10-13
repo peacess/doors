@@ -21,6 +21,6 @@ struct Bytes un_init(void);
 
 struct Bytes call(uint64_t method_idd, const struct Bytes *in_parameter);
 
-int32_t bytes_free(struct Bytes bytes);
+void bytes_free(struct Bytes data);
 
 #endif  /* DOORS_LIB_FFI_RCP_HEADER */

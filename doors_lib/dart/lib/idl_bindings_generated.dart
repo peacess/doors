@@ -43,12 +43,12 @@ class IdlBindings {
   late final _callPtr = _lookup<ffi.NativeFunction<Bytes Function(ffi.Uint64, ffi.Pointer<Bytes>)>>('call');
   late final _call = _callPtr.asFunction<Bytes Function(int, ffi.Pointer<Bytes>)>();
 
-  int bytes_free(Bytes bytes) {
-    return _bytes_free(bytes);
+  void bytes_free(Bytes data) {
+    return _bytes_free(data);
   }
 
-  late final _bytes_freePtr = _lookup<ffi.NativeFunction<ffi.Int32 Function(Bytes)>>('bytes_free');
-  late final _bytes_free = _bytes_freePtr.asFunction<int Function(Bytes)>();
+  late final _bytes_freePtr = _lookup<ffi.NativeFunction<ffi.Void Function(Bytes)>>('bytes_free');
+  late final _bytes_free = _bytes_freePtr.asFunction<void Function(Bytes)>();
 }
 
 final class Bytes extends ffi.Struct {

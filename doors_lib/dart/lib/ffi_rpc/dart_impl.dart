@@ -35,9 +35,8 @@ class FfiRpcDart {
   }
 
   void callback(Bytes data) {
-    final buffer = fb.BufferContext.fromBytes(data.bytes.asTypedList(data.len));
+    final buffer = data.attach();
     var header = DiscoveryHeader.reader.read(buffer, 0);
-
     try {
       var headType = HeaderType.from(header.headerType);
       switch (headType) {
@@ -48,6 +47,10 @@ class FfiRpcDart {
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  void bytesFree(Bytes data) {
+    _idlBindings.bytes_free(data);
   }
 }
 
@@ -68,3 +71,22 @@ enum HeaderType {
 }
 
 final ffiRpc = FfiRpcDart(idlBindings);
+
+final Finalizer<Bytes> _bytesFinalizer = Finalizer((Bytes data) {
+  ffiRpc.bytesFree(data);
+  data.bytes = nullptr;
+});
+
+extension BytesEx on Bytes {
+  fb.BufferContext attach() {
+    final buffer = fb.BufferContext.fromBytes(bytes.asTypedList(len));
+    _bytesFinalizer.attach(buffer, this, detach: this);
+    return buffer;
+  }
+
+  void detach() {
+    _bytesFinalizer.detach(this);
+    ffiRpc.bytesFree(this);
+    bytes = nullptr;
+  }
+}

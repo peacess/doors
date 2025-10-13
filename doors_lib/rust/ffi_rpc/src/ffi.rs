@@ -1,3 +1,5 @@
+use std::ptr::null_mut;
+
 use crate::lib_app::LibApp;
 
 #[repr(C)]
@@ -59,9 +61,12 @@ pub extern "C" fn call(method_idd: u64, in_parameter: &Bytes) -> Bytes {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn bytes_free(bytes: Bytes) -> i32 {
-    let _ = unsafe { Vec::from_raw_parts(bytes.bytes, bytes.len as usize, bytes.capacity as usize) };
-    0
+pub extern "C" fn bytes_free(mut data: Bytes) {
+    if !data.bytes.is_null() {
+        let _ = unsafe { Vec::from_raw_parts(data.bytes, data.len as usize, data.capacity as usize) };
+        //maybe it don't work, but it is a good code
+        data.bytes = null_mut();
+    }
 }
 
 /// 回调用函数的返回值在dart中并不支持，所以没有返回值
