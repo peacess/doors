@@ -1,7 +1,6 @@
 import 'dart:ffi';
-import 'dart:typed_data';
-
-import 'package:flutter/foundation.dart';
+import 'package:ffi/ffi.dart' as ffi;
+import 'package:idl/ffi_rpc/chat/callback.dart';
 import 'package:logger/logger.dart';
 
 import '../idl/base_base_generated.dart';
@@ -17,9 +16,11 @@ class FfiRpcDart {
   final IdlBindings _idlBindings;
   FfiRpcDart(this._idlBindings);
   late NetDiscoveryCallback netDiscoveryCallback;
+  late ChatCallback chatCallback;
 
-  void init({NetDiscoveryCallback? netDiscoveryCallback}) {
+  void init({NetDiscoveryCallback? netDiscoveryCallback, ChatCallback? chatCallback}) {
     this.netDiscoveryCallback = netDiscoveryCallback ?? NetDiscoveryCallback();
+    this.chatCallback = chatCallback ?? ChatCallback();
     final nativeCallable = NativeCallable<CallBackFunction>.listener(callback);
     var re = _idlBindings.init(nativeCallable.nativeFunction);
     _idlBindings.bytes_free(re);
@@ -30,18 +31,21 @@ class FfiRpcDart {
     _idlBindings.bytes_free(re);
   }
 
-  Bytes call(int methodId, Pointer<Bytes> inParameter) {
-    return _idlBindings.call(methodId, inParameter);
+  FfiBytes call(FfiCallHeader header, FfiBytes inParameter) {
+    return _idlBindings.call(header, inParameter);
   }
 
-  void callback(Bytes data) {
+  void callback(FfiBytes data) {
     final buffer = data.attach();
-    var header = DiscoveryHeader.reader.read(buffer, 0);
+    var header = Header.reader.read(buffer, 0);
     try {
       var headType = HeaderType.from(header.headerType);
       switch (headType) {
         case HeaderType.netDiscovery:
           netDiscoveryCallback.callback(buffer, header, DiscoveryHeader.reader.size);
+          break;
+        case HeaderType.chat:
+          chatCallback.callback(buffer, header, DiscoveryHeader.reader.size);
           break;
       }
     } catch (e) {
@@ -49,13 +53,18 @@ class FfiRpcDart {
     }
   }
 
-  void bytesFree(Bytes data) {
+  void bytesFree(FfiBytes data) {
     _idlBindings.bytes_free(data);
+    data.bytes = nullptr;
+    data.len = 0;
+    data.capacity = 0;
+    data.offset = 0;
   }
 }
 
 enum HeaderType {
-  netDiscovery(1);
+  netDiscovery(1),
+  chat(1);
 
   final int value;
   const HeaderType(this.value);
@@ -72,12 +81,12 @@ enum HeaderType {
 
 final ffiRpc = FfiRpcDart(idlBindings);
 
-final Finalizer<Bytes> _bytesFinalizer = Finalizer((Bytes data) {
+final Finalizer<FfiBytes> _bytesFinalizer = Finalizer((FfiBytes data) {
   ffiRpc.bytesFree(data);
   data.bytes = nullptr;
 });
 
-extension BytesEx on Bytes {
+extension BytesEx on FfiBytes {
   fb.BufferContext attach() {
     final buffer = fb.BufferContext.fromBytes(bytes.asTypedList(len));
     _bytesFinalizer.attach(buffer, this, detach: this);
@@ -87,6 +96,14 @@ extension BytesEx on Bytes {
   void detach() {
     _bytesFinalizer.detach(this);
     ffiRpc.bytesFree(this);
-    bytes = nullptr;
+  }
+}
+
+abstract class FfiBytesHelper {
+  static Pointer<FfiBytes> from(fb.BufferContext data) {
+    var p = ffi.calloc<FfiBytes>();
+    p.ref.len = data.buffer.elementSizeInBytes;
+    //todo
+    return p;
   }
 }

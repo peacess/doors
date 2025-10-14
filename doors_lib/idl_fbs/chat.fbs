@@ -2,7 +2,13 @@ include "base.fbs";
 include "ffi_rpc.fbs";
 namespace chat;
 
-table TextMessage(FrameType){
+attribute ChatFrame;
+
+attribute ChatFfiRpcIn;
+attribute ChatFfiRpcOut;
+attribute ChatCallback;
+
+table TextMessage(ChatFrame,ChatFfiRpcIn,ChatCallback){
     //message id
     id: base.UlidBytes;
     from_partner_id: base.PartnerId;
@@ -14,16 +20,11 @@ table TextMessage(FrameType){
 }
 
 //确认收到消息
-table TextMessageAck(FrameType){
+table TextMessageAck(ChatFrame,ChatFfiRpcIn,ChatCallback){
     //message id
     id: base.UlidBytes;
+    send_id: base.UlidBytes;
     // message timestamp
     ts: base.Timestamp;
-}
-
-table TextMessageRpc(FfiRpcParameter){
-    //message id
-    id: base.UlidBytes;
-    text_message: TextMessage;
 }
 

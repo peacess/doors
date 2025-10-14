@@ -4,6 +4,8 @@ package net_discovery
 
 import (
 	flatbuffers "github.com/google/flatbuffers/go"
+
+	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
 type DiscoveryFrame struct {
@@ -41,12 +43,12 @@ func (rcv *DiscoveryFrame) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *DiscoveryFrame) Header(obj *DiscoveryHeader) *DiscoveryHeader {
+func (rcv *DiscoveryFrame) Header(obj *base.Header) *base.Header {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
-			obj = new(DiscoveryHeader)
+			obj = new(base.Header)
 		}
 		obj.Init(rcv._tab.Bytes, x)
 		return obj

@@ -19,173 +19,6 @@ pub mod net_discovery {
     extern crate flatbuffers;
     use self::flatbuffers::{EndianScalar, Follow};
 
-    // struct DiscoveryHeader, aligned to 8
-    #[repr(transparent)]
-    #[derive(Clone, Copy, PartialEq)]
-    pub struct DiscoveryHeader(pub [u8; 56]);
-    impl Default for DiscoveryHeader {
-        fn default() -> Self {
-            Self([0; 56])
-        }
-    }
-    impl core::fmt::Debug for DiscoveryHeader {
-        fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-            f.debug_struct("DiscoveryHeader")
-                .field("header_type", &self.header_type())
-                .field("len", &self.len())
-                .field("discovery_type", &self.discovery_type())
-                .field("key", &self.key())
-                .finish()
-        }
-    }
-
-    impl flatbuffers::SimpleToVerifyInSlice for DiscoveryHeader {}
-    impl<'a> flatbuffers::Follow<'a> for DiscoveryHeader {
-        type Inner = &'a DiscoveryHeader;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a DiscoveryHeader>::follow(buf, loc)
-        }
-    }
-    impl<'a> flatbuffers::Follow<'a> for &'a DiscoveryHeader {
-        type Inner = &'a DiscoveryHeader;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<DiscoveryHeader>(buf, loc)
-        }
-    }
-    impl<'b> flatbuffers::Push for DiscoveryHeader {
-        type Output = DiscoveryHeader;
-        #[inline]
-        unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const DiscoveryHeader as *const u8, <Self as flatbuffers::Push>::size());
-            dst.copy_from_slice(src);
-        }
-        #[inline]
-        fn alignment() -> flatbuffers::PushAlignment {
-            flatbuffers::PushAlignment::new(8)
-        }
-    }
-
-    impl<'a> flatbuffers::Verifiable for DiscoveryHeader {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.in_buffer::<Self>(pos)
-        }
-    }
-
-    impl<'a> DiscoveryHeader {
-        #[allow(clippy::too_many_arguments)]
-        pub fn new(header_type: u16, len: u64, discovery_type: u32, key: &super::base::X25519Public) -> Self {
-            let mut s = Self([0; 56]);
-            s.set_header_type(header_type);
-            s.set_len(len);
-            s.set_discovery_type(discovery_type);
-            s.set_key(key);
-            s
-        }
-
-        pub fn header_type(&self) -> u16 {
-            let mut mem = core::mem::MaybeUninit::<<u16 as EndianScalar>::Scalar>::uninit();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            EndianScalar::from_little_endian(unsafe {
-                core::ptr::copy_nonoverlapping(
-                    self.0[0..].as_ptr(),
-                    mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
-                );
-                mem.assume_init()
-            })
-        }
-
-        pub fn set_header_type(&mut self, x: u16) {
-            let x_le = x.to_little_endian();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    &x_le as *const _ as *const u8,
-                    self.0[0..].as_mut_ptr(),
-                    core::mem::size_of::<<u16 as EndianScalar>::Scalar>(),
-                );
-            }
-        }
-
-        pub fn len(&self) -> u64 {
-            let mut mem = core::mem::MaybeUninit::<<u64 as EndianScalar>::Scalar>::uninit();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            EndianScalar::from_little_endian(unsafe {
-                core::ptr::copy_nonoverlapping(
-                    self.0[8..].as_ptr(),
-                    mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
-                );
-                mem.assume_init()
-            })
-        }
-
-        pub fn set_len(&mut self, x: u64) {
-            let x_le = x.to_little_endian();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    &x_le as *const _ as *const u8,
-                    self.0[8..].as_mut_ptr(),
-                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
-                );
-            }
-        }
-
-        pub fn discovery_type(&self) -> u32 {
-            let mut mem = core::mem::MaybeUninit::<<u32 as EndianScalar>::Scalar>::uninit();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            EndianScalar::from_little_endian(unsafe {
-                core::ptr::copy_nonoverlapping(
-                    self.0[16..].as_ptr(),
-                    mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-                mem.assume_init()
-            })
-        }
-
-        pub fn set_discovery_type(&mut self, x: u32) {
-            let x_le = x.to_little_endian();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    &x_le as *const _ as *const u8,
-                    self.0[16..].as_mut_ptr(),
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-            }
-        }
-
-        pub fn key(&self) -> &super::base::X25519Public {
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid struct in this slot
-            unsafe { &*(self.0[24..].as_ptr() as *const super::base::X25519Public) }
-        }
-
-        #[allow(clippy::identity_op)]
-        pub fn set_key(&mut self, x: &super::base::X25519Public) {
-            self.0[24..24 + 32].copy_from_slice(&x.0)
-        }
-    }
-
     pub enum DnsTerminalOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -466,11 +299,11 @@ pub mod net_discovery {
         }
 
         #[inline]
-        pub fn header(&self) -> Option<&'a DiscoveryHeader> {
+        pub fn header(&self) -> Option<&'a super::base::Header> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<DiscoveryHeader>(DiscoveryFrame::VT_HEADER, None) }
+            unsafe { self._tab.get::<super::base::Header>(DiscoveryFrame::VT_HEADER, None) }
         }
         #[inline]
         pub fn bytes(&self) -> Option<flatbuffers::Vector<'a, i8>> {
@@ -489,14 +322,14 @@ pub mod net_discovery {
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
-                .visit_field::<DiscoveryHeader>("header", Self::VT_HEADER, false)?
+                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, i8>>>("bytes", Self::VT_BYTES, false)?
                 .finish();
             Ok(())
         }
     }
     pub struct DiscoveryFrameArgs<'a> {
-        pub header: Option<&'a DiscoveryHeader>,
+        pub header: Option<&'a super::base::Header>,
         pub bytes: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, i8>>>,
     }
     impl<'a> Default for DiscoveryFrameArgs<'a> {
@@ -512,8 +345,8 @@ pub mod net_discovery {
     }
     impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DiscoveryFrameBuilder<'a, 'b, A> {
         #[inline]
-        pub fn add_header(&mut self, header: &DiscoveryHeader) {
-            self.fbb_.push_slot_always::<&DiscoveryHeader>(DiscoveryFrame::VT_HEADER, header);
+        pub fn add_header(&mut self, header: &super::base::Header) {
+            self.fbb_.push_slot_always::<&super::base::Header>(DiscoveryFrame::VT_HEADER, header);
         }
         #[inline]
         pub fn add_bytes(&mut self, bytes: flatbuffers::WIPOffset<flatbuffers::Vector<'b, i8>>) {

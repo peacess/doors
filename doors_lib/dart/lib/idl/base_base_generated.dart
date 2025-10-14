@@ -851,7 +851,7 @@ class Header {
   int get frameType => const fb.Uint32Reader().read(_bc, _bcOffset + 4);
   int get len => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
   TerminalId get toTerminalId => TerminalId.reader.read(_bc, _bcOffset + 16);
-  Uint128 get key => Uint128.reader.read(_bc, _bcOffset + 32);
+  X25519Public get key => X25519Public.reader.read(_bc, _bcOffset + 32);
 
   @override
   String toString() {
@@ -863,7 +863,7 @@ class _HeaderReader extends fb.StructReader<Header> {
   const _HeaderReader();
 
   @override
-  int get size => 48;
+  int get size => 64;
 
   @override
   Header createObject(fb.BufferContext bc, int offset) => Header._(bc, offset);
@@ -889,14 +889,14 @@ class HeaderObjectBuilder extends fb.ObjectBuilder {
   final int _frameType;
   final int _len;
   final TerminalIdObjectBuilder _toTerminalId;
-  final Uint128ObjectBuilder _key;
+  final X25519PublicObjectBuilder _key;
 
   HeaderObjectBuilder({
     required int headerType,
     required int frameType,
     required int len,
     required TerminalIdObjectBuilder toTerminalId,
-    required Uint128ObjectBuilder key,
+    required X25519PublicObjectBuilder key,
   }) : _headerType = headerType,
        _frameType = frameType,
        _len = len,

@@ -3,24 +3,30 @@
 
 #include <stdint.h>
 
-typedef struct Bytes {
+typedef struct FfiBytes {
   uint64_t len;
   uint64_t capacity;
   uint64_t offset;
   uint8_t *bytes;
-} Bytes;
+} FfiBytes;
 
 /**
  * 回调用函数的返回值在dart中并不支持，所以没有返回值
  */
-typedef void (*CallBack)(struct Bytes);
+typedef void (*CallBack)(struct FfiBytes);
 
-struct Bytes init(CallBack callback);
+typedef struct FfiCallHeader {
+  uint32_t header_type;
+  uint32_t rpc_type;
+  uint64_t len;
+} FfiCallHeader;
 
-struct Bytes un_init(void);
+struct FfiBytes init(CallBack callback);
 
-struct Bytes call(uint64_t method_idd, const struct Bytes *in_parameter);
+struct FfiBytes un_init(void);
 
-void bytes_free(struct Bytes data);
+struct FfiBytes call(struct FfiCallHeader header, struct FfiBytes in_parameter);
+
+void bytes_free(struct FfiBytes data);
 
 #endif  /* DOORS_LIB_FFI_RCP_HEADER */

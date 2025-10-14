@@ -47,19 +47,21 @@ func (rcv *Header) ToTerminalId(obj *TerminalId) *TerminalId {
 	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+16)
 	return obj
 }
-func (rcv *Header) Key(obj *Uint128) *Uint128 {
+func (rcv *Header) Key(obj *X25519Public) *X25519Public {
 	if obj == nil {
-		obj = new(Uint128)
+		obj = new(X25519Public)
 	}
 	obj.Init(rcv._tab.Bytes, rcv._tab.Pos+32)
 	return obj
 }
 
-func CreateHeader(builder *flatbuffers.Builder, headerType uint32, frameType uint32, len uint64, to_terminal_id_low uint64, to_terminal_id_high uint64, key_low uint64, key_high uint64) flatbuffers.UOffsetT {
-	builder.Prep(8, 48)
-	builder.Prep(8, 16)
-	builder.PrependUint64(key_high)
-	builder.PrependUint64(key_low)
+func CreateHeader(builder *flatbuffers.Builder, headerType uint32, frameType uint32, len uint64, to_terminal_id_low uint64, to_terminal_id_high uint64, key_key1 uint64, key_key2 uint64, key_key3 uint64, key_key4 uint64) flatbuffers.UOffsetT {
+	builder.Prep(8, 64)
+	builder.Prep(8, 32)
+	builder.PrependUint64(key_key4)
+	builder.PrependUint64(key_key3)
+	builder.PrependUint64(key_key2)
+	builder.PrependUint64(key_key1)
 	builder.Prep(8, 16)
 	builder.PrependUint64(to_terminal_id_high)
 	builder.PrependUint64(to_terminal_id_low)

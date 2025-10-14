@@ -56,8 +56,21 @@ func (rcv *TextMessageAck) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *TextMessageAck) Ts(obj *base.Timestamp) *base.Timestamp {
+func (rcv *TextMessageAck) SendId(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
+	if o != 0 {
+		x := o + rcv._tab.Pos
+		if obj == nil {
+			obj = new(base.UlidBytes)
+		}
+		obj.Init(rcv._tab.Bytes, x)
+		return obj
+	}
+	return nil
+}
+
+func (rcv *TextMessageAck) Ts(obj *base.Timestamp) *base.Timestamp {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
@@ -70,13 +83,16 @@ func (rcv *TextMessageAck) Ts(obj *base.Timestamp) *base.Timestamp {
 }
 
 func TextMessageAckStart(builder *flatbuffers.Builder) {
-	builder.StartObject(2)
+	builder.StartObject(3)
 }
 func TextMessageAckAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
+func TextMessageAckAddSendId(builder *flatbuffers.Builder, sendId flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(1, flatbuffers.UOffsetT(sendId), 0)
+}
 func TextMessageAckAddTs(builder *flatbuffers.Builder, ts flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(1, flatbuffers.UOffsetT(ts), 0)
+	builder.PrependStructSlot(2, flatbuffers.UOffsetT(ts), 0)
 }
 func TextMessageAckEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

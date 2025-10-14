@@ -168,84 +168,6 @@ class DnsTerminalObjectBuilder extends fb.ObjectBuilder {
   }
 }
 
-class DiscoveryHeader {
-  DiscoveryHeader._(this._bc, this._bcOffset);
-
-  static const fb.Reader<DiscoveryHeader> reader = _DiscoveryHeaderReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  int get headerType => const fb.Uint16Reader().read(_bc, _bcOffset + 0);
-  int get len => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
-  int get discoveryType => const fb.Uint32Reader().read(_bc, _bcOffset + 16);
-  base.X25519Public get key => base.X25519Public.reader.read(_bc, _bcOffset + 24);
-
-  @override
-  String toString() {
-    return 'DiscoveryHeader{headerType: ${headerType}, len: ${len}, discoveryType: ${discoveryType}, key: ${key}}';
-  }
-}
-
-class _DiscoveryHeaderReader extends fb.StructReader<DiscoveryHeader> {
-  const _DiscoveryHeaderReader();
-
-  @override
-  int get size => 56;
-
-  @override
-  DiscoveryHeader createObject(fb.BufferContext bc, int offset) => DiscoveryHeader._(bc, offset);
-}
-
-class DiscoveryHeaderBuilder {
-  DiscoveryHeaderBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  int finish(int headerType, int len, int discoveryType, fb.StructBuilder key) {
-    key();
-    fbBuilder.pad(4);
-    fbBuilder.putUint32(discoveryType);
-    fbBuilder.putUint64(len);
-    fbBuilder.pad(6);
-    fbBuilder.putUint16(headerType);
-    return fbBuilder.offset;
-  }
-}
-
-class DiscoveryHeaderObjectBuilder extends fb.ObjectBuilder {
-  final int _headerType;
-  final int _len;
-  final int _discoveryType;
-  final base.X25519PublicObjectBuilder _key;
-
-  DiscoveryHeaderObjectBuilder({required int headerType, required int len, required int discoveryType, required base.X25519PublicObjectBuilder key})
-    : _headerType = headerType,
-      _len = len,
-      _discoveryType = discoveryType,
-      _key = key;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    _key.finish(fbBuilder);
-    fbBuilder.pad(4);
-    fbBuilder.putUint32(_discoveryType);
-    fbBuilder.putUint64(_len);
-    fbBuilder.pad(6);
-    fbBuilder.putUint16(_headerType);
-    return fbBuilder.offset;
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
 class DiscoveryFrame {
   DiscoveryFrame._(this._bc, this._bcOffset);
   factory DiscoveryFrame(List<int> bytes) {
@@ -258,7 +180,7 @@ class DiscoveryFrame {
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  DiscoveryHeader? get header => DiscoveryHeader.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
   List<int>? get bytes => const fb.Int8ListReader().vTableGetNullable(_bc, _bcOffset, 6);
 
   @override
@@ -299,10 +221,10 @@ class DiscoveryFrameBuilder {
 }
 
 class DiscoveryFrameObjectBuilder extends fb.ObjectBuilder {
-  final DiscoveryHeaderObjectBuilder? _header;
+  final base.HeaderObjectBuilder? _header;
   final List<int>? _bytes;
 
-  DiscoveryFrameObjectBuilder({DiscoveryHeaderObjectBuilder? header, List<int>? bytes}) : _header = header, _bytes = bytes;
+  DiscoveryFrameObjectBuilder({base.HeaderObjectBuilder? header, List<int>? bytes}) : _header = header, _bytes = bytes;
 
   /// Finish building, and store into the [fbBuilder].
   @override

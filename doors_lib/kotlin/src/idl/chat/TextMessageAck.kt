@@ -37,9 +37,18 @@ class TextMessageAck : Table() {
             null
         }
     }
+    val sendId : base.UlidBytes? get() = sendId(base.UlidBytes())
+    fun sendId(obj: base.UlidBytes) : base.UlidBytes? {
+        val o = __offset(6)
+        return if (o != 0) {
+            obj.__assign(o + bb_pos, bb)
+        } else {
+            null
+        }
+    }
     val ts : base.Timestamp? get() = ts(base.Timestamp())
     fun ts(obj: base.Timestamp) : base.Timestamp? {
-        val o = __offset(6)
+        val o = __offset(8)
         return if (o != 0) {
             obj.__assign(o + bb_pos, bb)
         } else {
@@ -53,9 +62,10 @@ class TextMessageAck : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun startTextMessageAck(builder: FlatBufferBuilder) = builder.startTable(2)
+        fun startTextMessageAck(builder: FlatBufferBuilder) = builder.startTable(3)
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
-        fun addTs(builder: FlatBufferBuilder, ts: Int) = builder.addStruct(1, ts, 0)
+        fun addSendId(builder: FlatBufferBuilder, sendId: Int) = builder.addStruct(1, sendId, 0)
+        fun addTs(builder: FlatBufferBuilder, ts: Int) = builder.addStruct(2, ts, 0)
         fun endTextMessageAck(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o

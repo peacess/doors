@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:idl/idl.dart' as idl;
+import 'package:idl/idl/base_base_generated.dart';
 import 'package:idl/idl/net_discovery_net_discovery_generated.dart';
 import 'package:logger/logger.dart';
 
@@ -70,7 +71,7 @@ class _MyAppState extends State<MyApp> {
 
 final class Net extends idl.NetDiscoveryCallback {
   @override
-  void hiRecv(HiRecv hi) {
+  void hiRecv(Header header, HiRecv hi) {
     logger.i("call back data");
   }
 }

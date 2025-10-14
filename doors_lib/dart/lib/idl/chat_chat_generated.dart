@@ -165,11 +165,12 @@ class TextMessageAck {
   final int _bcOffset;
 
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  base.Timestamp? get ts => base.Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  base.UlidBytes? get sendId => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  base.Timestamp? get ts => base.Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 8);
 
   @override
   String toString() {
-    return 'TextMessageAck{id: ${id}, ts: ${ts}}';
+    return 'TextMessageAck{id: ${id}, sendId: ${sendId}, ts: ${ts}}';
   }
 }
 
@@ -186,7 +187,7 @@ class TextMessageAckBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(2);
+    fbBuilder.startTable(3);
   }
 
   int addId(int offset) {
@@ -194,8 +195,13 @@ class TextMessageAckBuilder {
     return fbBuilder.offset;
   }
 
-  int addTs(int offset) {
+  int addSendId(int offset) {
     fbBuilder.addStruct(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int addTs(int offset) {
+    fbBuilder.addStruct(2, offset);
     return fbBuilder.offset;
   }
 
@@ -206,99 +212,27 @@ class TextMessageAckBuilder {
 
 class TextMessageAckObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
+  final base.UlidBytesObjectBuilder? _sendId;
   final base.TimestampObjectBuilder? _ts;
 
-  TextMessageAckObjectBuilder({base.UlidBytesObjectBuilder? id, base.TimestampObjectBuilder? ts}) : _id = id, _ts = ts;
+  TextMessageAckObjectBuilder({base.UlidBytesObjectBuilder? id, base.UlidBytesObjectBuilder? sendId, base.TimestampObjectBuilder? ts})
+    : _id = id,
+      _sendId = sendId,
+      _ts = ts;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    fbBuilder.startTable(2);
+    fbBuilder.startTable(3);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
+    }
+    if (_sendId != null) {
+      fbBuilder.addStruct(1, _sendId!.finish(fbBuilder));
     }
     if (_ts != null) {
-      fbBuilder.addStruct(1, _ts!.finish(fbBuilder));
+      fbBuilder.addStruct(2, _ts!.finish(fbBuilder));
     }
-    return fbBuilder.endTable();
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class TextMessageRpc {
-  TextMessageRpc._(this._bc, this._bcOffset);
-  factory TextMessageRpc(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
-
-  static const fb.Reader<TextMessageRpc> reader = _TextMessageRpcReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  TextMessage? get textMessage => TextMessage.reader.vTableGetNullable(_bc, _bcOffset, 6);
-
-  @override
-  String toString() {
-    return 'TextMessageRpc{id: ${id}, textMessage: ${textMessage}}';
-  }
-}
-
-class _TextMessageRpcReader extends fb.TableReader<TextMessageRpc> {
-  const _TextMessageRpcReader();
-
-  @override
-  TextMessageRpc createObject(fb.BufferContext bc, int offset) => TextMessageRpc._(bc, offset);
-}
-
-class TextMessageRpcBuilder {
-  TextMessageRpcBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  void begin() {
-    fbBuilder.startTable(2);
-  }
-
-  int addId(int offset) {
-    fbBuilder.addStruct(0, offset);
-    return fbBuilder.offset;
-  }
-
-  int addTextMessageOffset(int? offset) {
-    fbBuilder.addOffset(1, offset);
-    return fbBuilder.offset;
-  }
-
-  int finish() {
-    return fbBuilder.endTable();
-  }
-}
-
-class TextMessageRpcObjectBuilder extends fb.ObjectBuilder {
-  final base.UlidBytesObjectBuilder? _id;
-  final TextMessageObjectBuilder? _textMessage;
-
-  TextMessageRpcObjectBuilder({base.UlidBytesObjectBuilder? id, TextMessageObjectBuilder? textMessage}) : _id = id, _textMessage = textMessage;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    final int? textMessageOffset = _textMessage?.getOrCreateOffset(fbBuilder);
-    fbBuilder.startTable(2);
-    if (_id != null) {
-      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(1, textMessageOffset);
     return fbBuilder.endTable();
   }
 

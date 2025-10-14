@@ -28,8 +28,8 @@ class DiscoveryFrame : Table() {
         __init(_i, _bb)
         return this
     }
-    val header : net_discovery.DiscoveryHeader? get() = header(net_discovery.DiscoveryHeader())
-    fun header(obj: net_discovery.DiscoveryHeader) : net_discovery.DiscoveryHeader? {
+    val header : base.Header? get() = header(base.Header())
+    fun header(obj: base.Header) : base.Header? {
         val o = __offset(4)
         return if (o != 0) {
             obj.__assign(o + bb_pos, bb)

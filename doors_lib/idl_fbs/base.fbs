@@ -97,7 +97,7 @@ struct Header{
     frame_type: uint32;
     len:uint64;
     to_terminal_id: TerminalId;
-    key: Uint128;
+    key: base.X25519Public;
 }
 
 //确认收到

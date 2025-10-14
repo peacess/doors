@@ -3,15 +3,22 @@ use std::ptr::null_mut;
 use crate::lib_app::LibApp;
 
 #[repr(C)]
-pub struct Bytes {
+pub struct FfiBytes {
     len: u64,
     capacity: u64,
     offset: u64,
     bytes: *mut u8,
 }
 
+#[repr(C)]
+pub struct FfiCallHeader {
+    header_type: u32,
+    rpc_type: u32,
+    len: u64,
+}
+
 #[unsafe(no_mangle)]
-pub extern "C" fn init(callback: CallBack) -> Bytes {
+pub extern "C" fn init(callback: CallBack) -> FfiBytes {
     if let Err(e) = LibApp::init(callback) {
         log::error!("Error building tokio runtime: {}", e);
         let mut info = format!("{}", e).as_bytes().to_vec();
@@ -19,14 +26,14 @@ pub extern "C" fn init(callback: CallBack) -> Bytes {
         let len = info.len() as u64;
         let capacity = info.capacity() as u64;
         std::mem::forget(info);
-        return Bytes {
+        return FfiBytes {
             len,
             capacity,
             offset: 0,
             bytes,
         };
     }
-    Bytes {
+    FfiBytes {
         len: 0,
         capacity: 0,
         offset: 0,
@@ -35,9 +42,9 @@ pub extern "C" fn init(callback: CallBack) -> Bytes {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn un_init() -> Bytes {
+pub extern "C" fn un_init() -> FfiBytes {
     LibApp::uninit();
-    Bytes {
+    FfiBytes {
         len: 0,
         capacity: 0,
         offset: 0,
@@ -46,13 +53,11 @@ pub extern "C" fn un_init() -> Bytes {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn call(method_idd: u64, in_parameter: &Bytes) -> Bytes {
-    if method_idd < 10 {
-        println!();
-    }
+pub extern "C" fn call(header: FfiCallHeader, in_parameter: FfiBytes) -> FfiBytes {
+    //todo
     let c = vec![0u8];
     let mut v = core::mem::ManuallyDrop::new(c);
-    Bytes {
+    FfiBytes {
         len: v.len() as u64,
         capacity: v.capacity() as u64,
         offset: 0,
@@ -61,7 +66,7 @@ pub extern "C" fn call(method_idd: u64, in_parameter: &Bytes) -> Bytes {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn bytes_free(mut data: Bytes) {
+pub extern "C" fn bytes_free(mut data: FfiBytes) {
     if !data.bytes.is_null() {
         let _ = unsafe { Vec::from_raw_parts(data.bytes, data.len as usize, data.capacity as usize) };
         //maybe it don't work, but it is a good code
@@ -70,7 +75,7 @@ pub extern "C" fn bytes_free(mut data: Bytes) {
 }
 
 /// 回调用函数的返回值在dart中并不支持，所以没有返回值
-pub type CallBack = extern "C" fn(Bytes);
+pub type CallBack = extern "C" fn(FfiBytes);
 
 // /// if the parameter call_back is null, then cancel the callback
 // #[unsafe(no_mangle)]

@@ -251,7 +251,8 @@ pub mod chat {
 
     impl<'a> TextMessageAck<'a> {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_TS: flatbuffers::VOffsetT = 6;
+        pub const VT_SEND_ID: flatbuffers::VOffsetT = 6;
+        pub const VT_TS: flatbuffers::VOffsetT = 8;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -266,6 +267,9 @@ pub mod chat {
             if let Some(x) = args.ts {
                 builder.add_ts(x);
             }
+            if let Some(x) = args.send_id {
+                builder.add_send_id(x);
+            }
             if let Some(x) = args.id {
                 builder.add_id(x);
             }
@@ -278,6 +282,13 @@ pub mod chat {
             // Created from valid Table for this object
             // which contains a valid value in this slot
             unsafe { self._tab.get::<super::base::UlidBytes>(TextMessageAck::VT_ID, None) }
+        }
+        #[inline]
+        pub fn send_id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(TextMessageAck::VT_SEND_ID, None) }
         }
         #[inline]
         pub fn ts(&self) -> Option<&'a super::base::Timestamp> {
@@ -294,6 +305,7 @@ pub mod chat {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
                 .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<super::base::UlidBytes>("send_id", Self::VT_SEND_ID, false)?
                 .visit_field::<super::base::Timestamp>("ts", Self::VT_TS, false)?
                 .finish();
             Ok(())
@@ -301,12 +313,17 @@ pub mod chat {
     }
     pub struct TextMessageAckArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
+        pub send_id: Option<&'a super::base::UlidBytes>,
         pub ts: Option<&'a super::base::Timestamp>,
     }
     impl<'a> Default for TextMessageAckArgs<'a> {
         #[inline]
         fn default() -> Self {
-            TextMessageAckArgs { id: None, ts: None }
+            TextMessageAckArgs {
+                id: None,
+                send_id: None,
+                ts: None,
+            }
         }
     }
 
@@ -318,6 +335,10 @@ pub mod chat {
         #[inline]
         pub fn add_id(&mut self, id: &super::base::UlidBytes) {
             self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessageAck::VT_ID, id);
+        }
+        #[inline]
+        pub fn add_send_id(&mut self, send_id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessageAck::VT_SEND_ID, send_id);
         }
         #[inline]
         pub fn add_ts(&mut self, ts: &super::base::Timestamp) {
@@ -339,122 +360,8 @@ pub mod chat {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             let mut ds = f.debug_struct("TextMessageAck");
             ds.field("id", &self.id());
+            ds.field("send_id", &self.send_id());
             ds.field("ts", &self.ts());
-            ds.finish()
-        }
-    }
-    pub enum TextMessageRpcOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct TextMessageRpc<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for TextMessageRpc<'a> {
-        type Inner = TextMessageRpc<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: flatbuffers::Table::new(buf, loc),
-            }
-        }
-    }
-
-    impl<'a> TextMessageRpc<'a> {
-        pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_TEXT_MESSAGE: flatbuffers::VOffsetT = 6;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            TextMessageRpc { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args TextMessageRpcArgs<'args>,
-        ) -> flatbuffers::WIPOffset<TextMessageRpc<'bldr>> {
-            let mut builder = TextMessageRpcBuilder::new(_fbb);
-            if let Some(x) = args.text_message {
-                builder.add_text_message(x);
-            }
-            if let Some(x) = args.id {
-                builder.add_id(x);
-            }
-            builder.finish()
-        }
-
-        #[inline]
-        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(TextMessageRpc::VT_ID, None) }
-        }
-        #[inline]
-        pub fn text_message(&self) -> Option<TextMessage<'a>> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe {
-                self._tab
-                    .get::<flatbuffers::ForwardsUOffset<TextMessage>>(TextMessageRpc::VT_TEXT_MESSAGE, None)
-            }
-        }
-    }
-
-    impl flatbuffers::Verifiable for TextMessageRpc<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?
-                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<TextMessage>>("text_message", Self::VT_TEXT_MESSAGE, false)?
-                .finish();
-            Ok(())
-        }
-    }
-    pub struct TextMessageRpcArgs<'a> {
-        pub id: Option<&'a super::base::UlidBytes>,
-        pub text_message: Option<flatbuffers::WIPOffset<TextMessage<'a>>>,
-    }
-    impl<'a> Default for TextMessageRpcArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            TextMessageRpcArgs { id: None, text_message: None }
-        }
-    }
-
-    pub struct TextMessageRpcBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> TextMessageRpcBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessageRpc::VT_ID, id);
-        }
-        #[inline]
-        pub fn add_text_message(&mut self, text_message: flatbuffers::WIPOffset<TextMessage<'b>>) {
-            self.fbb_
-                .push_slot_always::<flatbuffers::WIPOffset<TextMessage>>(TextMessageRpc::VT_TEXT_MESSAGE, text_message);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> TextMessageRpcBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            TextMessageRpcBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<TextMessageRpc<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for TextMessageRpc<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("TextMessageRpc");
-            ds.field("id", &self.id());
-            ds.field("text_message", &self.text_message());
             ds.finish()
         }
     }

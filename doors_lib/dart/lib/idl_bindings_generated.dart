@@ -22,36 +22,36 @@ class IdlBindings {
   /// The symbols are looked up with [lookup].
   IdlBindings.fromLookup(ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup) : _lookup = lookup;
 
-  Bytes init(CallBack callback) {
+  FfiBytes init(CallBack callback) {
     return _init(callback);
   }
 
-  late final _initPtr = _lookup<ffi.NativeFunction<Bytes Function(CallBack)>>('init');
-  late final _init = _initPtr.asFunction<Bytes Function(CallBack)>();
+  late final _initPtr = _lookup<ffi.NativeFunction<FfiBytes Function(CallBack)>>('init');
+  late final _init = _initPtr.asFunction<FfiBytes Function(CallBack)>();
 
-  Bytes un_init() {
+  FfiBytes un_init() {
     return _un_init();
   }
 
-  late final _un_initPtr = _lookup<ffi.NativeFunction<Bytes Function()>>('un_init');
-  late final _un_init = _un_initPtr.asFunction<Bytes Function()>();
+  late final _un_initPtr = _lookup<ffi.NativeFunction<FfiBytes Function()>>('un_init');
+  late final _un_init = _un_initPtr.asFunction<FfiBytes Function()>();
 
-  Bytes call(int method_idd, ffi.Pointer<Bytes> in_parameter) {
-    return _call(method_idd, in_parameter);
+  FfiBytes call(FfiCallHeader header, FfiBytes in_parameter) {
+    return _call(header, in_parameter);
   }
 
-  late final _callPtr = _lookup<ffi.NativeFunction<Bytes Function(ffi.Uint64, ffi.Pointer<Bytes>)>>('call');
-  late final _call = _callPtr.asFunction<Bytes Function(int, ffi.Pointer<Bytes>)>();
+  late final _callPtr = _lookup<ffi.NativeFunction<FfiBytes Function(FfiCallHeader, FfiBytes)>>('call');
+  late final _call = _callPtr.asFunction<FfiBytes Function(FfiCallHeader, FfiBytes)>();
 
-  void bytes_free(Bytes data) {
+  void bytes_free(FfiBytes data) {
     return _bytes_free(data);
   }
 
-  late final _bytes_freePtr = _lookup<ffi.NativeFunction<ffi.Void Function(Bytes)>>('bytes_free');
-  late final _bytes_free = _bytes_freePtr.asFunction<void Function(Bytes)>();
+  late final _bytes_freePtr = _lookup<ffi.NativeFunction<ffi.Void Function(FfiBytes)>>('bytes_free');
+  late final _bytes_free = _bytes_freePtr.asFunction<void Function(FfiBytes)>();
 }
 
-final class Bytes extends ffi.Struct {
+final class FfiBytes extends ffi.Struct {
   @ffi.Uint64()
   external int len;
 
@@ -64,7 +64,18 @@ final class Bytes extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> bytes;
 }
 
+final class FfiCallHeader extends ffi.Struct {
+  @ffi.Uint32()
+  external int header_type;
+
+  @ffi.Uint32()
+  external int rpc_type;
+
+  @ffi.Uint64()
+  external int len;
+}
+
 /// 回调用函数的返回值在dart中并不支持，所以没有返回值
 typedef CallBack = ffi.Pointer<ffi.NativeFunction<CallBackFunction>>;
-typedef CallBackFunction = ffi.Void Function(Bytes);
-typedef DartCallBackFunction = void Function(Bytes);
+typedef CallBackFunction = ffi.Void Function(FfiBytes);
+typedef DartCallBackFunction = void Function(FfiBytes);

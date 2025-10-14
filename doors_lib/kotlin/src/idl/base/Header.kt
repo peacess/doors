@@ -33,14 +33,16 @@ class Header : Struct() {
     val len : ULong get() = bb.getLong(bb_pos + 8).toULong()
     val toTerminalId : base.TerminalId? get() = toTerminalId(base.TerminalId())
     fun toTerminalId(obj: base.TerminalId) : base.TerminalId? = obj.__assign(bb_pos + 16, bb)
-    val key : base.Uint128? get() = key(base.Uint128())
-    fun key(obj: base.Uint128) : base.Uint128? = obj.__assign(bb_pos + 32, bb)
+    val key : base.X25519Public? get() = key(base.X25519Public())
+    fun key(obj: base.X25519Public) : base.X25519Public? = obj.__assign(bb_pos + 32, bb)
     companion object {
-        fun createHeader(builder: FlatBufferBuilder, headerType: UInt, frameType: UInt, len: ULong, toTerminalId_low: ULong, toTerminalId_high: ULong, key_low: ULong, key_high: ULong) : Int {
-            builder.prep(8, 48)
-            builder.prep(8, 16)
-            builder.putLong(key_high.toLong())
-            builder.putLong(key_low.toLong())
+        fun createHeader(builder: FlatBufferBuilder, headerType: UInt, frameType: UInt, len: ULong, toTerminalId_low: ULong, toTerminalId_high: ULong, key_key1: ULong, key_key2: ULong, key_key3: ULong, key_key4: ULong) : Int {
+            builder.prep(8, 64)
+            builder.prep(8, 32)
+            builder.putLong(key_key4.toLong())
+            builder.putLong(key_key3.toLong())
+            builder.putLong(key_key2.toLong())
+            builder.putLong(key_key1.toLong())
             builder.prep(8, 16)
             builder.putLong(to_terminal_id_high.toLong())
             builder.putLong(to_terminal_id_low.toLong())

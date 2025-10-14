@@ -2102,10 +2102,10 @@ pub mod base {
     // struct Header, aligned to 8
     #[repr(transparent)]
     #[derive(Clone, Copy, PartialEq)]
-    pub struct Header(pub [u8; 48]);
+    pub struct Header(pub [u8; 64]);
     impl Default for Header {
         fn default() -> Self {
-            Self([0; 48])
+            Self([0; 64])
         }
     }
     impl core::fmt::Debug for Header {
@@ -2158,8 +2158,8 @@ pub mod base {
 
     impl<'a> Header {
         #[allow(clippy::too_many_arguments)]
-        pub fn new(header_type: u32, frame_type: u32, len: u64, to_terminal_id: &TerminalId, key: &Uint128) -> Self {
-            let mut s = Self([0; 48]);
+        pub fn new(header_type: u32, frame_type: u32, len: u64, to_terminal_id: &TerminalId, key: &X25519Public) -> Self {
+            let mut s = Self([0; 64]);
             s.set_header_type(header_type);
             s.set_frame_type(frame_type);
             s.set_len(len);
@@ -2267,16 +2267,16 @@ pub mod base {
             self.0[16..16 + 16].copy_from_slice(&x.0)
         }
 
-        pub fn key(&self) -> &Uint128 {
+        pub fn key(&self) -> &X25519Public {
             // Safety:
             // Created from a valid Table for this object
             // Which contains a valid struct in this slot
-            unsafe { &*(self.0[32..].as_ptr() as *const Uint128) }
+            unsafe { &*(self.0[32..].as_ptr() as *const X25519Public) }
         }
 
         #[allow(clippy::identity_op)]
-        pub fn set_key(&mut self, x: &Uint128) {
-            self.0[32..32 + 16].copy_from_slice(&x.0)
+        pub fn set_key(&mut self, x: &X25519Public) {
+            self.0[32..32 + 32].copy_from_slice(&x.0)
         }
     }
 
