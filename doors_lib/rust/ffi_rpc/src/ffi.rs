@@ -1,5 +1,3 @@
-use std::ptr::null_mut;
-
 use crate::lib_app::LibApp;
 
 #[repr(C)]
@@ -8,13 +6,6 @@ pub struct FfiBytes {
     capacity: u64,
     offset: u64,
     bytes: *mut u8,
-}
-
-#[repr(C)]
-pub struct FfiCallHeader {
-    header_type: u32,
-    rpc_type: u32,
-    len: u64,
 }
 
 #[unsafe(no_mangle)]
@@ -53,7 +44,7 @@ pub extern "C" fn un_init() -> FfiBytes {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn call(header: FfiCallHeader, in_parameter: FfiBytes) -> FfiBytes {
+pub extern "C" fn call(data: FfiBytes) -> FfiBytes {
     //todo
     let c = vec![0u8];
     let mut v = core::mem::ManuallyDrop::new(c);
@@ -70,7 +61,7 @@ pub extern "C" fn bytes_free(mut data: FfiBytes) {
     if !data.bytes.is_null() {
         let _ = unsafe { Vec::from_raw_parts(data.bytes, data.len as usize, data.capacity as usize) };
         //maybe it don't work, but it is a good code
-        data.bytes = null_mut();
+        data.bytes = core::ptr::null_mut();
     }
 }
 

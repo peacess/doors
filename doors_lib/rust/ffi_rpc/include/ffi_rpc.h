@@ -15,17 +15,11 @@ typedef struct FfiBytes {
  */
 typedef void (*CallBack)(struct FfiBytes);
 
-typedef struct FfiCallHeader {
-  uint32_t header_type;
-  uint32_t rpc_type;
-  uint64_t len;
-} FfiCallHeader;
-
 struct FfiBytes init(CallBack callback);
 
 struct FfiBytes un_init(void);
 
-struct FfiBytes call(struct FfiCallHeader header, struct FfiBytes in_parameter);
+struct FfiBytes call(struct FfiBytes data);
 
 void bytes_free(struct FfiBytes data);
 

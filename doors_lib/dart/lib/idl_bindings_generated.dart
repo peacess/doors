@@ -36,12 +36,12 @@ class IdlBindings {
   late final _un_initPtr = _lookup<ffi.NativeFunction<FfiBytes Function()>>('un_init');
   late final _un_init = _un_initPtr.asFunction<FfiBytes Function()>();
 
-  FfiBytes call(FfiCallHeader header, FfiBytes in_parameter) {
-    return _call(header, in_parameter);
+  FfiBytes call(FfiBytes data) {
+    return _call(data);
   }
 
-  late final _callPtr = _lookup<ffi.NativeFunction<FfiBytes Function(FfiCallHeader, FfiBytes)>>('call');
-  late final _call = _callPtr.asFunction<FfiBytes Function(FfiCallHeader, FfiBytes)>();
+  late final _callPtr = _lookup<ffi.NativeFunction<FfiBytes Function(FfiBytes)>>('call');
+  late final _call = _callPtr.asFunction<FfiBytes Function(FfiBytes)>();
 
   void bytes_free(FfiBytes data) {
     return _bytes_free(data);
@@ -62,17 +62,6 @@ final class FfiBytes extends ffi.Struct {
   external int offset;
 
   external ffi.Pointer<ffi.Uint8> bytes;
-}
-
-final class FfiCallHeader extends ffi.Struct {
-  @ffi.Uint32()
-  external int header_type;
-
-  @ffi.Uint32()
-  external int rpc_type;
-
-  @ffi.Uint64()
-  external int len;
 }
 
 /// 回调用函数的返回值在dart中并不支持，所以没有返回值

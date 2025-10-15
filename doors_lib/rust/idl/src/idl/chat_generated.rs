@@ -365,4 +365,231 @@ pub mod chat {
             ds.finish()
         }
     }
+    pub enum ChatTextMessageOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct ChatTextMessage<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for ChatTextMessage<'a> {
+        type Inner = ChatTextMessage<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: flatbuffers::Table::new(buf, loc),
+            }
+        }
+    }
+
+    impl<'a> ChatTextMessage<'a> {
+        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
+        pub const VT_MESSAGE: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            ChatTextMessage { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args ChatTextMessageArgs<'args>,
+        ) -> flatbuffers::WIPOffset<ChatTextMessage<'bldr>> {
+            let mut builder = ChatTextMessageBuilder::new(_fbb);
+            if let Some(x) = args.message {
+                builder.add_message(x);
+            }
+            if let Some(x) = args.header {
+                builder.add_header(x);
+            }
+            builder.finish()
+        }
+
+        #[inline]
+        pub fn header(&self) -> Option<&'a super::base::Header> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::Header>(ChatTextMessage::VT_HEADER, None) }
+        }
+        #[inline]
+        pub fn message(&self) -> Option<TextMessage<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<TextMessage>>(ChatTextMessage::VT_MESSAGE, None) }
+        }
+    }
+
+    impl flatbuffers::Verifiable for ChatTextMessage<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<TextMessage>>("message", Self::VT_MESSAGE, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct ChatTextMessageArgs<'a> {
+        pub header: Option<&'a super::base::Header>,
+        pub message: Option<flatbuffers::WIPOffset<TextMessage<'a>>>,
+    }
+    impl<'a> Default for ChatTextMessageArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            ChatTextMessageArgs { header: None, message: None }
+        }
+    }
+
+    pub struct ChatTextMessageBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> ChatTextMessageBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_header(&mut self, header: &super::base::Header) {
+            self.fbb_.push_slot_always::<&super::base::Header>(ChatTextMessage::VT_HEADER, header);
+        }
+        #[inline]
+        pub fn add_message(&mut self, message: flatbuffers::WIPOffset<TextMessage<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<TextMessage>>(ChatTextMessage::VT_MESSAGE, message);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> ChatTextMessageBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            ChatTextMessageBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<ChatTextMessage<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for ChatTextMessage<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("ChatTextMessage");
+            ds.field("header", &self.header());
+            ds.field("message", &self.message());
+            ds.finish()
+        }
+    }
+    pub enum ChatTextMessageAckOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct ChatTextMessageAck<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for ChatTextMessageAck<'a> {
+        type Inner = ChatTextMessageAck<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: flatbuffers::Table::new(buf, loc),
+            }
+        }
+    }
+
+    impl<'a> ChatTextMessageAck<'a> {
+        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
+        pub const VT_MESSAGE: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            ChatTextMessageAck { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args ChatTextMessageAckArgs<'args>,
+        ) -> flatbuffers::WIPOffset<ChatTextMessageAck<'bldr>> {
+            let mut builder = ChatTextMessageAckBuilder::new(_fbb);
+            if let Some(x) = args.message {
+                builder.add_message(x);
+            }
+            if let Some(x) = args.header {
+                builder.add_header(x);
+            }
+            builder.finish()
+        }
+
+        #[inline]
+        pub fn header(&self) -> Option<&'a super::base::Header> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::Header>(ChatTextMessageAck::VT_HEADER, None) }
+        }
+        #[inline]
+        pub fn message(&self) -> Option<TextMessageAck<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<flatbuffers::ForwardsUOffset<TextMessageAck>>(ChatTextMessageAck::VT_MESSAGE, None)
+            }
+        }
+    }
+
+    impl flatbuffers::Verifiable for ChatTextMessageAck<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<TextMessageAck>>("message", Self::VT_MESSAGE, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct ChatTextMessageAckArgs<'a> {
+        pub header: Option<&'a super::base::Header>,
+        pub message: Option<flatbuffers::WIPOffset<TextMessageAck<'a>>>,
+    }
+    impl<'a> Default for ChatTextMessageAckArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            ChatTextMessageAckArgs { header: None, message: None }
+        }
+    }
+
+    pub struct ChatTextMessageAckBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> ChatTextMessageAckBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_header(&mut self, header: &super::base::Header) {
+            self.fbb_.push_slot_always::<&super::base::Header>(ChatTextMessageAck::VT_HEADER, header);
+        }
+        #[inline]
+        pub fn add_message(&mut self, message: flatbuffers::WIPOffset<TextMessageAck<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<TextMessageAck>>(ChatTextMessageAck::VT_MESSAGE, message);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> ChatTextMessageAckBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            ChatTextMessageAckBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<ChatTextMessageAck<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for ChatTextMessageAck<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("ChatTextMessageAck");
+            ds.field("header", &self.header());
+            ds.field("message", &self.message());
+            ds.finish()
+        }
+    }
 } // pub mod chat

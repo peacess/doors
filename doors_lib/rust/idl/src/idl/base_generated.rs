@@ -2111,9 +2111,9 @@ pub mod base {
     impl core::fmt::Debug for Header {
         fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
             f.debug_struct("Header")
+                .field("len", &self.len())
                 .field("header_type", &self.header_type())
                 .field("frame_type", &self.frame_type())
-                .field("len", &self.len())
                 .field("to_terminal_id", &self.to_terminal_id())
                 .field("key", &self.key())
                 .finish()
@@ -2158,72 +2158,14 @@ pub mod base {
 
     impl<'a> Header {
         #[allow(clippy::too_many_arguments)]
-        pub fn new(header_type: u32, frame_type: u32, len: u64, to_terminal_id: &TerminalId, key: &X25519Public) -> Self {
+        pub fn new(len: u64, header_type: u32, frame_type: u32, to_terminal_id: &TerminalId, key: &X25519Public) -> Self {
             let mut s = Self([0; 64]);
+            s.set_len(len);
             s.set_header_type(header_type);
             s.set_frame_type(frame_type);
-            s.set_len(len);
             s.set_to_terminal_id(to_terminal_id);
             s.set_key(key);
             s
-        }
-
-        pub fn header_type(&self) -> u32 {
-            let mut mem = core::mem::MaybeUninit::<<u32 as EndianScalar>::Scalar>::uninit();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            EndianScalar::from_little_endian(unsafe {
-                core::ptr::copy_nonoverlapping(
-                    self.0[0..].as_ptr(),
-                    mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-                mem.assume_init()
-            })
-        }
-
-        pub fn set_header_type(&mut self, x: u32) {
-            let x_le = x.to_little_endian();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    &x_le as *const _ as *const u8,
-                    self.0[0..].as_mut_ptr(),
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-            }
-        }
-
-        pub fn frame_type(&self) -> u32 {
-            let mut mem = core::mem::MaybeUninit::<<u32 as EndianScalar>::Scalar>::uninit();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            EndianScalar::from_little_endian(unsafe {
-                core::ptr::copy_nonoverlapping(
-                    self.0[4..].as_ptr(),
-                    mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-                mem.assume_init()
-            })
-        }
-
-        pub fn set_frame_type(&mut self, x: u32) {
-            let x_le = x.to_little_endian();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    &x_le as *const _ as *const u8,
-                    self.0[4..].as_mut_ptr(),
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-            }
         }
 
         pub fn len(&self) -> u64 {
@@ -2233,7 +2175,7 @@ pub mod base {
             // Which contains a valid value in this slot
             EndianScalar::from_little_endian(unsafe {
                 core::ptr::copy_nonoverlapping(
-                    self.0[8..].as_ptr(),
+                    self.0[0..].as_ptr(),
                     mem.as_mut_ptr() as *mut u8,
                     core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
                 );
@@ -2249,8 +2191,66 @@ pub mod base {
             unsafe {
                 core::ptr::copy_nonoverlapping(
                     &x_le as *const _ as *const u8,
-                    self.0[8..].as_mut_ptr(),
+                    self.0[0..].as_mut_ptr(),
                     core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn header_type(&self) -> u32 {
+            let mut mem = core::mem::MaybeUninit::<<u32 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[8..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_header_type(&mut self, x: u32) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[8..].as_mut_ptr(),
+                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn frame_type(&self) -> u32 {
+            let mut mem = core::mem::MaybeUninit::<<u32 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[12..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_frame_type(&mut self, x: u32) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[12..].as_mut_ptr(),
+                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
                 );
             }
         }
@@ -2481,77 +2481,5 @@ pub mod base {
             ds.field("bytes", &self.bytes());
             ds.finish()
         }
-    }
-    #[inline]
-    /// Verifies that a buffer of bytes contains a `Frame`
-    /// and returns it.
-    /// Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `root_as_frame_unchecked`.
-    pub fn root_as_frame(buf: &[u8]) -> Result<Frame, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::root::<Frame>(buf)
-    }
-    #[inline]
-    /// Verifies that a buffer of bytes contains a size prefixed
-    /// `Frame` and returns it.
-    /// Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `size_prefixed_root_as_frame_unchecked`.
-    pub fn size_prefixed_root_as_frame(buf: &[u8]) -> Result<Frame, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::size_prefixed_root::<Frame>(buf)
-    }
-    #[inline]
-    /// Verifies, with the given options, that a buffer of bytes
-    /// contains a `Frame` and returns it.
-    /// Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `root_as_frame_unchecked`.
-    pub fn root_as_frame_with_opts<'b, 'o>(opts: &'o flatbuffers::VerifierOptions, buf: &'b [u8]) -> Result<Frame<'b>, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::root_with_opts::<Frame<'b>>(opts, buf)
-    }
-    #[inline]
-    /// Verifies, with the given verifier options, that a buffer of
-    /// bytes contains a size prefixed `Frame` and returns
-    /// it. Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `root_as_frame_unchecked`.
-    pub fn size_prefixed_root_as_frame_with_opts<'b, 'o>(
-        opts: &'o flatbuffers::VerifierOptions,
-        buf: &'b [u8],
-    ) -> Result<Frame<'b>, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::size_prefixed_root_with_opts::<Frame<'b>>(opts, buf)
-    }
-    #[inline]
-    /// Assumes, without verification, that a buffer of bytes contains a Frame and returns it.
-    /// # Safety
-    /// Callers must trust the given bytes do indeed contain a valid `Frame`.
-    pub unsafe fn root_as_frame_unchecked(buf: &[u8]) -> Frame {
-        flatbuffers::root_unchecked::<Frame>(buf)
-    }
-    #[inline]
-    /// Assumes, without verification, that a buffer of bytes contains a size prefixed Frame and returns it.
-    /// # Safety
-    /// Callers must trust the given bytes do indeed contain a valid size prefixed `Frame`.
-    pub unsafe fn size_prefixed_root_as_frame_unchecked(buf: &[u8]) -> Frame {
-        flatbuffers::size_prefixed_root_unchecked::<Frame>(buf)
-    }
-    #[inline]
-    pub fn finish_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
-        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        root: flatbuffers::WIPOffset<Frame<'a>>,
-    ) {
-        fbb.finish(root, None);
-    }
-
-    #[inline]
-    pub fn finish_size_prefixed_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
-        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        root: flatbuffers::WIPOffset<Frame<'a>>,
-    ) {
-        fbb.finish_size_prefixed(root, None);
     }
 } // pub mod base

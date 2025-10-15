@@ -93,9 +93,9 @@ table Frame{
 }
 
 struct Header{
+    len:uint64;
     header_type: uint32;
     frame_type: uint32;
-    len:uint64;
     to_terminal_id: TerminalId;
     key: base.X25519Public;
 }
@@ -107,5 +107,3 @@ struct FrameConfirm(FrameType){
     // the frame id is confirmed
     frame_id: UlidBytes;
 }
-
-root_type Frame;

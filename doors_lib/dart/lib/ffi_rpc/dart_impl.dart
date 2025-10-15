@@ -31,8 +31,8 @@ class FfiRpcDart {
     _idlBindings.bytes_free(re);
   }
 
-  FfiBytes call(FfiCallHeader header, FfiBytes inParameter) {
-    return _idlBindings.call(header, inParameter);
+  FfiBytes call(FfiBytes inParameter) {
+    return _idlBindings.call(inParameter);
   }
 
   void callback(FfiBytes data) {
@@ -42,10 +42,10 @@ class FfiRpcDart {
       var headType = HeaderType.from(header.headerType);
       switch (headType) {
         case HeaderType.netDiscovery:
-          netDiscoveryCallback.callback(buffer, header, DiscoveryHeader.reader.size);
+          netDiscoveryCallback.callback(buffer, header, Header.reader.size);
           break;
         case HeaderType.chat:
-          chatCallback.callback(buffer, header, DiscoveryHeader.reader.size);
+          chatCallback.callback(buffer, header, Header.reader.size);
           break;
       }
     } catch (e) {

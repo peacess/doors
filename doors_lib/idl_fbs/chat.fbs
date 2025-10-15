@@ -28,3 +28,14 @@ table TextMessageAck(ChatFrame,ChatFfiRpcIn,ChatCallback){
     ts: base.Timestamp;
 }
 
+table ChatTextMessage{
+    header: base.Header;
+    message: TextMessage;
+}
+
+table ChatTextMessageAck{
+    header: base.Header;
+    message: TextMessageAck;
+}
+
+

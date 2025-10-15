@@ -244,3 +244,161 @@ class TextMessageAckObjectBuilder extends fb.ObjectBuilder {
     return fbBuilder.buffer;
   }
 }
+
+class ChatTextMessage {
+  ChatTextMessage._(this._bc, this._bcOffset);
+  factory ChatTextMessage(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<ChatTextMessage> reader = _ChatTextMessageReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  TextMessage? get message => TextMessage.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'ChatTextMessage{header: ${header}, message: ${message}}';
+  }
+}
+
+class _ChatTextMessageReader extends fb.TableReader<ChatTextMessage> {
+  const _ChatTextMessageReader();
+
+  @override
+  ChatTextMessage createObject(fb.BufferContext bc, int offset) => ChatTextMessage._(bc, offset);
+}
+
+class ChatTextMessageBuilder {
+  ChatTextMessageBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addHeader(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addMessageOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class ChatTextMessageObjectBuilder extends fb.ObjectBuilder {
+  final base.HeaderObjectBuilder? _header;
+  final TextMessageObjectBuilder? _message;
+
+  ChatTextMessageObjectBuilder({base.HeaderObjectBuilder? header, TextMessageObjectBuilder? message}) : _header = header, _message = message;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? messageOffset = _message?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_header != null) {
+      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class ChatTextMessageAck {
+  ChatTextMessageAck._(this._bc, this._bcOffset);
+  factory ChatTextMessageAck(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<ChatTextMessageAck> reader = _ChatTextMessageAckReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  TextMessageAck? get message => TextMessageAck.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'ChatTextMessageAck{header: ${header}, message: ${message}}';
+  }
+}
+
+class _ChatTextMessageAckReader extends fb.TableReader<ChatTextMessageAck> {
+  const _ChatTextMessageAckReader();
+
+  @override
+  ChatTextMessageAck createObject(fb.BufferContext bc, int offset) => ChatTextMessageAck._(bc, offset);
+}
+
+class ChatTextMessageAckBuilder {
+  ChatTextMessageAckBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addHeader(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addMessageOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class ChatTextMessageAckObjectBuilder extends fb.ObjectBuilder {
+  final base.HeaderObjectBuilder? _header;
+  final TextMessageAckObjectBuilder? _message;
+
+  ChatTextMessageAckObjectBuilder({base.HeaderObjectBuilder? header, TextMessageAckObjectBuilder? message}) : _header = header, _message = message;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? messageOffset = _message?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_header != null) {
+      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
