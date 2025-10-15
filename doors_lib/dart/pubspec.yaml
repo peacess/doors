@@ -16,9 +16,9 @@ dependencies:
   flat_buffers:
   uuid:
   ulid:
+  ffi:
 
 dev_dependencies:
-  ffi:
   ffigen:
   test:
   flutter_lints:

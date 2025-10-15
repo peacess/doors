@@ -6,6 +6,59 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type UByte16T struct {
+	Ub1  byte `json:"ub1"`
+	Ub2  byte `json:"ub2"`
+	Ub3  byte `json:"ub3"`
+	Ub4  byte `json:"ub4"`
+	Ub5  byte `json:"ub5"`
+	Ub6  byte `json:"ub6"`
+	Ub7  byte `json:"ub7"`
+	Ub8  byte `json:"ub8"`
+	Ub9  byte `json:"ub9"`
+	Ub10 byte `json:"ub10"`
+	Ub11 byte `json:"ub11"`
+	Ub12 byte `json:"ub12"`
+	Ub13 byte `json:"ub13"`
+	Ub14 byte `json:"ub14"`
+	Ub15 byte `json:"ub15"`
+	Ub16 byte `json:"ub16"`
+}
+
+func (t *UByte16T) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateUByte16(builder, t.Ub1, t.Ub2, t.Ub3, t.Ub4, t.Ub5, t.Ub6, t.Ub7, t.Ub8, t.Ub9, t.Ub10, t.Ub11, t.Ub12, t.Ub13, t.Ub14, t.Ub15, t.Ub16)
+}
+func (rcv *UByte16) UnPackTo(t *UByte16T) {
+	t.Ub1 = rcv.Ub1()
+	t.Ub2 = rcv.Ub2()
+	t.Ub3 = rcv.Ub3()
+	t.Ub4 = rcv.Ub4()
+	t.Ub5 = rcv.Ub5()
+	t.Ub6 = rcv.Ub6()
+	t.Ub7 = rcv.Ub7()
+	t.Ub8 = rcv.Ub8()
+	t.Ub9 = rcv.Ub9()
+	t.Ub10 = rcv.Ub10()
+	t.Ub11 = rcv.Ub11()
+	t.Ub12 = rcv.Ub12()
+	t.Ub13 = rcv.Ub13()
+	t.Ub14 = rcv.Ub14()
+	t.Ub15 = rcv.Ub15()
+	t.Ub16 = rcv.Ub16()
+}
+
+func (rcv *UByte16) UnPack() *UByte16T {
+	if rcv == nil {
+		return nil
+	}
+	t := &UByte16T{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type UByte16 struct {
 	_tab flatbuffers.Struct
 }

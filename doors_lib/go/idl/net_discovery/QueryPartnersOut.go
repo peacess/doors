@@ -8,6 +8,59 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type QueryPartnersOutT struct {
+	Id          *base.UlidBytesT `json:"id"`
+	InId        *base.UlidBytesT `json:"in_id"`
+	DnsPartners []*DnsTerminalT  `json:"dns_partners"`
+}
+
+func (t *QueryPartnersOutT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	dnsPartnersOffset := flatbuffers.UOffsetT(0)
+	if t.DnsPartners != nil {
+		dnsPartnersLength := len(t.DnsPartners)
+		dnsPartnersOffsets := make([]flatbuffers.UOffsetT, dnsPartnersLength)
+		for j := 0; j < dnsPartnersLength; j++ {
+			dnsPartnersOffsets[j] = t.DnsPartners[j].Pack(builder)
+		}
+		QueryPartnersOutStartDnsPartnersVector(builder, dnsPartnersLength)
+		for j := dnsPartnersLength - 1; j >= 0; j-- {
+			builder.PrependUOffsetT(dnsPartnersOffsets[j])
+		}
+		dnsPartnersOffset = builder.EndVector(dnsPartnersLength)
+	}
+	QueryPartnersOutStart(builder)
+	idOffset := t.Id.Pack(builder)
+	QueryPartnersOutAddId(builder, idOffset)
+	inIdOffset := t.InId.Pack(builder)
+	QueryPartnersOutAddInId(builder, inIdOffset)
+	QueryPartnersOutAddDnsPartners(builder, dnsPartnersOffset)
+	return QueryPartnersOutEnd(builder)
+}
+
+func (rcv *QueryPartnersOut) UnPackTo(t *QueryPartnersOutT) {
+	t.Id = rcv.Id(nil).UnPack()
+	t.InId = rcv.InId(nil).UnPack()
+	dnsPartnersLength := rcv.DnsPartnersLength()
+	t.DnsPartners = make([]*DnsTerminalT, dnsPartnersLength)
+	for j := 0; j < dnsPartnersLength; j++ {
+		x := DnsTerminal{}
+		rcv.DnsPartners(&x, j)
+		t.DnsPartners[j] = x.UnPack()
+	}
+}
+
+func (rcv *QueryPartnersOut) UnPack() *QueryPartnersOutT {
+	if rcv == nil {
+		return nil
+	}
+	t := &QueryPartnersOutT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type QueryPartnersOut struct {
 	_tab flatbuffers.Table
 }

@@ -39,21 +39,21 @@ pub mod ffi_rpc {
         type Inner = &'a FfiRpcHeader;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a FfiRpcHeader>::follow(buf, loc)
+            unsafe { <&'a FfiRpcHeader>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a FfiRpcHeader {
         type Inner = &'a FfiRpcHeader;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<FfiRpcHeader>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<FfiRpcHeader>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for FfiRpcHeader {
         type Output = FfiRpcHeader;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const FfiRpcHeader as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const FfiRpcHeader as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -165,6 +165,26 @@ pub mod ffi_rpc {
                     core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
                 );
             }
+        }
+
+        pub fn unpack(&self) -> FfiRpcHeaderT {
+            FfiRpcHeaderT {
+                header_type: self.header_type(),
+                rpc_type: self.rpc_type(),
+                len: self.len(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct FfiRpcHeaderT {
+        pub header_type: u32,
+        pub rpc_type: u32,
+        pub len: u64,
+    }
+    impl FfiRpcHeaderT {
+        pub fn pack(&self) -> FfiRpcHeader {
+            FfiRpcHeader::new(self.header_type, self.rpc_type, self.len)
         }
     }
 } // pub mod ffi_rpc

@@ -8,6 +8,64 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type DnsTerminalT struct {
+	Id         *base.UlidBytesT    `json:"id"`
+	ParterId   *base.PartnerIdT    `json:"parter_id"`
+	TerminalId *base.TerminalIdT   `json:"terminal_id"`
+	HostName   string              `json:"host_name"`
+	IpV4       uint32              `json:"ip_v4"`
+	PortV4     uint16              `json:"port_v4"`
+	IpV6       uint64              `json:"ip_v6"`
+	PortV6     uint16              `json:"port_v6"`
+	Key        *base.X25519PublicT `json:"key"`
+}
+
+func (t *DnsTerminalT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	hostNameOffset := flatbuffers.UOffsetT(0)
+	if t.HostName != "" {
+		hostNameOffset = builder.CreateString(t.HostName)
+	}
+	DnsTerminalStart(builder)
+	idOffset := t.Id.Pack(builder)
+	DnsTerminalAddId(builder, idOffset)
+	parterIdOffset := t.ParterId.Pack(builder)
+	DnsTerminalAddParterId(builder, parterIdOffset)
+	terminalIdOffset := t.TerminalId.Pack(builder)
+	DnsTerminalAddTerminalId(builder, terminalIdOffset)
+	DnsTerminalAddHostName(builder, hostNameOffset)
+	DnsTerminalAddIpV4(builder, t.IpV4)
+	DnsTerminalAddPortV4(builder, t.PortV4)
+	DnsTerminalAddIpV6(builder, t.IpV6)
+	DnsTerminalAddPortV6(builder, t.PortV6)
+	keyOffset := t.Key.Pack(builder)
+	DnsTerminalAddKey(builder, keyOffset)
+	return DnsTerminalEnd(builder)
+}
+
+func (rcv *DnsTerminal) UnPackTo(t *DnsTerminalT) {
+	t.Id = rcv.Id(nil).UnPack()
+	t.ParterId = rcv.ParterId(nil).UnPack()
+	t.TerminalId = rcv.TerminalId(nil).UnPack()
+	t.HostName = string(rcv.HostName())
+	t.IpV4 = rcv.IpV4()
+	t.PortV4 = rcv.PortV4()
+	t.IpV6 = rcv.IpV6()
+	t.PortV6 = rcv.PortV6()
+	t.Key = rcv.Key(nil).UnPack()
+}
+
+func (rcv *DnsTerminal) UnPack() *DnsTerminalT {
+	if rcv == nil {
+		return nil
+	}
+	t := &DnsTerminalT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type DnsTerminal struct {
 	_tab flatbuffers.Table
 }

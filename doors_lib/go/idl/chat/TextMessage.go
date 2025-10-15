@@ -8,6 +8,60 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type TextMessageT struct {
+	Id             *base.UlidBytesT  `json:"id"`
+	FromPartnerId  *base.PartnerIdT  `json:"from_partner_id"`
+	ToPartnerId    *base.PartnerIdT  `json:"to_partner_id"`
+	FromTerminalId *base.TerminalIdT `json:"from_terminal_id"`
+	ToTerminalId   *base.TerminalIdT `json:"to_terminal_id"`
+	Ts             *base.TimestampT  `json:"ts"`
+	Text           string            `json:"text"`
+}
+
+func (t *TextMessageT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	textOffset := flatbuffers.UOffsetT(0)
+	if t.Text != "" {
+		textOffset = builder.CreateString(t.Text)
+	}
+	TextMessageStart(builder)
+	idOffset := t.Id.Pack(builder)
+	TextMessageAddId(builder, idOffset)
+	fromPartnerIdOffset := t.FromPartnerId.Pack(builder)
+	TextMessageAddFromPartnerId(builder, fromPartnerIdOffset)
+	toPartnerIdOffset := t.ToPartnerId.Pack(builder)
+	TextMessageAddToPartnerId(builder, toPartnerIdOffset)
+	fromTerminalIdOffset := t.FromTerminalId.Pack(builder)
+	TextMessageAddFromTerminalId(builder, fromTerminalIdOffset)
+	toTerminalIdOffset := t.ToTerminalId.Pack(builder)
+	TextMessageAddToTerminalId(builder, toTerminalIdOffset)
+	tsOffset := t.Ts.Pack(builder)
+	TextMessageAddTs(builder, tsOffset)
+	TextMessageAddText(builder, textOffset)
+	return TextMessageEnd(builder)
+}
+
+func (rcv *TextMessage) UnPackTo(t *TextMessageT) {
+	t.Id = rcv.Id(nil).UnPack()
+	t.FromPartnerId = rcv.FromPartnerId(nil).UnPack()
+	t.ToPartnerId = rcv.ToPartnerId(nil).UnPack()
+	t.FromTerminalId = rcv.FromTerminalId(nil).UnPack()
+	t.ToTerminalId = rcv.ToTerminalId(nil).UnPack()
+	t.Ts = rcv.Ts(nil).UnPack()
+	t.Text = string(rcv.Text())
+}
+
+func (rcv *TextMessage) UnPack() *TextMessageT {
+	if rcv == nil {
+		return nil
+	}
+	t := &TextMessageT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type TextMessage struct {
 	_tab flatbuffers.Table
 }

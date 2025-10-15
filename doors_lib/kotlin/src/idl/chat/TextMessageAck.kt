@@ -2,73 +2,53 @@
 
 package chat
 
-import com.google.flatbuffers.BaseVector
-import com.google.flatbuffers.BooleanVector
-import com.google.flatbuffers.ByteVector
-import com.google.flatbuffers.Constants
-import com.google.flatbuffers.DoubleVector
-import com.google.flatbuffers.FlatBufferBuilder
-import com.google.flatbuffers.FloatVector
-import com.google.flatbuffers.LongVector
-import com.google.flatbuffers.StringVector
-import com.google.flatbuffers.Struct
-import com.google.flatbuffers.Table
-import com.google.flatbuffers.UnionVector
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import kotlin.math.sign
-
+import com.google.flatbuffers.kotlin.*
+import kotlin.jvm.JvmInline
 @Suppress("unused")
 class TextMessageAck : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
-        __reset(_i, _bb)
-    }
-    fun __assign(_i: Int, _bb: ByteBuffer) : TextMessageAck {
-        __init(_i, _bb)
-        return this
-    }
+    fun init(i: Int, buffer: ReadWriteBuffer) : TextMessageAck = reset(i, buffer)
+
     val id : base.UlidBytes? get() = id(base.UlidBytes())
-    fun id(obj: base.UlidBytes) : base.UlidBytes? {
-        val o = __offset(4)
-        return if (o != 0) {
-            obj.__assign(o + bb_pos, bb)
-        } else {
-            null
-        }
-    }
+    fun id(obj: base.UlidBytes) : base.UlidBytes? = lookupField(4, null ) { obj.init(it + bufferPos, bb) }
+
     val sendId : base.UlidBytes? get() = sendId(base.UlidBytes())
-    fun sendId(obj: base.UlidBytes) : base.UlidBytes? {
-        val o = __offset(6)
-        return if (o != 0) {
-            obj.__assign(o + bb_pos, bb)
-        } else {
-            null
-        }
-    }
+    fun sendId(obj: base.UlidBytes) : base.UlidBytes? = lookupField(6, null ) { obj.init(it + bufferPos, bb) }
+
     val ts : base.Timestamp? get() = ts(base.Timestamp())
-    fun ts(obj: base.Timestamp) : base.Timestamp? {
-        val o = __offset(8)
-        return if (o != 0) {
-            obj.__assign(o + bb_pos, bb)
-        } else {
-            null
-        }
-    }
+    fun ts(obj: base.Timestamp) : base.Timestamp? = lookupField(8, null ) { obj.init(it + bufferPos, bb) }
+
     companion object {
-        fun validateVersion() = Constants.FLATBUFFERS_25_2_10()
-        fun getRootAsTextMessageAck(_bb: ByteBuffer): TextMessageAck = getRootAsTextMessageAck(_bb, TextMessageAck())
-        fun getRootAsTextMessageAck(_bb: ByteBuffer, obj: TextMessageAck): TextMessageAck {
-            _bb.order(ByteOrder.LITTLE_ENDIAN)
-            return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
-        }
+        @JvmStatic
+        fun validateVersion() = VERSION_2_0_8
+
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer) : TextMessageAck = asRoot(buffer, TextMessageAck())
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer, obj: TextMessageAck) : TextMessageAck = obj.init(buffer.getInt(buffer.limit) + buffer.limit, buffer)
+
+
+        @JvmStatic
         fun startTextMessageAck(builder: FlatBufferBuilder) = builder.startTable(3)
-        fun addId(builder: FlatBufferBuilder, id: Int) = builder.addStruct(0, id, 0)
-        fun addSendId(builder: FlatBufferBuilder, sendId: Int) = builder.addStruct(1, sendId, 0)
-        fun addTs(builder: FlatBufferBuilder, ts: Int) = builder.addStruct(2, ts, 0)
-        fun endTextMessageAck(builder: FlatBufferBuilder) : Int {
-            val o = builder.endTable()
+
+        @JvmStatic
+        fun addId(builder: FlatBufferBuilder, id: Offset<base.UlidBytes>) = builder.addStruct(0, id.value, 0)
+
+        @JvmStatic
+        fun addSendId(builder: FlatBufferBuilder, sendId: Offset<base.UlidBytes>) = builder.addStruct(1, sendId.value, 0)
+
+        @JvmStatic
+        fun addTs(builder: FlatBufferBuilder, ts: Offset<base.Timestamp>) = builder.addStruct(2, ts.value, 0)
+
+        @JvmStatic
+        fun endTextMessageAck(builder: FlatBufferBuilder) : Offset<TextMessageAck> {
+            val o: Offset<TextMessageAck> = builder.endTable()
             return o
         }
     }
 }
+
+typealias TextMessageAckOffsetArray = OffsetArray<TextMessageAck>
+
+inline fun TextMessageAckOffsetArray(size: Int, crossinline call: (Int) -> Offset<TextMessageAck>): TextMessageAckOffsetArray =
+    TextMessageAckOffsetArray(IntArray(size) { call(it).value })

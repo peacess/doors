@@ -6,7 +6,7 @@ import '../idl_bindings_generated.dart';
 const String _libName = 'ffi_rpc';
 
 /// The dynamic library in which the symbols for [IdlBindings] can be found.
-final DynamicLibrary _dylib = () {
+final DynamicLibrary dylib = () {
   if (Platform.isMacOS || Platform.isIOS) {
     return DynamicLibrary.open('$_libName.framework/$_libName');
   }
@@ -19,4 +19,4 @@ final DynamicLibrary _dylib = () {
   throw UnsupportedError('Unknown platform: ${Platform.operatingSystem}');
 }();
 
-final IdlBindings idlBindings = IdlBindings(_dylib);
+final IdlBindings idlBindings = IdlBindings(dylib);

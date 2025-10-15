@@ -2,44 +2,6 @@
 
 package base
 
-import com.google.flatbuffers.BaseVector
-import com.google.flatbuffers.BooleanVector
-import com.google.flatbuffers.ByteVector
-import com.google.flatbuffers.Constants
-import com.google.flatbuffers.DoubleVector
-import com.google.flatbuffers.FlatBufferBuilder
-import com.google.flatbuffers.FloatVector
-import com.google.flatbuffers.LongVector
-import com.google.flatbuffers.StringVector
-import com.google.flatbuffers.Struct
-import com.google.flatbuffers.Table
-import com.google.flatbuffers.UnionVector
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import kotlin.math.sign
+import com.google.flatbuffers.kotlin.*
+import kotlin.jvm.JvmInline
 
-@Suppress("unused")
-class X25519Public : Struct() {
-
-    fun __init(_i: Int, _bb: ByteBuffer)  {
-        __reset(_i, _bb)
-    }
-    fun __assign(_i: Int, _bb: ByteBuffer) : X25519Public {
-        __init(_i, _bb)
-        return this
-    }
-    val key1 : ULong get() = bb.getLong(bb_pos + 0).toULong()
-    val key2 : ULong get() = bb.getLong(bb_pos + 8).toULong()
-    val key3 : ULong get() = bb.getLong(bb_pos + 16).toULong()
-    val key4 : ULong get() = bb.getLong(bb_pos + 24).toULong()
-    companion object {
-        fun createX25519Public(builder: FlatBufferBuilder, key1: ULong, key2: ULong, key3: ULong, key4: ULong) : Int {
-            builder.prep(8, 32)
-            builder.putLong(key4.toLong())
-            builder.putLong(key3.toLong())
-            builder.putLong(key2.toLong())
-            builder.putLong(key1.toLong())
-            return builder.offset()
-        }
-    }
-}

@@ -8,6 +8,37 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type ChatTextMessageT struct {
+	Header  *base.HeaderT `json:"header"`
+	Message *TextMessageT `json:"message"`
+}
+
+func (t *ChatTextMessageT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	messageOffset := t.Message.Pack(builder)
+	ChatTextMessageStart(builder)
+	headerOffset := t.Header.Pack(builder)
+	ChatTextMessageAddHeader(builder, headerOffset)
+	ChatTextMessageAddMessage(builder, messageOffset)
+	return ChatTextMessageEnd(builder)
+}
+
+func (rcv *ChatTextMessage) UnPackTo(t *ChatTextMessageT) {
+	t.Header = rcv.Header(nil).UnPack()
+	t.Message = rcv.Message(nil).UnPack()
+}
+
+func (rcv *ChatTextMessage) UnPack() *ChatTextMessageT {
+	if rcv == nil {
+		return nil
+	}
+	t := &ChatTextMessageT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type ChatTextMessage struct {
 	_tab flatbuffers.Table
 }

@@ -6,6 +6,35 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type X25519PublicT struct {
+	Key1 uint64 `json:"key1"`
+	Key2 uint64 `json:"key2"`
+	Key3 uint64 `json:"key3"`
+	Key4 uint64 `json:"key4"`
+}
+
+func (t *X25519PublicT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateX25519Public(builder, t.Key1, t.Key2, t.Key3, t.Key4)
+}
+func (rcv *X25519Public) UnPackTo(t *X25519PublicT) {
+	t.Key1 = rcv.Key1()
+	t.Key2 = rcv.Key2()
+	t.Key3 = rcv.Key3()
+	t.Key4 = rcv.Key4()
+}
+
+func (rcv *X25519Public) UnPack() *X25519PublicT {
+	if rcv == nil {
+		return nil
+	}
+	t := &X25519PublicT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type X25519Public struct {
 	_tab flatbuffers.Struct
 }

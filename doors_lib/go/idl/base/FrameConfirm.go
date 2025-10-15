@@ -6,6 +6,31 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type FrameConfirmT struct {
+	Id      *UlidBytesT `json:"id"`
+	FrameId *UlidBytesT `json:"frame_id"`
+}
+
+func (t *FrameConfirmT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateFrameConfirm(builder, t.Id.Ts1, t.Id.Ts2, t.Id.Ts3, t.Id.Ts4, t.Id.Ts5, t.Id.Ts6, t.Id.Rand7, t.Id.Rand8, t.Id.Rand9, t.Id.Rand10, t.Id.Rand11, t.Id.Rand12, t.Id.Rand13, t.Id.Rand14, t.Id.Rand15, t.Id.Rand16, t.FrameId.Ts1, t.FrameId.Ts2, t.FrameId.Ts3, t.FrameId.Ts4, t.FrameId.Ts5, t.FrameId.Ts6, t.FrameId.Rand7, t.FrameId.Rand8, t.FrameId.Rand9, t.FrameId.Rand10, t.FrameId.Rand11, t.FrameId.Rand12, t.FrameId.Rand13, t.FrameId.Rand14, t.FrameId.Rand15, t.FrameId.Rand16)
+}
+func (rcv *FrameConfirm) UnPackTo(t *FrameConfirmT) {
+	t.Id = rcv.Id(nil).UnPack()
+	t.FrameId = rcv.FrameId(nil).UnPack()
+}
+
+func (rcv *FrameConfirm) UnPack() *FrameConfirmT {
+	if rcv == nil {
+		return nil
+	}
+	t := &FrameConfirmT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type FrameConfirm struct {
 	_tab flatbuffers.Struct
 }

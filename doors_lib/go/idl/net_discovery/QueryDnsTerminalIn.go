@@ -8,6 +8,33 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type QueryDnsTerminalInT struct {
+	Id *base.UlidBytesT `json:"id"`
+}
+
+func (t *QueryDnsTerminalInT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	QueryDnsTerminalInStart(builder)
+	idOffset := t.Id.Pack(builder)
+	QueryDnsTerminalInAddId(builder, idOffset)
+	return QueryDnsTerminalInEnd(builder)
+}
+
+func (rcv *QueryDnsTerminalIn) UnPackTo(t *QueryDnsTerminalInT) {
+	t.Id = rcv.Id(nil).UnPack()
+}
+
+func (rcv *QueryDnsTerminalIn) UnPack() *QueryDnsTerminalInT {
+	if rcv == nil {
+		return nil
+	}
+	t := &QueryDnsTerminalInT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type QueryDnsTerminalIn struct {
 	_tab flatbuffers.Table
 }

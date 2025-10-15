@@ -31,7 +31,7 @@ pub mod chat {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -77,6 +77,25 @@ pub mod chat {
                 builder.add_id(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> TextMessageT {
+            let id = self.id().map(|x| x.unpack());
+            let from_partner_id = self.from_partner_id().map(|x| x.unpack());
+            let to_partner_id = self.to_partner_id().map(|x| x.unpack());
+            let from_terminal_id = self.from_terminal_id().map(|x| x.unpack());
+            let to_terminal_id = self.to_terminal_id().map(|x| x.unpack());
+            let ts = self.ts().map(|x| x.unpack());
+            let text = self.text().map(|x| x.to_string());
+            TextMessageT {
+                id,
+                from_partner_id,
+                to_partner_id,
+                from_terminal_id,
+                to_terminal_id,
+                ts,
+                text,
+            }
         }
 
         #[inline]
@@ -232,6 +251,59 @@ pub mod chat {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct TextMessageT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub from_partner_id: Option<super::base::PartnerIdT>,
+        pub to_partner_id: Option<super::base::PartnerIdT>,
+        pub from_terminal_id: Option<super::base::TerminalIdT>,
+        pub to_terminal_id: Option<super::base::TerminalIdT>,
+        pub ts: Option<super::base::TimestampT>,
+        pub text: Option<String>,
+    }
+    impl Default for TextMessageT {
+        fn default() -> Self {
+            Self {
+                id: None,
+                from_partner_id: None,
+                to_partner_id: None,
+                from_terminal_id: None,
+                to_terminal_id: None,
+                ts: None,
+                text: None,
+            }
+        }
+    }
+    impl TextMessageT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<TextMessage<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let from_partner_id_tmp = self.from_partner_id.as_ref().map(|x| x.pack());
+            let from_partner_id = from_partner_id_tmp.as_ref();
+            let to_partner_id_tmp = self.to_partner_id.as_ref().map(|x| x.pack());
+            let to_partner_id = to_partner_id_tmp.as_ref();
+            let from_terminal_id_tmp = self.from_terminal_id.as_ref().map(|x| x.pack());
+            let from_terminal_id = from_terminal_id_tmp.as_ref();
+            let to_terminal_id_tmp = self.to_terminal_id.as_ref().map(|x| x.pack());
+            let to_terminal_id = to_terminal_id_tmp.as_ref();
+            let ts_tmp = self.ts.as_ref().map(|x| x.pack());
+            let ts = ts_tmp.as_ref();
+            let text = self.text.as_ref().map(|x| _fbb.create_string(x));
+            TextMessage::create(
+                _fbb,
+                &TextMessageArgs {
+                    id,
+                    from_partner_id,
+                    to_partner_id,
+                    from_terminal_id,
+                    to_terminal_id,
+                    ts,
+                    text,
+                },
+            )
+        }
+    }
     pub enum TextMessageAckOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -244,7 +316,7 @@ pub mod chat {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -274,6 +346,13 @@ pub mod chat {
                 builder.add_id(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> TextMessageAckT {
+            let id = self.id().map(|x| x.unpack());
+            let send_id = self.send_id().map(|x| x.unpack());
+            let ts = self.ts().map(|x| x.unpack());
+            TextMessageAckT { id, send_id, ts }
         }
 
         #[inline]
@@ -365,6 +444,33 @@ pub mod chat {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct TextMessageAckT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub send_id: Option<super::base::UlidBytesT>,
+        pub ts: Option<super::base::TimestampT>,
+    }
+    impl Default for TextMessageAckT {
+        fn default() -> Self {
+            Self {
+                id: None,
+                send_id: None,
+                ts: None,
+            }
+        }
+    }
+    impl TextMessageAckT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<TextMessageAck<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let send_id_tmp = self.send_id.as_ref().map(|x| x.pack());
+            let send_id = send_id_tmp.as_ref();
+            let ts_tmp = self.ts.as_ref().map(|x| x.pack());
+            let ts = ts_tmp.as_ref();
+            TextMessageAck::create(_fbb, &TextMessageAckArgs { id, send_id, ts })
+        }
+    }
     pub enum ChatTextMessageOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -377,7 +483,7 @@ pub mod chat {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -403,6 +509,12 @@ pub mod chat {
                 builder.add_header(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> ChatTextMessageT {
+            let header = self.header().map(|x| x.unpack());
+            let message = self.message().map(|x| Box::new(x.unpack()));
+            ChatTextMessageT { header, message }
         }
 
         #[inline]
@@ -477,6 +589,28 @@ pub mod chat {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ChatTextMessageT {
+        pub header: Option<super::base::HeaderT>,
+        pub message: Option<Box<TextMessageT>>,
+    }
+    impl Default for ChatTextMessageT {
+        fn default() -> Self {
+            Self { header: None, message: None }
+        }
+    }
+    impl ChatTextMessageT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> flatbuffers::WIPOffset<ChatTextMessage<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let message = self.message.as_ref().map(|x| x.pack(_fbb));
+            ChatTextMessage::create(_fbb, &ChatTextMessageArgs { header, message })
+        }
+    }
     pub enum ChatTextMessageAckOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -489,7 +623,7 @@ pub mod chat {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -515,6 +649,12 @@ pub mod chat {
                 builder.add_header(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> ChatTextMessageAckT {
+            let header = self.header().map(|x| x.unpack());
+            let message = self.message().map(|x| Box::new(x.unpack()));
+            ChatTextMessageAckT { header, message }
         }
 
         #[inline]
@@ -590,6 +730,28 @@ pub mod chat {
             ds.field("header", &self.header());
             ds.field("message", &self.message());
             ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ChatTextMessageAckT {
+        pub header: Option<super::base::HeaderT>,
+        pub message: Option<Box<TextMessageAckT>>,
+    }
+    impl Default for ChatTextMessageAckT {
+        fn default() -> Self {
+            Self { header: None, message: None }
+        }
+    }
+    impl ChatTextMessageAckT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> flatbuffers::WIPOffset<ChatTextMessageAck<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let message = self.message.as_ref().map(|x| x.pack(_fbb));
+            ChatTextMessageAck::create(_fbb, &ChatTextMessageAckArgs { header, message })
         }
     }
 } // pub mod chat

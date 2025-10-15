@@ -6,6 +6,43 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type UByte8T struct {
+	Ub1 byte `json:"ub1"`
+	Ub2 byte `json:"ub2"`
+	Ub3 byte `json:"ub3"`
+	Ub4 byte `json:"ub4"`
+	Ub5 byte `json:"ub5"`
+	Ub6 byte `json:"ub6"`
+	Ub7 byte `json:"ub7"`
+	Ub8 byte `json:"ub8"`
+}
+
+func (t *UByte8T) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateUByte8(builder, t.Ub1, t.Ub2, t.Ub3, t.Ub4, t.Ub5, t.Ub6, t.Ub7, t.Ub8)
+}
+func (rcv *UByte8) UnPackTo(t *UByte8T) {
+	t.Ub1 = rcv.Ub1()
+	t.Ub2 = rcv.Ub2()
+	t.Ub3 = rcv.Ub3()
+	t.Ub4 = rcv.Ub4()
+	t.Ub5 = rcv.Ub5()
+	t.Ub6 = rcv.Ub6()
+	t.Ub7 = rcv.Ub7()
+	t.Ub8 = rcv.Ub8()
+}
+
+func (rcv *UByte8) UnPack() *UByte8T {
+	if rcv == nil {
+		return nil
+	}
+	t := &UByte8T{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type UByte8 struct {
 	_tab flatbuffers.Struct
 }

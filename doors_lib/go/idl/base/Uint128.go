@@ -6,6 +6,31 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type Uint128T struct {
+	Low  uint64 `json:"low"`
+	High uint64 `json:"high"`
+}
+
+func (t *Uint128T) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateUint128(builder, t.Low, t.High)
+}
+func (rcv *Uint128) UnPackTo(t *Uint128T) {
+	t.Low = rcv.Low()
+	t.High = rcv.High()
+}
+
+func (rcv *Uint128) UnPack() *Uint128T {
+	if rcv == nil {
+		return nil
+	}
+	t := &Uint128T{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type Uint128 struct {
 	_tab flatbuffers.Struct
 }

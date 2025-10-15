@@ -33,6 +33,64 @@ class TextMessage {
   String toString() {
     return 'TextMessage{id: ${id}, fromPartnerId: ${fromPartnerId}, toPartnerId: ${toPartnerId}, fromTerminalId: ${fromTerminalId}, toTerminalId: ${toTerminalId}, ts: ${ts}, text: ${text}}';
   }
+
+  TextMessageT unpack() => TextMessageT(
+    id: id?.unpack(),
+    fromPartnerId: fromPartnerId?.unpack(),
+    toPartnerId: toPartnerId?.unpack(),
+    fromTerminalId: fromTerminalId?.unpack(),
+    toTerminalId: toTerminalId?.unpack(),
+    ts: ts?.unpack(),
+    text: text,
+  );
+
+  static int pack(fb.Builder fbBuilder, TextMessageT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class TextMessageT implements fb.Packable {
+  base.UlidBytesT? id;
+  base.PartnerIdT? fromPartnerId;
+  base.PartnerIdT? toPartnerId;
+  base.TerminalIdT? fromTerminalId;
+  base.TerminalIdT? toTerminalId;
+  base.TimestampT? ts;
+  String? text;
+
+  TextMessageT({this.id, this.fromPartnerId, this.toPartnerId, this.fromTerminalId, this.toTerminalId, this.ts, this.text});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? textOffset = text == null ? null : fbBuilder.writeString(text!);
+    fbBuilder.startTable(7);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    if (fromPartnerId != null) {
+      fbBuilder.addStruct(1, fromPartnerId!.pack(fbBuilder));
+    }
+    if (toPartnerId != null) {
+      fbBuilder.addStruct(2, toPartnerId!.pack(fbBuilder));
+    }
+    if (fromTerminalId != null) {
+      fbBuilder.addStruct(3, fromTerminalId!.pack(fbBuilder));
+    }
+    if (toTerminalId != null) {
+      fbBuilder.addStruct(4, toTerminalId!.pack(fbBuilder));
+    }
+    if (ts != null) {
+      fbBuilder.addStruct(5, ts!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(6, textOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'TextMessageT{id: ${id}, fromPartnerId: ${fromPartnerId}, toPartnerId: ${toPartnerId}, fromTerminalId: ${fromTerminalId}, toTerminalId: ${toTerminalId}, ts: ${ts}, text: ${text}}';
+  }
 }
 
 class _TextMessageReader extends fb.TableReader<TextMessage> {
@@ -172,6 +230,41 @@ class TextMessageAck {
   String toString() {
     return 'TextMessageAck{id: ${id}, sendId: ${sendId}, ts: ${ts}}';
   }
+
+  TextMessageAckT unpack() => TextMessageAckT(id: id?.unpack(), sendId: sendId?.unpack(), ts: ts?.unpack());
+
+  static int pack(fb.Builder fbBuilder, TextMessageAckT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class TextMessageAckT implements fb.Packable {
+  base.UlidBytesT? id;
+  base.UlidBytesT? sendId;
+  base.TimestampT? ts;
+
+  TextMessageAckT({this.id, this.sendId, this.ts});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.startTable(3);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    if (sendId != null) {
+      fbBuilder.addStruct(1, sendId!.pack(fbBuilder));
+    }
+    if (ts != null) {
+      fbBuilder.addStruct(2, ts!.pack(fbBuilder));
+    }
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'TextMessageAckT{id: ${id}, sendId: ${sendId}, ts: ${ts}}';
+  }
 }
 
 class _TextMessageAckReader extends fb.TableReader<TextMessageAck> {
@@ -264,6 +357,36 @@ class ChatTextMessage {
   String toString() {
     return 'ChatTextMessage{header: ${header}, message: ${message}}';
   }
+
+  ChatTextMessageT unpack() => ChatTextMessageT(header: header?.unpack(), message: message?.unpack());
+
+  static int pack(fb.Builder fbBuilder, ChatTextMessageT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class ChatTextMessageT implements fb.Packable {
+  base.HeaderT? header;
+  TextMessageT? message;
+
+  ChatTextMessageT({this.header, this.message});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? messageOffset = message?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (header != null) {
+      fbBuilder.addStruct(0, header!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'ChatTextMessageT{header: ${header}, message: ${message}}';
+  }
 }
 
 class _ChatTextMessageReader extends fb.TableReader<ChatTextMessage> {
@@ -342,6 +465,36 @@ class ChatTextMessageAck {
   @override
   String toString() {
     return 'ChatTextMessageAck{header: ${header}, message: ${message}}';
+  }
+
+  ChatTextMessageAckT unpack() => ChatTextMessageAckT(header: header?.unpack(), message: message?.unpack());
+
+  static int pack(fb.Builder fbBuilder, ChatTextMessageAckT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class ChatTextMessageAckT implements fb.Packable {
+  base.HeaderT? header;
+  TextMessageAckT? message;
+
+  ChatTextMessageAckT({this.header, this.message});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? messageOffset = message?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (header != null) {
+      fbBuilder.addStruct(0, header!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'ChatTextMessageAckT{header: ${header}, message: ${message}}';
   }
 }
 

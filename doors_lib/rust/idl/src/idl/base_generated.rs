@@ -44,21 +44,21 @@ pub mod base {
         type Inner = &'a UByte8;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a UByte8>::follow(buf, loc)
+            unsafe { <&'a UByte8>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a UByte8 {
         type Inner = &'a UByte8;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<UByte8>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<UByte8>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for UByte8 {
         type Output = UByte8;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const UByte8 as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const UByte8 as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -321,6 +321,36 @@ pub mod base {
                 );
             }
         }
+
+        pub fn unpack(&self) -> UByte8T {
+            UByte8T {
+                ub1: self.ub1(),
+                ub2: self.ub2(),
+                ub3: self.ub3(),
+                ub4: self.ub4(),
+                ub5: self.ub5(),
+                ub6: self.ub6(),
+                ub7: self.ub7(),
+                ub8: self.ub8(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct UByte8T {
+        pub ub1: u8,
+        pub ub2: u8,
+        pub ub3: u8,
+        pub ub4: u8,
+        pub ub5: u8,
+        pub ub6: u8,
+        pub ub7: u8,
+        pub ub8: u8,
+    }
+    impl UByte8T {
+        pub fn pack(&self) -> UByte8 {
+            UByte8::new(self.ub1, self.ub2, self.ub3, self.ub4, self.ub5, self.ub6, self.ub7, self.ub8)
+        }
     }
 
     // struct UByte16, aligned to 1
@@ -360,21 +390,21 @@ pub mod base {
         type Inner = &'a UByte16;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a UByte16>::follow(buf, loc)
+            unsafe { <&'a UByte16>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a UByte16 {
         type Inner = &'a UByte16;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<UByte16>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<UByte16>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for UByte16 {
         type Output = UByte16;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const UByte16 as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const UByte16 as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -894,6 +924,55 @@ pub mod base {
                 );
             }
         }
+
+        pub fn unpack(&self) -> UByte16T {
+            UByte16T {
+                ub1: self.ub1(),
+                ub2: self.ub2(),
+                ub3: self.ub3(),
+                ub4: self.ub4(),
+                ub5: self.ub5(),
+                ub6: self.ub6(),
+                ub7: self.ub7(),
+                ub8: self.ub8(),
+                ub9: self.ub9(),
+                ub10: self.ub10(),
+                ub11: self.ub11(),
+                ub12: self.ub12(),
+                ub13: self.ub13(),
+                ub14: self.ub14(),
+                ub15: self.ub15(),
+                ub16: self.ub16(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct UByte16T {
+        pub ub1: u8,
+        pub ub2: u8,
+        pub ub3: u8,
+        pub ub4: u8,
+        pub ub5: u8,
+        pub ub6: u8,
+        pub ub7: u8,
+        pub ub8: u8,
+        pub ub9: u8,
+        pub ub10: u8,
+        pub ub11: u8,
+        pub ub12: u8,
+        pub ub13: u8,
+        pub ub14: u8,
+        pub ub15: u8,
+        pub ub16: u8,
+    }
+    impl UByte16T {
+        pub fn pack(&self) -> UByte16 {
+            UByte16::new(
+                self.ub1, self.ub2, self.ub3, self.ub4, self.ub5, self.ub6, self.ub7, self.ub8, self.ub9, self.ub10, self.ub11, self.ub12, self.ub13,
+                self.ub14, self.ub15, self.ub16,
+            )
+        }
     }
 
     // struct UlidBytes, aligned to 1
@@ -933,21 +1012,21 @@ pub mod base {
         type Inner = &'a UlidBytes;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a UlidBytes>::follow(buf, loc)
+            unsafe { <&'a UlidBytes>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a UlidBytes {
         type Inner = &'a UlidBytes;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<UlidBytes>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<UlidBytes>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for UlidBytes {
         type Output = UlidBytes;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const UlidBytes as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const UlidBytes as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -1467,6 +1546,69 @@ pub mod base {
                 );
             }
         }
+
+        pub fn unpack(&self) -> UlidBytesT {
+            UlidBytesT {
+                ts1: self.ts1(),
+                ts2: self.ts2(),
+                ts3: self.ts3(),
+                ts4: self.ts4(),
+                ts5: self.ts5(),
+                ts6: self.ts6(),
+                rand7: self.rand7(),
+                rand8: self.rand8(),
+                rand9: self.rand9(),
+                rand10: self.rand10(),
+                rand11: self.rand11(),
+                rand12: self.rand12(),
+                rand13: self.rand13(),
+                rand14: self.rand14(),
+                rand15: self.rand15(),
+                rand16: self.rand16(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct UlidBytesT {
+        pub ts1: u8,
+        pub ts2: u8,
+        pub ts3: u8,
+        pub ts4: u8,
+        pub ts5: u8,
+        pub ts6: u8,
+        pub rand7: u8,
+        pub rand8: u8,
+        pub rand9: u8,
+        pub rand10: u8,
+        pub rand11: u8,
+        pub rand12: u8,
+        pub rand13: u8,
+        pub rand14: u8,
+        pub rand15: u8,
+        pub rand16: u8,
+    }
+    impl UlidBytesT {
+        pub fn pack(&self) -> UlidBytes {
+            UlidBytes::new(
+                self.ts1,
+                self.ts2,
+                self.ts3,
+                self.ts4,
+                self.ts5,
+                self.ts6,
+                self.rand7,
+                self.rand8,
+                self.rand9,
+                self.rand10,
+                self.rand11,
+                self.rand12,
+                self.rand13,
+                self.rand14,
+                self.rand15,
+                self.rand16,
+            )
+        }
     }
 
     // struct X25519Public, aligned to 8
@@ -1494,21 +1636,21 @@ pub mod base {
         type Inner = &'a X25519Public;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a X25519Public>::follow(buf, loc)
+            unsafe { <&'a X25519Public>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a X25519Public {
         type Inner = &'a X25519Public;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<X25519Public>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<X25519Public>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for X25519Public {
         type Output = X25519Public;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const X25519Public as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const X25519Public as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -1651,6 +1793,28 @@ pub mod base {
                 );
             }
         }
+
+        pub fn unpack(&self) -> X25519PublicT {
+            X25519PublicT {
+                key1: self.key1(),
+                key2: self.key2(),
+                key3: self.key3(),
+                key4: self.key4(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct X25519PublicT {
+        pub key1: u64,
+        pub key2: u64,
+        pub key3: u64,
+        pub key4: u64,
+    }
+    impl X25519PublicT {
+        pub fn pack(&self) -> X25519Public {
+            X25519Public::new(self.key1, self.key2, self.key3, self.key4)
+        }
     }
 
     // struct Uint128, aligned to 8
@@ -1673,21 +1837,21 @@ pub mod base {
         type Inner = &'a Uint128;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a Uint128>::follow(buf, loc)
+            unsafe { <&'a Uint128>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a Uint128 {
         type Inner = &'a Uint128;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<Uint128>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<Uint128>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for Uint128 {
         type Output = Uint128;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const Uint128 as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const Uint128 as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -1770,6 +1934,24 @@ pub mod base {
                 );
             }
         }
+
+        pub fn unpack(&self) -> Uint128T {
+            Uint128T {
+                low: self.low(),
+                high: self.high(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct Uint128T {
+        pub low: u64,
+        pub high: u64,
+    }
+    impl Uint128T {
+        pub fn pack(&self) -> Uint128 {
+            Uint128::new(self.low, self.high)
+        }
     }
 
     // struct PartnerId, aligned to 8
@@ -1792,21 +1974,21 @@ pub mod base {
         type Inner = &'a PartnerId;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a PartnerId>::follow(buf, loc)
+            unsafe { <&'a PartnerId>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a PartnerId {
         type Inner = &'a PartnerId;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<PartnerId>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<PartnerId>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for PartnerId {
         type Output = PartnerId;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const PartnerId as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const PartnerId as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -1889,6 +2071,24 @@ pub mod base {
                 );
             }
         }
+
+        pub fn unpack(&self) -> PartnerIdT {
+            PartnerIdT {
+                low: self.low(),
+                high: self.high(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct PartnerIdT {
+        pub low: u64,
+        pub high: u64,
+    }
+    impl PartnerIdT {
+        pub fn pack(&self) -> PartnerId {
+            PartnerId::new(self.low, self.high)
+        }
     }
 
     // struct TerminalId, aligned to 8
@@ -1911,21 +2111,21 @@ pub mod base {
         type Inner = &'a TerminalId;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a TerminalId>::follow(buf, loc)
+            unsafe { <&'a TerminalId>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a TerminalId {
         type Inner = &'a TerminalId;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<TerminalId>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<TerminalId>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for TerminalId {
         type Output = TerminalId;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const TerminalId as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const TerminalId as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -2008,6 +2208,24 @@ pub mod base {
                 );
             }
         }
+
+        pub fn unpack(&self) -> TerminalIdT {
+            TerminalIdT {
+                low: self.low(),
+                high: self.high(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct TerminalIdT {
+        pub low: u64,
+        pub high: u64,
+    }
+    impl TerminalIdT {
+        pub fn pack(&self) -> TerminalId {
+            TerminalId::new(self.low, self.high)
+        }
     }
 
     // struct Timestamp, aligned to 8
@@ -2030,21 +2248,21 @@ pub mod base {
         type Inner = &'a Timestamp;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a Timestamp>::follow(buf, loc)
+            unsafe { <&'a Timestamp>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a Timestamp {
         type Inner = &'a Timestamp;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<Timestamp>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<Timestamp>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for Timestamp {
         type Output = Timestamp;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const Timestamp as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const Timestamp as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -2097,6 +2315,20 @@ pub mod base {
                 );
             }
         }
+
+        pub fn unpack(&self) -> TimestampT {
+            TimestampT { ts: self.ts() }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct TimestampT {
+        pub ts: i64,
+    }
+    impl TimestampT {
+        pub fn pack(&self) -> Timestamp {
+            Timestamp::new(self.ts)
+        }
     }
 
     // struct Header, aligned to 8
@@ -2125,21 +2357,21 @@ pub mod base {
         type Inner = &'a Header;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a Header>::follow(buf, loc)
+            unsafe { <&'a Header>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a Header {
         type Inner = &'a Header;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<Header>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<Header>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for Header {
         type Output = Header;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const Header as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const Header as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -2278,6 +2510,30 @@ pub mod base {
         pub fn set_key(&mut self, x: &X25519Public) {
             self.0[32..32 + 32].copy_from_slice(&x.0)
         }
+
+        pub fn unpack(&self) -> HeaderT {
+            HeaderT {
+                len: self.len(),
+                header_type: self.header_type(),
+                frame_type: self.frame_type(),
+                to_terminal_id: self.to_terminal_id().unpack(),
+                key: self.key().unpack(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct HeaderT {
+        pub len: u64,
+        pub header_type: u32,
+        pub frame_type: u32,
+        pub to_terminal_id: TerminalIdT,
+        pub key: X25519PublicT,
+    }
+    impl HeaderT {
+        pub fn pack(&self) -> Header {
+            Header::new(self.len, self.header_type, self.frame_type, &self.to_terminal_id.pack(), &self.key.pack())
+        }
     }
 
     // struct FrameConfirm, aligned to 1
@@ -2303,21 +2559,21 @@ pub mod base {
         type Inner = &'a FrameConfirm;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            <&'a FrameConfirm>::follow(buf, loc)
+            unsafe { <&'a FrameConfirm>::follow(buf, loc) }
         }
     }
     impl<'a> flatbuffers::Follow<'a> for &'a FrameConfirm {
         type Inner = &'a FrameConfirm;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            flatbuffers::follow_cast_ref::<FrameConfirm>(buf, loc)
+            unsafe { flatbuffers::follow_cast_ref::<FrameConfirm>(buf, loc) }
         }
     }
     impl<'b> flatbuffers::Push for FrameConfirm {
         type Output = FrameConfirm;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = ::core::slice::from_raw_parts(self as *const FrameConfirm as *const u8, <Self as flatbuffers::Push>::size());
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const FrameConfirm as *const u8, <Self as flatbuffers::Push>::size()) };
             dst.copy_from_slice(src);
         }
         #[inline]
@@ -2366,6 +2622,24 @@ pub mod base {
         pub fn set_frame_id(&mut self, x: &UlidBytes) {
             self.0[16..16 + 16].copy_from_slice(&x.0)
         }
+
+        pub fn unpack(&self) -> FrameConfirmT {
+            FrameConfirmT {
+                id: self.id().unpack(),
+                frame_id: self.frame_id().unpack(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct FrameConfirmT {
+        pub id: UlidBytesT,
+        pub frame_id: UlidBytesT,
+    }
+    impl FrameConfirmT {
+        pub fn pack(&self) -> FrameConfirm {
+            FrameConfirm::new(&self.id.pack(), &self.frame_id.pack())
+        }
     }
 
     pub enum FrameOffset {}
@@ -2380,7 +2654,7 @@ pub mod base {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -2406,6 +2680,12 @@ pub mod base {
                 builder.add_header(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> FrameT {
+            let header = self.header().map(|x| x.unpack());
+            let bytes = self.bytes().map(|x| x.into_iter().collect());
+            FrameT { header, bytes }
         }
 
         #[inline]
@@ -2480,6 +2760,25 @@ pub mod base {
             ds.field("header", &self.header());
             ds.field("bytes", &self.bytes());
             ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FrameT {
+        pub header: Option<HeaderT>,
+        pub bytes: Option<Vec<i8>>,
+    }
+    impl Default for FrameT {
+        fn default() -> Self {
+            Self { header: None, bytes: None }
+        }
+    }
+    impl FrameT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<Frame<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let bytes = self.bytes.as_ref().map(|x| _fbb.create_vector(x));
+            Frame::create(_fbb, &FrameArgs { header, bytes })
         }
     }
 } // pub mod base

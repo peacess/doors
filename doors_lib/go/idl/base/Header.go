@@ -6,6 +6,37 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type HeaderT struct {
+	Len          uint64         `json:"len"`
+	HeaderType   uint32         `json:"header_type"`
+	FrameType    uint32         `json:"frame_type"`
+	ToTerminalId *TerminalIdT   `json:"to_terminal_id"`
+	Key          *X25519PublicT `json:"key"`
+}
+
+func (t *HeaderT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateHeader(builder, t.Len, t.HeaderType, t.FrameType, t.ToTerminalId.Low, t.ToTerminalId.High, t.Key.Key1, t.Key.Key2, t.Key.Key3, t.Key.Key4)
+}
+func (rcv *Header) UnPackTo(t *HeaderT) {
+	t.Len = rcv.Len()
+	t.HeaderType = rcv.HeaderType()
+	t.FrameType = rcv.FrameType()
+	t.ToTerminalId = rcv.ToTerminalId(nil).UnPack()
+	t.Key = rcv.Key(nil).UnPack()
+}
+
+func (rcv *Header) UnPack() *HeaderT {
+	if rcv == nil {
+		return nil
+	}
+	t := &HeaderT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type Header struct {
 	_tab flatbuffers.Struct
 }

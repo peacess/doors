@@ -111,11 +111,12 @@ impl LibApp {
 
 #[cfg(test)]
 mod tests {
-    use crate::lib_app::LibApp;
+    use crate::{ffi::FfiBytes, lib_app::LibApp};
 
     #[test]
     fn it_works() {
-        LibApp::init().unwrap();
+        extern "C" fn empty_call(_t: FfiBytes) {}
+        LibApp::init(empty_call).unwrap();
         if let Some(app) = LibApp::app() {
             app.handle.spawn(async {});
         }

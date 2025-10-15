@@ -6,6 +6,49 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type FrameT struct {
+	Header *HeaderT `json:"header"`
+	Bytes  []int8   `json:"bytes"`
+}
+
+func (t *FrameT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	bytesOffset := flatbuffers.UOffsetT(0)
+	if t.Bytes != nil {
+		bytesLength := len(t.Bytes)
+		FrameStartBytesVector(builder, bytesLength)
+		for j := bytesLength - 1; j >= 0; j-- {
+			builder.PrependInt8(t.Bytes[j])
+		}
+		bytesOffset = builder.EndVector(bytesLength)
+	}
+	FrameStart(builder)
+	headerOffset := t.Header.Pack(builder)
+	FrameAddHeader(builder, headerOffset)
+	FrameAddBytes(builder, bytesOffset)
+	return FrameEnd(builder)
+}
+
+func (rcv *Frame) UnPackTo(t *FrameT) {
+	t.Header = rcv.Header(nil).UnPack()
+	bytesLength := rcv.BytesLength()
+	t.Bytes = make([]int8, bytesLength)
+	for j := 0; j < bytesLength; j++ {
+		t.Bytes[j] = rcv.Bytes(j)
+	}
+}
+
+func (rcv *Frame) UnPack() *FrameT {
+	if rcv == nil {
+		return nil
+	}
+	t := &FrameT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type Frame struct {
 	_tab flatbuffers.Table
 }

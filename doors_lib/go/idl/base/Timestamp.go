@@ -6,6 +6,29 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type TimestampT struct {
+	Ts int64 `json:"ts"`
+}
+
+func (t *TimestampT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateTimestamp(builder, t.Ts)
+}
+func (rcv *Timestamp) UnPackTo(t *TimestampT) {
+	t.Ts = rcv.Ts()
+}
+
+func (rcv *Timestamp) UnPack() *TimestampT {
+	if rcv == nil {
+		return nil
+	}
+	t := &TimestampT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type Timestamp struct {
 	_tab flatbuffers.Struct
 }

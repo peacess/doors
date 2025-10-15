@@ -31,7 +31,7 @@ pub mod net_discovery {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -77,6 +77,29 @@ pub mod net_discovery {
             builder.add_port_v6(args.port_v6);
             builder.add_port_v4(args.port_v4);
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> DnsTerminalT {
+            let id = self.id().map(|x| x.unpack());
+            let parter_id = self.parter_id().map(|x| x.unpack());
+            let terminal_id = self.terminal_id().map(|x| x.unpack());
+            let host_name = self.host_name().map(|x| x.to_string());
+            let ip_v4 = self.ip_v4();
+            let port_v4 = self.port_v4();
+            let ip_v6 = self.ip_v6();
+            let port_v6 = self.port_v6();
+            let key = self.key().map(|x| x.unpack());
+            DnsTerminalT {
+                id,
+                parter_id,
+                terminal_id,
+                host_name,
+                ip_v4,
+                port_v4,
+                ip_v6,
+                port_v6,
+                key,
+            }
         }
 
         #[inline]
@@ -258,6 +281,65 @@ pub mod net_discovery {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct DnsTerminalT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub parter_id: Option<super::base::PartnerIdT>,
+        pub terminal_id: Option<super::base::TerminalIdT>,
+        pub host_name: Option<String>,
+        pub ip_v4: u32,
+        pub port_v4: u16,
+        pub ip_v6: u64,
+        pub port_v6: u16,
+        pub key: Option<super::base::X25519PublicT>,
+    }
+    impl Default for DnsTerminalT {
+        fn default() -> Self {
+            Self {
+                id: None,
+                parter_id: None,
+                terminal_id: None,
+                host_name: None,
+                ip_v4: 0,
+                port_v4: 0,
+                ip_v6: 0,
+                port_v6: 0,
+                key: None,
+            }
+        }
+    }
+    impl DnsTerminalT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<DnsTerminal<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let parter_id_tmp = self.parter_id.as_ref().map(|x| x.pack());
+            let parter_id = parter_id_tmp.as_ref();
+            let terminal_id_tmp = self.terminal_id.as_ref().map(|x| x.pack());
+            let terminal_id = terminal_id_tmp.as_ref();
+            let host_name = self.host_name.as_ref().map(|x| _fbb.create_string(x));
+            let ip_v4 = self.ip_v4;
+            let port_v4 = self.port_v4;
+            let ip_v6 = self.ip_v6;
+            let port_v6 = self.port_v6;
+            let key_tmp = self.key.as_ref().map(|x| x.pack());
+            let key = key_tmp.as_ref();
+            DnsTerminal::create(
+                _fbb,
+                &DnsTerminalArgs {
+                    id,
+                    parter_id,
+                    terminal_id,
+                    host_name,
+                    ip_v4,
+                    port_v4,
+                    ip_v6,
+                    port_v6,
+                    key,
+                },
+            )
+        }
+    }
     pub enum DiscoveryFrameOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -270,7 +352,7 @@ pub mod net_discovery {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -296,6 +378,12 @@ pub mod net_discovery {
                 builder.add_header(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> DiscoveryFrameT {
+            let header = self.header().map(|x| x.unpack());
+            let bytes = self.bytes().map(|x| x.into_iter().collect());
+            DiscoveryFrameT { header, bytes }
         }
 
         #[inline]
@@ -372,6 +460,25 @@ pub mod net_discovery {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct DiscoveryFrameT {
+        pub header: Option<super::base::HeaderT>,
+        pub bytes: Option<Vec<i8>>,
+    }
+    impl Default for DiscoveryFrameT {
+        fn default() -> Self {
+            Self { header: None, bytes: None }
+        }
+    }
+    impl DiscoveryFrameT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<DiscoveryFrame<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let bytes = self.bytes.as_ref().map(|x| _fbb.create_vector(x));
+            DiscoveryFrame::create(_fbb, &DiscoveryFrameArgs { header, bytes })
+        }
+    }
     pub enum HiOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -384,7 +491,7 @@ pub mod net_discovery {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -410,6 +517,12 @@ pub mod net_discovery {
                 builder.add_id(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> HiT {
+            let id = self.id().map(|x| x.unpack());
+            let dns_terminal = self.dns_terminal().map(|x| Box::new(x.unpack()));
+            HiT { id, dns_terminal }
         }
 
         #[inline]
@@ -484,6 +597,25 @@ pub mod net_discovery {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct HiT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub dns_terminal: Option<Box<DnsTerminalT>>,
+    }
+    impl Default for HiT {
+        fn default() -> Self {
+            Self { id: None, dns_terminal: None }
+        }
+    }
+    impl HiT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<Hi<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let dns_terminal = self.dns_terminal.as_ref().map(|x| x.pack(_fbb));
+            Hi::create(_fbb, &HiArgs { id, dns_terminal })
+        }
+    }
     pub enum HiRecvOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -496,7 +628,7 @@ pub mod net_discovery {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -526,6 +658,13 @@ pub mod net_discovery {
                 builder.add_id(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> HiRecvT {
+            let id = self.id().map(|x| x.unpack());
+            let hi_id = self.hi_id().map(|x| x.unpack());
+            let dns_terminal = self.dns_terminal().map(|x| Box::new(x.unpack()));
+            HiRecvT { id, hi_id, dns_terminal }
         }
 
         #[inline]
@@ -618,6 +757,32 @@ pub mod net_discovery {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct HiRecvT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub hi_id: Option<super::base::UlidBytesT>,
+        pub dns_terminal: Option<Box<DnsTerminalT>>,
+    }
+    impl Default for HiRecvT {
+        fn default() -> Self {
+            Self {
+                id: None,
+                hi_id: None,
+                dns_terminal: None,
+            }
+        }
+    }
+    impl HiRecvT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<HiRecv<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let hi_id_tmp = self.hi_id.as_ref().map(|x| x.pack());
+            let hi_id = hi_id_tmp.as_ref();
+            let dns_terminal = self.dns_terminal.as_ref().map(|x| x.pack(_fbb));
+            HiRecv::create(_fbb, &HiRecvArgs { id, hi_id, dns_terminal })
+        }
+    }
     pub enum QueryDnsTerminalOutOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -630,7 +795,7 @@ pub mod net_discovery {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -660,6 +825,13 @@ pub mod net_discovery {
                 builder.add_id(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> QueryDnsTerminalOutT {
+            let id = self.id().map(|x| x.unpack());
+            let in_id = self.in_id().map(|x| x.unpack());
+            let dns_terminal = self.dns_terminal().map(|x| Box::new(x.unpack()));
+            QueryDnsTerminalOutT { id, in_id, dns_terminal }
         }
 
         #[inline]
@@ -755,6 +927,35 @@ pub mod net_discovery {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct QueryDnsTerminalOutT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub in_id: Option<super::base::UlidBytesT>,
+        pub dns_terminal: Option<Box<DnsTerminalT>>,
+    }
+    impl Default for QueryDnsTerminalOutT {
+        fn default() -> Self {
+            Self {
+                id: None,
+                in_id: None,
+                dns_terminal: None,
+            }
+        }
+    }
+    impl QueryDnsTerminalOutT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> flatbuffers::WIPOffset<QueryDnsTerminalOut<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let in_id_tmp = self.in_id.as_ref().map(|x| x.pack());
+            let in_id = in_id_tmp.as_ref();
+            let dns_terminal = self.dns_terminal.as_ref().map(|x| x.pack(_fbb));
+            QueryDnsTerminalOut::create(_fbb, &QueryDnsTerminalOutArgs { id, in_id, dns_terminal })
+        }
+    }
     pub enum QueryDnsTerminalInOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -767,7 +968,7 @@ pub mod net_discovery {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -789,6 +990,11 @@ pub mod net_discovery {
                 builder.add_id(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> QueryDnsTerminalInT {
+            let id = self.id().map(|x| x.unpack());
+            QueryDnsTerminalInT { id }
         }
 
         #[inline]
@@ -846,6 +1052,26 @@ pub mod net_discovery {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct QueryDnsTerminalInT {
+        pub id: Option<super::base::UlidBytesT>,
+    }
+    impl Default for QueryDnsTerminalInT {
+        fn default() -> Self {
+            Self { id: None }
+        }
+    }
+    impl QueryDnsTerminalInT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> flatbuffers::WIPOffset<QueryDnsTerminalIn<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            QueryDnsTerminalIn::create(_fbb, &QueryDnsTerminalInArgs { id })
+        }
+    }
     pub enum QueryPartnersOutOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -858,7 +1084,7 @@ pub mod net_discovery {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -888,6 +1114,13 @@ pub mod net_discovery {
                 builder.add_id(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> QueryPartnersOutT {
+            let id = self.id().map(|x| x.unpack());
+            let in_id = self.in_id().map(|x| x.unpack());
+            let dns_partners = self.dns_partners().map(|x| x.iter().map(|t| t.unpack()).collect());
+            QueryPartnersOutT { id, in_id, dns_partners }
         }
 
         #[inline]
@@ -990,6 +1223,38 @@ pub mod net_discovery {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct QueryPartnersOutT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub in_id: Option<super::base::UlidBytesT>,
+        pub dns_partners: Option<Vec<DnsTerminalT>>,
+    }
+    impl Default for QueryPartnersOutT {
+        fn default() -> Self {
+            Self {
+                id: None,
+                in_id: None,
+                dns_partners: None,
+            }
+        }
+    }
+    impl QueryPartnersOutT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> flatbuffers::WIPOffset<QueryPartnersOut<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let in_id_tmp = self.in_id.as_ref().map(|x| x.pack());
+            let in_id = in_id_tmp.as_ref();
+            let dns_partners = self.dns_partners.as_ref().map(|x| {
+                let w: Vec<_> = x.iter().map(|t| t.pack(_fbb)).collect();
+                _fbb.create_vector(&w)
+            });
+            QueryPartnersOut::create(_fbb, &QueryPartnersOutArgs { id, in_id, dns_partners })
+        }
+    }
     pub enum QueryPartnersInOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -1002,7 +1267,7 @@ pub mod net_discovery {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -1028,6 +1293,12 @@ pub mod net_discovery {
                 builder.add_id(x);
             }
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> QueryPartnersInT {
+            let id = self.id().map(|x| x.unpack());
+            let terminal = self.terminal().map(|x| Box::new(x.unpack()));
+            QueryPartnersInT { id, terminal }
         }
 
         #[inline]
@@ -1102,6 +1373,28 @@ pub mod net_discovery {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct QueryPartnersInT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub terminal: Option<Box<DnsTerminalT>>,
+    }
+    impl Default for QueryPartnersInT {
+        fn default() -> Self {
+            Self { id: None, terminal: None }
+        }
+    }
+    impl QueryPartnersInT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> flatbuffers::WIPOffset<QueryPartnersIn<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let terminal = self.terminal.as_ref().map(|x| x.pack(_fbb));
+            QueryPartnersIn::create(_fbb, &QueryPartnersInArgs { id, terminal })
+        }
+    }
     #[inline]
     /// Verifies that a buffer of bytes contains a `DiscoveryFrame`
     /// and returns it.
@@ -1153,14 +1446,14 @@ pub mod net_discovery {
     /// # Safety
     /// Callers must trust the given bytes do indeed contain a valid `DiscoveryFrame`.
     pub unsafe fn root_as_discovery_frame_unchecked(buf: &[u8]) -> DiscoveryFrame {
-        flatbuffers::root_unchecked::<DiscoveryFrame>(buf)
+        unsafe { flatbuffers::root_unchecked::<DiscoveryFrame>(buf) }
     }
     #[inline]
     /// Assumes, without verification, that a buffer of bytes contains a size prefixed DiscoveryFrame and returns it.
     /// # Safety
     /// Callers must trust the given bytes do indeed contain a valid size prefixed `DiscoveryFrame`.
     pub unsafe fn size_prefixed_root_as_discovery_frame_unchecked(buf: &[u8]) -> DiscoveryFrame {
-        flatbuffers::size_prefixed_root_unchecked::<DiscoveryFrame>(buf)
+        unsafe { flatbuffers::size_prefixed_root_unchecked::<DiscoveryFrame>(buf) }
     }
     #[inline]
     pub fn finish_discovery_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(

@@ -35,6 +35,66 @@ class DnsTerminal {
   String toString() {
     return 'DnsTerminal{id: ${id}, parterId: ${parterId}, terminalId: ${terminalId}, hostName: ${hostName}, ipV4: ${ipV4}, portV4: ${portV4}, ipV6: ${ipV6}, portV6: ${portV6}, key: ${key}}';
   }
+
+  DnsTerminalT unpack() => DnsTerminalT(
+    id: id?.unpack(),
+    parterId: parterId?.unpack(),
+    terminalId: terminalId?.unpack(),
+    hostName: hostName,
+    ipV4: ipV4,
+    portV4: portV4,
+    ipV6: ipV6,
+    portV6: portV6,
+    key: key?.unpack(),
+  );
+
+  static int pack(fb.Builder fbBuilder, DnsTerminalT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class DnsTerminalT implements fb.Packable {
+  base.UlidBytesT? id;
+  base.PartnerIdT? parterId;
+  base.TerminalIdT? terminalId;
+  String? hostName;
+  int ipV4;
+  int portV4;
+  int ipV6;
+  int portV6;
+  base.X25519PublicT? key;
+
+  DnsTerminalT({this.id, this.parterId, this.terminalId, this.hostName, this.ipV4 = 0, this.portV4 = 0, this.ipV6 = 0, this.portV6 = 0, this.key});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? hostNameOffset = hostName == null ? null : fbBuilder.writeString(hostName!);
+    fbBuilder.startTable(9);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    if (parterId != null) {
+      fbBuilder.addStruct(1, parterId!.pack(fbBuilder));
+    }
+    if (terminalId != null) {
+      fbBuilder.addStruct(2, terminalId!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(3, hostNameOffset);
+    fbBuilder.addUint32(4, ipV4);
+    fbBuilder.addUint16(5, portV4);
+    fbBuilder.addUint64(6, ipV6);
+    fbBuilder.addUint16(7, portV6);
+    if (key != null) {
+      fbBuilder.addStruct(8, key!.pack(fbBuilder));
+    }
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'DnsTerminalT{id: ${id}, parterId: ${parterId}, terminalId: ${terminalId}, hostName: ${hostName}, ipV4: ${ipV4}, portV4: ${portV4}, ipV6: ${ipV6}, portV6: ${portV6}, key: ${key}}';
+  }
 }
 
 class _DnsTerminalReader extends fb.TableReader<DnsTerminal> {
@@ -187,6 +247,36 @@ class DiscoveryFrame {
   String toString() {
     return 'DiscoveryFrame{header: ${header}, bytes: ${bytes}}';
   }
+
+  DiscoveryFrameT unpack() => DiscoveryFrameT(header: header?.unpack(), bytes: const fb.Int8ListReader(lazy: false).vTableGetNullable(_bc, _bcOffset, 6));
+
+  static int pack(fb.Builder fbBuilder, DiscoveryFrameT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class DiscoveryFrameT implements fb.Packable {
+  base.HeaderT? header;
+  List<int>? bytes;
+
+  DiscoveryFrameT({this.header, this.bytes});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? bytesOffset = bytes == null ? null : fbBuilder.writeListInt8(bytes!);
+    fbBuilder.startTable(2);
+    if (header != null) {
+      fbBuilder.addStruct(0, header!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, bytesOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'DiscoveryFrameT{header: ${header}, bytes: ${bytes}}';
+  }
 }
 
 class _DiscoveryFrameReader extends fb.TableReader<DiscoveryFrame> {
@@ -265,6 +355,36 @@ class Hi {
   @override
   String toString() {
     return 'Hi{id: ${id}, dnsTerminal: ${dnsTerminal}}';
+  }
+
+  HiT unpack() => HiT(id: id?.unpack(), dnsTerminal: dnsTerminal?.unpack());
+
+  static int pack(fb.Builder fbBuilder, HiT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class HiT implements fb.Packable {
+  base.UlidBytesT? id;
+  DnsTerminalT? dnsTerminal;
+
+  HiT({this.id, this.dnsTerminal});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? dnsTerminalOffset = dnsTerminal?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, dnsTerminalOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'HiT{id: ${id}, dnsTerminal: ${dnsTerminal}}';
   }
 }
 
@@ -345,6 +465,40 @@ class HiRecv {
   @override
   String toString() {
     return 'HiRecv{id: ${id}, hiId: ${hiId}, dnsTerminal: ${dnsTerminal}}';
+  }
+
+  HiRecvT unpack() => HiRecvT(id: id?.unpack(), hiId: hiId?.unpack(), dnsTerminal: dnsTerminal?.unpack());
+
+  static int pack(fb.Builder fbBuilder, HiRecvT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class HiRecvT implements fb.Packable {
+  base.UlidBytesT? id;
+  base.UlidBytesT? hiId;
+  DnsTerminalT? dnsTerminal;
+
+  HiRecvT({this.id, this.hiId, this.dnsTerminal});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? dnsTerminalOffset = dnsTerminal?.pack(fbBuilder);
+    fbBuilder.startTable(3);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    if (hiId != null) {
+      fbBuilder.addStruct(1, hiId!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(2, dnsTerminalOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'HiRecvT{id: ${id}, hiId: ${hiId}, dnsTerminal: ${dnsTerminal}}';
   }
 }
 
@@ -438,6 +592,40 @@ class QueryDnsTerminalOut {
   String toString() {
     return 'QueryDnsTerminalOut{id: ${id}, inId: ${inId}, dnsTerminal: ${dnsTerminal}}';
   }
+
+  QueryDnsTerminalOutT unpack() => QueryDnsTerminalOutT(id: id?.unpack(), inId: inId?.unpack(), dnsTerminal: dnsTerminal?.unpack());
+
+  static int pack(fb.Builder fbBuilder, QueryDnsTerminalOutT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class QueryDnsTerminalOutT implements fb.Packable {
+  base.UlidBytesT? id;
+  base.UlidBytesT? inId;
+  DnsTerminalT? dnsTerminal;
+
+  QueryDnsTerminalOutT({this.id, this.inId, this.dnsTerminal});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? dnsTerminalOffset = dnsTerminal?.pack(fbBuilder);
+    fbBuilder.startTable(3);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    if (inId != null) {
+      fbBuilder.addStruct(1, inId!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(2, dnsTerminalOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'QueryDnsTerminalOutT{id: ${id}, inId: ${inId}, dnsTerminal: ${dnsTerminal}}';
+  }
 }
 
 class _QueryDnsTerminalOutReader extends fb.TableReader<QueryDnsTerminalOut> {
@@ -528,6 +716,33 @@ class QueryDnsTerminalIn {
   String toString() {
     return 'QueryDnsTerminalIn{id: ${id}}';
   }
+
+  QueryDnsTerminalInT unpack() => QueryDnsTerminalInT(id: id?.unpack());
+
+  static int pack(fb.Builder fbBuilder, QueryDnsTerminalInT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class QueryDnsTerminalInT implements fb.Packable {
+  base.UlidBytesT? id;
+
+  QueryDnsTerminalInT({this.id});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.startTable(1);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'QueryDnsTerminalInT{id: ${id}}';
+  }
 }
 
 class _QueryDnsTerminalInReader extends fb.TableReader<QueryDnsTerminalIn> {
@@ -599,6 +814,40 @@ class QueryPartnersOut {
   @override
   String toString() {
     return 'QueryPartnersOut{id: ${id}, inId: ${inId}, dnsPartners: ${dnsPartners}}';
+  }
+
+  QueryPartnersOutT unpack() => QueryPartnersOutT(id: id?.unpack(), inId: inId?.unpack(), dnsPartners: dnsPartners?.map((e) => e.unpack()).toList());
+
+  static int pack(fb.Builder fbBuilder, QueryPartnersOutT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class QueryPartnersOutT implements fb.Packable {
+  base.UlidBytesT? id;
+  base.UlidBytesT? inId;
+  List<DnsTerminalT>? dnsPartners;
+
+  QueryPartnersOutT({this.id, this.inId, this.dnsPartners});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? dnsPartnersOffset = dnsPartners == null ? null : fbBuilder.writeList(dnsPartners!.map((b) => b.pack(fbBuilder)).toList());
+    fbBuilder.startTable(3);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    if (inId != null) {
+      fbBuilder.addStruct(1, inId!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(2, dnsPartnersOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'QueryPartnersOutT{id: ${id}, inId: ${inId}, dnsPartners: ${dnsPartners}}';
   }
 }
 
@@ -690,6 +939,36 @@ class QueryPartnersIn {
   @override
   String toString() {
     return 'QueryPartnersIn{id: ${id}, terminal: ${terminal}}';
+  }
+
+  QueryPartnersInT unpack() => QueryPartnersInT(id: id?.unpack(), terminal: terminal?.unpack());
+
+  static int pack(fb.Builder fbBuilder, QueryPartnersInT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class QueryPartnersInT implements fb.Packable {
+  base.UlidBytesT? id;
+  DnsTerminalT? terminal;
+
+  QueryPartnersInT({this.id, this.terminal});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? terminalOffset = terminal?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, terminalOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'QueryPartnersInT{id: ${id}, terminal: ${terminal}}';
   }
 }
 

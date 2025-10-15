@@ -22,6 +22,34 @@ class FfiRpcHeader {
   String toString() {
     return 'FfiRpcHeader{headerType: ${headerType}, rpcType: ${rpcType}, len: ${len}}';
   }
+
+  FfiRpcHeaderT unpack() => FfiRpcHeaderT(headerType: headerType, rpcType: rpcType, len: len);
+
+  static int pack(fb.Builder fbBuilder, FfiRpcHeaderT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class FfiRpcHeaderT implements fb.Packable {
+  int headerType;
+  int rpcType;
+  int len;
+
+  FfiRpcHeaderT({required this.headerType, required this.rpcType, required this.len});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(len);
+    fbBuilder.putUint32(rpcType);
+    fbBuilder.putUint32(headerType);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'FfiRpcHeaderT{headerType: ${headerType}, rpcType: ${rpcType}, len: ${len}}';
+  }
 }
 
 class _FfiRpcHeaderReader extends fb.StructReader<FfiRpcHeader> {

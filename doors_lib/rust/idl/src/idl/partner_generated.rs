@@ -31,7 +31,7 @@ pub mod partner {
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
-                _tab: flatbuffers::Table::new(buf, loc),
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
@@ -79,6 +79,27 @@ pub mod partner {
             }
             builder.add_port(args.port);
             builder.finish()
+        }
+
+        pub fn unpack(&self) -> PartnerT {
+            let id = self.id().map(|x| x.unpack());
+            let terminal_ids = self.terminal_ids().map(|x| x.iter().map(|t| t.unpack()).collect());
+            let partner_id = self.partner_id().map(|x| x.unpack());
+            let name = self.name().map(|x| x.to_string());
+            let show_name = self.show_name().map(|x| x.to_string());
+            let ip = self.ip().map(|x| x.to_string());
+            let port = self.port();
+            let create_ts = self.create_ts().map(|x| x.unpack());
+            PartnerT {
+                id,
+                terminal_ids,
+                partner_id,
+                name,
+                show_name,
+                ip,
+                port,
+                create_ts,
+            }
         }
 
         #[inline]
@@ -248,6 +269,63 @@ pub mod partner {
             ds.finish()
         }
     }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct PartnerT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub terminal_ids: Option<Vec<super::base::TerminalIdT>>,
+        pub partner_id: Option<super::base::UByte16T>,
+        pub name: Option<String>,
+        pub show_name: Option<String>,
+        pub ip: Option<String>,
+        pub port: i16,
+        pub create_ts: Option<super::base::TimestampT>,
+    }
+    impl Default for PartnerT {
+        fn default() -> Self {
+            Self {
+                id: None,
+                terminal_ids: None,
+                partner_id: None,
+                name: None,
+                show_name: None,
+                ip: None,
+                port: 0,
+                create_ts: None,
+            }
+        }
+    }
+    impl PartnerT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<Partner<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let terminal_ids = self.terminal_ids.as_ref().map(|x| {
+                let w: Vec<_> = x.iter().map(|t| t.pack()).collect();
+                _fbb.create_vector(&w)
+            });
+            let partner_id_tmp = self.partner_id.as_ref().map(|x| x.pack());
+            let partner_id = partner_id_tmp.as_ref();
+            let name = self.name.as_ref().map(|x| _fbb.create_string(x));
+            let show_name = self.show_name.as_ref().map(|x| _fbb.create_string(x));
+            let ip = self.ip.as_ref().map(|x| _fbb.create_string(x));
+            let port = self.port;
+            let create_ts_tmp = self.create_ts.as_ref().map(|x| x.pack());
+            let create_ts = create_ts_tmp.as_ref();
+            Partner::create(
+                _fbb,
+                &PartnerArgs {
+                    id,
+                    terminal_ids,
+                    partner_id,
+                    name,
+                    show_name,
+                    ip,
+                    port,
+                    create_ts,
+                },
+            )
+        }
+    }
     #[inline]
     /// Verifies that a buffer of bytes contains a `Partner`
     /// and returns it.
@@ -296,14 +374,14 @@ pub mod partner {
     /// # Safety
     /// Callers must trust the given bytes do indeed contain a valid `Partner`.
     pub unsafe fn root_as_partner_unchecked(buf: &[u8]) -> Partner {
-        flatbuffers::root_unchecked::<Partner>(buf)
+        unsafe { flatbuffers::root_unchecked::<Partner>(buf) }
     }
     #[inline]
     /// Assumes, without verification, that a buffer of bytes contains a size prefixed Partner and returns it.
     /// # Safety
     /// Callers must trust the given bytes do indeed contain a valid size prefixed `Partner`.
     pub unsafe fn size_prefixed_root_as_partner_unchecked(buf: &[u8]) -> Partner {
-        flatbuffers::size_prefixed_root_unchecked::<Partner>(buf)
+        unsafe { flatbuffers::size_prefixed_root_unchecked::<Partner>(buf) }
     }
     #[inline]
     pub fn finish_partner_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(

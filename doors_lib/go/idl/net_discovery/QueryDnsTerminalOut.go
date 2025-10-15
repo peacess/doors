@@ -8,6 +8,41 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type QueryDnsTerminalOutT struct {
+	Id          *base.UlidBytesT `json:"id"`
+	InId        *base.UlidBytesT `json:"in_id"`
+	DnsTerminal *DnsTerminalT    `json:"dns_terminal"`
+}
+
+func (t *QueryDnsTerminalOutT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	dnsTerminalOffset := t.DnsTerminal.Pack(builder)
+	QueryDnsTerminalOutStart(builder)
+	idOffset := t.Id.Pack(builder)
+	QueryDnsTerminalOutAddId(builder, idOffset)
+	inIdOffset := t.InId.Pack(builder)
+	QueryDnsTerminalOutAddInId(builder, inIdOffset)
+	QueryDnsTerminalOutAddDnsTerminal(builder, dnsTerminalOffset)
+	return QueryDnsTerminalOutEnd(builder)
+}
+
+func (rcv *QueryDnsTerminalOut) UnPackTo(t *QueryDnsTerminalOutT) {
+	t.Id = rcv.Id(nil).UnPack()
+	t.InId = rcv.InId(nil).UnPack()
+	t.DnsTerminal = rcv.DnsTerminal(nil).UnPack()
+}
+
+func (rcv *QueryDnsTerminalOut) UnPack() *QueryDnsTerminalOutT {
+	if rcv == nil {
+		return nil
+	}
+	t := &QueryDnsTerminalOutT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type QueryDnsTerminalOut struct {
 	_tab flatbuffers.Table
 }

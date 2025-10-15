@@ -6,6 +6,31 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type PartnerIdT struct {
+	Low  uint64 `json:"low"`
+	High uint64 `json:"high"`
+}
+
+func (t *PartnerIdT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreatePartnerId(builder, t.Low, t.High)
+}
+func (rcv *PartnerId) UnPackTo(t *PartnerIdT) {
+	t.Low = rcv.Low()
+	t.High = rcv.High()
+}
+
+func (rcv *PartnerId) UnPack() *PartnerIdT {
+	if rcv == nil {
+		return nil
+	}
+	t := &PartnerIdT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type PartnerId struct {
 	_tab flatbuffers.Struct
 }

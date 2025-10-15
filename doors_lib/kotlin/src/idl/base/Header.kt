@@ -2,54 +2,6 @@
 
 package base
 
-import com.google.flatbuffers.BaseVector
-import com.google.flatbuffers.BooleanVector
-import com.google.flatbuffers.ByteVector
-import com.google.flatbuffers.Constants
-import com.google.flatbuffers.DoubleVector
-import com.google.flatbuffers.FlatBufferBuilder
-import com.google.flatbuffers.FloatVector
-import com.google.flatbuffers.LongVector
-import com.google.flatbuffers.StringVector
-import com.google.flatbuffers.Struct
-import com.google.flatbuffers.Table
-import com.google.flatbuffers.UnionVector
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import kotlin.math.sign
+import com.google.flatbuffers.kotlin.*
+import kotlin.jvm.JvmInline
 
-@Suppress("unused")
-class Header : Struct() {
-
-    fun __init(_i: Int, _bb: ByteBuffer)  {
-        __reset(_i, _bb)
-    }
-    fun __assign(_i: Int, _bb: ByteBuffer) : Header {
-        __init(_i, _bb)
-        return this
-    }
-    val len : ULong get() = bb.getLong(bb_pos + 0).toULong()
-    val headerType : UInt get() = bb.getInt(bb_pos + 8).toUInt()
-    val frameType : UInt get() = bb.getInt(bb_pos + 12).toUInt()
-    val toTerminalId : base.TerminalId? get() = toTerminalId(base.TerminalId())
-    fun toTerminalId(obj: base.TerminalId) : base.TerminalId? = obj.__assign(bb_pos + 16, bb)
-    val key : base.X25519Public? get() = key(base.X25519Public())
-    fun key(obj: base.X25519Public) : base.X25519Public? = obj.__assign(bb_pos + 32, bb)
-    companion object {
-        fun createHeader(builder: FlatBufferBuilder, len: ULong, headerType: UInt, frameType: UInt, toTerminalId_low: ULong, toTerminalId_high: ULong, key_key1: ULong, key_key2: ULong, key_key3: ULong, key_key4: ULong) : Int {
-            builder.prep(8, 64)
-            builder.prep(8, 32)
-            builder.putLong(key_key4.toLong())
-            builder.putLong(key_key3.toLong())
-            builder.putLong(key_key2.toLong())
-            builder.putLong(key_key1.toLong())
-            builder.prep(8, 16)
-            builder.putLong(to_terminal_id_high.toLong())
-            builder.putLong(to_terminal_id_low.toLong())
-            builder.putInt(frameType.toInt())
-            builder.putInt(headerType.toInt())
-            builder.putLong(len.toLong())
-            return builder.offset()
-        }
-    }
-}

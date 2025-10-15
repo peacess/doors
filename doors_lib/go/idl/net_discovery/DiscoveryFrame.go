@@ -8,6 +8,49 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type DiscoveryFrameT struct {
+	Header *base.HeaderT `json:"header"`
+	Bytes  []int8        `json:"bytes"`
+}
+
+func (t *DiscoveryFrameT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	bytesOffset := flatbuffers.UOffsetT(0)
+	if t.Bytes != nil {
+		bytesLength := len(t.Bytes)
+		DiscoveryFrameStartBytesVector(builder, bytesLength)
+		for j := bytesLength - 1; j >= 0; j-- {
+			builder.PrependInt8(t.Bytes[j])
+		}
+		bytesOffset = builder.EndVector(bytesLength)
+	}
+	DiscoveryFrameStart(builder)
+	headerOffset := t.Header.Pack(builder)
+	DiscoveryFrameAddHeader(builder, headerOffset)
+	DiscoveryFrameAddBytes(builder, bytesOffset)
+	return DiscoveryFrameEnd(builder)
+}
+
+func (rcv *DiscoveryFrame) UnPackTo(t *DiscoveryFrameT) {
+	t.Header = rcv.Header(nil).UnPack()
+	bytesLength := rcv.BytesLength()
+	t.Bytes = make([]int8, bytesLength)
+	for j := 0; j < bytesLength; j++ {
+		t.Bytes[j] = rcv.Bytes(j)
+	}
+}
+
+func (rcv *DiscoveryFrame) UnPack() *DiscoveryFrameT {
+	if rcv == nil {
+		return nil
+	}
+	t := &DiscoveryFrameT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type DiscoveryFrame struct {
 	_tab flatbuffers.Table
 }

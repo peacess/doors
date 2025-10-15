@@ -27,6 +27,53 @@ class Ubyte8 {
   String toString() {
     return 'Ubyte8{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}}';
   }
+
+  Ubyte8T unpack() => Ubyte8T(ub1: ub1, ub2: ub2, ub3: ub3, ub4: ub4, ub5: ub5, ub6: ub6, ub7: ub7, ub8: ub8);
+
+  static int pack(fb.Builder fbBuilder, Ubyte8T? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class Ubyte8T implements fb.Packable {
+  int ub1;
+  int ub2;
+  int ub3;
+  int ub4;
+  int ub5;
+  int ub6;
+  int ub7;
+  int ub8;
+
+  Ubyte8T({
+    required this.ub1,
+    required this.ub2,
+    required this.ub3,
+    required this.ub4,
+    required this.ub5,
+    required this.ub6,
+    required this.ub7,
+    required this.ub8,
+  });
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint8(ub8);
+    fbBuilder.putUint8(ub7);
+    fbBuilder.putUint8(ub6);
+    fbBuilder.putUint8(ub5);
+    fbBuilder.putUint8(ub4);
+    fbBuilder.putUint8(ub3);
+    fbBuilder.putUint8(ub2);
+    fbBuilder.putUint8(ub1);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'Ubyte8T{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}}';
+  }
 }
 
 class _Ubyte8Reader extends fb.StructReader<Ubyte8> {
@@ -136,6 +183,94 @@ class Ubyte16 {
   @override
   String toString() {
     return 'Ubyte16{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}, ub9: ${ub9}, ub10: ${ub10}, ub11: ${ub11}, ub12: ${ub12}, ub13: ${ub13}, ub14: ${ub14}, ub15: ${ub15}, ub16: ${ub16}}';
+  }
+
+  Ubyte16T unpack() => Ubyte16T(
+    ub1: ub1,
+    ub2: ub2,
+    ub3: ub3,
+    ub4: ub4,
+    ub5: ub5,
+    ub6: ub6,
+    ub7: ub7,
+    ub8: ub8,
+    ub9: ub9,
+    ub10: ub10,
+    ub11: ub11,
+    ub12: ub12,
+    ub13: ub13,
+    ub14: ub14,
+    ub15: ub15,
+    ub16: ub16,
+  );
+
+  static int pack(fb.Builder fbBuilder, Ubyte16T? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class Ubyte16T implements fb.Packable {
+  int ub1;
+  int ub2;
+  int ub3;
+  int ub4;
+  int ub5;
+  int ub6;
+  int ub7;
+  int ub8;
+  int ub9;
+  int ub10;
+  int ub11;
+  int ub12;
+  int ub13;
+  int ub14;
+  int ub15;
+  int ub16;
+
+  Ubyte16T({
+    required this.ub1,
+    required this.ub2,
+    required this.ub3,
+    required this.ub4,
+    required this.ub5,
+    required this.ub6,
+    required this.ub7,
+    required this.ub8,
+    required this.ub9,
+    required this.ub10,
+    required this.ub11,
+    required this.ub12,
+    required this.ub13,
+    required this.ub14,
+    required this.ub15,
+    required this.ub16,
+  });
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint8(ub16);
+    fbBuilder.putUint8(ub15);
+    fbBuilder.putUint8(ub14);
+    fbBuilder.putUint8(ub13);
+    fbBuilder.putUint8(ub12);
+    fbBuilder.putUint8(ub11);
+    fbBuilder.putUint8(ub10);
+    fbBuilder.putUint8(ub9);
+    fbBuilder.putUint8(ub8);
+    fbBuilder.putUint8(ub7);
+    fbBuilder.putUint8(ub6);
+    fbBuilder.putUint8(ub5);
+    fbBuilder.putUint8(ub4);
+    fbBuilder.putUint8(ub3);
+    fbBuilder.putUint8(ub2);
+    fbBuilder.putUint8(ub1);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'Ubyte16T{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}, ub9: ${ub9}, ub10: ${ub10}, ub11: ${ub11}, ub12: ${ub12}, ub13: ${ub13}, ub14: ${ub14}, ub15: ${ub15}, ub16: ${ub16}}';
   }
 }
 
@@ -304,6 +439,94 @@ class UlidBytes {
   String toString() {
     return 'UlidBytes{ts1: ${ts1}, ts2: ${ts2}, ts3: ${ts3}, ts4: ${ts4}, ts5: ${ts5}, ts6: ${ts6}, rand7: ${rand7}, rand8: ${rand8}, rand9: ${rand9}, rand10: ${rand10}, rand11: ${rand11}, rand12: ${rand12}, rand13: ${rand13}, rand14: ${rand14}, rand15: ${rand15}, rand16: ${rand16}}';
   }
+
+  UlidBytesT unpack() => UlidBytesT(
+    ts1: ts1,
+    ts2: ts2,
+    ts3: ts3,
+    ts4: ts4,
+    ts5: ts5,
+    ts6: ts6,
+    rand7: rand7,
+    rand8: rand8,
+    rand9: rand9,
+    rand10: rand10,
+    rand11: rand11,
+    rand12: rand12,
+    rand13: rand13,
+    rand14: rand14,
+    rand15: rand15,
+    rand16: rand16,
+  );
+
+  static int pack(fb.Builder fbBuilder, UlidBytesT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class UlidBytesT implements fb.Packable {
+  int ts1;
+  int ts2;
+  int ts3;
+  int ts4;
+  int ts5;
+  int ts6;
+  int rand7;
+  int rand8;
+  int rand9;
+  int rand10;
+  int rand11;
+  int rand12;
+  int rand13;
+  int rand14;
+  int rand15;
+  int rand16;
+
+  UlidBytesT({
+    required this.ts1,
+    required this.ts2,
+    required this.ts3,
+    required this.ts4,
+    required this.ts5,
+    required this.ts6,
+    required this.rand7,
+    required this.rand8,
+    required this.rand9,
+    required this.rand10,
+    required this.rand11,
+    required this.rand12,
+    required this.rand13,
+    required this.rand14,
+    required this.rand15,
+    required this.rand16,
+  });
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint8(rand16);
+    fbBuilder.putUint8(rand15);
+    fbBuilder.putUint8(rand14);
+    fbBuilder.putUint8(rand13);
+    fbBuilder.putUint8(rand12);
+    fbBuilder.putUint8(rand11);
+    fbBuilder.putUint8(rand10);
+    fbBuilder.putUint8(rand9);
+    fbBuilder.putUint8(rand8);
+    fbBuilder.putUint8(rand7);
+    fbBuilder.putUint8(ts6);
+    fbBuilder.putUint8(ts5);
+    fbBuilder.putUint8(ts4);
+    fbBuilder.putUint8(ts3);
+    fbBuilder.putUint8(ts2);
+    fbBuilder.putUint8(ts1);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'UlidBytesT{ts1: ${ts1}, ts2: ${ts2}, ts3: ${ts3}, ts4: ${ts4}, ts5: ${ts5}, ts6: ${ts6}, rand7: ${rand7}, rand8: ${rand8}, rand9: ${rand9}, rand10: ${rand10}, rand11: ${rand11}, rand12: ${rand12}, rand13: ${rand13}, rand14: ${rand14}, rand15: ${rand15}, rand16: ${rand16}}';
+  }
 }
 
 class _UlidBytesReader extends fb.StructReader<UlidBytes> {
@@ -459,6 +682,36 @@ class X25519Public {
   String toString() {
     return 'X25519Public{key1: ${key1}, key2: ${key2}, key3: ${key3}, key4: ${key4}}';
   }
+
+  X25519PublicT unpack() => X25519PublicT(key1: key1, key2: key2, key3: key3, key4: key4);
+
+  static int pack(fb.Builder fbBuilder, X25519PublicT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class X25519PublicT implements fb.Packable {
+  int key1;
+  int key2;
+  int key3;
+  int key4;
+
+  X25519PublicT({required this.key1, required this.key2, required this.key3, required this.key4});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(key4);
+    fbBuilder.putUint64(key3);
+    fbBuilder.putUint64(key2);
+    fbBuilder.putUint64(key1);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'X25519PublicT{key1: ${key1}, key2: ${key2}, key3: ${key3}, key4: ${key4}}';
+  }
 }
 
 class _X25519PublicReader extends fb.StructReader<X25519Public> {
@@ -531,6 +784,32 @@ class Uint128 {
   String toString() {
     return 'Uint128{low: ${low}, high: ${high}}';
   }
+
+  Uint128T unpack() => Uint128T(low: low, high: high);
+
+  static int pack(fb.Builder fbBuilder, Uint128T? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class Uint128T implements fb.Packable {
+  int low;
+  int high;
+
+  Uint128T({required this.low, required this.high});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'Uint128T{low: ${low}, high: ${high}}';
+  }
 }
 
 class _Uint128Reader extends fb.StructReader<Uint128> {
@@ -592,6 +871,32 @@ class PartnerId {
   @override
   String toString() {
     return 'PartnerId{low: ${low}, high: ${high}}';
+  }
+
+  PartnerIdT unpack() => PartnerIdT(low: low, high: high);
+
+  static int pack(fb.Builder fbBuilder, PartnerIdT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class PartnerIdT implements fb.Packable {
+  int low;
+  int high;
+
+  PartnerIdT({required this.low, required this.high});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'PartnerIdT{low: ${low}, high: ${high}}';
   }
 }
 
@@ -655,6 +960,32 @@ class TerminalId {
   String toString() {
     return 'TerminalId{low: ${low}, high: ${high}}';
   }
+
+  TerminalIdT unpack() => TerminalIdT(low: low, high: high);
+
+  static int pack(fb.Builder fbBuilder, TerminalIdT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class TerminalIdT implements fb.Packable {
+  int low;
+  int high;
+
+  TerminalIdT({required this.low, required this.high});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'TerminalIdT{low: ${low}, high: ${high}}';
+  }
 }
 
 class _TerminalIdReader extends fb.StructReader<TerminalId> {
@@ -715,6 +1046,30 @@ class Timestamp {
   @override
   String toString() {
     return 'Timestamp{ts: ${ts}}';
+  }
+
+  TimestampT unpack() => TimestampT(ts: ts);
+
+  static int pack(fb.Builder fbBuilder, TimestampT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class TimestampT implements fb.Packable {
+  int ts;
+
+  TimestampT({required this.ts});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putInt64(ts);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'TimestampT{ts: ${ts}}';
   }
 }
 
@@ -778,6 +1133,36 @@ class Frame {
   @override
   String toString() {
     return 'Frame{header: ${header}, bytes: ${bytes}}';
+  }
+
+  FrameT unpack() => FrameT(header: header?.unpack(), bytes: const fb.Int8ListReader(lazy: false).vTableGetNullable(_bc, _bcOffset, 6));
+
+  static int pack(fb.Builder fbBuilder, FrameT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class FrameT implements fb.Packable {
+  HeaderT? header;
+  List<int>? bytes;
+
+  FrameT({this.header, this.bytes});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? bytesOffset = bytes == null ? null : fbBuilder.writeListInt8(bytes!);
+    fbBuilder.startTable(2);
+    if (header != null) {
+      fbBuilder.addStruct(0, header!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, bytesOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'FrameT{header: ${header}, bytes: ${bytes}}';
   }
 }
 
@@ -856,6 +1241,38 @@ class Header {
   @override
   String toString() {
     return 'Header{len: ${len}, headerType: ${headerType}, frameType: ${frameType}, toTerminalId: ${toTerminalId}, key: ${key}}';
+  }
+
+  HeaderT unpack() => HeaderT(len: len, headerType: headerType, frameType: frameType, toTerminalId: toTerminalId.unpack(), key: key.unpack());
+
+  static int pack(fb.Builder fbBuilder, HeaderT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class HeaderT implements fb.Packable {
+  int len;
+  int headerType;
+  int frameType;
+  TerminalIdT toTerminalId;
+  X25519PublicT key;
+
+  HeaderT({required this.len, required this.headerType, required this.frameType, required this.toTerminalId, required this.key});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    key.pack(fbBuilder);
+    toTerminalId.pack(fbBuilder);
+    fbBuilder.putUint32(frameType);
+    fbBuilder.putUint32(headerType);
+    fbBuilder.putUint64(len);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'HeaderT{len: ${len}, headerType: ${headerType}, frameType: ${frameType}, toTerminalId: ${toTerminalId}, key: ${key}}';
   }
 }
 
@@ -937,6 +1354,32 @@ class FrameConfirm {
   @override
   String toString() {
     return 'FrameConfirm{id: ${id}, frameId: ${frameId}}';
+  }
+
+  FrameConfirmT unpack() => FrameConfirmT(id: id.unpack(), frameId: frameId.unpack());
+
+  static int pack(fb.Builder fbBuilder, FrameConfirmT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class FrameConfirmT implements fb.Packable {
+  UlidBytesT id;
+  UlidBytesT frameId;
+
+  FrameConfirmT({required this.id, required this.frameId});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    frameId.pack(fbBuilder);
+    id.pack(fbBuilder);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'FrameConfirmT{id: ${id}, frameId: ${frameId}}';
   }
 }
 

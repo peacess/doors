@@ -44,7 +44,7 @@ pub extern "C" fn un_init() -> FfiBytes {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn call(data: FfiBytes) -> FfiBytes {
+pub extern "C" fn call(bytes: *const u8, length: u64) -> FfiBytes {
     //todo
     let c = vec![0u8];
     let mut v = core::mem::ManuallyDrop::new(c);

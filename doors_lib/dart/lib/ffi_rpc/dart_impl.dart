@@ -4,11 +4,11 @@ import 'package:idl/ffi_rpc/chat/callback.dart';
 import 'package:logger/logger.dart';
 
 import '../idl/base_base_generated.dart';
-import '../idl/net_discovery_net_discovery_generated.dart';
 import '../idl_bindings_generated.dart';
-import './net_discovery/hi.dart';
 import './idl.dart';
 import 'package:flat_buffers/flat_buffers.dart' as fb;
+
+import 'net_discovery/callback.dart';
 
 final logger = Logger();
 
@@ -31,9 +31,9 @@ class FfiRpcDart {
     _idlBindings.bytes_free(re);
   }
 
-  FfiBytes call(FfiBytes inParameter) {
-    return _idlBindings.call(inParameter);
-  }
+  // @Native<FfiBytes Function(Pointer<Uint8>, Uint64)>(symbol: 'call',isLeaf: true)
+  // external FfiBytes call(Pointer<Uint8> bytes, int length);
+  late final call = dylib.lookupFunction<FfiBytes Function(Pointer<Uint8>, Uint64), FfiBytes Function(Pointer<Uint8>, int)>('call', isLeaf: true);
 
   void callback(FfiBytes data) {
     final buffer = data.attach();

@@ -8,6 +8,83 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type PartnerT struct {
+	Id          *base.UlidBytesT    `json:"id"`
+	TerminalIds []*base.TerminalIdT `json:"terminal_ids"`
+	PartnerId   *base.UByte16T      `json:"partner_id"`
+	Name        string              `json:"name"`
+	ShowName    string              `json:"show_name"`
+	Ip          string              `json:"ip"`
+	Port        int16               `json:"port"`
+	CreateTs    *base.TimestampT    `json:"create_ts"`
+}
+
+func (t *PartnerT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	terminalIdsOffset := flatbuffers.UOffsetT(0)
+	if t.TerminalIds != nil {
+		terminalIdsLength := len(t.TerminalIds)
+		PartnerStartTerminalIdsVector(builder, terminalIdsLength)
+		for j := terminalIdsLength - 1; j >= 0; j-- {
+			t.TerminalIds[j].Pack(builder)
+		}
+		terminalIdsOffset = builder.EndVector(terminalIdsLength)
+	}
+	nameOffset := flatbuffers.UOffsetT(0)
+	if t.Name != "" {
+		nameOffset = builder.CreateString(t.Name)
+	}
+	showNameOffset := flatbuffers.UOffsetT(0)
+	if t.ShowName != "" {
+		showNameOffset = builder.CreateString(t.ShowName)
+	}
+	ipOffset := flatbuffers.UOffsetT(0)
+	if t.Ip != "" {
+		ipOffset = builder.CreateString(t.Ip)
+	}
+	PartnerStart(builder)
+	idOffset := t.Id.Pack(builder)
+	PartnerAddId(builder, idOffset)
+	PartnerAddTerminalIds(builder, terminalIdsOffset)
+	partnerIdOffset := t.PartnerId.Pack(builder)
+	PartnerAddPartnerId(builder, partnerIdOffset)
+	PartnerAddName(builder, nameOffset)
+	PartnerAddShowName(builder, showNameOffset)
+	PartnerAddIp(builder, ipOffset)
+	PartnerAddPort(builder, t.Port)
+	createTsOffset := t.CreateTs.Pack(builder)
+	PartnerAddCreateTs(builder, createTsOffset)
+	return PartnerEnd(builder)
+}
+
+func (rcv *Partner) UnPackTo(t *PartnerT) {
+	t.Id = rcv.Id(nil).UnPack()
+	terminalIdsLength := rcv.TerminalIdsLength()
+	t.TerminalIds = make([]*base.TerminalIdT, terminalIdsLength)
+	for j := 0; j < terminalIdsLength; j++ {
+		x := base.TerminalId{}
+		rcv.TerminalIds(&x, j)
+		t.TerminalIds[j] = x.UnPack()
+	}
+	t.PartnerId = rcv.PartnerId(nil).UnPack()
+	t.Name = string(rcv.Name())
+	t.ShowName = string(rcv.ShowName())
+	t.Ip = string(rcv.Ip())
+	t.Port = rcv.Port()
+	t.CreateTs = rcv.CreateTs(nil).UnPack()
+}
+
+func (rcv *Partner) UnPack() *PartnerT {
+	if rcv == nil {
+		return nil
+	}
+	t := &PartnerT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type Partner struct {
 	_tab flatbuffers.Table
 }

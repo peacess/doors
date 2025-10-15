@@ -8,6 +8,41 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type TextMessageAckT struct {
+	Id     *base.UlidBytesT `json:"id"`
+	SendId *base.UlidBytesT `json:"send_id"`
+	Ts     *base.TimestampT `json:"ts"`
+}
+
+func (t *TextMessageAckT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	TextMessageAckStart(builder)
+	idOffset := t.Id.Pack(builder)
+	TextMessageAckAddId(builder, idOffset)
+	sendIdOffset := t.SendId.Pack(builder)
+	TextMessageAckAddSendId(builder, sendIdOffset)
+	tsOffset := t.Ts.Pack(builder)
+	TextMessageAckAddTs(builder, tsOffset)
+	return TextMessageAckEnd(builder)
+}
+
+func (rcv *TextMessageAck) UnPackTo(t *TextMessageAckT) {
+	t.Id = rcv.Id(nil).UnPack()
+	t.SendId = rcv.SendId(nil).UnPack()
+	t.Ts = rcv.Ts(nil).UnPack()
+}
+
+func (rcv *TextMessageAck) UnPack() *TextMessageAckT {
+	if rcv == nil {
+		return nil
+	}
+	t := &TextMessageAckT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type TextMessageAck struct {
 	_tab flatbuffers.Table
 }

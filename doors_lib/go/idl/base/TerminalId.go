@@ -6,6 +6,31 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type TerminalIdT struct {
+	Low  uint64 `json:"low"`
+	High uint64 `json:"high"`
+}
+
+func (t *TerminalIdT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateTerminalId(builder, t.Low, t.High)
+}
+func (rcv *TerminalId) UnPackTo(t *TerminalIdT) {
+	t.Low = rcv.Low()
+	t.High = rcv.High()
+}
+
+func (rcv *TerminalId) UnPack() *TerminalIdT {
+	if rcv == nil {
+		return nil
+	}
+	t := &TerminalIdT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type TerminalId struct {
 	_tab flatbuffers.Struct
 }

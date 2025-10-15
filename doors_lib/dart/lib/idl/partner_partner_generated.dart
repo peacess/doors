@@ -34,6 +34,70 @@ class Partner {
   String toString() {
     return 'Partner{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, name: ${name}, showName: ${showName}, ip: ${ip}, port: ${port}, createTs: ${createTs}}';
   }
+
+  PartnerT unpack() => PartnerT(
+    id: id?.unpack(),
+    terminalIds: terminalIds?.map((e) => e.unpack()).toList(),
+    partnerId: partnerId?.unpack(),
+    name: name,
+    showName: showName,
+    ip: ip,
+    port: port,
+    createTs: createTs?.unpack(),
+  );
+
+  static int pack(fb.Builder fbBuilder, PartnerT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class PartnerT implements fb.Packable {
+  base.UlidBytesT? id;
+  List<base.TerminalIdT>? terminalIds;
+  base.Ubyte16T? partnerId;
+  String? name;
+  String? showName;
+  String? ip;
+  int port;
+  base.TimestampT? createTs;
+
+  PartnerT({this.id, this.terminalIds, this.partnerId, this.name, this.showName, this.ip, this.port = 0, this.createTs});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    int? terminalIdsOffset;
+    if (terminalIds != null) {
+      for (var e in terminalIds!) {
+        e.pack(fbBuilder);
+      }
+      terminalIdsOffset = fbBuilder.endStructVector(terminalIds!.length);
+    }
+    final int? nameOffset = name == null ? null : fbBuilder.writeString(name!);
+    final int? showNameOffset = showName == null ? null : fbBuilder.writeString(showName!);
+    final int? ipOffset = ip == null ? null : fbBuilder.writeString(ip!);
+    fbBuilder.startTable(8);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, terminalIdsOffset);
+    if (partnerId != null) {
+      fbBuilder.addStruct(2, partnerId!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(3, nameOffset);
+    fbBuilder.addOffset(4, showNameOffset);
+    fbBuilder.addOffset(5, ipOffset);
+    fbBuilder.addInt16(6, port);
+    if (createTs != null) {
+      fbBuilder.addStruct(7, createTs!.pack(fbBuilder));
+    }
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'PartnerT{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, name: ${name}, showName: ${showName}, ip: ${ip}, port: ${port}, createTs: ${createTs}}';
+  }
 }
 
 class _PartnerReader extends fb.TableReader<Partner> {

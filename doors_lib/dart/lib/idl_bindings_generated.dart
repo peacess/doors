@@ -36,12 +36,12 @@ class IdlBindings {
   late final _un_initPtr = _lookup<ffi.NativeFunction<FfiBytes Function()>>('un_init');
   late final _un_init = _un_initPtr.asFunction<FfiBytes Function()>();
 
-  FfiBytes call(FfiBytes data) {
-    return _call(data);
+  FfiBytes call(ffi.Pointer<ffi.Uint8> bytes, int length) {
+    return _call(bytes, length);
   }
 
-  late final _callPtr = _lookup<ffi.NativeFunction<FfiBytes Function(FfiBytes)>>('call');
-  late final _call = _callPtr.asFunction<FfiBytes Function(FfiBytes)>();
+  late final _callPtr = _lookup<ffi.NativeFunction<FfiBytes Function(ffi.Pointer<ffi.Uint8>, ffi.Uint64)>>('call');
+  late final _call = _callPtr.asFunction<FfiBytes Function(ffi.Pointer<ffi.Uint8>, int)>();
 
   void bytes_free(FfiBytes data) {
     return _bytes_free(data);

@@ -6,6 +6,33 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type FfiRpcHeaderT struct {
+	HeaderType uint32 `json:"header_type"`
+	RpcType    uint32 `json:"rpc_type"`
+	Len        uint64 `json:"len"`
+}
+
+func (t *FfiRpcHeaderT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateFfiRpcHeader(builder, t.HeaderType, t.RpcType, t.Len)
+}
+func (rcv *FfiRpcHeader) UnPackTo(t *FfiRpcHeaderT) {
+	t.HeaderType = rcv.HeaderType()
+	t.RpcType = rcv.RpcType()
+	t.Len = rcv.Len()
+}
+
+func (rcv *FfiRpcHeader) UnPack() *FfiRpcHeaderT {
+	if rcv == nil {
+		return nil
+	}
+	t := &FfiRpcHeaderT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type FfiRpcHeader struct {
 	_tab flatbuffers.Struct
 }

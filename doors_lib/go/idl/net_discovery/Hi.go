@@ -8,6 +8,37 @@ import (
 	base "github.com/peacess/doors/doors_lib/go/idl/base"
 )
 
+type HiT struct {
+	Id          *base.UlidBytesT `json:"id"`
+	DnsTerminal *DnsTerminalT    `json:"dns_terminal"`
+}
+
+func (t *HiT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	dnsTerminalOffset := t.DnsTerminal.Pack(builder)
+	HiStart(builder)
+	idOffset := t.Id.Pack(builder)
+	HiAddId(builder, idOffset)
+	HiAddDnsTerminal(builder, dnsTerminalOffset)
+	return HiEnd(builder)
+}
+
+func (rcv *Hi) UnPackTo(t *HiT) {
+	t.Id = rcv.Id(nil).UnPack()
+	t.DnsTerminal = rcv.DnsTerminal(nil).UnPack()
+}
+
+func (rcv *Hi) UnPack() *HiT {
+	if rcv == nil {
+		return nil
+	}
+	t := &HiT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type Hi struct {
 	_tab flatbuffers.Table
 }

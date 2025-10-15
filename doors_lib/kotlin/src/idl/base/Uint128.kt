@@ -2,40 +2,6 @@
 
 package base
 
-import com.google.flatbuffers.BaseVector
-import com.google.flatbuffers.BooleanVector
-import com.google.flatbuffers.ByteVector
-import com.google.flatbuffers.Constants
-import com.google.flatbuffers.DoubleVector
-import com.google.flatbuffers.FlatBufferBuilder
-import com.google.flatbuffers.FloatVector
-import com.google.flatbuffers.LongVector
-import com.google.flatbuffers.StringVector
-import com.google.flatbuffers.Struct
-import com.google.flatbuffers.Table
-import com.google.flatbuffers.UnionVector
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import kotlin.math.sign
+import com.google.flatbuffers.kotlin.*
+import kotlin.jvm.JvmInline
 
-@Suppress("unused")
-class Uint128 : Struct() {
-
-    fun __init(_i: Int, _bb: ByteBuffer)  {
-        __reset(_i, _bb)
-    }
-    fun __assign(_i: Int, _bb: ByteBuffer) : Uint128 {
-        __init(_i, _bb)
-        return this
-    }
-    val low : ULong get() = bb.getLong(bb_pos + 0).toULong()
-    val high : ULong get() = bb.getLong(bb_pos + 8).toULong()
-    companion object {
-        fun createUint128(builder: FlatBufferBuilder, low: ULong, high: ULong) : Int {
-            builder.prep(8, 16)
-            builder.putLong(high.toLong())
-            builder.putLong(low.toLong())
-            return builder.offset()
-        }
-    }
-}

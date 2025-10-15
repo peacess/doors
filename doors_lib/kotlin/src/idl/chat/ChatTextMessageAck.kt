@@ -2,63 +2,47 @@
 
 package chat
 
-import com.google.flatbuffers.BaseVector
-import com.google.flatbuffers.BooleanVector
-import com.google.flatbuffers.ByteVector
-import com.google.flatbuffers.Constants
-import com.google.flatbuffers.DoubleVector
-import com.google.flatbuffers.FlatBufferBuilder
-import com.google.flatbuffers.FloatVector
-import com.google.flatbuffers.LongVector
-import com.google.flatbuffers.StringVector
-import com.google.flatbuffers.Struct
-import com.google.flatbuffers.Table
-import com.google.flatbuffers.UnionVector
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import kotlin.math.sign
-
+import com.google.flatbuffers.kotlin.*
+import kotlin.jvm.JvmInline
 @Suppress("unused")
 class ChatTextMessageAck : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
-        __reset(_i, _bb)
-    }
-    fun __assign(_i: Int, _bb: ByteBuffer) : ChatTextMessageAck {
-        __init(_i, _bb)
-        return this
-    }
+    fun init(i: Int, buffer: ReadWriteBuffer) : ChatTextMessageAck = reset(i, buffer)
+
     val header : base.Header? get() = header(base.Header())
-    fun header(obj: base.Header) : base.Header? {
-        val o = __offset(4)
-        return if (o != 0) {
-            obj.__assign(o + bb_pos, bb)
-        } else {
-            null
-        }
-    }
+    fun header(obj: base.Header) : base.Header? = lookupField(4, null ) { obj.init(it + bufferPos, bb) }
+
     val message : chat.TextMessageAck? get() = message(chat.TextMessageAck())
-    fun message(obj: chat.TextMessageAck) : chat.TextMessageAck? {
-        val o = __offset(6)
-        return if (o != 0) {
-            obj.__assign(__indirect(o + bb_pos), bb)
-        } else {
-            null
-        }
-    }
+    fun message(obj: chat.TextMessageAck) : chat.TextMessageAck? = lookupField(6, null ) { obj.init(indirect(it + bufferPos), bb) }
+
     companion object {
-        fun validateVersion() = Constants.FLATBUFFERS_25_2_10()
-        fun getRootAsChatTextMessageAck(_bb: ByteBuffer): ChatTextMessageAck = getRootAsChatTextMessageAck(_bb, ChatTextMessageAck())
-        fun getRootAsChatTextMessageAck(_bb: ByteBuffer, obj: ChatTextMessageAck): ChatTextMessageAck {
-            _bb.order(ByteOrder.LITTLE_ENDIAN)
-            return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
-        }
+        @JvmStatic
+        fun validateVersion() = VERSION_2_0_8
+
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer) : ChatTextMessageAck = asRoot(buffer, ChatTextMessageAck())
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer, obj: ChatTextMessageAck) : ChatTextMessageAck = obj.init(buffer.getInt(buffer.limit) + buffer.limit, buffer)
+
+
+        @JvmStatic
         fun startChatTextMessageAck(builder: FlatBufferBuilder) = builder.startTable(2)
-        fun addHeader(builder: FlatBufferBuilder, header: Int) = builder.addStruct(0, header, 0)
-        fun addMessage(builder: FlatBufferBuilder, message: Int) = builder.addOffset(1, message, 0)
-        fun endChatTextMessageAck(builder: FlatBufferBuilder) : Int {
-            val o = builder.endTable()
+
+        @JvmStatic
+        fun addHeader(builder: FlatBufferBuilder, header: Offset<base.Header>) = builder.addStruct(0, header.value, 0)
+
+        @JvmStatic
+        fun addMessage(builder: FlatBufferBuilder, message: Offset<chat.TextMessageAck>) = builder.add(1, message, 0)
+
+        @JvmStatic
+        fun endChatTextMessageAck(builder: FlatBufferBuilder) : Offset<ChatTextMessageAck> {
+            val o: Offset<ChatTextMessageAck> = builder.endTable()
             return o
         }
     }
 }
+
+typealias ChatTextMessageAckOffsetArray = OffsetArray<ChatTextMessageAck>
+
+inline fun ChatTextMessageAckOffsetArray(size: Int, crossinline call: (Int) -> Offset<ChatTextMessageAck>): ChatTextMessageAckOffsetArray =
+    ChatTextMessageAckOffsetArray(IntArray(size) { call(it).value })

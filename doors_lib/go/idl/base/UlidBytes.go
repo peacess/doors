@@ -6,6 +6,59 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+type UlidBytesT struct {
+	Ts1    byte `json:"ts1"`
+	Ts2    byte `json:"ts2"`
+	Ts3    byte `json:"ts3"`
+	Ts4    byte `json:"ts4"`
+	Ts5    byte `json:"ts5"`
+	Ts6    byte `json:"ts6"`
+	Rand7  byte `json:"rand7"`
+	Rand8  byte `json:"rand8"`
+	Rand9  byte `json:"rand9"`
+	Rand10 byte `json:"rand10"`
+	Rand11 byte `json:"rand11"`
+	Rand12 byte `json:"rand12"`
+	Rand13 byte `json:"rand13"`
+	Rand14 byte `json:"rand14"`
+	Rand15 byte `json:"rand15"`
+	Rand16 byte `json:"rand16"`
+}
+
+func (t *UlidBytesT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+	if t == nil {
+		return 0
+	}
+	return CreateUlidBytes(builder, t.Ts1, t.Ts2, t.Ts3, t.Ts4, t.Ts5, t.Ts6, t.Rand7, t.Rand8, t.Rand9, t.Rand10, t.Rand11, t.Rand12, t.Rand13, t.Rand14, t.Rand15, t.Rand16)
+}
+func (rcv *UlidBytes) UnPackTo(t *UlidBytesT) {
+	t.Ts1 = rcv.Ts1()
+	t.Ts2 = rcv.Ts2()
+	t.Ts3 = rcv.Ts3()
+	t.Ts4 = rcv.Ts4()
+	t.Ts5 = rcv.Ts5()
+	t.Ts6 = rcv.Ts6()
+	t.Rand7 = rcv.Rand7()
+	t.Rand8 = rcv.Rand8()
+	t.Rand9 = rcv.Rand9()
+	t.Rand10 = rcv.Rand10()
+	t.Rand11 = rcv.Rand11()
+	t.Rand12 = rcv.Rand12()
+	t.Rand13 = rcv.Rand13()
+	t.Rand14 = rcv.Rand14()
+	t.Rand15 = rcv.Rand15()
+	t.Rand16 = rcv.Rand16()
+}
+
+func (rcv *UlidBytes) UnPack() *UlidBytesT {
+	if rcv == nil {
+		return nil
+	}
+	t := &UlidBytesT{}
+	rcv.UnPackTo(t)
+	return t
+}
+
 type UlidBytes struct {
 	_tab flatbuffers.Struct
 }
