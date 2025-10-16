@@ -26,12 +26,11 @@ class TextMessage {
   base.PartnerId? get toPartnerId => base.PartnerId.reader.vTableGetNullable(_bc, _bcOffset, 8);
   base.TerminalId? get fromTerminalId => base.TerminalId.reader.vTableGetNullable(_bc, _bcOffset, 10);
   base.TerminalId? get toTerminalId => base.TerminalId.reader.vTableGetNullable(_bc, _bcOffset, 12);
-  base.Timestamp? get ts => base.Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 14);
-  String? get text => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 16);
+  String? get text => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 14);
 
   @override
   String toString() {
-    return 'TextMessage{id: ${id}, fromPartnerId: ${fromPartnerId}, toPartnerId: ${toPartnerId}, fromTerminalId: ${fromTerminalId}, toTerminalId: ${toTerminalId}, ts: ${ts}, text: ${text}}';
+    return 'TextMessage{id: ${id}, fromPartnerId: ${fromPartnerId}, toPartnerId: ${toPartnerId}, fromTerminalId: ${fromTerminalId}, toTerminalId: ${toTerminalId}, text: ${text}}';
   }
 
   TextMessageT unpack() => TextMessageT(
@@ -40,7 +39,6 @@ class TextMessage {
     toPartnerId: toPartnerId?.unpack(),
     fromTerminalId: fromTerminalId?.unpack(),
     toTerminalId: toTerminalId?.unpack(),
-    ts: ts?.unpack(),
     text: text,
   );
 
@@ -56,15 +54,14 @@ class TextMessageT implements fb.Packable {
   base.PartnerIdT? toPartnerId;
   base.TerminalIdT? fromTerminalId;
   base.TerminalIdT? toTerminalId;
-  base.TimestampT? ts;
   String? text;
 
-  TextMessageT({this.id, this.fromPartnerId, this.toPartnerId, this.fromTerminalId, this.toTerminalId, this.ts, this.text});
+  TextMessageT({this.id, this.fromPartnerId, this.toPartnerId, this.fromTerminalId, this.toTerminalId, this.text});
 
   @override
   int pack(fb.Builder fbBuilder) {
     final int? textOffset = text == null ? null : fbBuilder.writeString(text!);
-    fbBuilder.startTable(7);
+    fbBuilder.startTable(6);
     if (id != null) {
       fbBuilder.addStruct(0, id!.pack(fbBuilder));
     }
@@ -80,16 +77,13 @@ class TextMessageT implements fb.Packable {
     if (toTerminalId != null) {
       fbBuilder.addStruct(4, toTerminalId!.pack(fbBuilder));
     }
-    if (ts != null) {
-      fbBuilder.addStruct(5, ts!.pack(fbBuilder));
-    }
-    fbBuilder.addOffset(6, textOffset);
+    fbBuilder.addOffset(5, textOffset);
     return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'TextMessageT{id: ${id}, fromPartnerId: ${fromPartnerId}, toPartnerId: ${toPartnerId}, fromTerminalId: ${fromTerminalId}, toTerminalId: ${toTerminalId}, ts: ${ts}, text: ${text}}';
+    return 'TextMessageT{id: ${id}, fromPartnerId: ${fromPartnerId}, toPartnerId: ${toPartnerId}, fromTerminalId: ${fromTerminalId}, toTerminalId: ${toTerminalId}, text: ${text}}';
   }
 }
 
@@ -106,7 +100,7 @@ class TextMessageBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(7);
+    fbBuilder.startTable(6);
   }
 
   int addId(int offset) {
@@ -134,13 +128,8 @@ class TextMessageBuilder {
     return fbBuilder.offset;
   }
 
-  int addTs(int offset) {
-    fbBuilder.addStruct(5, offset);
-    return fbBuilder.offset;
-  }
-
   int addTextOffset(int? offset) {
-    fbBuilder.addOffset(6, offset);
+    fbBuilder.addOffset(5, offset);
     return fbBuilder.offset;
   }
 
@@ -155,7 +144,6 @@ class TextMessageObjectBuilder extends fb.ObjectBuilder {
   final base.PartnerIdObjectBuilder? _toPartnerId;
   final base.TerminalIdObjectBuilder? _fromTerminalId;
   final base.TerminalIdObjectBuilder? _toTerminalId;
-  final base.TimestampObjectBuilder? _ts;
   final String? _text;
 
   TextMessageObjectBuilder({
@@ -164,21 +152,19 @@ class TextMessageObjectBuilder extends fb.ObjectBuilder {
     base.PartnerIdObjectBuilder? toPartnerId,
     base.TerminalIdObjectBuilder? fromTerminalId,
     base.TerminalIdObjectBuilder? toTerminalId,
-    base.TimestampObjectBuilder? ts,
     String? text,
   }) : _id = id,
        _fromPartnerId = fromPartnerId,
        _toPartnerId = toPartnerId,
        _fromTerminalId = fromTerminalId,
        _toTerminalId = toTerminalId,
-       _ts = ts,
        _text = text;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
     final int? textOffset = _text == null ? null : fbBuilder.writeString(_text!);
-    fbBuilder.startTable(7);
+    fbBuilder.startTable(6);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
@@ -194,10 +180,7 @@ class TextMessageObjectBuilder extends fb.ObjectBuilder {
     if (_toTerminalId != null) {
       fbBuilder.addStruct(4, _toTerminalId!.finish(fbBuilder));
     }
-    if (_ts != null) {
-      fbBuilder.addStruct(5, _ts!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(6, textOffset);
+    fbBuilder.addOffset(5, textOffset);
     return fbBuilder.endTable();
   }
 
@@ -224,14 +207,13 @@ class TextMessageAck {
 
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
   base.UlidBytes? get sendId => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 6);
-  base.Timestamp? get ts => base.Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 8);
 
   @override
   String toString() {
-    return 'TextMessageAck{id: ${id}, sendId: ${sendId}, ts: ${ts}}';
+    return 'TextMessageAck{id: ${id}, sendId: ${sendId}}';
   }
 
-  TextMessageAckT unpack() => TextMessageAckT(id: id?.unpack(), sendId: sendId?.unpack(), ts: ts?.unpack());
+  TextMessageAckT unpack() => TextMessageAckT(id: id?.unpack(), sendId: sendId?.unpack());
 
   static int pack(fb.Builder fbBuilder, TextMessageAckT? object) {
     if (object == null) return 0;
@@ -242,28 +224,24 @@ class TextMessageAck {
 class TextMessageAckT implements fb.Packable {
   base.UlidBytesT? id;
   base.UlidBytesT? sendId;
-  base.TimestampT? ts;
 
-  TextMessageAckT({this.id, this.sendId, this.ts});
+  TextMessageAckT({this.id, this.sendId});
 
   @override
   int pack(fb.Builder fbBuilder) {
-    fbBuilder.startTable(3);
+    fbBuilder.startTable(2);
     if (id != null) {
       fbBuilder.addStruct(0, id!.pack(fbBuilder));
     }
     if (sendId != null) {
       fbBuilder.addStruct(1, sendId!.pack(fbBuilder));
     }
-    if (ts != null) {
-      fbBuilder.addStruct(2, ts!.pack(fbBuilder));
-    }
     return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'TextMessageAckT{id: ${id}, sendId: ${sendId}, ts: ${ts}}';
+    return 'TextMessageAckT{id: ${id}, sendId: ${sendId}}';
   }
 }
 
@@ -280,7 +258,7 @@ class TextMessageAckBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(3);
+    fbBuilder.startTable(2);
   }
 
   int addId(int offset) {
@@ -293,11 +271,6 @@ class TextMessageAckBuilder {
     return fbBuilder.offset;
   }
 
-  int addTs(int offset) {
-    fbBuilder.addStruct(2, offset);
-    return fbBuilder.offset;
-  }
-
   int finish() {
     return fbBuilder.endTable();
   }
@@ -306,25 +279,18 @@ class TextMessageAckBuilder {
 class TextMessageAckObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
   final base.UlidBytesObjectBuilder? _sendId;
-  final base.TimestampObjectBuilder? _ts;
 
-  TextMessageAckObjectBuilder({base.UlidBytesObjectBuilder? id, base.UlidBytesObjectBuilder? sendId, base.TimestampObjectBuilder? ts})
-    : _id = id,
-      _sendId = sendId,
-      _ts = ts;
+  TextMessageAckObjectBuilder({base.UlidBytesObjectBuilder? id, base.UlidBytesObjectBuilder? sendId}) : _id = id, _sendId = sendId;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    fbBuilder.startTable(3);
+    fbBuilder.startTable(2);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
     if (_sendId != null) {
       fbBuilder.addStruct(1, _sendId!.finish(fbBuilder));
-    }
-    if (_ts != null) {
-      fbBuilder.addStruct(2, _ts!.finish(fbBuilder));
     }
     return fbBuilder.endTable();
   }

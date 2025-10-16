@@ -1,4 +1,4 @@
-.PHONY: build clean format upgrade
+.PHONY: build clean format upgrade gen
 
 format:
 	cd flutter/doors && make format
@@ -19,3 +19,6 @@ upgrade:
 	cd rust && make upgrade
 	cd flutter/doors && make upgrade
 	cd go && make upgrade
+
+gen:
+	cd flutter/doors && make gen

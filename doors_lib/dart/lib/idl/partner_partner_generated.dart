@@ -23,28 +23,16 @@ class Partner {
 
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
   List<base.TerminalId>? get terminalIds => const fb.ListReader<base.TerminalId>(base.TerminalId.reader).vTableGetNullable(_bc, _bcOffset, 6);
-  base.Ubyte16? get partnerId => base.Ubyte16.reader.vTableGetNullable(_bc, _bcOffset, 8);
-  String? get name => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
-  String? get showName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 12);
-  String? get ip => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 14);
-  int get port => const fb.Int16Reader().vTableGet(_bc, _bcOffset, 16, 0);
-  base.Timestamp? get createTs => base.Timestamp.reader.vTableGetNullable(_bc, _bcOffset, 18);
+  base.PartnerId? get partnerId => base.PartnerId.reader.vTableGetNullable(_bc, _bcOffset, 8);
+  String? get showName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
 
   @override
   String toString() {
-    return 'Partner{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, name: ${name}, showName: ${showName}, ip: ${ip}, port: ${port}, createTs: ${createTs}}';
+    return 'Partner{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, showName: ${showName}}';
   }
 
-  PartnerT unpack() => PartnerT(
-    id: id?.unpack(),
-    terminalIds: terminalIds?.map((e) => e.unpack()).toList(),
-    partnerId: partnerId?.unpack(),
-    name: name,
-    showName: showName,
-    ip: ip,
-    port: port,
-    createTs: createTs?.unpack(),
-  );
+  PartnerT unpack() =>
+      PartnerT(id: id?.unpack(), terminalIds: terminalIds?.map((e) => e.unpack()).toList(), partnerId: partnerId?.unpack(), showName: showName);
 
   static int pack(fb.Builder fbBuilder, PartnerT? object) {
     if (object == null) return 0;
@@ -55,14 +43,10 @@ class Partner {
 class PartnerT implements fb.Packable {
   base.UlidBytesT? id;
   List<base.TerminalIdT>? terminalIds;
-  base.Ubyte16T? partnerId;
-  String? name;
+  base.PartnerIdT? partnerId;
   String? showName;
-  String? ip;
-  int port;
-  base.TimestampT? createTs;
 
-  PartnerT({this.id, this.terminalIds, this.partnerId, this.name, this.showName, this.ip, this.port = 0, this.createTs});
+  PartnerT({this.id, this.terminalIds, this.partnerId, this.showName});
 
   @override
   int pack(fb.Builder fbBuilder) {
@@ -73,10 +57,8 @@ class PartnerT implements fb.Packable {
       }
       terminalIdsOffset = fbBuilder.endStructVector(terminalIds!.length);
     }
-    final int? nameOffset = name == null ? null : fbBuilder.writeString(name!);
     final int? showNameOffset = showName == null ? null : fbBuilder.writeString(showName!);
-    final int? ipOffset = ip == null ? null : fbBuilder.writeString(ip!);
-    fbBuilder.startTable(8);
+    fbBuilder.startTable(4);
     if (id != null) {
       fbBuilder.addStruct(0, id!.pack(fbBuilder));
     }
@@ -84,19 +66,13 @@ class PartnerT implements fb.Packable {
     if (partnerId != null) {
       fbBuilder.addStruct(2, partnerId!.pack(fbBuilder));
     }
-    fbBuilder.addOffset(3, nameOffset);
-    fbBuilder.addOffset(4, showNameOffset);
-    fbBuilder.addOffset(5, ipOffset);
-    fbBuilder.addInt16(6, port);
-    if (createTs != null) {
-      fbBuilder.addStruct(7, createTs!.pack(fbBuilder));
-    }
+    fbBuilder.addOffset(3, showNameOffset);
     return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'PartnerT{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, name: ${name}, showName: ${showName}, ip: ${ip}, port: ${port}, createTs: ${createTs}}';
+    return 'PartnerT{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, showName: ${showName}}';
   }
 }
 
@@ -113,7 +89,7 @@ class PartnerBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(8);
+    fbBuilder.startTable(4);
   }
 
   int addId(int offset) {
@@ -131,28 +107,8 @@ class PartnerBuilder {
     return fbBuilder.offset;
   }
 
-  int addNameOffset(int? offset) {
-    fbBuilder.addOffset(3, offset);
-    return fbBuilder.offset;
-  }
-
   int addShowNameOffset(int? offset) {
-    fbBuilder.addOffset(4, offset);
-    return fbBuilder.offset;
-  }
-
-  int addIpOffset(int? offset) {
-    fbBuilder.addOffset(5, offset);
-    return fbBuilder.offset;
-  }
-
-  int addPort(int? port) {
-    fbBuilder.addInt16(6, port);
-    return fbBuilder.offset;
-  }
-
-  int addCreateTs(int offset) {
-    fbBuilder.addStruct(7, offset);
+    fbBuilder.addOffset(3, offset);
     return fbBuilder.offset;
   }
 
@@ -164,39 +120,25 @@ class PartnerBuilder {
 class PartnerObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
   final List<base.TerminalIdObjectBuilder>? _terminalIds;
-  final base.Ubyte16ObjectBuilder? _partnerId;
-  final String? _name;
+  final base.PartnerIdObjectBuilder? _partnerId;
   final String? _showName;
-  final String? _ip;
-  final int? _port;
-  final base.TimestampObjectBuilder? _createTs;
 
   PartnerObjectBuilder({
     base.UlidBytesObjectBuilder? id,
     List<base.TerminalIdObjectBuilder>? terminalIds,
-    base.Ubyte16ObjectBuilder? partnerId,
-    String? name,
+    base.PartnerIdObjectBuilder? partnerId,
     String? showName,
-    String? ip,
-    int? port,
-    base.TimestampObjectBuilder? createTs,
   }) : _id = id,
        _terminalIds = terminalIds,
        _partnerId = partnerId,
-       _name = name,
-       _showName = showName,
-       _ip = ip,
-       _port = port,
-       _createTs = createTs;
+       _showName = showName;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
     final int? terminalIdsOffset = _terminalIds == null ? null : fbBuilder.writeListOfStructs(_terminalIds!);
-    final int? nameOffset = _name == null ? null : fbBuilder.writeString(_name!);
     final int? showNameOffset = _showName == null ? null : fbBuilder.writeString(_showName!);
-    final int? ipOffset = _ip == null ? null : fbBuilder.writeString(_ip!);
-    fbBuilder.startTable(8);
+    fbBuilder.startTable(4);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
@@ -204,13 +146,7 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
     if (_partnerId != null) {
       fbBuilder.addStruct(2, _partnerId!.finish(fbBuilder));
     }
-    fbBuilder.addOffset(3, nameOffset);
-    fbBuilder.addOffset(4, showNameOffset);
-    fbBuilder.addOffset(5, ipOffset);
-    fbBuilder.addInt16(6, _port);
-    if (_createTs != null) {
-      fbBuilder.addStruct(7, _createTs!.finish(fbBuilder));
-    }
+    fbBuilder.addOffset(3, showNameOffset);
     return fbBuilder.endTable();
   }
 

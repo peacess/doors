@@ -64,7 +64,8 @@ final class FfiBytes extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> bytes;
 }
 
-/// 回调用函数的返回值在dart中并不支持，所以没有返回值
-typedef CallBack = ffi.Pointer<ffi.NativeFunction<CallBackFunction>>;
 typedef CallBackFunction = ffi.Void Function(FfiBytes);
 typedef DartCallBackFunction = void Function(FfiBytes);
+
+/// 回调用函数的返回值在dart中并不支持，所以没有返回值
+typedef CallBack = ffi.Pointer<ffi.NativeFunction<CallBackFunction>>;

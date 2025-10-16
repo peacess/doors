@@ -10,14 +10,15 @@ import (
 
 type DnsTerminalT struct {
 	Id         *base.UlidBytesT    `json:"id"`
-	ParterId   *base.PartnerIdT    `json:"parter_id"`
+	PartnerId  *base.PartnerIdT    `json:"partner_id"`
 	TerminalId *base.TerminalIdT   `json:"terminal_id"`
-	HostName   string              `json:"host_name"`
 	IpV4       uint32              `json:"ip_v4"`
 	PortV4     uint16              `json:"port_v4"`
 	IpV6       uint64              `json:"ip_v6"`
 	PortV6     uint16              `json:"port_v6"`
 	Key        *base.X25519PublicT `json:"key"`
+	HostName   string              `json:"host_name"`
+	ShowName   string              `json:"show_name"`
 }
 
 func (t *DnsTerminalT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
@@ -28,33 +29,39 @@ func (t *DnsTerminalT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	if t.HostName != "" {
 		hostNameOffset = builder.CreateString(t.HostName)
 	}
+	showNameOffset := flatbuffers.UOffsetT(0)
+	if t.ShowName != "" {
+		showNameOffset = builder.CreateString(t.ShowName)
+	}
 	DnsTerminalStart(builder)
 	idOffset := t.Id.Pack(builder)
 	DnsTerminalAddId(builder, idOffset)
-	parterIdOffset := t.ParterId.Pack(builder)
-	DnsTerminalAddParterId(builder, parterIdOffset)
+	partnerIdOffset := t.PartnerId.Pack(builder)
+	DnsTerminalAddPartnerId(builder, partnerIdOffset)
 	terminalIdOffset := t.TerminalId.Pack(builder)
 	DnsTerminalAddTerminalId(builder, terminalIdOffset)
-	DnsTerminalAddHostName(builder, hostNameOffset)
 	DnsTerminalAddIpV4(builder, t.IpV4)
 	DnsTerminalAddPortV4(builder, t.PortV4)
 	DnsTerminalAddIpV6(builder, t.IpV6)
 	DnsTerminalAddPortV6(builder, t.PortV6)
 	keyOffset := t.Key.Pack(builder)
 	DnsTerminalAddKey(builder, keyOffset)
+	DnsTerminalAddHostName(builder, hostNameOffset)
+	DnsTerminalAddShowName(builder, showNameOffset)
 	return DnsTerminalEnd(builder)
 }
 
 func (rcv *DnsTerminal) UnPackTo(t *DnsTerminalT) {
 	t.Id = rcv.Id(nil).UnPack()
-	t.ParterId = rcv.ParterId(nil).UnPack()
+	t.PartnerId = rcv.PartnerId(nil).UnPack()
 	t.TerminalId = rcv.TerminalId(nil).UnPack()
-	t.HostName = string(rcv.HostName())
 	t.IpV4 = rcv.IpV4()
 	t.PortV4 = rcv.PortV4()
 	t.IpV6 = rcv.IpV6()
 	t.PortV6 = rcv.PortV6()
 	t.Key = rcv.Key(nil).UnPack()
+	t.HostName = string(rcv.HostName())
+	t.ShowName = string(rcv.ShowName())
 }
 
 func (rcv *DnsTerminal) UnPack() *DnsTerminalT {
@@ -114,7 +121,7 @@ func (rcv *DnsTerminal) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *DnsTerminal) ParterId(obj *base.PartnerId) *base.PartnerId {
+func (rcv *DnsTerminal) PartnerId(obj *base.PartnerId) *base.PartnerId {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		x := o + rcv._tab.Pos
@@ -140,16 +147,8 @@ func (rcv *DnsTerminal) TerminalId(obj *base.TerminalId) *base.TerminalId {
 	return nil
 }
 
-func (rcv *DnsTerminal) HostName() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
-	if o != 0 {
-		return rcv._tab.ByteVector(o + rcv._tab.Pos)
-	}
-	return nil
-}
-
 func (rcv *DnsTerminal) IpV4() uint32 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(12))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
 	if o != 0 {
 		return rcv._tab.GetUint32(o + rcv._tab.Pos)
 	}
@@ -157,11 +156,11 @@ func (rcv *DnsTerminal) IpV4() uint32 {
 }
 
 func (rcv *DnsTerminal) MutateIpV4(n uint32) bool {
-	return rcv._tab.MutateUint32Slot(12, n)
+	return rcv._tab.MutateUint32Slot(10, n)
 }
 
 func (rcv *DnsTerminal) PortV4() uint16 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(12))
 	if o != 0 {
 		return rcv._tab.GetUint16(o + rcv._tab.Pos)
 	}
@@ -169,11 +168,11 @@ func (rcv *DnsTerminal) PortV4() uint16 {
 }
 
 func (rcv *DnsTerminal) MutatePortV4(n uint16) bool {
-	return rcv._tab.MutateUint16Slot(14, n)
+	return rcv._tab.MutateUint16Slot(12, n)
 }
 
 func (rcv *DnsTerminal) IpV6() uint64 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
 	if o != 0 {
 		return rcv._tab.GetUint64(o + rcv._tab.Pos)
 	}
@@ -181,11 +180,11 @@ func (rcv *DnsTerminal) IpV6() uint64 {
 }
 
 func (rcv *DnsTerminal) MutateIpV6(n uint64) bool {
-	return rcv._tab.MutateUint64Slot(16, n)
+	return rcv._tab.MutateUint64Slot(14, n)
 }
 
 func (rcv *DnsTerminal) PortV6() uint16 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(18))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
 	if o != 0 {
 		return rcv._tab.GetUint16(o + rcv._tab.Pos)
 	}
@@ -193,11 +192,11 @@ func (rcv *DnsTerminal) PortV6() uint16 {
 }
 
 func (rcv *DnsTerminal) MutatePortV6(n uint16) bool {
-	return rcv._tab.MutateUint16Slot(18, n)
+	return rcv._tab.MutateUint16Slot(16, n)
 }
 
 func (rcv *DnsTerminal) Key(obj *base.X25519Public) *base.X25519Public {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(20))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(18))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
@@ -209,35 +208,54 @@ func (rcv *DnsTerminal) Key(obj *base.X25519Public) *base.X25519Public {
 	return nil
 }
 
+func (rcv *DnsTerminal) HostName() []byte {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(20))
+	if o != 0 {
+		return rcv._tab.ByteVector(o + rcv._tab.Pos)
+	}
+	return nil
+}
+
+func (rcv *DnsTerminal) ShowName() []byte {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(22))
+	if o != 0 {
+		return rcv._tab.ByteVector(o + rcv._tab.Pos)
+	}
+	return nil
+}
+
 func DnsTerminalStart(builder *flatbuffers.Builder) {
-	builder.StartObject(9)
+	builder.StartObject(10)
 }
 func DnsTerminalAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
-func DnsTerminalAddParterId(builder *flatbuffers.Builder, parterId flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(1, flatbuffers.UOffsetT(parterId), 0)
+func DnsTerminalAddPartnerId(builder *flatbuffers.Builder, partnerId flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(1, flatbuffers.UOffsetT(partnerId), 0)
 }
 func DnsTerminalAddTerminalId(builder *flatbuffers.Builder, terminalId flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(2, flatbuffers.UOffsetT(terminalId), 0)
 }
-func DnsTerminalAddHostName(builder *flatbuffers.Builder, hostName flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(3, flatbuffers.UOffsetT(hostName), 0)
-}
 func DnsTerminalAddIpV4(builder *flatbuffers.Builder, ipV4 uint32) {
-	builder.PrependUint32Slot(4, ipV4, 0)
+	builder.PrependUint32Slot(3, ipV4, 0)
 }
 func DnsTerminalAddPortV4(builder *flatbuffers.Builder, portV4 uint16) {
-	builder.PrependUint16Slot(5, portV4, 0)
+	builder.PrependUint16Slot(4, portV4, 0)
 }
 func DnsTerminalAddIpV6(builder *flatbuffers.Builder, ipV6 uint64) {
-	builder.PrependUint64Slot(6, ipV6, 0)
+	builder.PrependUint64Slot(5, ipV6, 0)
 }
 func DnsTerminalAddPortV6(builder *flatbuffers.Builder, portV6 uint16) {
-	builder.PrependUint16Slot(7, portV6, 0)
+	builder.PrependUint16Slot(6, portV6, 0)
 }
 func DnsTerminalAddKey(builder *flatbuffers.Builder, key flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(8, flatbuffers.UOffsetT(key), 0)
+	builder.PrependStructSlot(7, flatbuffers.UOffsetT(key), 0)
+}
+func DnsTerminalAddHostName(builder *flatbuffers.Builder, hostName flatbuffers.UOffsetT) {
+	builder.PrependUOffsetTSlot(8, flatbuffers.UOffsetT(hostName), 0)
+}
+func DnsTerminalAddShowName(builder *flatbuffers.Builder, showName flatbuffers.UOffsetT) {
+	builder.PrependUOffsetTSlot(9, flatbuffers.UOffsetT(showName), 0)
 }
 func DnsTerminalEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

@@ -11,6 +11,7 @@ import (
 type HiT struct {
 	Id          *base.UlidBytesT `json:"id"`
 	DnsTerminal *DnsTerminalT    `json:"dns_terminal"`
+	ShowName    string           `json:"show_name"`
 }
 
 func (t *HiT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
@@ -18,16 +19,22 @@ func (t *HiT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 		return 0
 	}
 	dnsTerminalOffset := t.DnsTerminal.Pack(builder)
+	showNameOffset := flatbuffers.UOffsetT(0)
+	if t.ShowName != "" {
+		showNameOffset = builder.CreateString(t.ShowName)
+	}
 	HiStart(builder)
 	idOffset := t.Id.Pack(builder)
 	HiAddId(builder, idOffset)
 	HiAddDnsTerminal(builder, dnsTerminalOffset)
+	HiAddShowName(builder, showNameOffset)
 	return HiEnd(builder)
 }
 
 func (rcv *Hi) UnPackTo(t *HiT) {
 	t.Id = rcv.Id(nil).UnPack()
 	t.DnsTerminal = rcv.DnsTerminal(nil).UnPack()
+	t.ShowName = string(rcv.ShowName())
 }
 
 func (rcv *Hi) UnPack() *HiT {
@@ -100,14 +107,25 @@ func (rcv *Hi) DnsTerminal(obj *DnsTerminal) *DnsTerminal {
 	return nil
 }
 
+func (rcv *Hi) ShowName() []byte {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
+	if o != 0 {
+		return rcv._tab.ByteVector(o + rcv._tab.Pos)
+	}
+	return nil
+}
+
 func HiStart(builder *flatbuffers.Builder) {
-	builder.StartObject(2)
+	builder.StartObject(3)
 }
 func HiAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
 func HiAddDnsTerminal(builder *flatbuffers.Builder, dnsTerminal flatbuffers.UOffsetT) {
 	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(dnsTerminal), 0)
+}
+func HiAddShowName(builder *flatbuffers.Builder, showName flatbuffers.UOffsetT) {
+	builder.PrependUOffsetTSlot(2, flatbuffers.UOffsetT(showName), 0)
 }
 func HiEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

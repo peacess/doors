@@ -15,6 +15,9 @@ class Hi : Table() {
     val dnsTerminal : netDiscovery.DnsTerminal? get() = dnsTerminal(netDiscovery.DnsTerminal())
     fun dnsTerminal(obj: netDiscovery.DnsTerminal) : netDiscovery.DnsTerminal? = lookupField(6, null ) { obj.init(indirect(it + bufferPos), bb) }
 
+    val showName : String? get() = lookupField(8, null ) { string(it + bufferPos) }
+    fun showNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 8, 1)
+
     companion object {
         @JvmStatic
         fun validateVersion() = VERSION_2_0_8
@@ -26,13 +29,16 @@ class Hi : Table() {
 
 
         @JvmStatic
-        fun startHi(builder: FlatBufferBuilder) = builder.startTable(2)
+        fun startHi(builder: FlatBufferBuilder) = builder.startTable(3)
 
         @JvmStatic
         fun addId(builder: FlatBufferBuilder, id: Offset<base.UlidBytes>) = builder.addStruct(0, id.value, 0)
 
         @JvmStatic
         fun addDnsTerminal(builder: FlatBufferBuilder, dnsTerminal: Offset<netDiscovery.DnsTerminal>) = builder.add(1, dnsTerminal, 0)
+
+        @JvmStatic
+        fun addShowName(builder: FlatBufferBuilder, showName: Offset<String>) = builder.add(2, showName, 0)
 
         @JvmStatic
         fun endHi(builder: FlatBufferBuilder) : Offset<Hi> {

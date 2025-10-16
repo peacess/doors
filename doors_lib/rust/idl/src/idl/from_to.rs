@@ -1,6 +1,22 @@
-use crate::idl::{UByte16, UlidBytes, X25519Public};
+use crate::{
+    PartnerId, TerminalId,
+    idl::{UByte16, UlidBytes, X25519Public},
+    partner_generated::partner::Partner,
+};
 
 impl From<ulid::Ulid> for UlidBytes {
+    fn from(value: ulid::Ulid) -> Self {
+        Self(value.to_bytes())
+    }
+}
+
+impl From<ulid::Ulid> for PartnerId {
+    fn from(value: ulid::Ulid) -> Self {
+        Self(value.to_bytes())
+    }
+}
+
+impl From<ulid::Ulid> for TerminalId {
     fn from(value: ulid::Ulid) -> Self {
         Self(value.to_bytes())
     }

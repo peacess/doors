@@ -3,10 +3,7 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart' as ffi;
 import 'package:idl/ffi_rpc/dart_impl.dart';
 import 'package:flat_buffers/flat_buffers.dart' as fb;
-import 'package:idl/ffi_rpc/idl.dart';
-import 'package:idl/idl_bindings_generated.dart';
 
-import '../../idl/base_base_generated.dart';
 import '../../idl/chat_chat_generated.dart';
 
 enum ChatType {

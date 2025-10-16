@@ -38,14 +38,15 @@ pub mod net_discovery {
 
     impl<'a> DnsTerminal<'a> {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_PARTER_ID: flatbuffers::VOffsetT = 6;
+        pub const VT_PARTNER_ID: flatbuffers::VOffsetT = 6;
         pub const VT_TERMINAL_ID: flatbuffers::VOffsetT = 8;
-        pub const VT_HOST_NAME: flatbuffers::VOffsetT = 10;
-        pub const VT_IP_V4: flatbuffers::VOffsetT = 12;
-        pub const VT_PORT_V4: flatbuffers::VOffsetT = 14;
-        pub const VT_IP_V6: flatbuffers::VOffsetT = 16;
-        pub const VT_PORT_V6: flatbuffers::VOffsetT = 18;
-        pub const VT_KEY: flatbuffers::VOffsetT = 20;
+        pub const VT_IP_V4: flatbuffers::VOffsetT = 10;
+        pub const VT_PORT_V4: flatbuffers::VOffsetT = 12;
+        pub const VT_IP_V6: flatbuffers::VOffsetT = 14;
+        pub const VT_PORT_V6: flatbuffers::VOffsetT = 16;
+        pub const VT_KEY: flatbuffers::VOffsetT = 18;
+        pub const VT_HOST_NAME: flatbuffers::VOffsetT = 20;
+        pub const VT_SHOW_NAME: flatbuffers::VOffsetT = 22;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -58,18 +59,21 @@ pub mod net_discovery {
         ) -> flatbuffers::WIPOffset<DnsTerminal<'bldr>> {
             let mut builder = DnsTerminalBuilder::new(_fbb);
             builder.add_ip_v6(args.ip_v6);
+            if let Some(x) = args.show_name {
+                builder.add_show_name(x);
+            }
+            if let Some(x) = args.host_name {
+                builder.add_host_name(x);
+            }
             if let Some(x) = args.key {
                 builder.add_key(x);
             }
             builder.add_ip_v4(args.ip_v4);
-            if let Some(x) = args.host_name {
-                builder.add_host_name(x);
-            }
             if let Some(x) = args.terminal_id {
                 builder.add_terminal_id(x);
             }
-            if let Some(x) = args.parter_id {
-                builder.add_parter_id(x);
+            if let Some(x) = args.partner_id {
+                builder.add_partner_id(x);
             }
             if let Some(x) = args.id {
                 builder.add_id(x);
@@ -81,24 +85,26 @@ pub mod net_discovery {
 
         pub fn unpack(&self) -> DnsTerminalT {
             let id = self.id().map(|x| x.unpack());
-            let parter_id = self.parter_id().map(|x| x.unpack());
+            let partner_id = self.partner_id().map(|x| x.unpack());
             let terminal_id = self.terminal_id().map(|x| x.unpack());
-            let host_name = self.host_name().map(|x| x.to_string());
             let ip_v4 = self.ip_v4();
             let port_v4 = self.port_v4();
             let ip_v6 = self.ip_v6();
             let port_v6 = self.port_v6();
             let key = self.key().map(|x| x.unpack());
+            let host_name = self.host_name().map(|x| x.to_string());
+            let show_name = self.show_name().map(|x| x.to_string());
             DnsTerminalT {
                 id,
-                parter_id,
+                partner_id,
                 terminal_id,
-                host_name,
                 ip_v4,
                 port_v4,
                 ip_v6,
                 port_v6,
                 key,
+                host_name,
+                show_name,
             }
         }
 
@@ -110,11 +116,11 @@ pub mod net_discovery {
             unsafe { self._tab.get::<super::base::UlidBytes>(DnsTerminal::VT_ID, None) }
         }
         #[inline]
-        pub fn parter_id(&self) -> Option<&'a super::base::PartnerId> {
+        pub fn partner_id(&self) -> Option<&'a super::base::PartnerId> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::PartnerId>(DnsTerminal::VT_PARTER_ID, None) }
+            unsafe { self._tab.get::<super::base::PartnerId>(DnsTerminal::VT_PARTNER_ID, None) }
         }
         #[inline]
         pub fn terminal_id(&self) -> Option<&'a super::base::TerminalId> {
@@ -122,13 +128,6 @@ pub mod net_discovery {
             // Created from valid Table for this object
             // which contains a valid value in this slot
             unsafe { self._tab.get::<super::base::TerminalId>(DnsTerminal::VT_TERMINAL_ID, None) }
-        }
-        #[inline]
-        pub fn host_name(&self) -> Option<&'a str> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DnsTerminal::VT_HOST_NAME, None) }
         }
         #[inline]
         pub fn ip_v4(&self) -> u32 {
@@ -165,6 +164,20 @@ pub mod net_discovery {
             // which contains a valid value in this slot
             unsafe { self._tab.get::<super::base::X25519Public>(DnsTerminal::VT_KEY, None) }
         }
+        #[inline]
+        pub fn host_name(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DnsTerminal::VT_HOST_NAME, None) }
+        }
+        #[inline]
+        pub fn show_name(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DnsTerminal::VT_SHOW_NAME, None) }
+        }
     }
 
     impl flatbuffers::Verifiable for DnsTerminal<'_> {
@@ -173,42 +186,45 @@ pub mod net_discovery {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
                 .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-                .visit_field::<super::base::PartnerId>("parter_id", Self::VT_PARTER_ID, false)?
+                .visit_field::<super::base::PartnerId>("partner_id", Self::VT_PARTNER_ID, false)?
                 .visit_field::<super::base::TerminalId>("terminal_id", Self::VT_TERMINAL_ID, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("host_name", Self::VT_HOST_NAME, false)?
                 .visit_field::<u32>("ip_v4", Self::VT_IP_V4, false)?
                 .visit_field::<u16>("port_v4", Self::VT_PORT_V4, false)?
                 .visit_field::<u64>("ip_v6", Self::VT_IP_V6, false)?
                 .visit_field::<u16>("port_v6", Self::VT_PORT_V6, false)?
                 .visit_field::<super::base::X25519Public>("key", Self::VT_KEY, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("host_name", Self::VT_HOST_NAME, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("show_name", Self::VT_SHOW_NAME, false)?
                 .finish();
             Ok(())
         }
     }
     pub struct DnsTerminalArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
-        pub parter_id: Option<&'a super::base::PartnerId>,
+        pub partner_id: Option<&'a super::base::PartnerId>,
         pub terminal_id: Option<&'a super::base::TerminalId>,
-        pub host_name: Option<flatbuffers::WIPOffset<&'a str>>,
         pub ip_v4: u32,
         pub port_v4: u16,
         pub ip_v6: u64,
         pub port_v6: u16,
         pub key: Option<&'a super::base::X25519Public>,
+        pub host_name: Option<flatbuffers::WIPOffset<&'a str>>,
+        pub show_name: Option<flatbuffers::WIPOffset<&'a str>>,
     }
     impl<'a> Default for DnsTerminalArgs<'a> {
         #[inline]
         fn default() -> Self {
             DnsTerminalArgs {
                 id: None,
-                parter_id: None,
+                partner_id: None,
                 terminal_id: None,
-                host_name: None,
                 ip_v4: 0,
                 port_v4: 0,
                 ip_v6: 0,
                 port_v6: 0,
                 key: None,
+                host_name: None,
+                show_name: None,
             }
         }
     }
@@ -223,16 +239,12 @@ pub mod net_discovery {
             self.fbb_.push_slot_always::<&super::base::UlidBytes>(DnsTerminal::VT_ID, id);
         }
         #[inline]
-        pub fn add_parter_id(&mut self, parter_id: &super::base::PartnerId) {
-            self.fbb_.push_slot_always::<&super::base::PartnerId>(DnsTerminal::VT_PARTER_ID, parter_id);
+        pub fn add_partner_id(&mut self, partner_id: &super::base::PartnerId) {
+            self.fbb_.push_slot_always::<&super::base::PartnerId>(DnsTerminal::VT_PARTNER_ID, partner_id);
         }
         #[inline]
         pub fn add_terminal_id(&mut self, terminal_id: &super::base::TerminalId) {
             self.fbb_.push_slot_always::<&super::base::TerminalId>(DnsTerminal::VT_TERMINAL_ID, terminal_id);
-        }
-        #[inline]
-        pub fn add_host_name(&mut self, host_name: flatbuffers::WIPOffset<&'b str>) {
-            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DnsTerminal::VT_HOST_NAME, host_name);
         }
         #[inline]
         pub fn add_ip_v4(&mut self, ip_v4: u32) {
@@ -255,6 +267,14 @@ pub mod net_discovery {
             self.fbb_.push_slot_always::<&super::base::X25519Public>(DnsTerminal::VT_KEY, key);
         }
         #[inline]
+        pub fn add_host_name(&mut self, host_name: flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DnsTerminal::VT_HOST_NAME, host_name);
+        }
+        #[inline]
+        pub fn add_show_name(&mut self, show_name: flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DnsTerminal::VT_SHOW_NAME, show_name);
+        }
+        #[inline]
         pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DnsTerminalBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
             DnsTerminalBuilder { fbb_: _fbb, start_: start }
@@ -270,14 +290,15 @@ pub mod net_discovery {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             let mut ds = f.debug_struct("DnsTerminal");
             ds.field("id", &self.id());
-            ds.field("parter_id", &self.parter_id());
+            ds.field("partner_id", &self.partner_id());
             ds.field("terminal_id", &self.terminal_id());
-            ds.field("host_name", &self.host_name());
             ds.field("ip_v4", &self.ip_v4());
             ds.field("port_v4", &self.port_v4());
             ds.field("ip_v6", &self.ip_v6());
             ds.field("port_v6", &self.port_v6());
             ds.field("key", &self.key());
+            ds.field("host_name", &self.host_name());
+            ds.field("show_name", &self.show_name());
             ds.finish()
         }
     }
@@ -285,27 +306,29 @@ pub mod net_discovery {
     #[derive(Debug, Clone, PartialEq)]
     pub struct DnsTerminalT {
         pub id: Option<super::base::UlidBytesT>,
-        pub parter_id: Option<super::base::PartnerIdT>,
+        pub partner_id: Option<super::base::PartnerIdT>,
         pub terminal_id: Option<super::base::TerminalIdT>,
-        pub host_name: Option<String>,
         pub ip_v4: u32,
         pub port_v4: u16,
         pub ip_v6: u64,
         pub port_v6: u16,
         pub key: Option<super::base::X25519PublicT>,
+        pub host_name: Option<String>,
+        pub show_name: Option<String>,
     }
     impl Default for DnsTerminalT {
         fn default() -> Self {
             Self {
                 id: None,
-                parter_id: None,
+                partner_id: None,
                 terminal_id: None,
-                host_name: None,
                 ip_v4: 0,
                 port_v4: 0,
                 ip_v6: 0,
                 port_v6: 0,
                 key: None,
+                host_name: None,
+                show_name: None,
             }
         }
     }
@@ -313,42 +336,44 @@ pub mod net_discovery {
         pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<DnsTerminal<'b>> {
             let id_tmp = self.id.as_ref().map(|x| x.pack());
             let id = id_tmp.as_ref();
-            let parter_id_tmp = self.parter_id.as_ref().map(|x| x.pack());
-            let parter_id = parter_id_tmp.as_ref();
+            let partner_id_tmp = self.partner_id.as_ref().map(|x| x.pack());
+            let partner_id = partner_id_tmp.as_ref();
             let terminal_id_tmp = self.terminal_id.as_ref().map(|x| x.pack());
             let terminal_id = terminal_id_tmp.as_ref();
-            let host_name = self.host_name.as_ref().map(|x| _fbb.create_string(x));
             let ip_v4 = self.ip_v4;
             let port_v4 = self.port_v4;
             let ip_v6 = self.ip_v6;
             let port_v6 = self.port_v6;
             let key_tmp = self.key.as_ref().map(|x| x.pack());
             let key = key_tmp.as_ref();
+            let host_name = self.host_name.as_ref().map(|x| _fbb.create_string(x));
+            let show_name = self.show_name.as_ref().map(|x| _fbb.create_string(x));
             DnsTerminal::create(
                 _fbb,
                 &DnsTerminalArgs {
                     id,
-                    parter_id,
+                    partner_id,
                     terminal_id,
-                    host_name,
                     ip_v4,
                     port_v4,
                     ip_v6,
                     port_v6,
                     key,
+                    host_name,
+                    show_name,
                 },
             )
         }
     }
-    pub enum DiscoveryFrameOffset {}
+    pub enum HiFrameOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
-    pub struct DiscoveryFrame<'a> {
+    pub struct HiFrame<'a> {
         pub _tab: flatbuffers::Table<'a>,
     }
 
-    impl<'a> flatbuffers::Follow<'a> for DiscoveryFrame<'a> {
-        type Inner = DiscoveryFrame<'a>;
+    impl<'a> flatbuffers::Follow<'a> for HiFrame<'a> {
+        type Inner = HiFrame<'a>;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
@@ -357,22 +382,22 @@ pub mod net_discovery {
         }
     }
 
-    impl<'a> DiscoveryFrame<'a> {
+    impl<'a> HiFrame<'a> {
         pub const VT_HEADER: flatbuffers::VOffsetT = 4;
-        pub const VT_BYTES: flatbuffers::VOffsetT = 6;
+        pub const VT_HI: flatbuffers::VOffsetT = 6;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            DiscoveryFrame { _tab: table }
+            HiFrame { _tab: table }
         }
         #[allow(unused_mut)]
         pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
             _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args DiscoveryFrameArgs<'args>,
-        ) -> flatbuffers::WIPOffset<DiscoveryFrame<'bldr>> {
-            let mut builder = DiscoveryFrameBuilder::new(_fbb);
-            if let Some(x) = args.bytes {
-                builder.add_bytes(x);
+            args: &'args HiFrameArgs<'args>,
+        ) -> flatbuffers::WIPOffset<HiFrame<'bldr>> {
+            let mut builder = HiFrameBuilder::new(_fbb);
+            if let Some(x) = args.hi {
+                builder.add_hi(x);
             }
             if let Some(x) = args.header {
                 builder.add_header(x);
@@ -380,10 +405,10 @@ pub mod net_discovery {
             builder.finish()
         }
 
-        pub fn unpack(&self) -> DiscoveryFrameT {
+        pub fn unpack(&self) -> HiFrameT {
             let header = self.header().map(|x| x.unpack());
-            let bytes = self.bytes().map(|x| x.into_iter().collect());
-            DiscoveryFrameT { header, bytes }
+            let hi = self.hi().map(|x| Box::new(x.unpack()));
+            HiFrameT { header, hi }
         }
 
         #[inline]
@@ -391,92 +416,89 @@ pub mod net_discovery {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::Header>(DiscoveryFrame::VT_HEADER, None) }
+            unsafe { self._tab.get::<super::base::Header>(HiFrame::VT_HEADER, None) }
         }
         #[inline]
-        pub fn bytes(&self) -> Option<flatbuffers::Vector<'a, i8>> {
+        pub fn hi(&self) -> Option<Hi<'a>> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe {
-                self._tab
-                    .get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, i8>>>(DiscoveryFrame::VT_BYTES, None)
-            }
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<Hi>>(HiFrame::VT_HI, None) }
         }
     }
 
-    impl flatbuffers::Verifiable for DiscoveryFrame<'_> {
+    impl flatbuffers::Verifiable for HiFrame<'_> {
         #[inline]
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
                 .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, i8>>>("bytes", Self::VT_BYTES, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<Hi>>("hi", Self::VT_HI, false)?
                 .finish();
             Ok(())
         }
     }
-    pub struct DiscoveryFrameArgs<'a> {
+    pub struct HiFrameArgs<'a> {
         pub header: Option<&'a super::base::Header>,
-        pub bytes: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, i8>>>,
+        pub hi: Option<flatbuffers::WIPOffset<Hi<'a>>>,
     }
-    impl<'a> Default for DiscoveryFrameArgs<'a> {
+    impl<'a> Default for HiFrameArgs<'a> {
         #[inline]
         fn default() -> Self {
-            DiscoveryFrameArgs { header: None, bytes: None }
+            HiFrameArgs { header: None, hi: None }
         }
     }
 
-    pub struct DiscoveryFrameBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+    pub struct HiFrameBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
         fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DiscoveryFrameBuilder<'a, 'b, A> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> HiFrameBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_header(&mut self, header: &super::base::Header) {
-            self.fbb_.push_slot_always::<&super::base::Header>(DiscoveryFrame::VT_HEADER, header);
+            self.fbb_.push_slot_always::<&super::base::Header>(HiFrame::VT_HEADER, header);
         }
         #[inline]
-        pub fn add_bytes(&mut self, bytes: flatbuffers::WIPOffset<flatbuffers::Vector<'b, i8>>) {
-            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DiscoveryFrame::VT_BYTES, bytes);
+        pub fn add_hi(&mut self, hi: flatbuffers::WIPOffset<Hi<'b>>) {
+            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<Hi>>(HiFrame::VT_HI, hi);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DiscoveryFrameBuilder<'a, 'b, A> {
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> HiFrameBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
-            DiscoveryFrameBuilder { fbb_: _fbb, start_: start }
+            HiFrameBuilder { fbb_: _fbb, start_: start }
         }
         #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<DiscoveryFrame<'a>> {
+        pub fn finish(self) -> flatbuffers::WIPOffset<HiFrame<'a>> {
             let o = self.fbb_.end_table(self.start_);
             flatbuffers::WIPOffset::new(o.value())
         }
     }
 
-    impl core::fmt::Debug for DiscoveryFrame<'_> {
+    impl core::fmt::Debug for HiFrame<'_> {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("DiscoveryFrame");
+            let mut ds = f.debug_struct("HiFrame");
             ds.field("header", &self.header());
-            ds.field("bytes", &self.bytes());
+            ds.field("hi", &self.hi());
             ds.finish()
         }
     }
     #[non_exhaustive]
     #[derive(Debug, Clone, PartialEq)]
-    pub struct DiscoveryFrameT {
+    pub struct HiFrameT {
         pub header: Option<super::base::HeaderT>,
-        pub bytes: Option<Vec<i8>>,
+        pub hi: Option<Box<HiT>>,
     }
-    impl Default for DiscoveryFrameT {
+    impl Default for HiFrameT {
         fn default() -> Self {
-            Self { header: None, bytes: None }
+            Self { header: None, hi: None }
         }
     }
-    impl DiscoveryFrameT {
-        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<DiscoveryFrame<'b>> {
+    impl HiFrameT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<HiFrame<'b>> {
             let header_tmp = self.header.as_ref().map(|x| x.pack());
             let header = header_tmp.as_ref();
-            let bytes = self.bytes.as_ref().map(|x| _fbb.create_vector(x));
-            DiscoveryFrame::create(_fbb, &DiscoveryFrameArgs { header, bytes })
+            let hi = self.hi.as_ref().map(|x| x.pack(_fbb));
+            HiFrame::create(_fbb, &HiFrameArgs { header, hi })
         }
     }
     pub enum HiOffset {}
@@ -499,6 +521,7 @@ pub mod net_discovery {
     impl<'a> Hi<'a> {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
         pub const VT_DNS_TERMINAL: flatbuffers::VOffsetT = 6;
+        pub const VT_SHOW_NAME: flatbuffers::VOffsetT = 8;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -510,6 +533,9 @@ pub mod net_discovery {
             args: &'args HiArgs<'args>,
         ) -> flatbuffers::WIPOffset<Hi<'bldr>> {
             let mut builder = HiBuilder::new(_fbb);
+            if let Some(x) = args.show_name {
+                builder.add_show_name(x);
+            }
             if let Some(x) = args.dns_terminal {
                 builder.add_dns_terminal(x);
             }
@@ -522,7 +548,8 @@ pub mod net_discovery {
         pub fn unpack(&self) -> HiT {
             let id = self.id().map(|x| x.unpack());
             let dns_terminal = self.dns_terminal().map(|x| Box::new(x.unpack()));
-            HiT { id, dns_terminal }
+            let show_name = self.show_name().map(|x| x.to_string());
+            HiT { id, dns_terminal, show_name }
         }
 
         #[inline]
@@ -539,6 +566,13 @@ pub mod net_discovery {
             // which contains a valid value in this slot
             unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(Hi::VT_DNS_TERMINAL, None) }
         }
+        #[inline]
+        pub fn show_name(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(Hi::VT_SHOW_NAME, None) }
+        }
     }
 
     impl flatbuffers::Verifiable for Hi<'_> {
@@ -548,6 +582,7 @@ pub mod net_discovery {
             v.visit_table(pos)?
                 .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<DnsTerminal>>("dns_terminal", Self::VT_DNS_TERMINAL, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("show_name", Self::VT_SHOW_NAME, false)?
                 .finish();
             Ok(())
         }
@@ -555,11 +590,16 @@ pub mod net_discovery {
     pub struct HiArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
         pub dns_terminal: Option<flatbuffers::WIPOffset<DnsTerminal<'a>>>,
+        pub show_name: Option<flatbuffers::WIPOffset<&'a str>>,
     }
     impl<'a> Default for HiArgs<'a> {
         #[inline]
         fn default() -> Self {
-            HiArgs { id: None, dns_terminal: None }
+            HiArgs {
+                id: None,
+                dns_terminal: None,
+                show_name: None,
+            }
         }
     }
 
@@ -578,6 +618,10 @@ pub mod net_discovery {
                 .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(Hi::VT_DNS_TERMINAL, dns_terminal);
         }
         #[inline]
+        pub fn add_show_name(&mut self, show_name: flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Hi::VT_SHOW_NAME, show_name);
+        }
+        #[inline]
         pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> HiBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
             HiBuilder { fbb_: _fbb, start_: start }
@@ -594,6 +638,7 @@ pub mod net_discovery {
             let mut ds = f.debug_struct("Hi");
             ds.field("id", &self.id());
             ds.field("dns_terminal", &self.dns_terminal());
+            ds.field("show_name", &self.show_name());
             ds.finish()
         }
     }
@@ -602,10 +647,15 @@ pub mod net_discovery {
     pub struct HiT {
         pub id: Option<super::base::UlidBytesT>,
         pub dns_terminal: Option<Box<DnsTerminalT>>,
+        pub show_name: Option<String>,
     }
     impl Default for HiT {
         fn default() -> Self {
-            Self { id: None, dns_terminal: None }
+            Self {
+                id: None,
+                dns_terminal: None,
+                show_name: None,
+            }
         }
     }
     impl HiT {
@@ -613,174 +663,8 @@ pub mod net_discovery {
             let id_tmp = self.id.as_ref().map(|x| x.pack());
             let id = id_tmp.as_ref();
             let dns_terminal = self.dns_terminal.as_ref().map(|x| x.pack(_fbb));
-            Hi::create(_fbb, &HiArgs { id, dns_terminal })
-        }
-    }
-    pub enum HiRecvOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct HiRecv<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for HiRecv<'a> {
-        type Inner = HiRecv<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
-            }
-        }
-    }
-
-    impl<'a> HiRecv<'a> {
-        pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_HI_ID: flatbuffers::VOffsetT = 6;
-        pub const VT_DNS_TERMINAL: flatbuffers::VOffsetT = 8;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            HiRecv { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args HiRecvArgs<'args>,
-        ) -> flatbuffers::WIPOffset<HiRecv<'bldr>> {
-            let mut builder = HiRecvBuilder::new(_fbb);
-            if let Some(x) = args.dns_terminal {
-                builder.add_dns_terminal(x);
-            }
-            if let Some(x) = args.hi_id {
-                builder.add_hi_id(x);
-            }
-            if let Some(x) = args.id {
-                builder.add_id(x);
-            }
-            builder.finish()
-        }
-
-        pub fn unpack(&self) -> HiRecvT {
-            let id = self.id().map(|x| x.unpack());
-            let hi_id = self.hi_id().map(|x| x.unpack());
-            let dns_terminal = self.dns_terminal().map(|x| Box::new(x.unpack()));
-            HiRecvT { id, hi_id, dns_terminal }
-        }
-
-        #[inline]
-        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(HiRecv::VT_ID, None) }
-        }
-        #[inline]
-        pub fn hi_id(&self) -> Option<&'a super::base::UlidBytes> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(HiRecv::VT_HI_ID, None) }
-        }
-        #[inline]
-        pub fn dns_terminal(&self) -> Option<DnsTerminal<'a>> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(HiRecv::VT_DNS_TERMINAL, None) }
-        }
-    }
-
-    impl flatbuffers::Verifiable for HiRecv<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?
-                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-                .visit_field::<super::base::UlidBytes>("hi_id", Self::VT_HI_ID, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<DnsTerminal>>("dns_terminal", Self::VT_DNS_TERMINAL, false)?
-                .finish();
-            Ok(())
-        }
-    }
-    pub struct HiRecvArgs<'a> {
-        pub id: Option<&'a super::base::UlidBytes>,
-        pub hi_id: Option<&'a super::base::UlidBytes>,
-        pub dns_terminal: Option<flatbuffers::WIPOffset<DnsTerminal<'a>>>,
-    }
-    impl<'a> Default for HiRecvArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            HiRecvArgs {
-                id: None,
-                hi_id: None,
-                dns_terminal: None,
-            }
-        }
-    }
-
-    pub struct HiRecvBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> HiRecvBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(HiRecv::VT_ID, id);
-        }
-        #[inline]
-        pub fn add_hi_id(&mut self, hi_id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(HiRecv::VT_HI_ID, hi_id);
-        }
-        #[inline]
-        pub fn add_dns_terminal(&mut self, dns_terminal: flatbuffers::WIPOffset<DnsTerminal<'b>>) {
-            self.fbb_
-                .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(HiRecv::VT_DNS_TERMINAL, dns_terminal);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> HiRecvBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            HiRecvBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<HiRecv<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for HiRecv<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("HiRecv");
-            ds.field("id", &self.id());
-            ds.field("hi_id", &self.hi_id());
-            ds.field("dns_terminal", &self.dns_terminal());
-            ds.finish()
-        }
-    }
-    #[non_exhaustive]
-    #[derive(Debug, Clone, PartialEq)]
-    pub struct HiRecvT {
-        pub id: Option<super::base::UlidBytesT>,
-        pub hi_id: Option<super::base::UlidBytesT>,
-        pub dns_terminal: Option<Box<DnsTerminalT>>,
-    }
-    impl Default for HiRecvT {
-        fn default() -> Self {
-            Self {
-                id: None,
-                hi_id: None,
-                dns_terminal: None,
-            }
-        }
-    }
-    impl HiRecvT {
-        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<HiRecv<'b>> {
-            let id_tmp = self.id.as_ref().map(|x| x.pack());
-            let id = id_tmp.as_ref();
-            let hi_id_tmp = self.hi_id.as_ref().map(|x| x.pack());
-            let hi_id = hi_id_tmp.as_ref();
-            let dns_terminal = self.dns_terminal.as_ref().map(|x| x.pack(_fbb));
-            HiRecv::create(_fbb, &HiRecvArgs { id, hi_id, dns_terminal })
+            let show_name = self.show_name.as_ref().map(|x| _fbb.create_string(x));
+            Hi::create(_fbb, &HiArgs { id, dns_terminal, show_name })
         }
     }
     pub enum QueryDnsTerminalOutOffset {}
@@ -1394,80 +1278,5 @@ pub mod net_discovery {
             let terminal = self.terminal.as_ref().map(|x| x.pack(_fbb));
             QueryPartnersIn::create(_fbb, &QueryPartnersInArgs { id, terminal })
         }
-    }
-    #[inline]
-    /// Verifies that a buffer of bytes contains a `DiscoveryFrame`
-    /// and returns it.
-    /// Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `root_as_discovery_frame_unchecked`.
-    pub fn root_as_discovery_frame(buf: &[u8]) -> Result<DiscoveryFrame, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::root::<DiscoveryFrame>(buf)
-    }
-    #[inline]
-    /// Verifies that a buffer of bytes contains a size prefixed
-    /// `DiscoveryFrame` and returns it.
-    /// Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `size_prefixed_root_as_discovery_frame_unchecked`.
-    pub fn size_prefixed_root_as_discovery_frame(buf: &[u8]) -> Result<DiscoveryFrame, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::size_prefixed_root::<DiscoveryFrame>(buf)
-    }
-    #[inline]
-    /// Verifies, with the given options, that a buffer of bytes
-    /// contains a `DiscoveryFrame` and returns it.
-    /// Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `root_as_discovery_frame_unchecked`.
-    pub fn root_as_discovery_frame_with_opts<'b, 'o>(
-        opts: &'o flatbuffers::VerifierOptions,
-        buf: &'b [u8],
-    ) -> Result<DiscoveryFrame<'b>, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::root_with_opts::<DiscoveryFrame<'b>>(opts, buf)
-    }
-    #[inline]
-    /// Verifies, with the given verifier options, that a buffer of
-    /// bytes contains a size prefixed `DiscoveryFrame` and returns
-    /// it. Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `root_as_discovery_frame_unchecked`.
-    pub fn size_prefixed_root_as_discovery_frame_with_opts<'b, 'o>(
-        opts: &'o flatbuffers::VerifierOptions,
-        buf: &'b [u8],
-    ) -> Result<DiscoveryFrame<'b>, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::size_prefixed_root_with_opts::<DiscoveryFrame<'b>>(opts, buf)
-    }
-    #[inline]
-    /// Assumes, without verification, that a buffer of bytes contains a DiscoveryFrame and returns it.
-    /// # Safety
-    /// Callers must trust the given bytes do indeed contain a valid `DiscoveryFrame`.
-    pub unsafe fn root_as_discovery_frame_unchecked(buf: &[u8]) -> DiscoveryFrame {
-        unsafe { flatbuffers::root_unchecked::<DiscoveryFrame>(buf) }
-    }
-    #[inline]
-    /// Assumes, without verification, that a buffer of bytes contains a size prefixed DiscoveryFrame and returns it.
-    /// # Safety
-    /// Callers must trust the given bytes do indeed contain a valid size prefixed `DiscoveryFrame`.
-    pub unsafe fn size_prefixed_root_as_discovery_frame_unchecked(buf: &[u8]) -> DiscoveryFrame {
-        unsafe { flatbuffers::size_prefixed_root_unchecked::<DiscoveryFrame>(buf) }
-    }
-    #[inline]
-    pub fn finish_discovery_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
-        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        root: flatbuffers::WIPOffset<DiscoveryFrame<'a>>,
-    ) {
-        fbb.finish(root, None);
-    }
-
-    #[inline]
-    pub fn finish_size_prefixed_discovery_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
-        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        root: flatbuffers::WIPOffset<DiscoveryFrame<'a>>,
-    ) {
-        fbb.finish_size_prefixed(root, None);
     }
 } // pub mod net_discovery

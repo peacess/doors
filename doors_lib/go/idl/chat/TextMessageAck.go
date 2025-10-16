@@ -11,7 +11,6 @@ import (
 type TextMessageAckT struct {
 	Id     *base.UlidBytesT `json:"id"`
 	SendId *base.UlidBytesT `json:"send_id"`
-	Ts     *base.TimestampT `json:"ts"`
 }
 
 func (t *TextMessageAckT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
@@ -23,15 +22,12 @@ func (t *TextMessageAckT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffset
 	TextMessageAckAddId(builder, idOffset)
 	sendIdOffset := t.SendId.Pack(builder)
 	TextMessageAckAddSendId(builder, sendIdOffset)
-	tsOffset := t.Ts.Pack(builder)
-	TextMessageAckAddTs(builder, tsOffset)
 	return TextMessageAckEnd(builder)
 }
 
 func (rcv *TextMessageAck) UnPackTo(t *TextMessageAckT) {
 	t.Id = rcv.Id(nil).UnPack()
 	t.SendId = rcv.SendId(nil).UnPack()
-	t.Ts = rcv.Ts(nil).UnPack()
 }
 
 func (rcv *TextMessageAck) UnPack() *TextMessageAckT {
@@ -104,30 +100,14 @@ func (rcv *TextMessageAck) SendId(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *TextMessageAck) Ts(obj *base.Timestamp) *base.Timestamp {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
-	if o != 0 {
-		x := o + rcv._tab.Pos
-		if obj == nil {
-			obj = new(base.Timestamp)
-		}
-		obj.Init(rcv._tab.Bytes, x)
-		return obj
-	}
-	return nil
-}
-
 func TextMessageAckStart(builder *flatbuffers.Builder) {
-	builder.StartObject(3)
+	builder.StartObject(2)
 }
 func TextMessageAckAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
 func TextMessageAckAddSendId(builder *flatbuffers.Builder, sendId flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(1, flatbuffers.UOffsetT(sendId), 0)
-}
-func TextMessageAckAddTs(builder *flatbuffers.Builder, ts flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(2, flatbuffers.UOffsetT(ts), 0)
 }
 func TextMessageAckEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

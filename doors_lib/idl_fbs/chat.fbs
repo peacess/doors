@@ -15,7 +15,6 @@ table TextMessage(ChatFrame,ChatFfiRpcIn,ChatCallback){
     to_partner_id: base.PartnerId;
     from_terminal_id: base.TerminalId;
     to_terminal_id: base.TerminalId;
-    ts: base.Timestamp;
     text: string;
 }
 
@@ -24,8 +23,6 @@ table TextMessageAck(ChatFrame,ChatFfiRpcIn,ChatCallback){
     //message id
     id: base.UlidBytes;
     send_id: base.UlidBytes;
-    // message timestamp
-    ts: base.Timestamp;
 }
 
 table ChatTextMessage{

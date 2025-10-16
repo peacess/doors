@@ -11,12 +11,8 @@ import (
 type PartnerT struct {
 	Id          *base.UlidBytesT    `json:"id"`
 	TerminalIds []*base.TerminalIdT `json:"terminal_ids"`
-	PartnerId   *base.UByte16T      `json:"partner_id"`
-	Name        string              `json:"name"`
+	PartnerId   *base.PartnerIdT    `json:"partner_id"`
 	ShowName    string              `json:"show_name"`
-	Ip          string              `json:"ip"`
-	Port        int16               `json:"port"`
-	CreateTs    *base.TimestampT    `json:"create_ts"`
 }
 
 func (t *PartnerT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
@@ -32,17 +28,9 @@ func (t *PartnerT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 		}
 		terminalIdsOffset = builder.EndVector(terminalIdsLength)
 	}
-	nameOffset := flatbuffers.UOffsetT(0)
-	if t.Name != "" {
-		nameOffset = builder.CreateString(t.Name)
-	}
 	showNameOffset := flatbuffers.UOffsetT(0)
 	if t.ShowName != "" {
 		showNameOffset = builder.CreateString(t.ShowName)
-	}
-	ipOffset := flatbuffers.UOffsetT(0)
-	if t.Ip != "" {
-		ipOffset = builder.CreateString(t.Ip)
 	}
 	PartnerStart(builder)
 	idOffset := t.Id.Pack(builder)
@@ -50,12 +38,7 @@ func (t *PartnerT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	PartnerAddTerminalIds(builder, terminalIdsOffset)
 	partnerIdOffset := t.PartnerId.Pack(builder)
 	PartnerAddPartnerId(builder, partnerIdOffset)
-	PartnerAddName(builder, nameOffset)
 	PartnerAddShowName(builder, showNameOffset)
-	PartnerAddIp(builder, ipOffset)
-	PartnerAddPort(builder, t.Port)
-	createTsOffset := t.CreateTs.Pack(builder)
-	PartnerAddCreateTs(builder, createTsOffset)
 	return PartnerEnd(builder)
 }
 
@@ -69,11 +52,7 @@ func (rcv *Partner) UnPackTo(t *PartnerT) {
 		t.TerminalIds[j] = x.UnPack()
 	}
 	t.PartnerId = rcv.PartnerId(nil).UnPack()
-	t.Name = string(rcv.Name())
 	t.ShowName = string(rcv.ShowName())
-	t.Ip = string(rcv.Ip())
-	t.Port = rcv.Port()
-	t.CreateTs = rcv.CreateTs(nil).UnPack()
 }
 
 func (rcv *Partner) UnPack() *PartnerT {
@@ -152,12 +131,12 @@ func (rcv *Partner) TerminalIdsLength() int {
 	return 0
 }
 
-func (rcv *Partner) PartnerId(obj *base.UByte16) *base.UByte16 {
+func (rcv *Partner) PartnerId(obj *base.PartnerId) *base.PartnerId {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
-			obj = new(base.UByte16)
+			obj = new(base.PartnerId)
 		}
 		obj.Init(rcv._tab.Bytes, x)
 		return obj
@@ -165,7 +144,7 @@ func (rcv *Partner) PartnerId(obj *base.UByte16) *base.UByte16 {
 	return nil
 }
 
-func (rcv *Partner) Name() []byte {
+func (rcv *Partner) ShowName() []byte {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
@@ -173,49 +152,8 @@ func (rcv *Partner) Name() []byte {
 	return nil
 }
 
-func (rcv *Partner) ShowName() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(12))
-	if o != 0 {
-		return rcv._tab.ByteVector(o + rcv._tab.Pos)
-	}
-	return nil
-}
-
-func (rcv *Partner) Ip() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
-	if o != 0 {
-		return rcv._tab.ByteVector(o + rcv._tab.Pos)
-	}
-	return nil
-}
-
-func (rcv *Partner) Port() int16 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
-	if o != 0 {
-		return rcv._tab.GetInt16(o + rcv._tab.Pos)
-	}
-	return 0
-}
-
-func (rcv *Partner) MutatePort(n int16) bool {
-	return rcv._tab.MutateInt16Slot(16, n)
-}
-
-func (rcv *Partner) CreateTs(obj *base.Timestamp) *base.Timestamp {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(18))
-	if o != 0 {
-		x := o + rcv._tab.Pos
-		if obj == nil {
-			obj = new(base.Timestamp)
-		}
-		obj.Init(rcv._tab.Bytes, x)
-		return obj
-	}
-	return nil
-}
-
 func PartnerStart(builder *flatbuffers.Builder) {
-	builder.StartObject(8)
+	builder.StartObject(4)
 }
 func PartnerAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
@@ -229,20 +167,8 @@ func PartnerStartTerminalIdsVector(builder *flatbuffers.Builder, numElems int) f
 func PartnerAddPartnerId(builder *flatbuffers.Builder, partnerId flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(2, flatbuffers.UOffsetT(partnerId), 0)
 }
-func PartnerAddName(builder *flatbuffers.Builder, name flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(3, flatbuffers.UOffsetT(name), 0)
-}
 func PartnerAddShowName(builder *flatbuffers.Builder, showName flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(4, flatbuffers.UOffsetT(showName), 0)
-}
-func PartnerAddIp(builder *flatbuffers.Builder, ip flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(5, flatbuffers.UOffsetT(ip), 0)
-}
-func PartnerAddPort(builder *flatbuffers.Builder, port int16) {
-	builder.PrependInt16Slot(6, port, 0)
-}
-func PartnerAddCreateTs(builder *flatbuffers.Builder, createTs flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(7, flatbuffers.UOffsetT(createTs), 0)
+	builder.PrependUOffsetTSlot(3, flatbuffers.UOffsetT(showName), 0)
 }
 func PartnerEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

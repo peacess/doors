@@ -40,11 +40,7 @@ pub mod partner {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
         pub const VT_TERMINAL_IDS: flatbuffers::VOffsetT = 6;
         pub const VT_PARTNER_ID: flatbuffers::VOffsetT = 8;
-        pub const VT_NAME: flatbuffers::VOffsetT = 10;
-        pub const VT_SHOW_NAME: flatbuffers::VOffsetT = 12;
-        pub const VT_IP: flatbuffers::VOffsetT = 14;
-        pub const VT_PORT: flatbuffers::VOffsetT = 16;
-        pub const VT_CREATE_TS: flatbuffers::VOffsetT = 18;
+        pub const VT_SHOW_NAME: flatbuffers::VOffsetT = 10;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -56,17 +52,8 @@ pub mod partner {
             args: &'args PartnerArgs<'args>,
         ) -> flatbuffers::WIPOffset<Partner<'bldr>> {
             let mut builder = PartnerBuilder::new(_fbb);
-            if let Some(x) = args.create_ts {
-                builder.add_create_ts(x);
-            }
-            if let Some(x) = args.ip {
-                builder.add_ip(x);
-            }
             if let Some(x) = args.show_name {
                 builder.add_show_name(x);
-            }
-            if let Some(x) = args.name {
-                builder.add_name(x);
             }
             if let Some(x) = args.partner_id {
                 builder.add_partner_id(x);
@@ -77,7 +64,6 @@ pub mod partner {
             if let Some(x) = args.id {
                 builder.add_id(x);
             }
-            builder.add_port(args.port);
             builder.finish()
         }
 
@@ -85,20 +71,12 @@ pub mod partner {
             let id = self.id().map(|x| x.unpack());
             let terminal_ids = self.terminal_ids().map(|x| x.iter().map(|t| t.unpack()).collect());
             let partner_id = self.partner_id().map(|x| x.unpack());
-            let name = self.name().map(|x| x.to_string());
             let show_name = self.show_name().map(|x| x.to_string());
-            let ip = self.ip().map(|x| x.to_string());
-            let port = self.port();
-            let create_ts = self.create_ts().map(|x| x.unpack());
             PartnerT {
                 id,
                 terminal_ids,
                 partner_id,
-                name,
                 show_name,
-                ip,
-                port,
-                create_ts,
             }
         }
 
@@ -120,18 +98,11 @@ pub mod partner {
             }
         }
         #[inline]
-        pub fn partner_id(&self) -> Option<&'a super::base::UByte16> {
+        pub fn partner_id(&self) -> Option<&'a super::base::PartnerId> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UByte16>(Partner::VT_PARTNER_ID, None) }
-        }
-        #[inline]
-        pub fn name(&self) -> Option<&'a str> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(Partner::VT_NAME, None) }
+            unsafe { self._tab.get::<super::base::PartnerId>(Partner::VT_PARTNER_ID, None) }
         }
         #[inline]
         pub fn show_name(&self) -> Option<&'a str> {
@@ -139,27 +110,6 @@ pub mod partner {
             // Created from valid Table for this object
             // which contains a valid value in this slot
             unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(Partner::VT_SHOW_NAME, None) }
-        }
-        #[inline]
-        pub fn ip(&self) -> Option<&'a str> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(Partner::VT_IP, None) }
-        }
-        #[inline]
-        pub fn port(&self) -> i16 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<i16>(Partner::VT_PORT, Some(0)).unwrap() }
-        }
-        #[inline]
-        pub fn create_ts(&self) -> Option<&'a super::base::Timestamp> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::Timestamp>(Partner::VT_CREATE_TS, None) }
         }
     }
 
@@ -170,12 +120,8 @@ pub mod partner {
             v.visit_table(pos)?
                 .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, super::base::TerminalId>>>("terminal_ids", Self::VT_TERMINAL_IDS, false)?
-                .visit_field::<super::base::UByte16>("partner_id", Self::VT_PARTNER_ID, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, false)?
+                .visit_field::<super::base::PartnerId>("partner_id", Self::VT_PARTNER_ID, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("show_name", Self::VT_SHOW_NAME, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("ip", Self::VT_IP, false)?
-                .visit_field::<i16>("port", Self::VT_PORT, false)?
-                .visit_field::<super::base::Timestamp>("create_ts", Self::VT_CREATE_TS, false)?
                 .finish();
             Ok(())
         }
@@ -183,12 +129,8 @@ pub mod partner {
     pub struct PartnerArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
         pub terminal_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, super::base::TerminalId>>>,
-        pub partner_id: Option<&'a super::base::UByte16>,
-        pub name: Option<flatbuffers::WIPOffset<&'a str>>,
+        pub partner_id: Option<&'a super::base::PartnerId>,
         pub show_name: Option<flatbuffers::WIPOffset<&'a str>>,
-        pub ip: Option<flatbuffers::WIPOffset<&'a str>>,
-        pub port: i16,
-        pub create_ts: Option<&'a super::base::Timestamp>,
     }
     impl<'a> Default for PartnerArgs<'a> {
         #[inline]
@@ -197,11 +139,7 @@ pub mod partner {
                 id: None,
                 terminal_ids: None,
                 partner_id: None,
-                name: None,
                 show_name: None,
-                ip: None,
-                port: 0,
-                create_ts: None,
             }
         }
     }
@@ -220,28 +158,12 @@ pub mod partner {
             self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Partner::VT_TERMINAL_IDS, terminal_ids);
         }
         #[inline]
-        pub fn add_partner_id(&mut self, partner_id: &super::base::UByte16) {
-            self.fbb_.push_slot_always::<&super::base::UByte16>(Partner::VT_PARTNER_ID, partner_id);
-        }
-        #[inline]
-        pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b str>) {
-            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Partner::VT_NAME, name);
+        pub fn add_partner_id(&mut self, partner_id: &super::base::PartnerId) {
+            self.fbb_.push_slot_always::<&super::base::PartnerId>(Partner::VT_PARTNER_ID, partner_id);
         }
         #[inline]
         pub fn add_show_name(&mut self, show_name: flatbuffers::WIPOffset<&'b str>) {
             self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Partner::VT_SHOW_NAME, show_name);
-        }
-        #[inline]
-        pub fn add_ip(&mut self, ip: flatbuffers::WIPOffset<&'b str>) {
-            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Partner::VT_IP, ip);
-        }
-        #[inline]
-        pub fn add_port(&mut self, port: i16) {
-            self.fbb_.push_slot::<i16>(Partner::VT_PORT, port, 0);
-        }
-        #[inline]
-        pub fn add_create_ts(&mut self, create_ts: &super::base::Timestamp) {
-            self.fbb_.push_slot_always::<&super::base::Timestamp>(Partner::VT_CREATE_TS, create_ts);
         }
         #[inline]
         pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> PartnerBuilder<'a, 'b, A> {
@@ -261,11 +183,7 @@ pub mod partner {
             ds.field("id", &self.id());
             ds.field("terminal_ids", &self.terminal_ids());
             ds.field("partner_id", &self.partner_id());
-            ds.field("name", &self.name());
             ds.field("show_name", &self.show_name());
-            ds.field("ip", &self.ip());
-            ds.field("port", &self.port());
-            ds.field("create_ts", &self.create_ts());
             ds.finish()
         }
     }
@@ -274,12 +192,8 @@ pub mod partner {
     pub struct PartnerT {
         pub id: Option<super::base::UlidBytesT>,
         pub terminal_ids: Option<Vec<super::base::TerminalIdT>>,
-        pub partner_id: Option<super::base::UByte16T>,
-        pub name: Option<String>,
+        pub partner_id: Option<super::base::PartnerIdT>,
         pub show_name: Option<String>,
-        pub ip: Option<String>,
-        pub port: i16,
-        pub create_ts: Option<super::base::TimestampT>,
     }
     impl Default for PartnerT {
         fn default() -> Self {
@@ -287,11 +201,7 @@ pub mod partner {
                 id: None,
                 terminal_ids: None,
                 partner_id: None,
-                name: None,
                 show_name: None,
-                ip: None,
-                port: 0,
-                create_ts: None,
             }
         }
     }
@@ -305,97 +215,16 @@ pub mod partner {
             });
             let partner_id_tmp = self.partner_id.as_ref().map(|x| x.pack());
             let partner_id = partner_id_tmp.as_ref();
-            let name = self.name.as_ref().map(|x| _fbb.create_string(x));
             let show_name = self.show_name.as_ref().map(|x| _fbb.create_string(x));
-            let ip = self.ip.as_ref().map(|x| _fbb.create_string(x));
-            let port = self.port;
-            let create_ts_tmp = self.create_ts.as_ref().map(|x| x.pack());
-            let create_ts = create_ts_tmp.as_ref();
             Partner::create(
                 _fbb,
                 &PartnerArgs {
                     id,
                     terminal_ids,
                     partner_id,
-                    name,
                     show_name,
-                    ip,
-                    port,
-                    create_ts,
                 },
             )
         }
-    }
-    #[inline]
-    /// Verifies that a buffer of bytes contains a `Partner`
-    /// and returns it.
-    /// Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `root_as_partner_unchecked`.
-    pub fn root_as_partner(buf: &[u8]) -> Result<Partner, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::root::<Partner>(buf)
-    }
-    #[inline]
-    /// Verifies that a buffer of bytes contains a size prefixed
-    /// `Partner` and returns it.
-    /// Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `size_prefixed_root_as_partner_unchecked`.
-    pub fn size_prefixed_root_as_partner(buf: &[u8]) -> Result<Partner, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::size_prefixed_root::<Partner>(buf)
-    }
-    #[inline]
-    /// Verifies, with the given options, that a buffer of bytes
-    /// contains a `Partner` and returns it.
-    /// Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `root_as_partner_unchecked`.
-    pub fn root_as_partner_with_opts<'b, 'o>(opts: &'o flatbuffers::VerifierOptions, buf: &'b [u8]) -> Result<Partner<'b>, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::root_with_opts::<Partner<'b>>(opts, buf)
-    }
-    #[inline]
-    /// Verifies, with the given verifier options, that a buffer of
-    /// bytes contains a size prefixed `Partner` and returns
-    /// it. Note that verification is still experimental and may not
-    /// catch every error, or be maximally performant. For the
-    /// previous, unchecked, behavior use
-    /// `root_as_partner_unchecked`.
-    pub fn size_prefixed_root_as_partner_with_opts<'b, 'o>(
-        opts: &'o flatbuffers::VerifierOptions,
-        buf: &'b [u8],
-    ) -> Result<Partner<'b>, flatbuffers::InvalidFlatbuffer> {
-        flatbuffers::size_prefixed_root_with_opts::<Partner<'b>>(opts, buf)
-    }
-    #[inline]
-    /// Assumes, without verification, that a buffer of bytes contains a Partner and returns it.
-    /// # Safety
-    /// Callers must trust the given bytes do indeed contain a valid `Partner`.
-    pub unsafe fn root_as_partner_unchecked(buf: &[u8]) -> Partner {
-        unsafe { flatbuffers::root_unchecked::<Partner>(buf) }
-    }
-    #[inline]
-    /// Assumes, without verification, that a buffer of bytes contains a size prefixed Partner and returns it.
-    /// # Safety
-    /// Callers must trust the given bytes do indeed contain a valid size prefixed `Partner`.
-    pub unsafe fn size_prefixed_root_as_partner_unchecked(buf: &[u8]) -> Partner {
-        unsafe { flatbuffers::size_prefixed_root_unchecked::<Partner>(buf) }
-    }
-    #[inline]
-    pub fn finish_partner_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
-        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        root: flatbuffers::WIPOffset<Partner<'a>>,
-    ) {
-        fbb.finish(root, None);
-    }
-
-    #[inline]
-    pub fn finish_size_prefixed_partner_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
-        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        root: flatbuffers::WIPOffset<Partner<'a>>,
-    ) {
-        fbb.finish_size_prefixed(root, None);
     }
 } // pub mod partner

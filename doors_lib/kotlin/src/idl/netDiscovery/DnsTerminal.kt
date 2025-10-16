@@ -12,25 +12,28 @@ class DnsTerminal : Table() {
     val id : base.UlidBytes? get() = id(base.UlidBytes())
     fun id(obj: base.UlidBytes) : base.UlidBytes? = lookupField(4, null ) { obj.init(it + bufferPos, bb) }
 
-    val parterId : base.PartnerId? get() = parterId(base.PartnerId())
-    fun parterId(obj: base.PartnerId) : base.PartnerId? = lookupField(6, null ) { obj.init(it + bufferPos, bb) }
+    val partnerId : base.PartnerId? get() = partnerId(base.PartnerId())
+    fun partnerId(obj: base.PartnerId) : base.PartnerId? = lookupField(6, null ) { obj.init(it + bufferPos, bb) }
 
     val terminalId : base.TerminalId? get() = terminalId(base.TerminalId())
     fun terminalId(obj: base.TerminalId) : base.TerminalId? = lookupField(8, null ) { obj.init(it + bufferPos, bb) }
 
-    val hostName : String? get() = lookupField(10, null ) { string(it + bufferPos) }
-    fun hostNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 10, 1)
+    val ipV4 : UInt get() = lookupField(10, 0u ) { bb.getUInt(it + bufferPos) }
 
-    val ipV4 : UInt get() = lookupField(12, 0u ) { bb.getUInt(it + bufferPos) }
+    val portV4 : UShort get() = lookupField(12, 0u ) { bb.getUShort(it + bufferPos) }
 
-    val portV4 : UShort get() = lookupField(14, 0u ) { bb.getUShort(it + bufferPos) }
+    val ipV6 : ULong get() = lookupField(14, 0UL ) { bb.getULong(it + bufferPos) }
 
-    val ipV6 : ULong get() = lookupField(16, 0UL ) { bb.getULong(it + bufferPos) }
-
-    val portV6 : UShort get() = lookupField(18, 0u ) { bb.getUShort(it + bufferPos) }
+    val portV6 : UShort get() = lookupField(16, 0u ) { bb.getUShort(it + bufferPos) }
 
     val key : base.X25519Public? get() = key(base.X25519Public())
-    fun key(obj: base.X25519Public) : base.X25519Public? = lookupField(20, null ) { obj.init(it + bufferPos, bb) }
+    fun key(obj: base.X25519Public) : base.X25519Public? = lookupField(18, null ) { obj.init(it + bufferPos, bb) }
+
+    val hostName : String? get() = lookupField(20, null ) { string(it + bufferPos) }
+    fun hostNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 20, 1)
+
+    val showName : String? get() = lookupField(22, null ) { string(it + bufferPos) }
+    fun showNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 22, 1)
 
     companion object {
         @JvmStatic
@@ -43,34 +46,37 @@ class DnsTerminal : Table() {
 
 
         @JvmStatic
-        fun startDnsTerminal(builder: FlatBufferBuilder) = builder.startTable(9)
+        fun startDnsTerminal(builder: FlatBufferBuilder) = builder.startTable(10)
 
         @JvmStatic
         fun addId(builder: FlatBufferBuilder, id: Offset<base.UlidBytes>) = builder.addStruct(0, id.value, 0)
 
         @JvmStatic
-        fun addParterId(builder: FlatBufferBuilder, parterId: Offset<base.PartnerId>) = builder.addStruct(1, parterId.value, 0)
+        fun addPartnerId(builder: FlatBufferBuilder, partnerId: Offset<base.PartnerId>) = builder.addStruct(1, partnerId.value, 0)
 
         @JvmStatic
         fun addTerminalId(builder: FlatBufferBuilder, terminalId: Offset<base.TerminalId>) = builder.addStruct(2, terminalId.value, 0)
 
         @JvmStatic
-        fun addHostName(builder: FlatBufferBuilder, hostName: Offset<String>) = builder.add(3, hostName, 0)
+        fun addIpV4(builder: FlatBufferBuilder, ipV4: UInt) = builder.add(3, ipV4, 0u)
 
         @JvmStatic
-        fun addIpV4(builder: FlatBufferBuilder, ipV4: UInt) = builder.add(4, ipV4, 0u)
+        fun addPortV4(builder: FlatBufferBuilder, portV4: UShort) = builder.add(4, portV4, 0u)
 
         @JvmStatic
-        fun addPortV4(builder: FlatBufferBuilder, portV4: UShort) = builder.add(5, portV4, 0u)
+        fun addIpV6(builder: FlatBufferBuilder, ipV6: ULong) = builder.add(5, ipV6, 0UL)
 
         @JvmStatic
-        fun addIpV6(builder: FlatBufferBuilder, ipV6: ULong) = builder.add(6, ipV6, 0UL)
+        fun addPortV6(builder: FlatBufferBuilder, portV6: UShort) = builder.add(6, portV6, 0u)
 
         @JvmStatic
-        fun addPortV6(builder: FlatBufferBuilder, portV6: UShort) = builder.add(7, portV6, 0u)
+        fun addKey(builder: FlatBufferBuilder, key: Offset<base.X25519Public>) = builder.addStruct(7, key.value, 0)
 
         @JvmStatic
-        fun addKey(builder: FlatBufferBuilder, key: Offset<base.X25519Public>) = builder.addStruct(8, key.value, 0)
+        fun addHostName(builder: FlatBufferBuilder, hostName: Offset<String>) = builder.add(8, hostName, 0)
+
+        @JvmStatic
+        fun addShowName(builder: FlatBufferBuilder, showName: Offset<String>) = builder.add(9, showName, 0)
 
         @JvmStatic
         fun endDnsTerminal(builder: FlatBufferBuilder) : Offset<DnsTerminal> {

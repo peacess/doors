@@ -16,22 +16,11 @@ class Partner : Table() {
     fun terminalIds(obj: base.TerminalId, j: Int) : base.TerminalId? = lookupField(6, null ) { obj.init(vector(it) + j * 16, bb) }
     val terminalIdsLength : Int get() = lookupField(6, 0 ) { vectorLength(it) }
 
-    val partnerId : base.UByte16? get() = partnerId(base.UByte16())
-    fun partnerId(obj: base.UByte16) : base.UByte16? = lookupField(8, null ) { obj.init(it + bufferPos, bb) }
+    val partnerId : base.PartnerId? get() = partnerId(base.PartnerId())
+    fun partnerId(obj: base.PartnerId) : base.PartnerId? = lookupField(8, null ) { obj.init(it + bufferPos, bb) }
 
-    val name : String? get() = lookupField(10, null ) { string(it + bufferPos) }
-    fun nameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 10, 1)
-
-    val showName : String? get() = lookupField(12, null ) { string(it + bufferPos) }
-    fun showNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 12, 1)
-
-    val ip : String? get() = lookupField(14, null ) { string(it + bufferPos) }
-    fun ipAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 14, 1)
-
-    val port : Short get() = lookupField(16, 0 ) { bb.getShort(it + bufferPos) }
-
-    val createTs : base.Timestamp? get() = createTs(base.Timestamp())
-    fun createTs(obj: base.Timestamp) : base.Timestamp? = lookupField(18, null ) { obj.init(it + bufferPos, bb) }
+    val showName : String? get() = lookupField(10, null ) { string(it + bufferPos) }
+    fun showNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 10, 1)
 
     companion object {
         @JvmStatic
@@ -44,7 +33,7 @@ class Partner : Table() {
 
 
         @JvmStatic
-        fun startPartner(builder: FlatBufferBuilder) = builder.startTable(8)
+        fun startPartner(builder: FlatBufferBuilder) = builder.startTable(4)
 
         @JvmStatic
         fun addId(builder: FlatBufferBuilder, id: Offset<base.UlidBytes>) = builder.addStruct(0, id.value, 0)
@@ -56,34 +45,16 @@ class Partner : Table() {
         fun startTerminalIdsVector(builder: FlatBufferBuilder, numElems: Int) = builder.startVector(16, numElems, 8)
 
         @JvmStatic
-        fun addPartnerId(builder: FlatBufferBuilder, partnerId: Offset<base.UByte16>) = builder.addStruct(2, partnerId.value, 0)
+        fun addPartnerId(builder: FlatBufferBuilder, partnerId: Offset<base.PartnerId>) = builder.addStruct(2, partnerId.value, 0)
 
         @JvmStatic
-        fun addName(builder: FlatBufferBuilder, name: Offset<String>) = builder.add(3, name, 0)
-
-        @JvmStatic
-        fun addShowName(builder: FlatBufferBuilder, showName: Offset<String>) = builder.add(4, showName, 0)
-
-        @JvmStatic
-        fun addIp(builder: FlatBufferBuilder, ip: Offset<String>) = builder.add(5, ip, 0)
-
-        @JvmStatic
-        fun addPort(builder: FlatBufferBuilder, port: Short) = builder.add(6, port, 0)
-
-        @JvmStatic
-        fun addCreateTs(builder: FlatBufferBuilder, createTs: Offset<base.Timestamp>) = builder.addStruct(7, createTs.value, 0)
+        fun addShowName(builder: FlatBufferBuilder, showName: Offset<String>) = builder.add(3, showName, 0)
 
         @JvmStatic
         fun endPartner(builder: FlatBufferBuilder) : Offset<Partner> {
             val o: Offset<Partner> = builder.endTable()
             return o
         }
-
-        @JvmStatic
-        fun finishPartnerBuffer(builder: FlatBufferBuilder, offset: Offset<Partner>) = builder.finish(offset)
-
-        @JvmStatic
-        fun finishSizePrefixedPartnerBuffer(builder: FlatBufferBuilder, offset: Offset<Partner>) = builder.finishSizePrefixed(offset)
     }
 }
 

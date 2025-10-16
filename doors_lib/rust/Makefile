@@ -27,12 +27,15 @@ PATH := $(ANDROID_NDK)/toolchains/llvm/prebuilt/$(OS_NAME)-x86_64/bin:$(PATH)
 target=../../target
 dart_android=../dart/android/src/main/jniLibs
 
-all:build_linux build_android
+all:release_linux debug_linux
 
-build_linux:
+release_linux:
 	cd ffi_rpc && cargo build --release
 	cp -f ${target}/release/libffi_rpc.so ../dart/linux/
-build_android:
+debug_linux:
+	cd ffi_rpc && cargo build
+	cp -f ${target}/debug/libffi_rpc.so ../dart/linux/
+release_android:
 	cd ffi_rpc && CC_aarch64_linux_android=$(ANDROID_AARCH64_LINKER) \
 		CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$(ANDROID_AARCH64_LINKER) \
 		cargo build --target aarch64-linux-android --release

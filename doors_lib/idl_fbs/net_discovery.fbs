@@ -10,32 +10,28 @@ attribute NetDiscoveryCallback;
 
 table DnsTerminal {
     id: base.UlidBytes;
-    parter_id: base.PartnerId;
+    partner_id: base.PartnerId;
     terminal_id: base.TerminalId;
-    host_name: string;
     ip_v4: uint32;
     port_v4: uint16;
     ip_v6: uint64;
     port_v6: uint16;
     key: base.X25519Public;
+    host_name: string;
+    show_name: string;
 }
 
-table DiscoveryFrame {
+table HiFrame {
     header: base.Header;
-    bytes: [byte];
+    hi: Hi;
 }
 
 //
-table Hi(NetDiscovery) {
+table Hi(NetDiscovery,NetDiscoveryCallback) {
     // 消息的唯一标识
     id: base.UlidBytes;
     dns_terminal: DnsTerminal;
-}
-
-table HiRecv(NetDiscoveryCallback) {
-    id: base.UlidBytes;
-    hi_id: base.UlidBytes;
-    dns_terminal: DnsTerminal;
+    show_name: string;
 }
 
 table QueryDnsTerminalOut(NetDiscoveryFfiRpcOut) {
@@ -59,5 +55,4 @@ table QueryPartnersIn(NetDiscoveryFfiRpcIn:"QueryPartnersOut") {
     terminal: DnsTerminal;
 }
 
-root_type DiscoveryFrame;
 

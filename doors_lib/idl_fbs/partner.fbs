@@ -6,13 +6,6 @@ namespace partner;
 table Partner{
     id: base.UlidBytes;//随机产生的一个唯一标识
     terminal_ids: [base.TerminalId];//终端id
-    partner_id: base.UByte16; //partner
-    name: string;
+    partner_id: base.PartnerId; //partner
     show_name: string;
-    ip: string;
-    port: int16;
-    create_ts: base.Timestamp;
 }
-
-
-root_type Partner;

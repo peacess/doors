@@ -11,11 +11,23 @@ pub struct PartnerServiceInfo {
 impl PartnerServiceInfo {
     pub fn new() -> PartnerServiceInfo {
         let secret = EphemeralSecret::random();
+        let mut port = 9933u16;
+        loop {
+            match std::net::UdpSocket::bind("") {
+                Err(_e) => {
+                    port += 1;
+                    continue;
+                }
+                Ok(_s) => {
+                    break;
+                }
+            }
+        }
         PartnerServiceInfo {
             id: idl::ids::generate_ulid(),
             instance_name: "doors_chat".into(),
             service_type: "_http._tcp".into(),
-            port: 9933,
+            port,
             secret,
         }
     }

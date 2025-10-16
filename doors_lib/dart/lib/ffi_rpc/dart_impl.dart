@@ -9,18 +9,21 @@ import './idl.dart';
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import 'net_discovery/callback.dart';
+import 'chat/chat.dart';
 
 final logger = Logger();
 
 class FfiRpcDart {
   final IdlBindings _idlBindings;
   FfiRpcDart(this._idlBindings);
-  late NetDiscoveryCallback netDiscoveryCallback;
-  late ChatCallback chatCallback;
+  late final NetDiscoveryCallback netDiscoveryCallback;
+  late final ChatCallback chatCallback;
+  late final Chat chat;
 
-  void init({NetDiscoveryCallback? netDiscoveryCallback, ChatCallback? chatCallback}) {
-    this.netDiscoveryCallback = netDiscoveryCallback ?? NetDiscoveryCallback();
+  void init({required NetDiscoveryCallback netDiscoveryCallback, ChatCallback? chatCallback, Chat? chat}) {
+    this.netDiscoveryCallback = netDiscoveryCallback;
     this.chatCallback = chatCallback ?? ChatCallback();
+    this.chat = chat ?? Chat();
     final nativeCallable = NativeCallable<CallBackFunction>.listener(callback);
     var re = _idlBindings.init(nativeCallable.nativeFunction);
     _idlBindings.bytes_free(re);

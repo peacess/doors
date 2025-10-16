@@ -22,30 +22,32 @@ class DnsTerminal {
   final int _bcOffset;
 
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  base.PartnerId? get parterId => base.PartnerId.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  base.PartnerId? get partnerId => base.PartnerId.reader.vTableGetNullable(_bc, _bcOffset, 6);
   base.TerminalId? get terminalId => base.TerminalId.reader.vTableGetNullable(_bc, _bcOffset, 8);
-  String? get hostName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
-  int get ipV4 => const fb.Uint32Reader().vTableGet(_bc, _bcOffset, 12, 0);
-  int get portV4 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 14, 0);
-  int get ipV6 => const fb.Uint64Reader().vTableGet(_bc, _bcOffset, 16, 0);
-  int get portV6 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 18, 0);
-  base.X25519Public? get key => base.X25519Public.reader.vTableGetNullable(_bc, _bcOffset, 20);
+  int get ipV4 => const fb.Uint32Reader().vTableGet(_bc, _bcOffset, 10, 0);
+  int get portV4 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 12, 0);
+  int get ipV6 => const fb.Uint64Reader().vTableGet(_bc, _bcOffset, 14, 0);
+  int get portV6 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 16, 0);
+  base.X25519Public? get key => base.X25519Public.reader.vTableGetNullable(_bc, _bcOffset, 18);
+  String? get hostName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 20);
+  String? get showName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 22);
 
   @override
   String toString() {
-    return 'DnsTerminal{id: ${id}, parterId: ${parterId}, terminalId: ${terminalId}, hostName: ${hostName}, ipV4: ${ipV4}, portV4: ${portV4}, ipV6: ${ipV6}, portV6: ${portV6}, key: ${key}}';
+    return 'DnsTerminal{id: ${id}, partnerId: ${partnerId}, terminalId: ${terminalId}, ipV4: ${ipV4}, portV4: ${portV4}, ipV6: ${ipV6}, portV6: ${portV6}, key: ${key}, hostName: ${hostName}, showName: ${showName}}';
   }
 
   DnsTerminalT unpack() => DnsTerminalT(
     id: id?.unpack(),
-    parterId: parterId?.unpack(),
+    partnerId: partnerId?.unpack(),
     terminalId: terminalId?.unpack(),
-    hostName: hostName,
     ipV4: ipV4,
     portV4: portV4,
     ipV6: ipV6,
     portV6: portV6,
     key: key?.unpack(),
+    hostName: hostName,
+    showName: showName,
   );
 
   static int pack(fb.Builder fbBuilder, DnsTerminalT? object) {
@@ -56,44 +58,58 @@ class DnsTerminal {
 
 class DnsTerminalT implements fb.Packable {
   base.UlidBytesT? id;
-  base.PartnerIdT? parterId;
+  base.PartnerIdT? partnerId;
   base.TerminalIdT? terminalId;
-  String? hostName;
   int ipV4;
   int portV4;
   int ipV6;
   int portV6;
   base.X25519PublicT? key;
+  String? hostName;
+  String? showName;
 
-  DnsTerminalT({this.id, this.parterId, this.terminalId, this.hostName, this.ipV4 = 0, this.portV4 = 0, this.ipV6 = 0, this.portV6 = 0, this.key});
+  DnsTerminalT({
+    this.id,
+    this.partnerId,
+    this.terminalId,
+    this.ipV4 = 0,
+    this.portV4 = 0,
+    this.ipV6 = 0,
+    this.portV6 = 0,
+    this.key,
+    this.hostName,
+    this.showName,
+  });
 
   @override
   int pack(fb.Builder fbBuilder) {
     final int? hostNameOffset = hostName == null ? null : fbBuilder.writeString(hostName!);
-    fbBuilder.startTable(9);
+    final int? showNameOffset = showName == null ? null : fbBuilder.writeString(showName!);
+    fbBuilder.startTable(10);
     if (id != null) {
       fbBuilder.addStruct(0, id!.pack(fbBuilder));
     }
-    if (parterId != null) {
-      fbBuilder.addStruct(1, parterId!.pack(fbBuilder));
+    if (partnerId != null) {
+      fbBuilder.addStruct(1, partnerId!.pack(fbBuilder));
     }
     if (terminalId != null) {
       fbBuilder.addStruct(2, terminalId!.pack(fbBuilder));
     }
-    fbBuilder.addOffset(3, hostNameOffset);
-    fbBuilder.addUint32(4, ipV4);
-    fbBuilder.addUint16(5, portV4);
-    fbBuilder.addUint64(6, ipV6);
-    fbBuilder.addUint16(7, portV6);
+    fbBuilder.addUint32(3, ipV4);
+    fbBuilder.addUint16(4, portV4);
+    fbBuilder.addUint64(5, ipV6);
+    fbBuilder.addUint16(6, portV6);
     if (key != null) {
-      fbBuilder.addStruct(8, key!.pack(fbBuilder));
+      fbBuilder.addStruct(7, key!.pack(fbBuilder));
     }
+    fbBuilder.addOffset(8, hostNameOffset);
+    fbBuilder.addOffset(9, showNameOffset);
     return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'DnsTerminalT{id: ${id}, parterId: ${parterId}, terminalId: ${terminalId}, hostName: ${hostName}, ipV4: ${ipV4}, portV4: ${portV4}, ipV6: ${ipV6}, portV6: ${portV6}, key: ${key}}';
+    return 'DnsTerminalT{id: ${id}, partnerId: ${partnerId}, terminalId: ${terminalId}, ipV4: ${ipV4}, portV4: ${portV4}, ipV6: ${ipV6}, portV6: ${portV6}, key: ${key}, hostName: ${hostName}, showName: ${showName}}';
   }
 }
 
@@ -110,7 +126,7 @@ class DnsTerminalBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(9);
+    fbBuilder.startTable(10);
   }
 
   int addId(int offset) {
@@ -118,7 +134,7 @@ class DnsTerminalBuilder {
     return fbBuilder.offset;
   }
 
-  int addParterId(int offset) {
+  int addPartnerId(int offset) {
     fbBuilder.addStruct(1, offset);
     return fbBuilder.offset;
   }
@@ -128,33 +144,38 @@ class DnsTerminalBuilder {
     return fbBuilder.offset;
   }
 
-  int addHostNameOffset(int? offset) {
-    fbBuilder.addOffset(3, offset);
-    return fbBuilder.offset;
-  }
-
   int addIpV4(int? ipV4) {
-    fbBuilder.addUint32(4, ipV4);
+    fbBuilder.addUint32(3, ipV4);
     return fbBuilder.offset;
   }
 
   int addPortV4(int? portV4) {
-    fbBuilder.addUint16(5, portV4);
+    fbBuilder.addUint16(4, portV4);
     return fbBuilder.offset;
   }
 
   int addIpV6(int? ipV6) {
-    fbBuilder.addUint64(6, ipV6);
+    fbBuilder.addUint64(5, ipV6);
     return fbBuilder.offset;
   }
 
   int addPortV6(int? portV6) {
-    fbBuilder.addUint16(7, portV6);
+    fbBuilder.addUint16(6, portV6);
     return fbBuilder.offset;
   }
 
   int addKey(int offset) {
-    fbBuilder.addStruct(8, offset);
+    fbBuilder.addStruct(7, offset);
+    return fbBuilder.offset;
+  }
+
+  int addHostNameOffset(int? offset) {
+    fbBuilder.addOffset(8, offset);
+    return fbBuilder.offset;
+  }
+
+  int addShowNameOffset(int? offset) {
+    fbBuilder.addOffset(9, offset);
     return fbBuilder.offset;
   }
 
@@ -165,57 +186,62 @@ class DnsTerminalBuilder {
 
 class DnsTerminalObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
-  final base.PartnerIdObjectBuilder? _parterId;
+  final base.PartnerIdObjectBuilder? _partnerId;
   final base.TerminalIdObjectBuilder? _terminalId;
-  final String? _hostName;
   final int? _ipV4;
   final int? _portV4;
   final int? _ipV6;
   final int? _portV6;
   final base.X25519PublicObjectBuilder? _key;
+  final String? _hostName;
+  final String? _showName;
 
   DnsTerminalObjectBuilder({
     base.UlidBytesObjectBuilder? id,
-    base.PartnerIdObjectBuilder? parterId,
+    base.PartnerIdObjectBuilder? partnerId,
     base.TerminalIdObjectBuilder? terminalId,
-    String? hostName,
     int? ipV4,
     int? portV4,
     int? ipV6,
     int? portV6,
     base.X25519PublicObjectBuilder? key,
+    String? hostName,
+    String? showName,
   }) : _id = id,
-       _parterId = parterId,
+       _partnerId = partnerId,
        _terminalId = terminalId,
-       _hostName = hostName,
        _ipV4 = ipV4,
        _portV4 = portV4,
        _ipV6 = ipV6,
        _portV6 = portV6,
-       _key = key;
+       _key = key,
+       _hostName = hostName,
+       _showName = showName;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
     final int? hostNameOffset = _hostName == null ? null : fbBuilder.writeString(_hostName!);
-    fbBuilder.startTable(9);
+    final int? showNameOffset = _showName == null ? null : fbBuilder.writeString(_showName!);
+    fbBuilder.startTable(10);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
-    if (_parterId != null) {
-      fbBuilder.addStruct(1, _parterId!.finish(fbBuilder));
+    if (_partnerId != null) {
+      fbBuilder.addStruct(1, _partnerId!.finish(fbBuilder));
     }
     if (_terminalId != null) {
       fbBuilder.addStruct(2, _terminalId!.finish(fbBuilder));
     }
-    fbBuilder.addOffset(3, hostNameOffset);
-    fbBuilder.addUint32(4, _ipV4);
-    fbBuilder.addUint16(5, _portV4);
-    fbBuilder.addUint64(6, _ipV6);
-    fbBuilder.addUint16(7, _portV6);
+    fbBuilder.addUint32(3, _ipV4);
+    fbBuilder.addUint16(4, _portV4);
+    fbBuilder.addUint64(5, _ipV6);
+    fbBuilder.addUint16(6, _portV6);
     if (_key != null) {
-      fbBuilder.addStruct(8, _key!.finish(fbBuilder));
+      fbBuilder.addStruct(7, _key!.finish(fbBuilder));
     }
+    fbBuilder.addOffset(8, hostNameOffset);
+    fbBuilder.addOffset(9, showNameOffset);
     return fbBuilder.endTable();
   }
 
@@ -228,66 +254,66 @@ class DnsTerminalObjectBuilder extends fb.ObjectBuilder {
   }
 }
 
-class DiscoveryFrame {
-  DiscoveryFrame._(this._bc, this._bcOffset);
-  factory DiscoveryFrame(List<int> bytes) {
+class HiFrame {
+  HiFrame._(this._bc, this._bcOffset);
+  factory HiFrame(List<int> bytes) {
     final rootRef = fb.BufferContext.fromBytes(bytes);
     return reader.read(rootRef, 0);
   }
 
-  static const fb.Reader<DiscoveryFrame> reader = _DiscoveryFrameReader();
+  static const fb.Reader<HiFrame> reader = _HiFrameReader();
 
   final fb.BufferContext _bc;
   final int _bcOffset;
 
   base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  List<int>? get bytes => const fb.Int8ListReader().vTableGetNullable(_bc, _bcOffset, 6);
+  Hi? get hi => Hi.reader.vTableGetNullable(_bc, _bcOffset, 6);
 
   @override
   String toString() {
-    return 'DiscoveryFrame{header: ${header}, bytes: ${bytes}}';
+    return 'HiFrame{header: ${header}, hi: ${hi}}';
   }
 
-  DiscoveryFrameT unpack() => DiscoveryFrameT(header: header?.unpack(), bytes: const fb.Int8ListReader(lazy: false).vTableGetNullable(_bc, _bcOffset, 6));
+  HiFrameT unpack() => HiFrameT(header: header?.unpack(), hi: hi?.unpack());
 
-  static int pack(fb.Builder fbBuilder, DiscoveryFrameT? object) {
+  static int pack(fb.Builder fbBuilder, HiFrameT? object) {
     if (object == null) return 0;
     return object.pack(fbBuilder);
   }
 }
 
-class DiscoveryFrameT implements fb.Packable {
+class HiFrameT implements fb.Packable {
   base.HeaderT? header;
-  List<int>? bytes;
+  HiT? hi;
 
-  DiscoveryFrameT({this.header, this.bytes});
+  HiFrameT({this.header, this.hi});
 
   @override
   int pack(fb.Builder fbBuilder) {
-    final int? bytesOffset = bytes == null ? null : fbBuilder.writeListInt8(bytes!);
+    final int? hiOffset = hi?.pack(fbBuilder);
     fbBuilder.startTable(2);
     if (header != null) {
       fbBuilder.addStruct(0, header!.pack(fbBuilder));
     }
-    fbBuilder.addOffset(1, bytesOffset);
+    fbBuilder.addOffset(1, hiOffset);
     return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'DiscoveryFrameT{header: ${header}, bytes: ${bytes}}';
+    return 'HiFrameT{header: ${header}, hi: ${hi}}';
   }
 }
 
-class _DiscoveryFrameReader extends fb.TableReader<DiscoveryFrame> {
-  const _DiscoveryFrameReader();
+class _HiFrameReader extends fb.TableReader<HiFrame> {
+  const _HiFrameReader();
 
   @override
-  DiscoveryFrame createObject(fb.BufferContext bc, int offset) => DiscoveryFrame._(bc, offset);
+  HiFrame createObject(fb.BufferContext bc, int offset) => HiFrame._(bc, offset);
 }
 
-class DiscoveryFrameBuilder {
-  DiscoveryFrameBuilder(this.fbBuilder);
+class HiFrameBuilder {
+  HiFrameBuilder(this.fbBuilder);
 
   final fb.Builder fbBuilder;
 
@@ -300,7 +326,7 @@ class DiscoveryFrameBuilder {
     return fbBuilder.offset;
   }
 
-  int addBytesOffset(int? offset) {
+  int addHiOffset(int? offset) {
     fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
   }
@@ -310,21 +336,21 @@ class DiscoveryFrameBuilder {
   }
 }
 
-class DiscoveryFrameObjectBuilder extends fb.ObjectBuilder {
+class HiFrameObjectBuilder extends fb.ObjectBuilder {
   final base.HeaderObjectBuilder? _header;
-  final List<int>? _bytes;
+  final HiObjectBuilder? _hi;
 
-  DiscoveryFrameObjectBuilder({base.HeaderObjectBuilder? header, List<int>? bytes}) : _header = header, _bytes = bytes;
+  HiFrameObjectBuilder({base.HeaderObjectBuilder? header, HiObjectBuilder? hi}) : _header = header, _hi = hi;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    final int? bytesOffset = _bytes == null ? null : fbBuilder.writeListInt8(_bytes!);
+    final int? hiOffset = _hi?.getOrCreateOffset(fbBuilder);
     fbBuilder.startTable(2);
     if (_header != null) {
       fbBuilder.addStruct(0, _header!.finish(fbBuilder));
     }
-    fbBuilder.addOffset(1, bytesOffset);
+    fbBuilder.addOffset(1, hiOffset);
     return fbBuilder.endTable();
   }
 
@@ -351,13 +377,14 @@ class Hi {
 
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
   DnsTerminal? get dnsTerminal => DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  String? get showName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 8);
 
   @override
   String toString() {
-    return 'Hi{id: ${id}, dnsTerminal: ${dnsTerminal}}';
+    return 'Hi{id: ${id}, dnsTerminal: ${dnsTerminal}, showName: ${showName}}';
   }
 
-  HiT unpack() => HiT(id: id?.unpack(), dnsTerminal: dnsTerminal?.unpack());
+  HiT unpack() => HiT(id: id?.unpack(), dnsTerminal: dnsTerminal?.unpack(), showName: showName);
 
   static int pack(fb.Builder fbBuilder, HiT? object) {
     if (object == null) return 0;
@@ -368,23 +395,26 @@ class Hi {
 class HiT implements fb.Packable {
   base.UlidBytesT? id;
   DnsTerminalT? dnsTerminal;
+  String? showName;
 
-  HiT({this.id, this.dnsTerminal});
+  HiT({this.id, this.dnsTerminal, this.showName});
 
   @override
   int pack(fb.Builder fbBuilder) {
     final int? dnsTerminalOffset = dnsTerminal?.pack(fbBuilder);
-    fbBuilder.startTable(2);
+    final int? showNameOffset = showName == null ? null : fbBuilder.writeString(showName!);
+    fbBuilder.startTable(3);
     if (id != null) {
       fbBuilder.addStruct(0, id!.pack(fbBuilder));
     }
     fbBuilder.addOffset(1, dnsTerminalOffset);
+    fbBuilder.addOffset(2, showNameOffset);
     return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'HiT{id: ${id}, dnsTerminal: ${dnsTerminal}}';
+    return 'HiT{id: ${id}, dnsTerminal: ${dnsTerminal}, showName: ${showName}}';
   }
 }
 
@@ -401,7 +431,7 @@ class HiBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(2);
+    fbBuilder.startTable(3);
   }
 
   int addId(int offset) {
@@ -414,121 +444,7 @@ class HiBuilder {
     return fbBuilder.offset;
   }
 
-  int finish() {
-    return fbBuilder.endTable();
-  }
-}
-
-class HiObjectBuilder extends fb.ObjectBuilder {
-  final base.UlidBytesObjectBuilder? _id;
-  final DnsTerminalObjectBuilder? _dnsTerminal;
-
-  HiObjectBuilder({base.UlidBytesObjectBuilder? id, DnsTerminalObjectBuilder? dnsTerminal}) : _id = id, _dnsTerminal = dnsTerminal;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    final int? dnsTerminalOffset = _dnsTerminal?.getOrCreateOffset(fbBuilder);
-    fbBuilder.startTable(2);
-    if (_id != null) {
-      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(1, dnsTerminalOffset);
-    return fbBuilder.endTable();
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class HiRecv {
-  HiRecv._(this._bc, this._bcOffset);
-  factory HiRecv(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
-
-  static const fb.Reader<HiRecv> reader = _HiRecvReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  base.UlidBytes? get hiId => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 6);
-  DnsTerminal? get dnsTerminal => DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 8);
-
-  @override
-  String toString() {
-    return 'HiRecv{id: ${id}, hiId: ${hiId}, dnsTerminal: ${dnsTerminal}}';
-  }
-
-  HiRecvT unpack() => HiRecvT(id: id?.unpack(), hiId: hiId?.unpack(), dnsTerminal: dnsTerminal?.unpack());
-
-  static int pack(fb.Builder fbBuilder, HiRecvT? object) {
-    if (object == null) return 0;
-    return object.pack(fbBuilder);
-  }
-}
-
-class HiRecvT implements fb.Packable {
-  base.UlidBytesT? id;
-  base.UlidBytesT? hiId;
-  DnsTerminalT? dnsTerminal;
-
-  HiRecvT({this.id, this.hiId, this.dnsTerminal});
-
-  @override
-  int pack(fb.Builder fbBuilder) {
-    final int? dnsTerminalOffset = dnsTerminal?.pack(fbBuilder);
-    fbBuilder.startTable(3);
-    if (id != null) {
-      fbBuilder.addStruct(0, id!.pack(fbBuilder));
-    }
-    if (hiId != null) {
-      fbBuilder.addStruct(1, hiId!.pack(fbBuilder));
-    }
-    fbBuilder.addOffset(2, dnsTerminalOffset);
-    return fbBuilder.endTable();
-  }
-
-  @override
-  String toString() {
-    return 'HiRecvT{id: ${id}, hiId: ${hiId}, dnsTerminal: ${dnsTerminal}}';
-  }
-}
-
-class _HiRecvReader extends fb.TableReader<HiRecv> {
-  const _HiRecvReader();
-
-  @override
-  HiRecv createObject(fb.BufferContext bc, int offset) => HiRecv._(bc, offset);
-}
-
-class HiRecvBuilder {
-  HiRecvBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  void begin() {
-    fbBuilder.startTable(3);
-  }
-
-  int addId(int offset) {
-    fbBuilder.addStruct(0, offset);
-    return fbBuilder.offset;
-  }
-
-  int addHiId(int offset) {
-    fbBuilder.addStruct(1, offset);
-    return fbBuilder.offset;
-  }
-
-  int addDnsTerminalOffset(int? offset) {
+  int addShowNameOffset(int? offset) {
     fbBuilder.addOffset(2, offset);
     return fbBuilder.offset;
   }
@@ -538,28 +454,27 @@ class HiRecvBuilder {
   }
 }
 
-class HiRecvObjectBuilder extends fb.ObjectBuilder {
+class HiObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
-  final base.UlidBytesObjectBuilder? _hiId;
   final DnsTerminalObjectBuilder? _dnsTerminal;
+  final String? _showName;
 
-  HiRecvObjectBuilder({base.UlidBytesObjectBuilder? id, base.UlidBytesObjectBuilder? hiId, DnsTerminalObjectBuilder? dnsTerminal})
+  HiObjectBuilder({base.UlidBytesObjectBuilder? id, DnsTerminalObjectBuilder? dnsTerminal, String? showName})
     : _id = id,
-      _hiId = hiId,
-      _dnsTerminal = dnsTerminal;
+      _dnsTerminal = dnsTerminal,
+      _showName = showName;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
     final int? dnsTerminalOffset = _dnsTerminal?.getOrCreateOffset(fbBuilder);
+    final int? showNameOffset = _showName == null ? null : fbBuilder.writeString(_showName!);
     fbBuilder.startTable(3);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
-    if (_hiId != null) {
-      fbBuilder.addStruct(1, _hiId!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(2, dnsTerminalOffset);
+    fbBuilder.addOffset(1, dnsTerminalOffset);
+    fbBuilder.addOffset(2, showNameOffset);
     return fbBuilder.endTable();
   }
 

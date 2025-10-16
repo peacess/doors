@@ -15,9 +15,6 @@ class TextMessageAck : Table() {
     val sendId : base.UlidBytes? get() = sendId(base.UlidBytes())
     fun sendId(obj: base.UlidBytes) : base.UlidBytes? = lookupField(6, null ) { obj.init(it + bufferPos, bb) }
 
-    val ts : base.Timestamp? get() = ts(base.Timestamp())
-    fun ts(obj: base.Timestamp) : base.Timestamp? = lookupField(8, null ) { obj.init(it + bufferPos, bb) }
-
     companion object {
         @JvmStatic
         fun validateVersion() = VERSION_2_0_8
@@ -29,16 +26,13 @@ class TextMessageAck : Table() {
 
 
         @JvmStatic
-        fun startTextMessageAck(builder: FlatBufferBuilder) = builder.startTable(3)
+        fun startTextMessageAck(builder: FlatBufferBuilder) = builder.startTable(2)
 
         @JvmStatic
         fun addId(builder: FlatBufferBuilder, id: Offset<base.UlidBytes>) = builder.addStruct(0, id.value, 0)
 
         @JvmStatic
         fun addSendId(builder: FlatBufferBuilder, sendId: Offset<base.UlidBytes>) = builder.addStruct(1, sendId.value, 0)
-
-        @JvmStatic
-        fun addTs(builder: FlatBufferBuilder, ts: Offset<base.Timestamp>) = builder.addStruct(2, ts.value, 0)
 
         @JvmStatic
         fun endTextMessageAck(builder: FlatBufferBuilder) : Offset<TextMessageAck> {

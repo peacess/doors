@@ -14,6 +14,7 @@ clean:
 gen:
 	cd doors_lib/idl_fbs && make gen
 	cd doors_lib && make gen
+	cd doors_app && make gen
 
 build: gen
 	cd doors_app && make build

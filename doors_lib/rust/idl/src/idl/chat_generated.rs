@@ -42,8 +42,7 @@ pub mod chat {
         pub const VT_TO_PARTNER_ID: flatbuffers::VOffsetT = 8;
         pub const VT_FROM_TERMINAL_ID: flatbuffers::VOffsetT = 10;
         pub const VT_TO_TERMINAL_ID: flatbuffers::VOffsetT = 12;
-        pub const VT_TS: flatbuffers::VOffsetT = 14;
-        pub const VT_TEXT: flatbuffers::VOffsetT = 16;
+        pub const VT_TEXT: flatbuffers::VOffsetT = 14;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -57,9 +56,6 @@ pub mod chat {
             let mut builder = TextMessageBuilder::new(_fbb);
             if let Some(x) = args.text {
                 builder.add_text(x);
-            }
-            if let Some(x) = args.ts {
-                builder.add_ts(x);
             }
             if let Some(x) = args.to_terminal_id {
                 builder.add_to_terminal_id(x);
@@ -85,7 +81,6 @@ pub mod chat {
             let to_partner_id = self.to_partner_id().map(|x| x.unpack());
             let from_terminal_id = self.from_terminal_id().map(|x| x.unpack());
             let to_terminal_id = self.to_terminal_id().map(|x| x.unpack());
-            let ts = self.ts().map(|x| x.unpack());
             let text = self.text().map(|x| x.to_string());
             TextMessageT {
                 id,
@@ -93,7 +88,6 @@ pub mod chat {
                 to_partner_id,
                 from_terminal_id,
                 to_terminal_id,
-                ts,
                 text,
             }
         }
@@ -134,13 +128,6 @@ pub mod chat {
             unsafe { self._tab.get::<super::base::TerminalId>(TextMessage::VT_TO_TERMINAL_ID, None) }
         }
         #[inline]
-        pub fn ts(&self) -> Option<&'a super::base::Timestamp> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::Timestamp>(TextMessage::VT_TS, None) }
-        }
-        #[inline]
         pub fn text(&self) -> Option<&'a str> {
             // Safety:
             // Created from valid Table for this object
@@ -159,7 +146,6 @@ pub mod chat {
                 .visit_field::<super::base::PartnerId>("to_partner_id", Self::VT_TO_PARTNER_ID, false)?
                 .visit_field::<super::base::TerminalId>("from_terminal_id", Self::VT_FROM_TERMINAL_ID, false)?
                 .visit_field::<super::base::TerminalId>("to_terminal_id", Self::VT_TO_TERMINAL_ID, false)?
-                .visit_field::<super::base::Timestamp>("ts", Self::VT_TS, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("text", Self::VT_TEXT, false)?
                 .finish();
             Ok(())
@@ -171,7 +157,6 @@ pub mod chat {
         pub to_partner_id: Option<&'a super::base::PartnerId>,
         pub from_terminal_id: Option<&'a super::base::TerminalId>,
         pub to_terminal_id: Option<&'a super::base::TerminalId>,
-        pub ts: Option<&'a super::base::Timestamp>,
         pub text: Option<flatbuffers::WIPOffset<&'a str>>,
     }
     impl<'a> Default for TextMessageArgs<'a> {
@@ -183,7 +168,6 @@ pub mod chat {
                 to_partner_id: None,
                 from_terminal_id: None,
                 to_terminal_id: None,
-                ts: None,
                 text: None,
             }
         }
@@ -219,10 +203,6 @@ pub mod chat {
                 .push_slot_always::<&super::base::TerminalId>(TextMessage::VT_TO_TERMINAL_ID, to_terminal_id);
         }
         #[inline]
-        pub fn add_ts(&mut self, ts: &super::base::Timestamp) {
-            self.fbb_.push_slot_always::<&super::base::Timestamp>(TextMessage::VT_TS, ts);
-        }
-        #[inline]
         pub fn add_text(&mut self, text: flatbuffers::WIPOffset<&'b str>) {
             self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(TextMessage::VT_TEXT, text);
         }
@@ -246,7 +226,6 @@ pub mod chat {
             ds.field("to_partner_id", &self.to_partner_id());
             ds.field("from_terminal_id", &self.from_terminal_id());
             ds.field("to_terminal_id", &self.to_terminal_id());
-            ds.field("ts", &self.ts());
             ds.field("text", &self.text());
             ds.finish()
         }
@@ -259,7 +238,6 @@ pub mod chat {
         pub to_partner_id: Option<super::base::PartnerIdT>,
         pub from_terminal_id: Option<super::base::TerminalIdT>,
         pub to_terminal_id: Option<super::base::TerminalIdT>,
-        pub ts: Option<super::base::TimestampT>,
         pub text: Option<String>,
     }
     impl Default for TextMessageT {
@@ -270,7 +248,6 @@ pub mod chat {
                 to_partner_id: None,
                 from_terminal_id: None,
                 to_terminal_id: None,
-                ts: None,
                 text: None,
             }
         }
@@ -287,8 +264,6 @@ pub mod chat {
             let from_terminal_id = from_terminal_id_tmp.as_ref();
             let to_terminal_id_tmp = self.to_terminal_id.as_ref().map(|x| x.pack());
             let to_terminal_id = to_terminal_id_tmp.as_ref();
-            let ts_tmp = self.ts.as_ref().map(|x| x.pack());
-            let ts = ts_tmp.as_ref();
             let text = self.text.as_ref().map(|x| _fbb.create_string(x));
             TextMessage::create(
                 _fbb,
@@ -298,7 +273,6 @@ pub mod chat {
                     to_partner_id,
                     from_terminal_id,
                     to_terminal_id,
-                    ts,
                     text,
                 },
             )
@@ -324,7 +298,6 @@ pub mod chat {
     impl<'a> TextMessageAck<'a> {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
         pub const VT_SEND_ID: flatbuffers::VOffsetT = 6;
-        pub const VT_TS: flatbuffers::VOffsetT = 8;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -336,9 +309,6 @@ pub mod chat {
             args: &'args TextMessageAckArgs<'args>,
         ) -> flatbuffers::WIPOffset<TextMessageAck<'bldr>> {
             let mut builder = TextMessageAckBuilder::new(_fbb);
-            if let Some(x) = args.ts {
-                builder.add_ts(x);
-            }
             if let Some(x) = args.send_id {
                 builder.add_send_id(x);
             }
@@ -351,8 +321,7 @@ pub mod chat {
         pub fn unpack(&self) -> TextMessageAckT {
             let id = self.id().map(|x| x.unpack());
             let send_id = self.send_id().map(|x| x.unpack());
-            let ts = self.ts().map(|x| x.unpack());
-            TextMessageAckT { id, send_id, ts }
+            TextMessageAckT { id, send_id }
         }
 
         #[inline]
@@ -369,13 +338,6 @@ pub mod chat {
             // which contains a valid value in this slot
             unsafe { self._tab.get::<super::base::UlidBytes>(TextMessageAck::VT_SEND_ID, None) }
         }
-        #[inline]
-        pub fn ts(&self) -> Option<&'a super::base::Timestamp> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::Timestamp>(TextMessageAck::VT_TS, None) }
-        }
     }
 
     impl flatbuffers::Verifiable for TextMessageAck<'_> {
@@ -385,7 +347,6 @@ pub mod chat {
             v.visit_table(pos)?
                 .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
                 .visit_field::<super::base::UlidBytes>("send_id", Self::VT_SEND_ID, false)?
-                .visit_field::<super::base::Timestamp>("ts", Self::VT_TS, false)?
                 .finish();
             Ok(())
         }
@@ -393,16 +354,11 @@ pub mod chat {
     pub struct TextMessageAckArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
         pub send_id: Option<&'a super::base::UlidBytes>,
-        pub ts: Option<&'a super::base::Timestamp>,
     }
     impl<'a> Default for TextMessageAckArgs<'a> {
         #[inline]
         fn default() -> Self {
-            TextMessageAckArgs {
-                id: None,
-                send_id: None,
-                ts: None,
-            }
+            TextMessageAckArgs { id: None, send_id: None }
         }
     }
 
@@ -418,10 +374,6 @@ pub mod chat {
         #[inline]
         pub fn add_send_id(&mut self, send_id: &super::base::UlidBytes) {
             self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessageAck::VT_SEND_ID, send_id);
-        }
-        #[inline]
-        pub fn add_ts(&mut self, ts: &super::base::Timestamp) {
-            self.fbb_.push_slot_always::<&super::base::Timestamp>(TextMessageAck::VT_TS, ts);
         }
         #[inline]
         pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> TextMessageAckBuilder<'a, 'b, A> {
@@ -440,7 +392,6 @@ pub mod chat {
             let mut ds = f.debug_struct("TextMessageAck");
             ds.field("id", &self.id());
             ds.field("send_id", &self.send_id());
-            ds.field("ts", &self.ts());
             ds.finish()
         }
     }
@@ -449,15 +400,10 @@ pub mod chat {
     pub struct TextMessageAckT {
         pub id: Option<super::base::UlidBytesT>,
         pub send_id: Option<super::base::UlidBytesT>,
-        pub ts: Option<super::base::TimestampT>,
     }
     impl Default for TextMessageAckT {
         fn default() -> Self {
-            Self {
-                id: None,
-                send_id: None,
-                ts: None,
-            }
+            Self { id: None, send_id: None }
         }
     }
     impl TextMessageAckT {
@@ -466,9 +412,7 @@ pub mod chat {
             let id = id_tmp.as_ref();
             let send_id_tmp = self.send_id.as_ref().map(|x| x.pack());
             let send_id = send_id_tmp.as_ref();
-            let ts_tmp = self.ts.as_ref().map(|x| x.pack());
-            let ts = ts_tmp.as_ref();
-            TextMessageAck::create(_fbb, &TextMessageAckArgs { id, send_id, ts })
+            TextMessageAck::create(_fbb, &TextMessageAckArgs { id, send_id })
         }
     }
     pub enum ChatTextMessageOffset {}

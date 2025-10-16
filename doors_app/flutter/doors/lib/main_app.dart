@@ -1,8 +1,11 @@
+import 'package:doors/data/libex/chat_callback.dart';
+import 'package:doors/data/libex/net_discovery_callback.dart';
 import 'package:doors/l10n/gen_code/app_localizations.dart';
 import 'package:doors/views/doors_app.dart';
 import 'package:doors/views/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:idl/idl.dart';
 
 class DoorsMainApp extends StatefulWidget {
   const DoorsMainApp({super.key});
@@ -18,6 +21,7 @@ class _DoorsMainApp extends State<DoorsMainApp> {
   void initState() {
     super.initState();
     themeMode.addListener(_refresh);
+    ffiRpc.init(netDiscoveryCallback: AppNetDiscoveryCallback(DoorsApp.app.partners), chatCallback: AppChatCallback());
   }
 
   @override
