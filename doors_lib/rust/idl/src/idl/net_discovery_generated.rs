@@ -40,13 +40,10 @@ pub mod net_discovery {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
         pub const VT_PARTNER_ID: flatbuffers::VOffsetT = 6;
         pub const VT_TERMINAL_ID: flatbuffers::VOffsetT = 8;
-        pub const VT_IP_V4: flatbuffers::VOffsetT = 10;
-        pub const VT_PORT_V4: flatbuffers::VOffsetT = 12;
-        pub const VT_IP_V6: flatbuffers::VOffsetT = 14;
-        pub const VT_PORT_V6: flatbuffers::VOffsetT = 16;
-        pub const VT_KEY: flatbuffers::VOffsetT = 18;
-        pub const VT_HOST_NAME: flatbuffers::VOffsetT = 20;
-        pub const VT_SHOW_NAME: flatbuffers::VOffsetT = 22;
+        pub const VT_KEY: flatbuffers::VOffsetT = 10;
+        pub const VT_HOST_NAME: flatbuffers::VOffsetT = 12;
+        pub const VT_SHOW_NAME: flatbuffers::VOffsetT = 14;
+        pub const VT_NET_INTERFACES: flatbuffers::VOffsetT = 16;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -58,7 +55,9 @@ pub mod net_discovery {
             args: &'args DnsTerminalArgs<'args>,
         ) -> flatbuffers::WIPOffset<DnsTerminal<'bldr>> {
             let mut builder = DnsTerminalBuilder::new(_fbb);
-            builder.add_ip_v6(args.ip_v6);
+            if let Some(x) = args.net_interfaces {
+                builder.add_net_interfaces(x);
+            }
             if let Some(x) = args.show_name {
                 builder.add_show_name(x);
             }
@@ -68,7 +67,6 @@ pub mod net_discovery {
             if let Some(x) = args.key {
                 builder.add_key(x);
             }
-            builder.add_ip_v4(args.ip_v4);
             if let Some(x) = args.terminal_id {
                 builder.add_terminal_id(x);
             }
@@ -78,8 +76,6 @@ pub mod net_discovery {
             if let Some(x) = args.id {
                 builder.add_id(x);
             }
-            builder.add_port_v6(args.port_v6);
-            builder.add_port_v4(args.port_v4);
             builder.finish()
         }
 
@@ -87,24 +83,18 @@ pub mod net_discovery {
             let id = self.id().map(|x| x.unpack());
             let partner_id = self.partner_id().map(|x| x.unpack());
             let terminal_id = self.terminal_id().map(|x| x.unpack());
-            let ip_v4 = self.ip_v4();
-            let port_v4 = self.port_v4();
-            let ip_v6 = self.ip_v6();
-            let port_v6 = self.port_v6();
             let key = self.key().map(|x| x.unpack());
             let host_name = self.host_name().map(|x| x.to_string());
             let show_name = self.show_name().map(|x| x.to_string());
+            let net_interfaces = self.net_interfaces().map(|x| x.iter().map(|t| t.unpack()).collect());
             DnsTerminalT {
                 id,
                 partner_id,
                 terminal_id,
-                ip_v4,
-                port_v4,
-                ip_v6,
-                port_v6,
                 key,
                 host_name,
                 show_name,
+                net_interfaces,
             }
         }
 
@@ -130,34 +120,6 @@ pub mod net_discovery {
             unsafe { self._tab.get::<super::base::TerminalId>(DnsTerminal::VT_TERMINAL_ID, None) }
         }
         #[inline]
-        pub fn ip_v4(&self) -> u32 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u32>(DnsTerminal::VT_IP_V4, Some(0)).unwrap() }
-        }
-        #[inline]
-        pub fn port_v4(&self) -> u16 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u16>(DnsTerminal::VT_PORT_V4, Some(0)).unwrap() }
-        }
-        #[inline]
-        pub fn ip_v6(&self) -> u64 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u64>(DnsTerminal::VT_IP_V6, Some(0)).unwrap() }
-        }
-        #[inline]
-        pub fn port_v6(&self) -> u16 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u16>(DnsTerminal::VT_PORT_V6, Some(0)).unwrap() }
-        }
-        #[inline]
         pub fn key(&self) -> Option<&'a super::base::X25519Public> {
             // Safety:
             // Created from valid Table for this object
@@ -178,6 +140,19 @@ pub mod net_discovery {
             // which contains a valid value in this slot
             unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DnsTerminal::VT_SHOW_NAME, None) }
         }
+        #[inline]
+        pub fn net_interfaces(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<NetInterface<'a>>>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<NetInterface>>>>(
+                        DnsTerminal::VT_NET_INTERFACES,
+                        None,
+                    )
+            }
+        }
     }
 
     impl flatbuffers::Verifiable for DnsTerminal<'_> {
@@ -188,13 +163,14 @@ pub mod net_discovery {
                 .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
                 .visit_field::<super::base::PartnerId>("partner_id", Self::VT_PARTNER_ID, false)?
                 .visit_field::<super::base::TerminalId>("terminal_id", Self::VT_TERMINAL_ID, false)?
-                .visit_field::<u32>("ip_v4", Self::VT_IP_V4, false)?
-                .visit_field::<u16>("port_v4", Self::VT_PORT_V4, false)?
-                .visit_field::<u64>("ip_v6", Self::VT_IP_V6, false)?
-                .visit_field::<u16>("port_v6", Self::VT_PORT_V6, false)?
                 .visit_field::<super::base::X25519Public>("key", Self::VT_KEY, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("host_name", Self::VT_HOST_NAME, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("show_name", Self::VT_SHOW_NAME, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<NetInterface>>>>(
+                    "net_interfaces",
+                    Self::VT_NET_INTERFACES,
+                    false,
+                )?
                 .finish();
             Ok(())
         }
@@ -203,13 +179,10 @@ pub mod net_discovery {
         pub id: Option<&'a super::base::UlidBytes>,
         pub partner_id: Option<&'a super::base::PartnerId>,
         pub terminal_id: Option<&'a super::base::TerminalId>,
-        pub ip_v4: u32,
-        pub port_v4: u16,
-        pub ip_v6: u64,
-        pub port_v6: u16,
         pub key: Option<&'a super::base::X25519Public>,
         pub host_name: Option<flatbuffers::WIPOffset<&'a str>>,
         pub show_name: Option<flatbuffers::WIPOffset<&'a str>>,
+        pub net_interfaces: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<NetInterface<'a>>>>>,
     }
     impl<'a> Default for DnsTerminalArgs<'a> {
         #[inline]
@@ -218,13 +191,10 @@ pub mod net_discovery {
                 id: None,
                 partner_id: None,
                 terminal_id: None,
-                ip_v4: 0,
-                port_v4: 0,
-                ip_v6: 0,
-                port_v6: 0,
                 key: None,
                 host_name: None,
                 show_name: None,
+                net_interfaces: None,
             }
         }
     }
@@ -247,22 +217,6 @@ pub mod net_discovery {
             self.fbb_.push_slot_always::<&super::base::TerminalId>(DnsTerminal::VT_TERMINAL_ID, terminal_id);
         }
         #[inline]
-        pub fn add_ip_v4(&mut self, ip_v4: u32) {
-            self.fbb_.push_slot::<u32>(DnsTerminal::VT_IP_V4, ip_v4, 0);
-        }
-        #[inline]
-        pub fn add_port_v4(&mut self, port_v4: u16) {
-            self.fbb_.push_slot::<u16>(DnsTerminal::VT_PORT_V4, port_v4, 0);
-        }
-        #[inline]
-        pub fn add_ip_v6(&mut self, ip_v6: u64) {
-            self.fbb_.push_slot::<u64>(DnsTerminal::VT_IP_V6, ip_v6, 0);
-        }
-        #[inline]
-        pub fn add_port_v6(&mut self, port_v6: u16) {
-            self.fbb_.push_slot::<u16>(DnsTerminal::VT_PORT_V6, port_v6, 0);
-        }
-        #[inline]
         pub fn add_key(&mut self, key: &super::base::X25519Public) {
             self.fbb_.push_slot_always::<&super::base::X25519Public>(DnsTerminal::VT_KEY, key);
         }
@@ -273,6 +227,11 @@ pub mod net_discovery {
         #[inline]
         pub fn add_show_name(&mut self, show_name: flatbuffers::WIPOffset<&'b str>) {
             self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DnsTerminal::VT_SHOW_NAME, show_name);
+        }
+        #[inline]
+        pub fn add_net_interfaces(&mut self, net_interfaces: flatbuffers::WIPOffset<flatbuffers::Vector<'b, flatbuffers::ForwardsUOffset<NetInterface<'b>>>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<_>>(DnsTerminal::VT_NET_INTERFACES, net_interfaces);
         }
         #[inline]
         pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DnsTerminalBuilder<'a, 'b, A> {
@@ -292,13 +251,10 @@ pub mod net_discovery {
             ds.field("id", &self.id());
             ds.field("partner_id", &self.partner_id());
             ds.field("terminal_id", &self.terminal_id());
-            ds.field("ip_v4", &self.ip_v4());
-            ds.field("port_v4", &self.port_v4());
-            ds.field("ip_v6", &self.ip_v6());
-            ds.field("port_v6", &self.port_v6());
             ds.field("key", &self.key());
             ds.field("host_name", &self.host_name());
             ds.field("show_name", &self.show_name());
+            ds.field("net_interfaces", &self.net_interfaces());
             ds.finish()
         }
     }
@@ -308,13 +264,10 @@ pub mod net_discovery {
         pub id: Option<super::base::UlidBytesT>,
         pub partner_id: Option<super::base::PartnerIdT>,
         pub terminal_id: Option<super::base::TerminalIdT>,
-        pub ip_v4: u32,
-        pub port_v4: u16,
-        pub ip_v6: u64,
-        pub port_v6: u16,
         pub key: Option<super::base::X25519PublicT>,
         pub host_name: Option<String>,
         pub show_name: Option<String>,
+        pub net_interfaces: Option<Vec<NetInterfaceT>>,
     }
     impl Default for DnsTerminalT {
         fn default() -> Self {
@@ -322,13 +275,10 @@ pub mod net_discovery {
                 id: None,
                 partner_id: None,
                 terminal_id: None,
-                ip_v4: 0,
-                port_v4: 0,
-                ip_v6: 0,
-                port_v6: 0,
                 key: None,
                 host_name: None,
                 show_name: None,
+                net_interfaces: None,
             }
         }
     }
@@ -340,27 +290,428 @@ pub mod net_discovery {
             let partner_id = partner_id_tmp.as_ref();
             let terminal_id_tmp = self.terminal_id.as_ref().map(|x| x.pack());
             let terminal_id = terminal_id_tmp.as_ref();
-            let ip_v4 = self.ip_v4;
-            let port_v4 = self.port_v4;
-            let ip_v6 = self.ip_v6;
-            let port_v6 = self.port_v6;
             let key_tmp = self.key.as_ref().map(|x| x.pack());
             let key = key_tmp.as_ref();
             let host_name = self.host_name.as_ref().map(|x| _fbb.create_string(x));
             let show_name = self.show_name.as_ref().map(|x| _fbb.create_string(x));
+            let net_interfaces = self.net_interfaces.as_ref().map(|x| {
+                let w: Vec<_> = x.iter().map(|t| t.pack(_fbb)).collect();
+                _fbb.create_vector(&w)
+            });
             DnsTerminal::create(
                 _fbb,
                 &DnsTerminalArgs {
                     id,
                     partner_id,
                     terminal_id,
-                    ip_v4,
-                    port_v4,
-                    ip_v6,
-                    port_v6,
                     key,
                     host_name,
                     show_name,
+                    net_interfaces,
+                },
+            )
+        }
+    }
+    pub enum NetInterfaceOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct NetInterface<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for NetInterface<'a> {
+        type Inner = NetInterface<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
+            }
+        }
+    }
+
+    impl<'a> NetInterface<'a> {
+        pub const VT_IP_V4: flatbuffers::VOffsetT = 4;
+        pub const VT_PORT_V4: flatbuffers::VOffsetT = 6;
+        pub const VT_IP_V6_GLOBAL: flatbuffers::VOffsetT = 8;
+        pub const VT_PORT_V6_GLOBAL: flatbuffers::VOffsetT = 10;
+        pub const VT_IP_V6_TEMPORARY: flatbuffers::VOffsetT = 12;
+        pub const VT_PORT_V6_TEMPORARY: flatbuffers::VOffsetT = 14;
+        pub const VT_IP_V6_LINK_LOCAL: flatbuffers::VOffsetT = 16;
+        pub const VT_PORT_V6_LINK_LOCAL: flatbuffers::VOffsetT = 18;
+        pub const VT_SCOPE_V6: flatbuffers::VOffsetT = 20;
+        pub const VT_IP_V6_UNIQUE_LOCAL: flatbuffers::VOffsetT = 22;
+        pub const VT_PORT_V6_UNIQUE_LOCAL: flatbuffers::VOffsetT = 24;
+        pub const VT_NAME: flatbuffers::VOffsetT = 26;
+        pub const VT_MAC_ADDRESS: flatbuffers::VOffsetT = 28;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            NetInterface { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args NetInterfaceArgs<'args>,
+        ) -> flatbuffers::WIPOffset<NetInterface<'bldr>> {
+            let mut builder = NetInterfaceBuilder::new(_fbb);
+            builder.add_ip_v6_unique_local(args.ip_v6_unique_local);
+            builder.add_ip_v6_link_local(args.ip_v6_link_local);
+            builder.add_ip_v6_temporary(args.ip_v6_temporary);
+            builder.add_ip_v6_global(args.ip_v6_global);
+            if let Some(x) = args.mac_address {
+                builder.add_mac_address(x);
+            }
+            if let Some(x) = args.name {
+                builder.add_name(x);
+            }
+            builder.add_scope_v6(args.scope_v6);
+            builder.add_ip_v4(args.ip_v4);
+            builder.add_port_v6_unique_local(args.port_v6_unique_local);
+            builder.add_port_v6_link_local(args.port_v6_link_local);
+            builder.add_port_v6_temporary(args.port_v6_temporary);
+            builder.add_port_v6_global(args.port_v6_global);
+            builder.add_port_v4(args.port_v4);
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> NetInterfaceT {
+            let ip_v4 = self.ip_v4();
+            let port_v4 = self.port_v4();
+            let ip_v6_global = self.ip_v6_global();
+            let port_v6_global = self.port_v6_global();
+            let ip_v6_temporary = self.ip_v6_temporary();
+            let port_v6_temporary = self.port_v6_temporary();
+            let ip_v6_link_local = self.ip_v6_link_local();
+            let port_v6_link_local = self.port_v6_link_local();
+            let scope_v6 = self.scope_v6();
+            let ip_v6_unique_local = self.ip_v6_unique_local();
+            let port_v6_unique_local = self.port_v6_unique_local();
+            let name = self.name().map(|x| x.to_string());
+            let mac_address = self.mac_address().map(|x| x.to_string());
+            NetInterfaceT {
+                ip_v4,
+                port_v4,
+                ip_v6_global,
+                port_v6_global,
+                ip_v6_temporary,
+                port_v6_temporary,
+                ip_v6_link_local,
+                port_v6_link_local,
+                scope_v6,
+                ip_v6_unique_local,
+                port_v6_unique_local,
+                name,
+                mac_address,
+            }
+        }
+
+        #[inline]
+        pub fn ip_v4(&self) -> u32 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u32>(NetInterface::VT_IP_V4, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn port_v4(&self) -> u16 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V4, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn ip_v6_global(&self) -> u64 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u64>(NetInterface::VT_IP_V6_GLOBAL, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn port_v6_global(&self) -> u16 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V6_GLOBAL, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn ip_v6_temporary(&self) -> u64 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u64>(NetInterface::VT_IP_V6_TEMPORARY, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn port_v6_temporary(&self) -> u16 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V6_TEMPORARY, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn ip_v6_link_local(&self) -> u64 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u64>(NetInterface::VT_IP_V6_LINK_LOCAL, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn port_v6_link_local(&self) -> u16 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V6_LINK_LOCAL, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn scope_v6(&self) -> u32 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u32>(NetInterface::VT_SCOPE_V6, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn ip_v6_unique_local(&self) -> u64 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u64>(NetInterface::VT_IP_V6_UNIQUE_LOCAL, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn port_v6_unique_local(&self) -> u16 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V6_UNIQUE_LOCAL, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn name(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(NetInterface::VT_NAME, None) }
+        }
+        #[inline]
+        pub fn mac_address(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(NetInterface::VT_MAC_ADDRESS, None) }
+        }
+    }
+
+    impl flatbuffers::Verifiable for NetInterface<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<u32>("ip_v4", Self::VT_IP_V4, false)?
+                .visit_field::<u16>("port_v4", Self::VT_PORT_V4, false)?
+                .visit_field::<u64>("ip_v6_global", Self::VT_IP_V6_GLOBAL, false)?
+                .visit_field::<u16>("port_v6_global", Self::VT_PORT_V6_GLOBAL, false)?
+                .visit_field::<u64>("ip_v6_temporary", Self::VT_IP_V6_TEMPORARY, false)?
+                .visit_field::<u16>("port_v6_temporary", Self::VT_PORT_V6_TEMPORARY, false)?
+                .visit_field::<u64>("ip_v6_link_local", Self::VT_IP_V6_LINK_LOCAL, false)?
+                .visit_field::<u16>("port_v6_link_local", Self::VT_PORT_V6_LINK_LOCAL, false)?
+                .visit_field::<u32>("scope_v6", Self::VT_SCOPE_V6, false)?
+                .visit_field::<u64>("ip_v6_unique_local", Self::VT_IP_V6_UNIQUE_LOCAL, false)?
+                .visit_field::<u16>("port_v6_unique_local", Self::VT_PORT_V6_UNIQUE_LOCAL, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("mac_address", Self::VT_MAC_ADDRESS, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct NetInterfaceArgs<'a> {
+        pub ip_v4: u32,
+        pub port_v4: u16,
+        pub ip_v6_global: u64,
+        pub port_v6_global: u16,
+        pub ip_v6_temporary: u64,
+        pub port_v6_temporary: u16,
+        pub ip_v6_link_local: u64,
+        pub port_v6_link_local: u16,
+        pub scope_v6: u32,
+        pub ip_v6_unique_local: u64,
+        pub port_v6_unique_local: u16,
+        pub name: Option<flatbuffers::WIPOffset<&'a str>>,
+        pub mac_address: Option<flatbuffers::WIPOffset<&'a str>>,
+    }
+    impl<'a> Default for NetInterfaceArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            NetInterfaceArgs {
+                ip_v4: 0,
+                port_v4: 0,
+                ip_v6_global: 0,
+                port_v6_global: 0,
+                ip_v6_temporary: 0,
+                port_v6_temporary: 0,
+                ip_v6_link_local: 0,
+                port_v6_link_local: 0,
+                scope_v6: 0,
+                ip_v6_unique_local: 0,
+                port_v6_unique_local: 0,
+                name: None,
+                mac_address: None,
+            }
+        }
+    }
+
+    pub struct NetInterfaceBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> NetInterfaceBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_ip_v4(&mut self, ip_v4: u32) {
+            self.fbb_.push_slot::<u32>(NetInterface::VT_IP_V4, ip_v4, 0);
+        }
+        #[inline]
+        pub fn add_port_v4(&mut self, port_v4: u16) {
+            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V4, port_v4, 0);
+        }
+        #[inline]
+        pub fn add_ip_v6_global(&mut self, ip_v6_global: u64) {
+            self.fbb_.push_slot::<u64>(NetInterface::VT_IP_V6_GLOBAL, ip_v6_global, 0);
+        }
+        #[inline]
+        pub fn add_port_v6_global(&mut self, port_v6_global: u16) {
+            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V6_GLOBAL, port_v6_global, 0);
+        }
+        #[inline]
+        pub fn add_ip_v6_temporary(&mut self, ip_v6_temporary: u64) {
+            self.fbb_.push_slot::<u64>(NetInterface::VT_IP_V6_TEMPORARY, ip_v6_temporary, 0);
+        }
+        #[inline]
+        pub fn add_port_v6_temporary(&mut self, port_v6_temporary: u16) {
+            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V6_TEMPORARY, port_v6_temporary, 0);
+        }
+        #[inline]
+        pub fn add_ip_v6_link_local(&mut self, ip_v6_link_local: u64) {
+            self.fbb_.push_slot::<u64>(NetInterface::VT_IP_V6_LINK_LOCAL, ip_v6_link_local, 0);
+        }
+        #[inline]
+        pub fn add_port_v6_link_local(&mut self, port_v6_link_local: u16) {
+            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V6_LINK_LOCAL, port_v6_link_local, 0);
+        }
+        #[inline]
+        pub fn add_scope_v6(&mut self, scope_v6: u32) {
+            self.fbb_.push_slot::<u32>(NetInterface::VT_SCOPE_V6, scope_v6, 0);
+        }
+        #[inline]
+        pub fn add_ip_v6_unique_local(&mut self, ip_v6_unique_local: u64) {
+            self.fbb_.push_slot::<u64>(NetInterface::VT_IP_V6_UNIQUE_LOCAL, ip_v6_unique_local, 0);
+        }
+        #[inline]
+        pub fn add_port_v6_unique_local(&mut self, port_v6_unique_local: u16) {
+            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V6_UNIQUE_LOCAL, port_v6_unique_local, 0);
+        }
+        #[inline]
+        pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(NetInterface::VT_NAME, name);
+        }
+        #[inline]
+        pub fn add_mac_address(&mut self, mac_address: flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<_>>(NetInterface::VT_MAC_ADDRESS, mac_address);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> NetInterfaceBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            NetInterfaceBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<NetInterface<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for NetInterface<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("NetInterface");
+            ds.field("ip_v4", &self.ip_v4());
+            ds.field("port_v4", &self.port_v4());
+            ds.field("ip_v6_global", &self.ip_v6_global());
+            ds.field("port_v6_global", &self.port_v6_global());
+            ds.field("ip_v6_temporary", &self.ip_v6_temporary());
+            ds.field("port_v6_temporary", &self.port_v6_temporary());
+            ds.field("ip_v6_link_local", &self.ip_v6_link_local());
+            ds.field("port_v6_link_local", &self.port_v6_link_local());
+            ds.field("scope_v6", &self.scope_v6());
+            ds.field("ip_v6_unique_local", &self.ip_v6_unique_local());
+            ds.field("port_v6_unique_local", &self.port_v6_unique_local());
+            ds.field("name", &self.name());
+            ds.field("mac_address", &self.mac_address());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct NetInterfaceT {
+        pub ip_v4: u32,
+        pub port_v4: u16,
+        pub ip_v6_global: u64,
+        pub port_v6_global: u16,
+        pub ip_v6_temporary: u64,
+        pub port_v6_temporary: u16,
+        pub ip_v6_link_local: u64,
+        pub port_v6_link_local: u16,
+        pub scope_v6: u32,
+        pub ip_v6_unique_local: u64,
+        pub port_v6_unique_local: u16,
+        pub name: Option<String>,
+        pub mac_address: Option<String>,
+    }
+    impl Default for NetInterfaceT {
+        fn default() -> Self {
+            Self {
+                ip_v4: 0,
+                port_v4: 0,
+                ip_v6_global: 0,
+                port_v6_global: 0,
+                ip_v6_temporary: 0,
+                port_v6_temporary: 0,
+                ip_v6_link_local: 0,
+                port_v6_link_local: 0,
+                scope_v6: 0,
+                ip_v6_unique_local: 0,
+                port_v6_unique_local: 0,
+                name: None,
+                mac_address: None,
+            }
+        }
+    }
+    impl NetInterfaceT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<NetInterface<'b>> {
+            let ip_v4 = self.ip_v4;
+            let port_v4 = self.port_v4;
+            let ip_v6_global = self.ip_v6_global;
+            let port_v6_global = self.port_v6_global;
+            let ip_v6_temporary = self.ip_v6_temporary;
+            let port_v6_temporary = self.port_v6_temporary;
+            let ip_v6_link_local = self.ip_v6_link_local;
+            let port_v6_link_local = self.port_v6_link_local;
+            let scope_v6 = self.scope_v6;
+            let ip_v6_unique_local = self.ip_v6_unique_local;
+            let port_v6_unique_local = self.port_v6_unique_local;
+            let name = self.name.as_ref().map(|x| _fbb.create_string(x));
+            let mac_address = self.mac_address.as_ref().map(|x| _fbb.create_string(x));
+            NetInterface::create(
+                _fbb,
+                &NetInterfaceArgs {
+                    ip_v4,
+                    port_v4,
+                    ip_v6_global,
+                    port_v6_global,
+                    ip_v6_temporary,
+                    port_v6_temporary,
+                    ip_v6_link_local,
+                    port_v6_link_local,
+                    scope_v6,
+                    ip_v6_unique_local,
+                    port_v6_unique_local,
+                    name,
+                    mac_address,
                 },
             )
         }

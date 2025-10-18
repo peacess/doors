@@ -1,34 +1,192 @@
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+
 use x25519_dalek::EphemeralSecret;
 
 pub struct PartnerServiceInfo {
     pub id: ulid::Ulid,
     pub instance_name: String,
     pub service_type: String,
-    pub port: u16,
     pub secret: EphemeralSecret,
+    pub net_ips: Vec<NetIp>,
 }
 
 impl PartnerServiceInfo {
     pub fn new() -> PartnerServiceInfo {
         let secret = EphemeralSecret::random();
-        let mut port = 9933u16;
-        loop {
-            match std::net::UdpSocket::bind("") {
-                Err(_e) => {
-                    port += 1;
-                    continue;
-                }
-                Ok(_s) => {
-                    break;
+
+        let mut net_ips = Vec::new();
+        match netwatcher::list_interfaces() {
+            Err(e) => {
+                log::error!("Error showing network interfaces: {}", e);
+            }
+            Ok(nets) => {
+                for net in nets {
+                    if let Some(ip) = Self::net_ip_from_net(net.1) {
+                        net_ips.push(ip);
+                    }
                 }
             }
         }
+
         PartnerServiceInfo {
             id: idl::ids::generate_ulid(),
             instance_name: "doors_chat".into(),
             service_type: "_http._tcp".into(),
-            port,
             secret,
+            net_ips,
         }
+    }
+
+    fn net_ip_from_net(net: netwatcher::Interface) -> Option<NetIp> {
+        if net.ips.is_empty() || net.hw_addr == "00:00:00:00:00:00" {
+            return None;
+        }
+
+        let mut net_ip = NetIp::default();
+        net_ip.name = net.name;
+        net_ip.mac_address = net.hw_addr;
+        net_ip.scope_v6 = net.index;
+        for add in net.ips {
+            match add.ip {
+                IpAddr::V4(v4) => {
+                    log::debug!("{}", v4);
+                    if v4.is_loopback() {
+                        continue;
+                    }
+                    net_ip.ip_v4 = v4;
+                    {
+                        let mut port = NetIp::DEFAULT_PORT;
+                        loop {
+                            match std::net::UdpSocket::bind(core::net::SocketAddrV4::new(net_ip.ip_v4, port)) {
+                                Err(_e) => {
+                                    port += 1;
+                                    continue;
+                                }
+                                Ok(_s) => {
+                                    net_ip.port_v4 = port;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                IpAddr::V6(v6) => {
+                    log::debug!("{}", v6);
+                    if v6.is_loopback() {
+                        continue;
+                    }
+
+                    if v6.is_unicast_link_local() {
+                        let mut port = NetIp::DEFAULT_PORT;
+                        loop {
+                            match std::net::UdpSocket::bind(core::net::SocketAddrV6::new(v6, port, 0, net.index)) {
+                                Err(e) => {
+                                    log::debug!("{}", e);
+                                    port += 1;
+                                    continue;
+                                }
+                                Ok(_s) => {
+                                    net_ip.port_v4 = port;
+                                    break;
+                                }
+                            }
+                        }
+                        net_ip.ip_v6_link_local = v6;
+                        net_ip.port_v6_link_local = port;
+                    } else if v6.is_unique_local() {
+                        let mut port = NetIp::DEFAULT_PORT;
+                        loop {
+                            match std::net::UdpSocket::bind(core::net::SocketAddrV6::new(v6, port, 0, net.index)) {
+                                Err(e) => {
+                                    log::debug!("{}", e);
+                                    port += 1;
+                                    continue;
+                                }
+                                Ok(_s) => {
+                                    net_ip.port_v4 = port;
+                                    break;
+                                }
+                            }
+                        }
+                        net_ip.ip_v6_unique_local = v6;
+                        net_ip.port_v6_unique_local = port;
+                    } else {
+                        let mut port = NetIp::DEFAULT_PORT;
+                        loop {
+                            match std::net::UdpSocket::bind(core::net::SocketAddrV6::new(v6, port, 0, 0)) {
+                                Err(e) => {
+                                    log::debug!("{}", e);
+                                    port += 1;
+                                    continue;
+                                }
+                                Ok(_s) => {
+                                    net_ip.port_v4 = port;
+                                    break;
+                                }
+                            }
+                        }
+                        if net_ip.ip_v6_global.is_unspecified() {
+                            net_ip.ip_v6_global = v6;
+                            net_ip.port_v6_global = port;
+                        } else {
+                            net_ip.ip_v6_temporary = v6;
+                            net_ip.port_v6_temporary = port;
+                        }
+                    }
+                }
+            }
+        }
+        Some(net_ip)
+    }
+}
+
+pub struct NetIp {
+    pub ip_v4: Ipv4Addr,
+    pub port_v4: u16,
+    pub ip_v6_global: Ipv6Addr,
+    pub port_v6_global: u16,
+    pub ip_v6_temporary: Ipv6Addr,
+    pub port_v6_temporary: u16,
+    pub ip_v6_link_local: Ipv6Addr,
+    pub port_v6_link_local: u16,
+    pub scope_v6: u32,
+    pub ip_v6_unique_local: Ipv6Addr,
+    pub port_v6_unique_local: u16,
+    pub name: String,
+    pub mac_address: String,
+}
+
+impl NetIp {
+    pub const DEFAULT_PORT: u16 = 9933;
+}
+
+impl Default for NetIp {
+    fn default() -> Self {
+        Self {
+            ip_v4: Ipv4Addr::from_bits(0),
+            port_v4: 0,
+            ip_v6_global: Ipv6Addr::from_bits(0),
+            port_v6_global: 0,
+            ip_v6_temporary: Ipv6Addr::from_bits(0),
+            port_v6_temporary: 0,
+            ip_v6_link_local: Ipv6Addr::from_bits(0),
+            port_v6_link_local: 0,
+            ip_v6_unique_local: Ipv6Addr::from_bits(0),
+            port_v6_unique_local: 0,
+            scope_v6: 0,
+            name: "".to_string(),
+            mac_address: "".to_string(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::discover::partner_service_info::PartnerServiceInfo;
+
+    #[test]
+    fn test_net_ip_from_net() {
+        env_logger::builder().is_test(false).filter_level(log::LevelFilter::Debug).init();
+        let _net_ip = PartnerServiceInfo::new();
     }
 }

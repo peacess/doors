@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define NetIp_DEFAULT_PORT 9933
+
 typedef struct FfiBytes {
   uint64_t len;
   uint64_t capacity;

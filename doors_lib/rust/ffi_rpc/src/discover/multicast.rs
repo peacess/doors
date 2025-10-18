@@ -11,7 +11,6 @@ use idl::{
 use crate::discover::{net::NetHelper, partner_service_info::PartnerServiceInfo};
 
 pub struct MulticastService {
-    ips: Vec<std::net::IpAddr>,
     sender_ipv4: tokio::net::UdpSocket,
     receiver_ipv4: tokio::net::UdpSocket,
     sender_ipv6: Option<tokio::net::UdpSocket>,
@@ -36,7 +35,11 @@ impl MulticastService {
     }
 
     pub fn new_with_ips(ips: Vec<std::net::IpAddr>) -> Result<Arc<Self>, anyhow::Error> {
-        let has_ipv6 = ips.iter().any(|ip| ip.is_ipv6());
+        let service_info = PartnerServiceInfo::new();
+        let ips = &service_info.net_ips;
+        let has_ipv6 = ips
+            .iter()
+            .any(|ip| ip.ip_v6_link_local.is_unspecified() || ip.ip_v6_unique_local.is_unspecified());
         let receiver_ipv4 = {
             let listen_addr = SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, Self::MULTICAST_GROUP_PORT);
             let socket = socket2::Socket::new(socket2::Domain::IPV4, socket2::Type::DGRAM, Some(socket2::Protocol::UDP))?;
@@ -91,12 +94,11 @@ impl MulticastService {
         };
 
         Ok(Arc::new(Self {
-            ips,
             sender_ipv4,
             receiver_ipv4,
             sender_ipv6,
             receiver_ipv6,
-            service_info: PartnerServiceInfo::new(),
+            service_info,
         }))
     }
     pub fn init(self: Arc<Self>, cancel_token: tokio_util::sync::CancellationToken) -> tokio::task::JoinHandle<Result<(), anyhow::Error>> {
@@ -107,35 +109,38 @@ impl MulticastService {
                 let buffer = {
                     let mut builder = flatbuffers::FlatBufferBuilder::with_capacity(1024);
                     let show_name = builder.create_string("doors_chat");
-                    let hi = Hi::create(
-                        &mut builder,
-                        &HiArgs {
-                            id: Some(&UlidBytes::from(idl::ids::generate_ulid())),
-                            dns_terminal: Some(DnsTerminal::create(
-                                &mut builder,
-                                &DnsTerminalArgs {
-                                    id: Some(&UlidBytes::from(idl::ids::generate_ulid())),
-                                    partner_id: Some(&PartnerId::from(idl::ids::generate_ulid())),
-                                    terminal_id: Some(&TerminalId::from(idl::ids::generate_ulid())),
-                                    ip_v4: todo!(),
-                                    port_v4: todo!(),
-                                    ip_v6: todo!(),
-                                    port_v6: todo!(),
-                                    key: todo!(),
-                                    host_name: todo!(),
-                                    show_name: todo!(),
-                                },
-                            )),
-                            show_name: Some(show_name),
-                        },
-                    );
-
-                    let header = Header::new();
-
-                    let hi_frame = HiFrame::create(&mut builder, &HiFrameArgs { hi: Some(hi), header });
-
-                    builder.finished_data()
+                    // let hi = Hi::create(
+                    //     &mut builder,
+                    //     &HiArgs {
+                    //         id: Some(&UlidBytes::from(idl::ids::generate_ulid())),
+                    //         dns_terminal: Some(DnsTerminal::create(
+                    //             &mut builder,
+                    //             &DnsTerminalArgs {
+                    //                 id: Some(&UlidBytes::from(idl::ids::generate_ulid())),
+                    //                 partner_id: Some(&PartnerId::from(idl::ids::generate_ulid())),
+                    //                 terminal_id: Some(&TerminalId::from(idl::ids::generate_ulid())),
+                    //                 ip_v4: todo!(),
+                    //                 port_v4: todo!(),
+                    //                 ip_v6: todo!(),
+                    //                 port_v6: todo!(),
+                    //                 key: todo!(),
+                    //                 host_name: todo!(),
+                    //                 show_name: todo!(),
+                    //             },
+                    //         )),
+                    //         show_name: Some(show_name),
+                    //     },
+                    // );
+                    //
+                    // let header = Header::new();
+                    //
+                    // let hi_frame = HiFrame::create(&mut builder, &HiFrameArgs { hi: Some(hi), header });
+                    //
+                    // builder.finished_data()
                 };
+
+                let msg = "".to_string();
+
                 match self.sender_ipv4.send_to(msg.as_bytes(), &Self::MULTICAST_GROUP_IPV4).await {
                     Ok(sent) => {
                         log::info!("[Sender] Sent {} bytes to {}", sent, Self::MULTICAST_GROUP_IPV4);

@@ -24,30 +24,24 @@ class DnsTerminal {
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
   base.PartnerId? get partnerId => base.PartnerId.reader.vTableGetNullable(_bc, _bcOffset, 6);
   base.TerminalId? get terminalId => base.TerminalId.reader.vTableGetNullable(_bc, _bcOffset, 8);
-  int get ipV4 => const fb.Uint32Reader().vTableGet(_bc, _bcOffset, 10, 0);
-  int get portV4 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 12, 0);
-  int get ipV6 => const fb.Uint64Reader().vTableGet(_bc, _bcOffset, 14, 0);
-  int get portV6 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 16, 0);
-  base.X25519Public? get key => base.X25519Public.reader.vTableGetNullable(_bc, _bcOffset, 18);
-  String? get hostName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 20);
-  String? get showName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 22);
+  base.X25519Public? get key => base.X25519Public.reader.vTableGetNullable(_bc, _bcOffset, 10);
+  String? get hostName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 12);
+  String? get showName => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 14);
+  List<NetInterface>? get netInterfaces => const fb.ListReader<NetInterface>(NetInterface.reader).vTableGetNullable(_bc, _bcOffset, 16);
 
   @override
   String toString() {
-    return 'DnsTerminal{id: ${id}, partnerId: ${partnerId}, terminalId: ${terminalId}, ipV4: ${ipV4}, portV4: ${portV4}, ipV6: ${ipV6}, portV6: ${portV6}, key: ${key}, hostName: ${hostName}, showName: ${showName}}';
+    return 'DnsTerminal{id: ${id}, partnerId: ${partnerId}, terminalId: ${terminalId}, key: ${key}, hostName: ${hostName}, showName: ${showName}, netInterfaces: ${netInterfaces}}';
   }
 
   DnsTerminalT unpack() => DnsTerminalT(
     id: id?.unpack(),
     partnerId: partnerId?.unpack(),
     terminalId: terminalId?.unpack(),
-    ipV4: ipV4,
-    portV4: portV4,
-    ipV6: ipV6,
-    portV6: portV6,
     key: key?.unpack(),
     hostName: hostName,
     showName: showName,
+    netInterfaces: netInterfaces?.map((e) => e.unpack()).toList(),
   );
 
   static int pack(fb.Builder fbBuilder, DnsTerminalT? object) {
@@ -60,32 +54,19 @@ class DnsTerminalT implements fb.Packable {
   base.UlidBytesT? id;
   base.PartnerIdT? partnerId;
   base.TerminalIdT? terminalId;
-  int ipV4;
-  int portV4;
-  int ipV6;
-  int portV6;
   base.X25519PublicT? key;
   String? hostName;
   String? showName;
+  List<NetInterfaceT>? netInterfaces;
 
-  DnsTerminalT({
-    this.id,
-    this.partnerId,
-    this.terminalId,
-    this.ipV4 = 0,
-    this.portV4 = 0,
-    this.ipV6 = 0,
-    this.portV6 = 0,
-    this.key,
-    this.hostName,
-    this.showName,
-  });
+  DnsTerminalT({this.id, this.partnerId, this.terminalId, this.key, this.hostName, this.showName, this.netInterfaces});
 
   @override
   int pack(fb.Builder fbBuilder) {
     final int? hostNameOffset = hostName == null ? null : fbBuilder.writeString(hostName!);
     final int? showNameOffset = showName == null ? null : fbBuilder.writeString(showName!);
-    fbBuilder.startTable(10);
+    final int? netInterfacesOffset = netInterfaces == null ? null : fbBuilder.writeList(netInterfaces!.map((b) => b.pack(fbBuilder)).toList());
+    fbBuilder.startTable(7);
     if (id != null) {
       fbBuilder.addStruct(0, id!.pack(fbBuilder));
     }
@@ -95,21 +76,18 @@ class DnsTerminalT implements fb.Packable {
     if (terminalId != null) {
       fbBuilder.addStruct(2, terminalId!.pack(fbBuilder));
     }
-    fbBuilder.addUint32(3, ipV4);
-    fbBuilder.addUint16(4, portV4);
-    fbBuilder.addUint64(5, ipV6);
-    fbBuilder.addUint16(6, portV6);
     if (key != null) {
-      fbBuilder.addStruct(7, key!.pack(fbBuilder));
+      fbBuilder.addStruct(3, key!.pack(fbBuilder));
     }
-    fbBuilder.addOffset(8, hostNameOffset);
-    fbBuilder.addOffset(9, showNameOffset);
+    fbBuilder.addOffset(4, hostNameOffset);
+    fbBuilder.addOffset(5, showNameOffset);
+    fbBuilder.addOffset(6, netInterfacesOffset);
     return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'DnsTerminalT{id: ${id}, partnerId: ${partnerId}, terminalId: ${terminalId}, ipV4: ${ipV4}, portV4: ${portV4}, ipV6: ${ipV6}, portV6: ${portV6}, key: ${key}, hostName: ${hostName}, showName: ${showName}}';
+    return 'DnsTerminalT{id: ${id}, partnerId: ${partnerId}, terminalId: ${terminalId}, key: ${key}, hostName: ${hostName}, showName: ${showName}, netInterfaces: ${netInterfaces}}';
   }
 }
 
@@ -126,7 +104,7 @@ class DnsTerminalBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(10);
+    fbBuilder.startTable(7);
   }
 
   int addId(int offset) {
@@ -144,38 +122,23 @@ class DnsTerminalBuilder {
     return fbBuilder.offset;
   }
 
-  int addIpV4(int? ipV4) {
-    fbBuilder.addUint32(3, ipV4);
-    return fbBuilder.offset;
-  }
-
-  int addPortV4(int? portV4) {
-    fbBuilder.addUint16(4, portV4);
-    return fbBuilder.offset;
-  }
-
-  int addIpV6(int? ipV6) {
-    fbBuilder.addUint64(5, ipV6);
-    return fbBuilder.offset;
-  }
-
-  int addPortV6(int? portV6) {
-    fbBuilder.addUint16(6, portV6);
-    return fbBuilder.offset;
-  }
-
   int addKey(int offset) {
-    fbBuilder.addStruct(7, offset);
+    fbBuilder.addStruct(3, offset);
     return fbBuilder.offset;
   }
 
   int addHostNameOffset(int? offset) {
-    fbBuilder.addOffset(8, offset);
+    fbBuilder.addOffset(4, offset);
     return fbBuilder.offset;
   }
 
   int addShowNameOffset(int? offset) {
-    fbBuilder.addOffset(9, offset);
+    fbBuilder.addOffset(5, offset);
+    return fbBuilder.offset;
+  }
+
+  int addNetInterfacesOffset(int? offset) {
+    fbBuilder.addOffset(6, offset);
     return fbBuilder.offset;
   }
 
@@ -188,42 +151,34 @@ class DnsTerminalObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
   final base.PartnerIdObjectBuilder? _partnerId;
   final base.TerminalIdObjectBuilder? _terminalId;
-  final int? _ipV4;
-  final int? _portV4;
-  final int? _ipV6;
-  final int? _portV6;
   final base.X25519PublicObjectBuilder? _key;
   final String? _hostName;
   final String? _showName;
+  final List<NetInterfaceObjectBuilder>? _netInterfaces;
 
   DnsTerminalObjectBuilder({
     base.UlidBytesObjectBuilder? id,
     base.PartnerIdObjectBuilder? partnerId,
     base.TerminalIdObjectBuilder? terminalId,
-    int? ipV4,
-    int? portV4,
-    int? ipV6,
-    int? portV6,
     base.X25519PublicObjectBuilder? key,
     String? hostName,
     String? showName,
+    List<NetInterfaceObjectBuilder>? netInterfaces,
   }) : _id = id,
        _partnerId = partnerId,
        _terminalId = terminalId,
-       _ipV4 = ipV4,
-       _portV4 = portV4,
-       _ipV6 = ipV6,
-       _portV6 = portV6,
        _key = key,
        _hostName = hostName,
-       _showName = showName;
+       _showName = showName,
+       _netInterfaces = netInterfaces;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
     final int? hostNameOffset = _hostName == null ? null : fbBuilder.writeString(_hostName!);
     final int? showNameOffset = _showName == null ? null : fbBuilder.writeString(_showName!);
-    fbBuilder.startTable(10);
+    final int? netInterfacesOffset = _netInterfaces == null ? null : fbBuilder.writeList(_netInterfaces!.map((b) => b.getOrCreateOffset(fbBuilder)).toList());
+    fbBuilder.startTable(7);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
@@ -233,15 +188,283 @@ class DnsTerminalObjectBuilder extends fb.ObjectBuilder {
     if (_terminalId != null) {
       fbBuilder.addStruct(2, _terminalId!.finish(fbBuilder));
     }
-    fbBuilder.addUint32(3, _ipV4);
-    fbBuilder.addUint16(4, _portV4);
-    fbBuilder.addUint64(5, _ipV6);
-    fbBuilder.addUint16(6, _portV6);
     if (_key != null) {
-      fbBuilder.addStruct(7, _key!.finish(fbBuilder));
+      fbBuilder.addStruct(3, _key!.finish(fbBuilder));
     }
-    fbBuilder.addOffset(8, hostNameOffset);
-    fbBuilder.addOffset(9, showNameOffset);
+    fbBuilder.addOffset(4, hostNameOffset);
+    fbBuilder.addOffset(5, showNameOffset);
+    fbBuilder.addOffset(6, netInterfacesOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class NetInterface {
+  NetInterface._(this._bc, this._bcOffset);
+  factory NetInterface(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<NetInterface> reader = _NetInterfaceReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  int get ipV4 => const fb.Uint32Reader().vTableGet(_bc, _bcOffset, 4, 0);
+  int get portV4 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 6, 0);
+  int get ipV6Global => const fb.Uint64Reader().vTableGet(_bc, _bcOffset, 8, 0);
+  int get portV6Global => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 10, 0);
+  int get ipV6Temporary => const fb.Uint64Reader().vTableGet(_bc, _bcOffset, 12, 0);
+  int get portV6Temporary => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 14, 0);
+  int get ipV6LinkLocal => const fb.Uint64Reader().vTableGet(_bc, _bcOffset, 16, 0);
+  int get portV6LinkLocal => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 18, 0);
+  int get scopeV6 => const fb.Uint32Reader().vTableGet(_bc, _bcOffset, 20, 0);
+  int get ipV6UniqueLocal => const fb.Uint64Reader().vTableGet(_bc, _bcOffset, 22, 0);
+  int get portV6UniqueLocal => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 24, 0);
+  String? get name => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 26);
+  String? get macAddress => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 28);
+
+  @override
+  String toString() {
+    return 'NetInterface{ipV4: ${ipV4}, portV4: ${portV4}, ipV6Global: ${ipV6Global}, portV6Global: ${portV6Global}, ipV6Temporary: ${ipV6Temporary}, portV6Temporary: ${portV6Temporary}, ipV6LinkLocal: ${ipV6LinkLocal}, portV6LinkLocal: ${portV6LinkLocal}, scopeV6: ${scopeV6}, ipV6UniqueLocal: ${ipV6UniqueLocal}, portV6UniqueLocal: ${portV6UniqueLocal}, name: ${name}, macAddress: ${macAddress}}';
+  }
+
+  NetInterfaceT unpack() => NetInterfaceT(
+    ipV4: ipV4,
+    portV4: portV4,
+    ipV6Global: ipV6Global,
+    portV6Global: portV6Global,
+    ipV6Temporary: ipV6Temporary,
+    portV6Temporary: portV6Temporary,
+    ipV6LinkLocal: ipV6LinkLocal,
+    portV6LinkLocal: portV6LinkLocal,
+    scopeV6: scopeV6,
+    ipV6UniqueLocal: ipV6UniqueLocal,
+    portV6UniqueLocal: portV6UniqueLocal,
+    name: name,
+    macAddress: macAddress,
+  );
+
+  static int pack(fb.Builder fbBuilder, NetInterfaceT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class NetInterfaceT implements fb.Packable {
+  int ipV4;
+  int portV4;
+  int ipV6Global;
+  int portV6Global;
+  int ipV6Temporary;
+  int portV6Temporary;
+  int ipV6LinkLocal;
+  int portV6LinkLocal;
+  int scopeV6;
+  int ipV6UniqueLocal;
+  int portV6UniqueLocal;
+  String? name;
+  String? macAddress;
+
+  NetInterfaceT({
+    this.ipV4 = 0,
+    this.portV4 = 0,
+    this.ipV6Global = 0,
+    this.portV6Global = 0,
+    this.ipV6Temporary = 0,
+    this.portV6Temporary = 0,
+    this.ipV6LinkLocal = 0,
+    this.portV6LinkLocal = 0,
+    this.scopeV6 = 0,
+    this.ipV6UniqueLocal = 0,
+    this.portV6UniqueLocal = 0,
+    this.name,
+    this.macAddress,
+  });
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? nameOffset = name == null ? null : fbBuilder.writeString(name!);
+    final int? macAddressOffset = macAddress == null ? null : fbBuilder.writeString(macAddress!);
+    fbBuilder.startTable(13);
+    fbBuilder.addUint32(0, ipV4);
+    fbBuilder.addUint16(1, portV4);
+    fbBuilder.addUint64(2, ipV6Global);
+    fbBuilder.addUint16(3, portV6Global);
+    fbBuilder.addUint64(4, ipV6Temporary);
+    fbBuilder.addUint16(5, portV6Temporary);
+    fbBuilder.addUint64(6, ipV6LinkLocal);
+    fbBuilder.addUint16(7, portV6LinkLocal);
+    fbBuilder.addUint32(8, scopeV6);
+    fbBuilder.addUint64(9, ipV6UniqueLocal);
+    fbBuilder.addUint16(10, portV6UniqueLocal);
+    fbBuilder.addOffset(11, nameOffset);
+    fbBuilder.addOffset(12, macAddressOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'NetInterfaceT{ipV4: ${ipV4}, portV4: ${portV4}, ipV6Global: ${ipV6Global}, portV6Global: ${portV6Global}, ipV6Temporary: ${ipV6Temporary}, portV6Temporary: ${portV6Temporary}, ipV6LinkLocal: ${ipV6LinkLocal}, portV6LinkLocal: ${portV6LinkLocal}, scopeV6: ${scopeV6}, ipV6UniqueLocal: ${ipV6UniqueLocal}, portV6UniqueLocal: ${portV6UniqueLocal}, name: ${name}, macAddress: ${macAddress}}';
+  }
+}
+
+class _NetInterfaceReader extends fb.TableReader<NetInterface> {
+  const _NetInterfaceReader();
+
+  @override
+  NetInterface createObject(fb.BufferContext bc, int offset) => NetInterface._(bc, offset);
+}
+
+class NetInterfaceBuilder {
+  NetInterfaceBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(13);
+  }
+
+  int addIpV4(int? ipV4) {
+    fbBuilder.addUint32(0, ipV4);
+    return fbBuilder.offset;
+  }
+
+  int addPortV4(int? portV4) {
+    fbBuilder.addUint16(1, portV4);
+    return fbBuilder.offset;
+  }
+
+  int addIpV6Global(int? ipV6Global) {
+    fbBuilder.addUint64(2, ipV6Global);
+    return fbBuilder.offset;
+  }
+
+  int addPortV6Global(int? portV6Global) {
+    fbBuilder.addUint16(3, portV6Global);
+    return fbBuilder.offset;
+  }
+
+  int addIpV6Temporary(int? ipV6Temporary) {
+    fbBuilder.addUint64(4, ipV6Temporary);
+    return fbBuilder.offset;
+  }
+
+  int addPortV6Temporary(int? portV6Temporary) {
+    fbBuilder.addUint16(5, portV6Temporary);
+    return fbBuilder.offset;
+  }
+
+  int addIpV6LinkLocal(int? ipV6LinkLocal) {
+    fbBuilder.addUint64(6, ipV6LinkLocal);
+    return fbBuilder.offset;
+  }
+
+  int addPortV6LinkLocal(int? portV6LinkLocal) {
+    fbBuilder.addUint16(7, portV6LinkLocal);
+    return fbBuilder.offset;
+  }
+
+  int addScopeV6(int? scopeV6) {
+    fbBuilder.addUint32(8, scopeV6);
+    return fbBuilder.offset;
+  }
+
+  int addIpV6UniqueLocal(int? ipV6UniqueLocal) {
+    fbBuilder.addUint64(9, ipV6UniqueLocal);
+    return fbBuilder.offset;
+  }
+
+  int addPortV6UniqueLocal(int? portV6UniqueLocal) {
+    fbBuilder.addUint16(10, portV6UniqueLocal);
+    return fbBuilder.offset;
+  }
+
+  int addNameOffset(int? offset) {
+    fbBuilder.addOffset(11, offset);
+    return fbBuilder.offset;
+  }
+
+  int addMacAddressOffset(int? offset) {
+    fbBuilder.addOffset(12, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class NetInterfaceObjectBuilder extends fb.ObjectBuilder {
+  final int? _ipV4;
+  final int? _portV4;
+  final int? _ipV6Global;
+  final int? _portV6Global;
+  final int? _ipV6Temporary;
+  final int? _portV6Temporary;
+  final int? _ipV6LinkLocal;
+  final int? _portV6LinkLocal;
+  final int? _scopeV6;
+  final int? _ipV6UniqueLocal;
+  final int? _portV6UniqueLocal;
+  final String? _name;
+  final String? _macAddress;
+
+  NetInterfaceObjectBuilder({
+    int? ipV4,
+    int? portV4,
+    int? ipV6Global,
+    int? portV6Global,
+    int? ipV6Temporary,
+    int? portV6Temporary,
+    int? ipV6LinkLocal,
+    int? portV6LinkLocal,
+    int? scopeV6,
+    int? ipV6UniqueLocal,
+    int? portV6UniqueLocal,
+    String? name,
+    String? macAddress,
+  }) : _ipV4 = ipV4,
+       _portV4 = portV4,
+       _ipV6Global = ipV6Global,
+       _portV6Global = portV6Global,
+       _ipV6Temporary = ipV6Temporary,
+       _portV6Temporary = portV6Temporary,
+       _ipV6LinkLocal = ipV6LinkLocal,
+       _portV6LinkLocal = portV6LinkLocal,
+       _scopeV6 = scopeV6,
+       _ipV6UniqueLocal = ipV6UniqueLocal,
+       _portV6UniqueLocal = portV6UniqueLocal,
+       _name = name,
+       _macAddress = macAddress;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? nameOffset = _name == null ? null : fbBuilder.writeString(_name!);
+    final int? macAddressOffset = _macAddress == null ? null : fbBuilder.writeString(_macAddress!);
+    fbBuilder.startTable(13);
+    fbBuilder.addUint32(0, _ipV4);
+    fbBuilder.addUint16(1, _portV4);
+    fbBuilder.addUint64(2, _ipV6Global);
+    fbBuilder.addUint16(3, _portV6Global);
+    fbBuilder.addUint64(4, _ipV6Temporary);
+    fbBuilder.addUint16(5, _portV6Temporary);
+    fbBuilder.addUint64(6, _ipV6LinkLocal);
+    fbBuilder.addUint16(7, _portV6LinkLocal);
+    fbBuilder.addUint32(8, _scopeV6);
+    fbBuilder.addUint64(9, _ipV6UniqueLocal);
+    fbBuilder.addUint16(10, _portV6UniqueLocal);
+    fbBuilder.addOffset(11, nameOffset);
+    fbBuilder.addOffset(12, macAddressOffset);
     return fbBuilder.endTable();
   }
 

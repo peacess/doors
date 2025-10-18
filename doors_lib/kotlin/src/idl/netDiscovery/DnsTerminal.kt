@@ -18,22 +18,18 @@ class DnsTerminal : Table() {
     val terminalId : base.TerminalId? get() = terminalId(base.TerminalId())
     fun terminalId(obj: base.TerminalId) : base.TerminalId? = lookupField(8, null ) { obj.init(it + bufferPos, bb) }
 
-    val ipV4 : UInt get() = lookupField(10, 0u ) { bb.getUInt(it + bufferPos) }
-
-    val portV4 : UShort get() = lookupField(12, 0u ) { bb.getUShort(it + bufferPos) }
-
-    val ipV6 : ULong get() = lookupField(14, 0UL ) { bb.getULong(it + bufferPos) }
-
-    val portV6 : UShort get() = lookupField(16, 0u ) { bb.getUShort(it + bufferPos) }
-
     val key : base.X25519Public? get() = key(base.X25519Public())
-    fun key(obj: base.X25519Public) : base.X25519Public? = lookupField(18, null ) { obj.init(it + bufferPos, bb) }
+    fun key(obj: base.X25519Public) : base.X25519Public? = lookupField(10, null ) { obj.init(it + bufferPos, bb) }
 
-    val hostName : String? get() = lookupField(20, null ) { string(it + bufferPos) }
-    fun hostNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 20, 1)
+    val hostName : String? get() = lookupField(12, null ) { string(it + bufferPos) }
+    fun hostNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 12, 1)
 
-    val showName : String? get() = lookupField(22, null ) { string(it + bufferPos) }
-    fun showNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 22, 1)
+    val showName : String? get() = lookupField(14, null ) { string(it + bufferPos) }
+    fun showNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 14, 1)
+
+    fun netInterfaces(j: Int) : netDiscovery.NetInterface? = netInterfaces(netDiscovery.NetInterface(), j)
+    fun netInterfaces(obj: netDiscovery.NetInterface, j: Int) : netDiscovery.NetInterface? = lookupField(16, null ) { obj.init(indirect(vector(it) + j * 4), bb) }
+    val netInterfacesLength : Int get() = lookupField(16, 0 ) { vectorLength(it) }
 
     companion object {
         @JvmStatic
@@ -46,7 +42,7 @@ class DnsTerminal : Table() {
 
 
         @JvmStatic
-        fun startDnsTerminal(builder: FlatBufferBuilder) = builder.startTable(10)
+        fun startDnsTerminal(builder: FlatBufferBuilder) = builder.startTable(7)
 
         @JvmStatic
         fun addId(builder: FlatBufferBuilder, id: Offset<base.UlidBytes>) = builder.addStruct(0, id.value, 0)
@@ -58,25 +54,28 @@ class DnsTerminal : Table() {
         fun addTerminalId(builder: FlatBufferBuilder, terminalId: Offset<base.TerminalId>) = builder.addStruct(2, terminalId.value, 0)
 
         @JvmStatic
-        fun addIpV4(builder: FlatBufferBuilder, ipV4: UInt) = builder.add(3, ipV4, 0u)
+        fun addKey(builder: FlatBufferBuilder, key: Offset<base.X25519Public>) = builder.addStruct(3, key.value, 0)
 
         @JvmStatic
-        fun addPortV4(builder: FlatBufferBuilder, portV4: UShort) = builder.add(4, portV4, 0u)
+        fun addHostName(builder: FlatBufferBuilder, hostName: Offset<String>) = builder.add(4, hostName, 0)
 
         @JvmStatic
-        fun addIpV6(builder: FlatBufferBuilder, ipV6: ULong) = builder.add(5, ipV6, 0UL)
+        fun addShowName(builder: FlatBufferBuilder, showName: Offset<String>) = builder.add(5, showName, 0)
 
         @JvmStatic
-        fun addPortV6(builder: FlatBufferBuilder, portV6: UShort) = builder.add(6, portV6, 0u)
+        fun addNetInterfaces(builder: FlatBufferBuilder, netInterfaces: VectorOffset<netDiscovery.NetInterface>) = builder.add(6, netInterfaces, 0)
 
         @JvmStatic
-        fun addKey(builder: FlatBufferBuilder, key: Offset<base.X25519Public>) = builder.addStruct(7, key.value, 0)
+        fun createNetInterfacesVector(builder: FlatBufferBuilder, vector:netDiscovery.NetInterfaceOffsetArray) : VectorOffset<netDiscovery.NetInterface> {
+            builder.startVector(4, vector.size, 4)
+            for (i in vector.size - 1 downTo 0) {
+                builder.add(vector[i])
+            }
+            return builder.endVector()
+        }
 
         @JvmStatic
-        fun addHostName(builder: FlatBufferBuilder, hostName: Offset<String>) = builder.add(8, hostName, 0)
-
-        @JvmStatic
-        fun addShowName(builder: FlatBufferBuilder, showName: Offset<String>) = builder.add(9, showName, 0)
+        fun startNetInterfacesVector(builder: FlatBufferBuilder, numElems: Int) = builder.startVector(4, numElems, 4)
 
         @JvmStatic
         fun endDnsTerminal(builder: FlatBufferBuilder) : Offset<DnsTerminal> {

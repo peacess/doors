@@ -12,13 +12,26 @@ table DnsTerminal {
     id: base.UlidBytes;
     partner_id: base.PartnerId;
     terminal_id: base.TerminalId;
-    ip_v4: uint32;
-    port_v4: uint16;
-    ip_v6: uint64;
-    port_v6: uint16;
     key: base.X25519Public;
     host_name: string;
     show_name: string;
+    net_interfaces: [NetInterface];
+}
+
+table NetInterface {
+    ip_v4: uint32;
+    port_v4: uint16;
+    ip_v6_global: uint64;
+    port_v6_global: uint16;
+    ip_v6_temporary: uint64;
+    port_v6_temporary: uint16;
+    ip_v6_link_local: uint64;
+    port_v6_link_local: uint16;
+    scope_v6: uint32;
+    ip_v6_unique_local: uint64;
+    port_v6_unique_local: uint16;
+    name: string;
+    mac_address: string;
 }
 
 table HiFrame {
