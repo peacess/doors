@@ -1611,6 +1611,628 @@ pub mod base {
         }
     }
 
+    // struct Ipv6, aligned to 1
+    #[repr(transparent)]
+    #[derive(Clone, Copy, PartialEq)]
+    pub struct Ipv6(pub [u8; 16]);
+    impl Default for Ipv6 {
+        fn default() -> Self {
+            Self([0; 16])
+        }
+    }
+    impl core::fmt::Debug for Ipv6 {
+        fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+            f.debug_struct("Ipv6")
+                .field("ub1", &self.ub1())
+                .field("ub2", &self.ub2())
+                .field("ub3", &self.ub3())
+                .field("ub4", &self.ub4())
+                .field("ub5", &self.ub5())
+                .field("ub6", &self.ub6())
+                .field("ub7", &self.ub7())
+                .field("ub8", &self.ub8())
+                .field("ub9", &self.ub9())
+                .field("ub10", &self.ub10())
+                .field("ub11", &self.ub11())
+                .field("ub12", &self.ub12())
+                .field("ub13", &self.ub13())
+                .field("ub14", &self.ub14())
+                .field("ub15", &self.ub15())
+                .field("ub16", &self.ub16())
+                .finish()
+        }
+    }
+
+    impl flatbuffers::SimpleToVerifyInSlice for Ipv6 {}
+    impl<'a> flatbuffers::Follow<'a> for Ipv6 {
+        type Inner = &'a Ipv6;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            unsafe { <&'a Ipv6>::follow(buf, loc) }
+        }
+    }
+    impl<'a> flatbuffers::Follow<'a> for &'a Ipv6 {
+        type Inner = &'a Ipv6;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            unsafe { flatbuffers::follow_cast_ref::<Ipv6>(buf, loc) }
+        }
+    }
+    impl<'b> flatbuffers::Push for Ipv6 {
+        type Output = Ipv6;
+        #[inline]
+        unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const Ipv6 as *const u8, <Self as flatbuffers::Push>::size()) };
+            dst.copy_from_slice(src);
+        }
+        #[inline]
+        fn alignment() -> flatbuffers::PushAlignment {
+            flatbuffers::PushAlignment::new(1)
+        }
+    }
+
+    impl<'a> flatbuffers::Verifiable for Ipv6 {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.in_buffer::<Self>(pos)
+        }
+    }
+
+    impl<'a> Ipv6 {
+        #[allow(clippy::too_many_arguments)]
+        pub fn new(
+            ub1: u8,
+            ub2: u8,
+            ub3: u8,
+            ub4: u8,
+            ub5: u8,
+            ub6: u8,
+            ub7: u8,
+            ub8: u8,
+            ub9: u8,
+            ub10: u8,
+            ub11: u8,
+            ub12: u8,
+            ub13: u8,
+            ub14: u8,
+            ub15: u8,
+            ub16: u8,
+        ) -> Self {
+            let mut s = Self([0; 16]);
+            s.set_ub1(ub1);
+            s.set_ub2(ub2);
+            s.set_ub3(ub3);
+            s.set_ub4(ub4);
+            s.set_ub5(ub5);
+            s.set_ub6(ub6);
+            s.set_ub7(ub7);
+            s.set_ub8(ub8);
+            s.set_ub9(ub9);
+            s.set_ub10(ub10);
+            s.set_ub11(ub11);
+            s.set_ub12(ub12);
+            s.set_ub13(ub13);
+            s.set_ub14(ub14);
+            s.set_ub15(ub15);
+            s.set_ub16(ub16);
+            s
+        }
+
+        pub fn ub1(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[0..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub1(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[0..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub2(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[1..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub2(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[1..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub3(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[2..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub3(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[2..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub4(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[3..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub4(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[3..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub5(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[4..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub5(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[4..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub6(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[5..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub6(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[5..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub7(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[6..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub7(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[6..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub8(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[7..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub8(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[7..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub9(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[8..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub9(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[8..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub10(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[9..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub10(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[9..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub11(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[10..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub11(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[10..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub12(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[11..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub12(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[11..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub13(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[12..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub13(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[12..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub14(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[13..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub14(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[13..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub15(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[14..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub15(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[14..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn ub16(&self) -> u8 {
+            let mut mem = core::mem::MaybeUninit::<<u8 as EndianScalar>::Scalar>::uninit();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            EndianScalar::from_little_endian(unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.0[15..].as_ptr(),
+                    mem.as_mut_ptr() as *mut u8,
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+                mem.assume_init()
+            })
+        }
+
+        pub fn set_ub16(&mut self, x: u8) {
+            let x_le = x.to_little_endian();
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid value in this slot
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    &x_le as *const _ as *const u8,
+                    self.0[15..].as_mut_ptr(),
+                    core::mem::size_of::<<u8 as EndianScalar>::Scalar>(),
+                );
+            }
+        }
+
+        pub fn unpack(&self) -> Ipv6T {
+            Ipv6T {
+                ub1: self.ub1(),
+                ub2: self.ub2(),
+                ub3: self.ub3(),
+                ub4: self.ub4(),
+                ub5: self.ub5(),
+                ub6: self.ub6(),
+                ub7: self.ub7(),
+                ub8: self.ub8(),
+                ub9: self.ub9(),
+                ub10: self.ub10(),
+                ub11: self.ub11(),
+                ub12: self.ub12(),
+                ub13: self.ub13(),
+                ub14: self.ub14(),
+                ub15: self.ub15(),
+                ub16: self.ub16(),
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct Ipv6T {
+        pub ub1: u8,
+        pub ub2: u8,
+        pub ub3: u8,
+        pub ub4: u8,
+        pub ub5: u8,
+        pub ub6: u8,
+        pub ub7: u8,
+        pub ub8: u8,
+        pub ub9: u8,
+        pub ub10: u8,
+        pub ub11: u8,
+        pub ub12: u8,
+        pub ub13: u8,
+        pub ub14: u8,
+        pub ub15: u8,
+        pub ub16: u8,
+    }
+    impl Ipv6T {
+        pub fn pack(&self) -> Ipv6 {
+            Ipv6::new(
+                self.ub1, self.ub2, self.ub3, self.ub4, self.ub5, self.ub6, self.ub7, self.ub8, self.ub9, self.ub10, self.ub11, self.ub12, self.ub13,
+                self.ub14, self.ub15, self.ub16,
+            )
+        }
+    }
+
     // struct X25519Public, aligned to 8
     #[repr(transparent)]
     #[derive(Clone, Copy, PartialEq)]

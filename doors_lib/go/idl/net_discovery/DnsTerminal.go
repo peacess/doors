@@ -9,7 +9,6 @@ import (
 )
 
 type DnsTerminalT struct {
-	Id            *base.UlidBytesT    `json:"id"`
 	PartnerId     *base.PartnerIdT    `json:"partner_id"`
 	TerminalId    *base.TerminalIdT   `json:"terminal_id"`
 	Key           *base.X25519PublicT `json:"key"`
@@ -44,8 +43,6 @@ func (t *DnsTerminalT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 		netInterfacesOffset = builder.EndVector(netInterfacesLength)
 	}
 	DnsTerminalStart(builder)
-	idOffset := t.Id.Pack(builder)
-	DnsTerminalAddId(builder, idOffset)
 	partnerIdOffset := t.PartnerId.Pack(builder)
 	DnsTerminalAddPartnerId(builder, partnerIdOffset)
 	terminalIdOffset := t.TerminalId.Pack(builder)
@@ -59,7 +56,6 @@ func (t *DnsTerminalT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 }
 
 func (rcv *DnsTerminal) UnPackTo(t *DnsTerminalT) {
-	t.Id = rcv.Id(nil).UnPack()
 	t.PartnerId = rcv.PartnerId(nil).UnPack()
 	t.TerminalId = rcv.TerminalId(nil).UnPack()
 	t.Key = rcv.Key(nil).UnPack()
@@ -118,21 +114,8 @@ func (rcv *DnsTerminal) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *DnsTerminal) Id(obj *base.UlidBytes) *base.UlidBytes {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
-	if o != 0 {
-		x := o + rcv._tab.Pos
-		if obj == nil {
-			obj = new(base.UlidBytes)
-		}
-		obj.Init(rcv._tab.Bytes, x)
-		return obj
-	}
-	return nil
-}
-
 func (rcv *DnsTerminal) PartnerId(obj *base.PartnerId) *base.PartnerId {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
@@ -145,7 +128,7 @@ func (rcv *DnsTerminal) PartnerId(obj *base.PartnerId) *base.PartnerId {
 }
 
 func (rcv *DnsTerminal) TerminalId(obj *base.TerminalId) *base.TerminalId {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
@@ -158,7 +141,7 @@ func (rcv *DnsTerminal) TerminalId(obj *base.TerminalId) *base.TerminalId {
 }
 
 func (rcv *DnsTerminal) Key(obj *base.X25519Public) *base.X25519Public {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
@@ -171,7 +154,7 @@ func (rcv *DnsTerminal) Key(obj *base.X25519Public) *base.X25519Public {
 }
 
 func (rcv *DnsTerminal) HostName() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(12))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
 	}
@@ -179,7 +162,7 @@ func (rcv *DnsTerminal) HostName() []byte {
 }
 
 func (rcv *DnsTerminal) ShowName() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(12))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
 	}
@@ -187,7 +170,7 @@ func (rcv *DnsTerminal) ShowName() []byte {
 }
 
 func (rcv *DnsTerminal) NetInterfaces(obj *NetInterface, j int) bool {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
 	if o != 0 {
 		x := rcv._tab.Vector(o)
 		x += flatbuffers.UOffsetT(j) * 4
@@ -199,7 +182,7 @@ func (rcv *DnsTerminal) NetInterfaces(obj *NetInterface, j int) bool {
 }
 
 func (rcv *DnsTerminal) NetInterfacesLength() int {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
 	if o != 0 {
 		return rcv._tab.VectorLen(o)
 	}
@@ -207,28 +190,25 @@ func (rcv *DnsTerminal) NetInterfacesLength() int {
 }
 
 func DnsTerminalStart(builder *flatbuffers.Builder) {
-	builder.StartObject(7)
-}
-func DnsTerminalAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
+	builder.StartObject(6)
 }
 func DnsTerminalAddPartnerId(builder *flatbuffers.Builder, partnerId flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(1, flatbuffers.UOffsetT(partnerId), 0)
+	builder.PrependStructSlot(0, flatbuffers.UOffsetT(partnerId), 0)
 }
 func DnsTerminalAddTerminalId(builder *flatbuffers.Builder, terminalId flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(2, flatbuffers.UOffsetT(terminalId), 0)
+	builder.PrependStructSlot(1, flatbuffers.UOffsetT(terminalId), 0)
 }
 func DnsTerminalAddKey(builder *flatbuffers.Builder, key flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(3, flatbuffers.UOffsetT(key), 0)
+	builder.PrependStructSlot(2, flatbuffers.UOffsetT(key), 0)
 }
 func DnsTerminalAddHostName(builder *flatbuffers.Builder, hostName flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(4, flatbuffers.UOffsetT(hostName), 0)
+	builder.PrependUOffsetTSlot(3, flatbuffers.UOffsetT(hostName), 0)
 }
 func DnsTerminalAddShowName(builder *flatbuffers.Builder, showName flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(5, flatbuffers.UOffsetT(showName), 0)
+	builder.PrependUOffsetTSlot(4, flatbuffers.UOffsetT(showName), 0)
 }
 func DnsTerminalAddNetInterfaces(builder *flatbuffers.Builder, netInterfaces flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(6, flatbuffers.UOffsetT(netInterfaces), 0)
+	builder.PrependUOffsetTSlot(5, flatbuffers.UOffsetT(netInterfaces), 0)
 }
 func DnsTerminalStartNetInterfacesVector(builder *flatbuffers.Builder, numElems int) flatbuffers.UOffsetT {
 	return builder.StartVector(4, numElems, 4)

@@ -1,12 +1,20 @@
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use std::{ffi::CStr, net::IpAddr};
 
-use x25519_dalek::EphemeralSecret;
+use idl::{
+    PartnerId, TerminalId, X25519Public,
+    net_discovery_generated::net_discovery::{DnsTerminal, DnsTerminalArgs, NetInterface},
+};
+use x25519_dalek::{EphemeralSecret, PublicKey};
+
+use super::net_ip::NetIp;
 
 pub struct PartnerServiceInfo {
-    pub id: ulid::Ulid,
+    pub partner_id: ulid::Ulid,
     pub instance_name: String,
+    pub host_name: String,
     pub service_type: String,
     pub secret: EphemeralSecret,
+    pub terminal_id: ulid::Ulid,
     pub net_ips: Vec<NetIp>,
 }
 
@@ -27,12 +35,24 @@ impl PartnerServiceInfo {
                 }
             }
         }
+        let host_name = {
+            let mut buf = [0u8; 512];
+            let re = unsafe { libc::gethostname(buf.as_mut_ptr() as *mut i8, buf.len() - 1) };
+            if re == 0 {
+                unsafe { CStr::from_ptr(buf.as_ptr() as *const i8).to_string_lossy().into_owned() }
+            } else {
+                log::error!("gethostname returned an error:{}", re);
+                "".to_string()
+            }
+        };
 
         PartnerServiceInfo {
-            id: idl::ids::generate_ulid(),
+            partner_id: idl::ids::generate_ulid(),
             instance_name: "doors_chat".into(),
+            host_name,
             service_type: "_http._tcp".into(),
             secret,
+            terminal_id: idl::ids::generate_ulid(),
             net_ips,
         }
     }
@@ -138,45 +158,26 @@ impl PartnerServiceInfo {
         }
         Some(net_ip)
     }
-}
 
-pub struct NetIp {
-    pub ip_v4: Ipv4Addr,
-    pub port_v4: u16,
-    pub ip_v6_global: Ipv6Addr,
-    pub port_v6_global: u16,
-    pub ip_v6_temporary: Ipv6Addr,
-    pub port_v6_temporary: u16,
-    pub ip_v6_link_local: Ipv6Addr,
-    pub port_v6_link_local: u16,
-    pub scope_v6: u32,
-    pub ip_v6_unique_local: Ipv6Addr,
-    pub port_v6_unique_local: u16,
-    pub name: String,
-    pub mac_address: String,
-}
-
-impl NetIp {
-    pub const DEFAULT_PORT: u16 = 9933;
-}
-
-impl Default for NetIp {
-    fn default() -> Self {
-        Self {
-            ip_v4: Ipv4Addr::from_bits(0),
-            port_v4: 0,
-            ip_v6_global: Ipv6Addr::from_bits(0),
-            port_v6_global: 0,
-            ip_v6_temporary: Ipv6Addr::from_bits(0),
-            port_v6_temporary: 0,
-            ip_v6_link_local: Ipv6Addr::from_bits(0),
-            port_v6_link_local: 0,
-            ip_v6_unique_local: Ipv6Addr::from_bits(0),
-            port_v6_unique_local: 0,
-            scope_v6: 0,
-            name: "".to_string(),
-            mac_address: "".to_string(),
-        }
+    pub fn to_dns_terminal<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+        &self,
+        builder: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+    ) -> flatbuffers::WIPOffset<DnsTerminal<'bldr>> {
+        let host_name = builder.create_string(&self.host_name);
+        let show_name = builder.create_string("doors_chat");
+        let net_interfaces = self.net_ips.iter().map(|net| net.to_iet_interface(builder)).collect::<Vec<_>>();
+        let net_interfaces = builder.create_vector(&net_interfaces);
+        DnsTerminal::create(
+            builder,
+            &DnsTerminalArgs {
+                partner_id: Some(&PartnerId::from(self.partner_id)),
+                terminal_id: Some(&TerminalId::from(self.terminal_id)),
+                key: Some(&X25519Public::from(&PublicKey::from(&self.secret))),
+                host_name: Some(host_name),
+                show_name: Some(show_name),
+                net_interfaces: Some(net_interfaces),
+            },
+        )
     }
 }
 

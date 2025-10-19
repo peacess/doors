@@ -13,21 +13,25 @@ class NetInterface : Table() {
 
     val portV4 : UShort get() = lookupField(6, 0u ) { bb.getUShort(it + bufferPos) }
 
-    val ipV6Global : ULong get() = lookupField(8, 0UL ) { bb.getULong(it + bufferPos) }
+    val ipV6Global : base.Ipv6? get() = ipV6Global(base.Ipv6())
+    fun ipV6Global(obj: base.Ipv6) : base.Ipv6? = lookupField(8, null ) { obj.init(it + bufferPos, bb) }
 
     val portV6Global : UShort get() = lookupField(10, 0u ) { bb.getUShort(it + bufferPos) }
 
-    val ipV6Temporary : ULong get() = lookupField(12, 0UL ) { bb.getULong(it + bufferPos) }
+    val ipV6Temporary : base.Ipv6? get() = ipV6Temporary(base.Ipv6())
+    fun ipV6Temporary(obj: base.Ipv6) : base.Ipv6? = lookupField(12, null ) { obj.init(it + bufferPos, bb) }
 
     val portV6Temporary : UShort get() = lookupField(14, 0u ) { bb.getUShort(it + bufferPos) }
 
-    val ipV6LinkLocal : ULong get() = lookupField(16, 0UL ) { bb.getULong(it + bufferPos) }
+    val ipV6LinkLocal : base.Ipv6? get() = ipV6LinkLocal(base.Ipv6())
+    fun ipV6LinkLocal(obj: base.Ipv6) : base.Ipv6? = lookupField(16, null ) { obj.init(it + bufferPos, bb) }
 
     val portV6LinkLocal : UShort get() = lookupField(18, 0u ) { bb.getUShort(it + bufferPos) }
 
     val scopeV6 : UInt get() = lookupField(20, 0u ) { bb.getUInt(it + bufferPos) }
 
-    val ipV6UniqueLocal : ULong get() = lookupField(22, 0UL ) { bb.getULong(it + bufferPos) }
+    val ipV6UniqueLocal : base.Ipv6? get() = ipV6UniqueLocal(base.Ipv6())
+    fun ipV6UniqueLocal(obj: base.Ipv6) : base.Ipv6? = lookupField(22, null ) { obj.init(it + bufferPos, bb) }
 
     val portV6UniqueLocal : UShort get() = lookupField(24, 0u ) { bb.getUShort(it + bufferPos) }
 
@@ -48,24 +52,6 @@ class NetInterface : Table() {
 
 
         @JvmStatic
-        fun createNetInterface(builder: FlatBufferBuilder, ipV4: UInt, portV4: UShort, ipV6Global: ULong, portV6Global: UShort, ipV6Temporary: ULong, portV6Temporary: UShort, ipV6LinkLocal: ULong, portV6LinkLocal: UShort, scopeV6: UInt, ipV6UniqueLocal: ULong, portV6UniqueLocal: UShort, nameOffset: Offset<String>, macAddressOffset: Offset<String>) : Offset<NetInterface> {
-            builder.startTable(13)
-            addIpV6UniqueLocal(builder, ipV6UniqueLocal)
-            addIpV6LinkLocal(builder, ipV6LinkLocal)
-            addIpV6Temporary(builder, ipV6Temporary)
-            addIpV6Global(builder, ipV6Global)
-            addMacAddress(builder, macAddressOffset)
-            addName(builder, nameOffset)
-            addScopeV6(builder, scopeV6)
-            addIpV4(builder, ipV4)
-            addPortV6UniqueLocal(builder, portV6UniqueLocal)
-            addPortV6LinkLocal(builder, portV6LinkLocal)
-            addPortV6Temporary(builder, portV6Temporary)
-            addPortV6Global(builder, portV6Global)
-            addPortV4(builder, portV4)
-            return endNetInterface(builder)
-        }
-        @JvmStatic
         fun startNetInterface(builder: FlatBufferBuilder) = builder.startTable(13)
 
         @JvmStatic
@@ -75,19 +61,19 @@ class NetInterface : Table() {
         fun addPortV4(builder: FlatBufferBuilder, portV4: UShort) = builder.add(1, portV4, 0u)
 
         @JvmStatic
-        fun addIpV6Global(builder: FlatBufferBuilder, ipV6Global: ULong) = builder.add(2, ipV6Global, 0UL)
+        fun addIpV6Global(builder: FlatBufferBuilder, ipV6Global: Offset<base.Ipv6>) = builder.addStruct(2, ipV6Global.value, 0)
 
         @JvmStatic
         fun addPortV6Global(builder: FlatBufferBuilder, portV6Global: UShort) = builder.add(3, portV6Global, 0u)
 
         @JvmStatic
-        fun addIpV6Temporary(builder: FlatBufferBuilder, ipV6Temporary: ULong) = builder.add(4, ipV6Temporary, 0UL)
+        fun addIpV6Temporary(builder: FlatBufferBuilder, ipV6Temporary: Offset<base.Ipv6>) = builder.addStruct(4, ipV6Temporary.value, 0)
 
         @JvmStatic
         fun addPortV6Temporary(builder: FlatBufferBuilder, portV6Temporary: UShort) = builder.add(5, portV6Temporary, 0u)
 
         @JvmStatic
-        fun addIpV6LinkLocal(builder: FlatBufferBuilder, ipV6LinkLocal: ULong) = builder.add(6, ipV6LinkLocal, 0UL)
+        fun addIpV6LinkLocal(builder: FlatBufferBuilder, ipV6LinkLocal: Offset<base.Ipv6>) = builder.addStruct(6, ipV6LinkLocal.value, 0)
 
         @JvmStatic
         fun addPortV6LinkLocal(builder: FlatBufferBuilder, portV6LinkLocal: UShort) = builder.add(7, portV6LinkLocal, 0u)
@@ -96,7 +82,7 @@ class NetInterface : Table() {
         fun addScopeV6(builder: FlatBufferBuilder, scopeV6: UInt) = builder.add(8, scopeV6, 0u)
 
         @JvmStatic
-        fun addIpV6UniqueLocal(builder: FlatBufferBuilder, ipV6UniqueLocal: ULong) = builder.add(9, ipV6UniqueLocal, 0UL)
+        fun addIpV6UniqueLocal(builder: FlatBufferBuilder, ipV6UniqueLocal: Offset<base.Ipv6>) = builder.addStruct(9, ipV6UniqueLocal.value, 0)
 
         @JvmStatic
         fun addPortV6UniqueLocal(builder: FlatBufferBuilder, portV6UniqueLocal: UShort) = builder.add(10, portV6UniqueLocal, 0u)

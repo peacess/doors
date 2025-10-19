@@ -59,6 +59,25 @@ struct UlidBytes{
     rand16: ubyte;
 }
 
+struct Ipv6{
+    ub1: ubyte;
+    ub2: ubyte;
+    ub3: ubyte;
+    ub4: ubyte;
+    ub5: ubyte;
+    ub6: ubyte;
+    ub7: ubyte;
+    ub8: ubyte;
+    ub9: ubyte;
+    ub10: ubyte;
+    ub11: ubyte;
+    ub12: ubyte;
+    ub13: ubyte;
+    ub14: ubyte;
+    ub15: ubyte;
+    ub16: ubyte;
+}
+
 struct X25519Public{
     key1: uint64;
     key2: uint64;

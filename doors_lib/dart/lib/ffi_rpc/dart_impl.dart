@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart' as ffi;
 import 'package:idl/ffi_rpc/chat/callback.dart';
+import 'package:idl/ffi_rpc/header_type.dart';
 import 'package:logger/logger.dart';
 
 import '../idl/base_base_generated.dart';
@@ -62,23 +63,6 @@ class FfiRpcDart {
     data.len = 0;
     data.capacity = 0;
     data.offset = 0;
-  }
-}
-
-enum HeaderType {
-  netDiscovery(1),
-  chat(1);
-
-  final int value;
-  const HeaderType(this.value);
-
-  factory HeaderType.from(int headerType) {
-    for (var it in HeaderType.values) {
-      if (it.value == headerType) {
-        return it;
-      }
-    }
-    throw ArgumentError('Unknown header type: $headerType');
   }
 }
 

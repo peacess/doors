@@ -665,6 +665,261 @@ class UlidBytesObjectBuilder extends fb.ObjectBuilder {
   }
 }
 
+class Ipv6 {
+  Ipv6._(this._bc, this._bcOffset);
+
+  static const fb.Reader<Ipv6> reader = _Ipv6Reader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  int get ub1 => const fb.Uint8Reader().read(_bc, _bcOffset + 0);
+  int get ub2 => const fb.Uint8Reader().read(_bc, _bcOffset + 1);
+  int get ub3 => const fb.Uint8Reader().read(_bc, _bcOffset + 2);
+  int get ub4 => const fb.Uint8Reader().read(_bc, _bcOffset + 3);
+  int get ub5 => const fb.Uint8Reader().read(_bc, _bcOffset + 4);
+  int get ub6 => const fb.Uint8Reader().read(_bc, _bcOffset + 5);
+  int get ub7 => const fb.Uint8Reader().read(_bc, _bcOffset + 6);
+  int get ub8 => const fb.Uint8Reader().read(_bc, _bcOffset + 7);
+  int get ub9 => const fb.Uint8Reader().read(_bc, _bcOffset + 8);
+  int get ub10 => const fb.Uint8Reader().read(_bc, _bcOffset + 9);
+  int get ub11 => const fb.Uint8Reader().read(_bc, _bcOffset + 10);
+  int get ub12 => const fb.Uint8Reader().read(_bc, _bcOffset + 11);
+  int get ub13 => const fb.Uint8Reader().read(_bc, _bcOffset + 12);
+  int get ub14 => const fb.Uint8Reader().read(_bc, _bcOffset + 13);
+  int get ub15 => const fb.Uint8Reader().read(_bc, _bcOffset + 14);
+  int get ub16 => const fb.Uint8Reader().read(_bc, _bcOffset + 15);
+
+  @override
+  String toString() {
+    return 'Ipv6{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}, ub9: ${ub9}, ub10: ${ub10}, ub11: ${ub11}, ub12: ${ub12}, ub13: ${ub13}, ub14: ${ub14}, ub15: ${ub15}, ub16: ${ub16}}';
+  }
+
+  Ipv6T unpack() => Ipv6T(
+    ub1: ub1,
+    ub2: ub2,
+    ub3: ub3,
+    ub4: ub4,
+    ub5: ub5,
+    ub6: ub6,
+    ub7: ub7,
+    ub8: ub8,
+    ub9: ub9,
+    ub10: ub10,
+    ub11: ub11,
+    ub12: ub12,
+    ub13: ub13,
+    ub14: ub14,
+    ub15: ub15,
+    ub16: ub16,
+  );
+
+  static int pack(fb.Builder fbBuilder, Ipv6T? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class Ipv6T implements fb.Packable {
+  int ub1;
+  int ub2;
+  int ub3;
+  int ub4;
+  int ub5;
+  int ub6;
+  int ub7;
+  int ub8;
+  int ub9;
+  int ub10;
+  int ub11;
+  int ub12;
+  int ub13;
+  int ub14;
+  int ub15;
+  int ub16;
+
+  Ipv6T({
+    required this.ub1,
+    required this.ub2,
+    required this.ub3,
+    required this.ub4,
+    required this.ub5,
+    required this.ub6,
+    required this.ub7,
+    required this.ub8,
+    required this.ub9,
+    required this.ub10,
+    required this.ub11,
+    required this.ub12,
+    required this.ub13,
+    required this.ub14,
+    required this.ub15,
+    required this.ub16,
+  });
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint8(ub16);
+    fbBuilder.putUint8(ub15);
+    fbBuilder.putUint8(ub14);
+    fbBuilder.putUint8(ub13);
+    fbBuilder.putUint8(ub12);
+    fbBuilder.putUint8(ub11);
+    fbBuilder.putUint8(ub10);
+    fbBuilder.putUint8(ub9);
+    fbBuilder.putUint8(ub8);
+    fbBuilder.putUint8(ub7);
+    fbBuilder.putUint8(ub6);
+    fbBuilder.putUint8(ub5);
+    fbBuilder.putUint8(ub4);
+    fbBuilder.putUint8(ub3);
+    fbBuilder.putUint8(ub2);
+    fbBuilder.putUint8(ub1);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'Ipv6T{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}, ub9: ${ub9}, ub10: ${ub10}, ub11: ${ub11}, ub12: ${ub12}, ub13: ${ub13}, ub14: ${ub14}, ub15: ${ub15}, ub16: ${ub16}}';
+  }
+}
+
+class _Ipv6Reader extends fb.StructReader<Ipv6> {
+  const _Ipv6Reader();
+
+  @override
+  int get size => 16;
+
+  @override
+  Ipv6 createObject(fb.BufferContext bc, int offset) => Ipv6._(bc, offset);
+}
+
+class Ipv6Builder {
+  Ipv6Builder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  int finish(
+    int ub1,
+    int ub2,
+    int ub3,
+    int ub4,
+    int ub5,
+    int ub6,
+    int ub7,
+    int ub8,
+    int ub9,
+    int ub10,
+    int ub11,
+    int ub12,
+    int ub13,
+    int ub14,
+    int ub15,
+    int ub16,
+  ) {
+    fbBuilder.putUint8(ub16);
+    fbBuilder.putUint8(ub15);
+    fbBuilder.putUint8(ub14);
+    fbBuilder.putUint8(ub13);
+    fbBuilder.putUint8(ub12);
+    fbBuilder.putUint8(ub11);
+    fbBuilder.putUint8(ub10);
+    fbBuilder.putUint8(ub9);
+    fbBuilder.putUint8(ub8);
+    fbBuilder.putUint8(ub7);
+    fbBuilder.putUint8(ub6);
+    fbBuilder.putUint8(ub5);
+    fbBuilder.putUint8(ub4);
+    fbBuilder.putUint8(ub3);
+    fbBuilder.putUint8(ub2);
+    fbBuilder.putUint8(ub1);
+    return fbBuilder.offset;
+  }
+}
+
+class Ipv6ObjectBuilder extends fb.ObjectBuilder {
+  final int _ub1;
+  final int _ub2;
+  final int _ub3;
+  final int _ub4;
+  final int _ub5;
+  final int _ub6;
+  final int _ub7;
+  final int _ub8;
+  final int _ub9;
+  final int _ub10;
+  final int _ub11;
+  final int _ub12;
+  final int _ub13;
+  final int _ub14;
+  final int _ub15;
+  final int _ub16;
+
+  Ipv6ObjectBuilder({
+    required int ub1,
+    required int ub2,
+    required int ub3,
+    required int ub4,
+    required int ub5,
+    required int ub6,
+    required int ub7,
+    required int ub8,
+    required int ub9,
+    required int ub10,
+    required int ub11,
+    required int ub12,
+    required int ub13,
+    required int ub14,
+    required int ub15,
+    required int ub16,
+  }) : _ub1 = ub1,
+       _ub2 = ub2,
+       _ub3 = ub3,
+       _ub4 = ub4,
+       _ub5 = ub5,
+       _ub6 = ub6,
+       _ub7 = ub7,
+       _ub8 = ub8,
+       _ub9 = ub9,
+       _ub10 = ub10,
+       _ub11 = ub11,
+       _ub12 = ub12,
+       _ub13 = ub13,
+       _ub14 = ub14,
+       _ub15 = ub15,
+       _ub16 = ub16;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    fbBuilder.putUint8(_ub16);
+    fbBuilder.putUint8(_ub15);
+    fbBuilder.putUint8(_ub14);
+    fbBuilder.putUint8(_ub13);
+    fbBuilder.putUint8(_ub12);
+    fbBuilder.putUint8(_ub11);
+    fbBuilder.putUint8(_ub10);
+    fbBuilder.putUint8(_ub9);
+    fbBuilder.putUint8(_ub8);
+    fbBuilder.putUint8(_ub7);
+    fbBuilder.putUint8(_ub6);
+    fbBuilder.putUint8(_ub5);
+    fbBuilder.putUint8(_ub4);
+    fbBuilder.putUint8(_ub3);
+    fbBuilder.putUint8(_ub2);
+    fbBuilder.putUint8(_ub1);
+    return fbBuilder.offset;
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
 class X25519Public {
   X25519Public._(this._bc, this._bcOffset);
 

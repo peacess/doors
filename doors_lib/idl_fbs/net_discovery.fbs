@@ -9,7 +9,6 @@ attribute NetDiscoveryFfiRpcOut;
 attribute NetDiscoveryCallback;
 
 table DnsTerminal {
-    id: base.UlidBytes;
     partner_id: base.PartnerId;
     terminal_id: base.TerminalId;
     key: base.X25519Public;
@@ -21,14 +20,15 @@ table DnsTerminal {
 table NetInterface {
     ip_v4: uint32;
     port_v4: uint16;
-    ip_v6_global: uint64;
+    ip_v6_global: base.Ipv6;
     port_v6_global: uint16;
-    ip_v6_temporary: uint64;
+    ip_v6_temporary: base.Ipv6;
     port_v6_temporary: uint16;
-    ip_v6_link_local: uint64;
+    ip_v6_link_local: base.Ipv6;
     port_v6_link_local: uint16;
+    // index of netinterface
     scope_v6: uint32;
-    ip_v6_unique_local: uint64;
+    ip_v6_unique_local: base.Ipv6;
     port_v6_unique_local: uint16;
     name: string;
     mac_address: string;
@@ -67,5 +67,3 @@ table QueryPartnersIn(NetDiscoveryFfiRpcIn:"QueryPartnersOut") {
     id: base.UlidBytes;
     terminal: DnsTerminal;
 }
-
-

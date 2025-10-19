@@ -4,11 +4,15 @@ use std::{
 };
 
 use idl::{
-    Header, PartnerId, TerminalId, UlidBytes,
+    Header, PartnerId, TerminalId, UlidBytes, X25519Public,
     net_discovery_generated::net_discovery::{DnsTerminal, DnsTerminalArgs, Hi, HiArgs, HiFrame, HiFrameArgs},
 };
+use x25519_dalek::PublicKey;
 
-use crate::discover::{net::NetHelper, partner_service_info::PartnerServiceInfo};
+use crate::{
+    HeaderType,
+    discover::{net::NetHelper, net_discover_type::NetDiscoverType, partner_service_info::PartnerServiceInfo},
+};
 
 pub struct MulticastService {
     sender_ipv4: tokio::net::UdpSocket,
@@ -31,10 +35,10 @@ impl MulticastService {
     const MULTICAST_GROUP_IPV6: SocketAddrV6 = SocketAddrV6::new(Self::MULTICAST_IPV6, Self::MULTICAST_GROUP_PORT, 0, 0);
 
     pub fn new() -> Result<Arc<Self>, anyhow::Error> {
-        Self::new_with_ips(NetHelper::list())
+        Self::new_with_ips()
     }
 
-    pub fn new_with_ips(ips: Vec<std::net::IpAddr>) -> Result<Arc<Self>, anyhow::Error> {
+    pub fn new_with_ips() -> Result<Arc<Self>, anyhow::Error> {
         let service_info = PartnerServiceInfo::new();
         let ips = &service_info.net_ips;
         let has_ipv6 = ips
@@ -106,42 +110,41 @@ impl MulticastService {
             {
                 // send hi
                 log::info!("Sending initial multicast 'hi' message");
+
+                let mut builder = flatbuffers::FlatBufferBuilder::with_capacity(1024);
                 let buffer = {
-                    let mut builder = flatbuffers::FlatBufferBuilder::with_capacity(1024);
-                    let show_name = builder.create_string("doors_chat");
-                    // let hi = Hi::create(
-                    //     &mut builder,
-                    //     &HiArgs {
-                    //         id: Some(&UlidBytes::from(idl::ids::generate_ulid())),
-                    //         dns_terminal: Some(DnsTerminal::create(
-                    //             &mut builder,
-                    //             &DnsTerminalArgs {
-                    //                 id: Some(&UlidBytes::from(idl::ids::generate_ulid())),
-                    //                 partner_id: Some(&PartnerId::from(idl::ids::generate_ulid())),
-                    //                 terminal_id: Some(&TerminalId::from(idl::ids::generate_ulid())),
-                    //                 ip_v4: todo!(),
-                    //                 port_v4: todo!(),
-                    //                 ip_v6: todo!(),
-                    //                 port_v6: todo!(),
-                    //                 key: todo!(),
-                    //                 host_name: todo!(),
-                    //                 show_name: todo!(),
-                    //             },
-                    //         )),
-                    //         show_name: Some(show_name),
-                    //     },
-                    // );
-                    //
-                    // let header = Header::new();
-                    //
-                    // let hi_frame = HiFrame::create(&mut builder, &HiFrameArgs { hi: Some(hi), header });
-                    //
-                    // builder.finished_data()
+                    let hi = {
+                        let show_name = builder.create_string("doors_chat");
+                        let dns_terminal = self.service_info.to_dns_terminal(&mut builder);
+                        Hi::create(
+                            &mut builder,
+                            &HiArgs {
+                                id: Some(&UlidBytes::from(idl::ids::generate_ulid())),
+                                dns_terminal: Some(dns_terminal),
+                                show_name: Some(show_name),
+                            },
+                        )
+                    };
+                    let header = Header::new(
+                        hi.value() as u64,
+                        HeaderType::NetDiscovery.to_u32(),
+                        NetDiscoverType::Hi.to_u32(),
+                        &TerminalId::from(self.service_info.terminal_id),
+                        &X25519Public::from(&PublicKey::from(&self.service_info.secret)),
+                    );
+                    let _hi_frame = HiFrame::create(
+                        &mut builder,
+                        &HiFrameArgs {
+                            header: Some(&header),
+                            hi: Some(hi),
+                        },
+                    );
+                    builder.finished_data()
                 };
 
                 let msg = "".to_string();
 
-                match self.sender_ipv4.send_to(msg.as_bytes(), &Self::MULTICAST_GROUP_IPV4).await {
+                match self.sender_ipv4.send_to(buffer, &Self::MULTICAST_GROUP_IPV4).await {
                     Ok(sent) => {
                         log::info!("[Sender] Sent {} bytes to {}", sent, Self::MULTICAST_GROUP_IPV4);
                     }

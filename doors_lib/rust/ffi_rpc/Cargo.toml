@@ -11,6 +11,8 @@ crate-type = ["cdylib","lib"]
 log.workspace = true
 env_logger.workspace = true
 anyhow.workspace = true
+strum.workspace = true
+strum_macros.workspace = true
 
 tokio.workspace = true
 tokio-util.workspace = true
@@ -19,6 +21,7 @@ parking_lot.workspace = true
 flatbuffers.workspace = true
 netwatcher.workspace = true
 socket2.workspace = true
+libc.workspace = true
 
 x25519-dalek.workspace = true
 curve25519-dalek.workspace = true
