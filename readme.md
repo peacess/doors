@@ -1,15 +1,15 @@
 
 all coming  .....  
 # lifedoor -- safe life tools
-## chat
+## chat in local net(dont sent message to internet)
 ### 实现概要
 #### use flatbuffers, not http/s
 #### udp,not tcp
 #### server impl for go and rust
-#### window linux mac...
-#### add io-uring in second version
+#### window linux mac android ios ...
 #### security or crypto
-[libsignal-protocol](https://github.com/signalapp/libsignal/blob/main/rust/protocol/Cargo.toml)
+#### message in memory
+[see libsignal-protocol](https://github.com/signalapp/libsignal/blob/main/rust/protocol/Cargo.toml)
 
 ## tools ------
 
