@@ -1,5 +1,5 @@
 use std::{
-    net::{Ipv4Addr, Ipv6Addr, SocketAddrV4, SocketAddrV6},
+    net::{Ipv4Addr, Ipv6Addr, SocketAddr, SocketAddrV4, SocketAddrV6},
     sync::Arc,
 };
 
@@ -7,11 +7,14 @@ use idl::{
     Header, PartnerId, TerminalId, UlidBytes, X25519Public,
     net_discovery_generated::net_discovery::{DnsTerminal, DnsTerminalArgs, Hi, HiArgs, HiFrame, HiFrameArgs},
 };
+use tokio::runtime::Handle;
 use x25519_dalek::PublicKey;
 
 use crate::{
     HeaderType,
     discover::{net::NetHelper, net_discover_type::NetDiscoverType, partner_service_info::PartnerServiceInfo},
+    ffi::FfiBytes,
+    lib_app::LIB_APP,
 };
 
 pub struct MulticastService {
@@ -20,6 +23,7 @@ pub struct MulticastService {
     sender_ipv6: Option<tokio::net::UdpSocket>,
     receiver_ipv6: Option<tokio::net::UdpSocket>,
     service_info: PartnerServiceInfo,
+    handle: Handle,
 }
 
 impl MulticastService {
@@ -34,11 +38,11 @@ impl MulticastService {
     const MULTICAST_IPV6: Ipv6Addr = Ipv6Addr::new(0xFF05, 0, 0, 0, 0, 0, 0, 66);
     const MULTICAST_GROUP_IPV6: SocketAddrV6 = SocketAddrV6::new(Self::MULTICAST_IPV6, Self::MULTICAST_GROUP_PORT, 0, 0);
 
-    pub fn new() -> Result<Arc<Self>, anyhow::Error> {
-        Self::new_with_ips()
+    pub fn new(handle: Handle) -> Result<Arc<Self>, anyhow::Error> {
+        Self::new_with_ips(handle)
     }
 
-    pub fn new_with_ips() -> Result<Arc<Self>, anyhow::Error> {
+    pub fn new_with_ips(handle: Handle) -> Result<Arc<Self>, anyhow::Error> {
         let service_info = PartnerServiceInfo::new();
         let ips = &service_info.net_ips;
         let has_ipv6 = ips
@@ -51,8 +55,13 @@ impl MulticastService {
             #[cfg(not(windows))]
             socket.set_reuse_port(true)?;
             socket.bind(&listen_addr.into())?;
-            // let socket : std::net::UdpSocket = socket.into();
-            let udp_socket = tokio::net::UdpSocket::from_std(socket.into())?;
+            socket.set_nonblocking(true)?;
+            let join_handle = handle.spawn(async move {
+                let udp_socket = tokio::net::UdpSocket::from_std(socket.into())?;
+                Ok::<tokio::net::UdpSocket, std::io::Error>(udp_socket)
+            });
+            let udp_socket = handle.block_on(join_handle)??;
+
             udp_socket.join_multicast_v4(*Self::MULTICAST_GROUP_IPV4.ip(), Ipv4Addr::UNSPECIFIED)?;
             log::info!("Successfully connected to multicast server: {}", Self::MULTICAST_GROUP_IPV4);
             udp_socket
@@ -63,7 +72,12 @@ impl MulticastService {
             socket.set_multicast_loop_v4(false)?;
             // 设置更大的值（如 32）可以允许消息被路由器转发 (如果路由器配置允许)。
             socket.set_multicast_ttl_v4(32)?;
-            let socket = tokio::net::UdpSocket::from_std(socket)?;
+            socket.set_nonblocking(true)?;
+            let join_handle = handle.spawn(async move {
+                let socket = tokio::net::UdpSocket::from_std(socket.into())?;
+                Ok::<tokio::net::UdpSocket, std::io::Error>(socket)
+            });
+            let socket = handle.block_on(join_handle)??;
             log::info!("[Sender] bind: {:?}", socket.local_addr()?);
             socket
         };
@@ -76,7 +90,12 @@ impl MulticastService {
                 #[cfg(not(windows))]
                 socket.set_reuse_port(true)?;
                 socket.bind(&listen_addr.into())?;
-                let udp_socket = tokio::net::UdpSocket::from_std(socket.into())?;
+                socket.set_nonblocking(true)?;
+                let join_handle = handle.spawn(async move {
+                    let udp_socket = tokio::net::UdpSocket::from_std(socket.into())?;
+                    Ok::<tokio::net::UdpSocket, std::io::Error>(udp_socket)
+                });
+                let udp_socket = handle.block_on(join_handle)??;
                 udp_socket.join_multicast_v6(Self::MULTICAST_GROUP_IPV6.ip(), 0)?;
                 log::info!("Successfully connected to multicast server: {}", Self::MULTICAST_GROUP_IPV6);
                 Some(udp_socket)
@@ -89,7 +108,12 @@ impl MulticastService {
             if has_ipv6 {
                 let socket = std::net::UdpSocket::bind(":::0")?;
                 socket.set_multicast_loop_v6(false)?;
-                let socket = tokio::net::UdpSocket::from_std(socket)?;
+                socket.set_nonblocking(true)?;
+                let join_handle = handle.spawn(async move {
+                    let socket = tokio::net::UdpSocket::from_std(socket.into())?;
+                    Ok::<tokio::net::UdpSocket, std::io::Error>(socket)
+                });
+                let socket = handle.block_on(join_handle)??;
                 log::info!("[Sender] bind: {:?}", socket.local_addr()?);
                 Some(socket)
             } else {
@@ -103,10 +127,11 @@ impl MulticastService {
             sender_ipv6,
             receiver_ipv6,
             service_info,
+            handle,
         }))
     }
     pub fn init(self: Arc<Self>, cancel_token: tokio_util::sync::CancellationToken) -> tokio::task::JoinHandle<Result<(), anyhow::Error>> {
-        tokio::spawn(async move {
+        self.handle.clone().spawn(async move {
             {
                 // send hi
                 log::info!("Sending initial multicast 'hi' message");
@@ -132,13 +157,14 @@ impl MulticastService {
                         &TerminalId::from(self.service_info.terminal_id),
                         &X25519Public::from(&PublicKey::from(&self.service_info.secret)),
                     );
-                    let _hi_frame = HiFrame::create(
+                    let hi_frame = HiFrame::create(
                         &mut builder,
                         &HiFrameArgs {
                             header: Some(&header),
                             hi: Some(hi),
                         },
                     );
+                    builder.finish(hi_frame, None);
                     builder.finished_data()
                 };
 
@@ -163,71 +189,63 @@ impl MulticastService {
                     }
                 }
             }
-            let mut buf = [0u8; 1024];
-            let mut buf_v6 = [0u8; 1024];
-            if let Some(receiver_ipv6) = &self.receiver_ipv6 {
-                loop {
-                    tokio::select! {
-                        data_ipv4 = self.receiver_ipv4.recv_from(&mut buf) => {
-                            match data_ipv4 {
-                                Ok((len, _src_addr)) => {
-                                    let msg = String::from_utf8_lossy(&buf[..len]);
-                                    if msg.trim() == "EXIT" {
-                                        println!("[Receiver] 收到退出指令，退出。");
-                                        break Err(anyhow::anyhow!("Exit signal sent"));
-                                    }
-                                }
-                                Err(e) => {
-                                    log::error!("{}", e);
-                                    break Err(anyhow::anyhow!("Error receiving data: {}", e));
-                                }
+            let mut buf_v4 = [0u8; 4096];
+            let mut buf_v6 = [0u8; 4096];
+            let mut err_count = 0;
+
+            loop {
+                if cancel_token.is_cancelled() {
+                    log::info!("net discovery cancelled");
+                    break;
+                }
+                if err_count > 50 {
+                    log::error!("net discovery err count: {}", err_count);
+                    break;
+                }
+                let re = tokio::select! {
+                    data_ipv4 = self.receiver_ipv4.recv_from(&mut buf_v4) => {
+                        match data_ipv4 {
+                            Err(e) => Err(e),
+                            Ok((len, addr)) => {
+                                self.handle_recv(len,addr,&buf_v4);
+                                Ok(())
                             }
-                        }
-                        data_ipv6 = receiver_ipv6.recv_from(&mut buf_v6) => {
-                            match data_ipv6 {
-                                Ok((len, _src_addr)) => {
-                                    let msg = String::from_utf8_lossy(&buf_v6[..len]);
-                                    if msg.trim() == "EXIT" {
-                                        println!("[Receiver] 收到退出指令，退出。");
-                                        break Err(anyhow::anyhow!("Exit signal sent"));
-                                    }
-                                }
-                                Err(e) => {
-                                    log::error!("{}", e);
-                                    break Err(anyhow::anyhow!("Error receiving data: {}", e));
-                                }
-                            }
-                        }
-                        _ = cancel_token.cancelled() => {
-                            break Ok(());
                         }
                     }
-                }
-            } else {
-                loop {
-                    tokio::select! {
-                    data_ipv4 = self.receiver_ipv4.recv_from(&mut buf) => {
-                        match data_ipv4 {
-                            Ok((len, _src_addr)) => {
-                                let msg = String::from_utf8_lossy(&buf[..len]);
-                                if msg.trim() == "EXIT" {
-                                    println!("[Receiver] 收到退出指令，退出。");
-                                    break Err(anyhow::anyhow!("Exit signal sent"));
-                                }
-                            }
-                            Err(e) => {
-                                log::error!("{}", e);
-                                break Err(anyhow::anyhow!("Error receiving data: {}", e));
+                    Some(data_ipv6) = async{
+                        if let Some(receiver_ipv6) = &self.receiver_ipv6 {
+                            Some(receiver_ipv6.recv_from(&mut buf_v6).await)
+                        } else {
+                            None
+                        }
+                    } => {
+                        match data_ipv6{
+                            Err(e) => Err(e),
+                            Ok((len, addr)) => {
+                                self.handle_recv(len, addr, &buf_v6);
+                                Ok(())
                             }
                         }
                     }
                     _ = cancel_token.cancelled() => {
-                        break Ok(());
+                        Ok(())
                     }
-                    }
+                };
+                if let Err(err) = re {
+                    err_count += 1;
+                    log::error!("Error receiving data: {}", err);
                 }
             }
+            Ok(())
         })
+    }
+
+    fn handle_recv(&self, len: usize, data: SocketAddr, buffer: &[u8]) {
+        if let Some(app) = LIB_APP.get() {
+            if let Some(call) = app.get_callback() {
+                call(FfiBytes::from(buffer[0..len].to_vec()));
+            }
+        }
     }
 
     pub fn uninit(&self) -> Result<(), anyhow::Error> {

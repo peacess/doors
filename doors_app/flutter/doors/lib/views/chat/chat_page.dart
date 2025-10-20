@@ -25,7 +25,7 @@ class _ChatPageState extends State<ChatPage> {
         child: Row(
           children: [
             if (!DoorsApp.app.widthIsMobile()) makeLeft(),
-            Expanded(child: Text("chat")),
+            Expanded(child: Center(child: Text("chat"))),
           ],
         ),
       ),
@@ -40,7 +40,20 @@ class _ChatPageState extends State<ChatPage> {
       builder: (context, value, child) {
         return Visibility(
           visible: value,
-          child: Container(width: 60, padding: EdgeInsets.only(left: 6), child: const Text("left ")),
+          child: Container(
+            width: 120,
+            padding: EdgeInsets.only(left: 6),
+            child: ValueListenableBuilder(
+              valueListenable: DoorsApp.app.partners.patterns,
+              builder: (_, value, _) {
+                return Expanded(
+                  child: Wrap(
+                    children: [for (var it in value) TextButton.icon(onPressed: () {}, label: Text(it.showName))],
+                  ),
+                );
+              },
+            ),
+          ),
         );
       },
     );

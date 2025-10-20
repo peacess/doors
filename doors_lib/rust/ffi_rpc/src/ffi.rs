@@ -10,6 +10,8 @@ pub struct FfiBytes {
 
 #[unsafe(no_mangle)]
 pub extern "C" fn init(callback: CallBack) -> FfiBytes {
+    env_logger::builder().is_test(false).filter_level(log::LevelFilter::Debug).init();
+    log::info!("init rust lib rpc ffi");
     if let Err(e) = LibApp::init(callback) {
         log::error!("Error building tokio runtime: {}", e);
         let mut info = format!("{}", e).as_bytes().to_vec();
@@ -75,3 +77,17 @@ pub type CallBack = extern "C" fn(FfiBytes);
 //     let _v = core::mem::ManuallyDrop::new(c);
 //     0
 // }
+
+impl FfiBytes {
+    #[inline]
+    pub fn from(mut bytes: Vec<u8>) -> FfiBytes {
+        let b = FfiBytes {
+            len: bytes.len() as u64,
+            capacity: bytes.capacity() as u64,
+            offset: 0,
+            bytes: bytes.as_mut_ptr(),
+        };
+        std::mem::forget(bytes);
+        b
+    }
+}

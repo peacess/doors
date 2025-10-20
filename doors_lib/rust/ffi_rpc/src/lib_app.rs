@@ -13,7 +13,7 @@ pub struct LibApp {
     call_back: Option<crate::ffi::CallBack>,
 }
 
-static LIB_APP: std::sync::OnceLock<LibApp> = std::sync::OnceLock::new();
+pub static LIB_APP: std::sync::OnceLock<LibApp> = std::sync::OnceLock::new();
 
 impl LibApp {
     fn make_app(call_back: crate::ffi::CallBack) -> Result<Self, anyhow::Error> {
@@ -21,24 +21,28 @@ impl LibApp {
         let cancel_token = CancellationToken::new();
         let handle = runtime.handle().clone();
         let running_handle = Arc::new(std::sync::atomic::AtomicBool::new(true));
-        let multicast_service = MulticastService::new()?;
-
         let running_handle_thread = running_handle.clone();
         let token_thread = cancel_token.clone();
         {
+            log::info!("before run tokio runtime");
             let local_thread = std::thread::current();
             std::thread::spawn(move || {
                 let _en = runtime.enter();
                 runtime.block_on(async {
+                    log::info!("running tokio runtime");
                     running_handle_thread.store(true, std::sync::atomic::Ordering::Relaxed);
                     local_thread.unpark();
                     token_thread.cancelled().await;
                     running_handle_thread.store(false, std::sync::atomic::Ordering::Relaxed);
+                    log::info!("exit tokio runtime");
                 });
             });
             // make sure the thead to started running
             std::thread::park_timeout(Duration::from_secs(1));
+            log::info!("after run tokio runtime");
         }
+
+        let multicast_service = MulticastService::new(handle.clone())?;
 
         Ok(Self {
             handle,
