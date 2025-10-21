@@ -1,4 +1,8 @@
-use std::{ffi::CStr, net::IpAddr, sync::atomic::Ordering};
+use std::{
+    ffi::CStr,
+    net::{IpAddr, Ipv4Addr, Ipv6Addr},
+    sync::{Arc, atomic::Ordering},
+};
 
 use idl::{
     PartnerId, TerminalId, X25519Public,
@@ -16,6 +20,8 @@ pub struct PartnerServiceInfo {
     pub secret: EphemeralSecret,
     pub terminal_id: ulid::Ulid,
     pub net_ips: Vec<NetIp>,
+    pub port_v4: Arc<core::sync::atomic::AtomicU16>,
+    pub port_v6: Arc<core::sync::atomic::AtomicU16>,
 }
 
 impl std::fmt::Debug for PartnerServiceInfo {
@@ -60,6 +66,9 @@ impl PartnerServiceInfo {
             }
         };
 
+        let port_v4 = NetIp::DEFAULT_PORT;
+        let port_v6 = NetIp::DEFAULT_PORT;
+
         PartnerServiceInfo {
             partner_id: idl::ids::generate_ulid(),
             instance_name: "doors_chat".into(),
@@ -68,6 +77,8 @@ impl PartnerServiceInfo {
             secret,
             terminal_id: idl::ids::generate_ulid(),
             net_ips,
+            port_v4: Arc::new(core::sync::atomic::AtomicU16::new(port_v4)),
+            port_v6: Arc::new(core::sync::atomic::AtomicU16::new(port_v6)),
         }
     }
 
@@ -88,21 +99,6 @@ impl PartnerServiceInfo {
                         continue;
                     }
                     net_ip.ip_v4 = v4;
-                    {
-                        let mut port = NetIp::DEFAULT_PORT;
-                        loop {
-                            match std::net::UdpSocket::bind(core::net::SocketAddrV4::new(net_ip.ip_v4, port)) {
-                                Err(_e) => {
-                                    port += 1;
-                                    continue;
-                                }
-                                Ok(_s) => {
-                                    net_ip.port_v4.store(port, Ordering::Relaxed);
-                                    break;
-                                }
-                            }
-                        }
-                    }
                 }
                 IpAddr::V6(v6) => {
                     log::debug!("{}", v6);
@@ -111,57 +107,14 @@ impl PartnerServiceInfo {
                     }
 
                     if v6.is_unicast_link_local() {
-                        let mut port = NetIp::DEFAULT_PORT;
-                        loop {
-                            match std::net::UdpSocket::bind(core::net::SocketAddrV6::new(v6, port, 0, net.index)) {
-                                Err(e) => {
-                                    log::debug!("{}", e);
-                                    port += 1;
-                                    continue;
-                                }
-                                Ok(_s) => {
-                                    break;
-                                }
-                            }
-                        }
                         net_ip.ip_v6_link_local = v6;
-                        net_ip.port_v6_link_local.store(port, Ordering::Relaxed);
                     } else if v6.is_unique_local() {
-                        let mut port = NetIp::DEFAULT_PORT;
-                        loop {
-                            match std::net::UdpSocket::bind(core::net::SocketAddrV6::new(v6, port, 0, net.index)) {
-                                Err(e) => {
-                                    log::debug!("{}", e);
-                                    port += 1;
-                                    continue;
-                                }
-                                Ok(_s) => {
-                                    break;
-                                }
-                            }
-                        }
                         net_ip.ip_v6_unique_local = v6;
-                        net_ip.port_v6_unique_local.store(port, Ordering::Relaxed);
                     } else {
-                        let mut port = NetIp::DEFAULT_PORT;
-                        loop {
-                            match std::net::UdpSocket::bind(core::net::SocketAddrV6::new(v6, port, 0, 0)) {
-                                Err(e) => {
-                                    log::debug!("{}", e);
-                                    port += 1;
-                                    continue;
-                                }
-                                Ok(_s) => {
-                                    break;
-                                }
-                            }
-                        }
                         if net_ip.ip_v6_global.is_unspecified() {
                             net_ip.ip_v6_global = v6;
-                            net_ip.port_v6_global.store(port, Ordering::Relaxed);
                         } else {
                             net_ip.ip_v6_temporary = v6;
-                            net_ip.port_v6_temporary.store(port, Ordering::Relaxed);
                         }
                     }
                 }
@@ -177,7 +130,12 @@ impl PartnerServiceInfo {
     ) -> flatbuffers::WIPOffset<DnsTerminal<'bldr>> {
         let host_name = builder.create_string(&self.host_name);
         let show_name = builder.create_string("doors_chat");
-        let net_interfaces = self.net_ips.iter().map(|net| net.to_iet_interface(builder)).collect::<Vec<_>>();
+        let (port_v4, port_v6) = (self.port_v4.load(Ordering::Relaxed), self.port_v6.load(Ordering::Relaxed));
+        let net_interfaces = self
+            .net_ips
+            .iter()
+            .map(|net| net.to_iet_interface(builder, port_v4, port_v6))
+            .collect::<Vec<_>>();
         let net_interfaces = builder.create_vector(&net_interfaces);
         DnsTerminal::create(
             builder,
@@ -202,16 +160,16 @@ mod tests {
     #[test]
     fn test_net_ip_from_net() {
         env_logger::builder().is_test(false).filter_level(log::LevelFilter::Debug).init();
-        let _net_ip = PartnerServiceInfo::new();
+        let net_ip = PartnerServiceInfo::new();
         let mut binds = Vec::with_capacity(10);
-        for net in _net_ip.net_ips.iter() {
+        for net in net_ip.net_ips.iter() {
             binds.push(std::net::UdpSocket::bind(core::net::SocketAddrV4::new(
                 net.ip_v4,
-                net.port_v4.load(Ordering::Relaxed),
+                net_ip.port_v4.load(Ordering::Relaxed),
             )));
         }
         let _net_ip2 = PartnerServiceInfo::new();
-        log::debug!("net_ip1: {:?}", _net_ip);
+        log::debug!("net_ip1: {:?}", net_ip);
         log::debug!("net_ip2: {:?}", _net_ip2);
     }
 }

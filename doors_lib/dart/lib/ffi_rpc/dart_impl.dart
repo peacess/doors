@@ -75,14 +75,31 @@ final Finalizer<FfiBytes> _bytesFinalizer = Finalizer((FfiBytes data) {
 
 extension BytesEx on FfiBytes {
   fb.BufferContext attach() {
+    FfiBytes t = Struct.create();
     final buffer = fb.BufferContext.fromBytes(bytes.asTypedList(len));
-    _bytesFinalizer.attach(buffer, this, detach: this);
+    _bytesFinalizer.attach(buffer, this, detach: FfiBytesT(bytes, len));
     return buffer;
   }
 
   void detach() {
-    _bytesFinalizer.detach(this);
+    _bytesFinalizer.detach(FfiBytesT(bytes, len));
     ffiRpc.bytesFree(this);
+  }
+}
+
+class FfiBytesT {
+  Pointer<Uint8> bytes;
+  int len;
+  int capacity;
+  int offset;
+  FfiBytesT(this.bytes, this.len, {int? capacity, int? offset}) : capacity = capacity ?? len, offset = offset ?? len;
+
+  FfiBytes to() {
+    return Struct.create()
+      ..len = len
+      ..offset = offset
+      ..capacity = capacity
+      ..bytes = bytes;
   }
 }
 

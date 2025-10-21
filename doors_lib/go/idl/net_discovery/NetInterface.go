@@ -9,19 +9,16 @@ import (
 )
 
 type NetInterfaceT struct {
-	IpV4              uint32      `json:"ip_v4"`
-	PortV4            uint16      `json:"port_v4"`
-	IpV6Global        *base.Ipv6T `json:"ip_v6_global"`
-	PortV6Global      uint16      `json:"port_v6_global"`
-	IpV6Temporary     *base.Ipv6T `json:"ip_v6_temporary"`
-	PortV6Temporary   uint16      `json:"port_v6_temporary"`
-	IpV6LinkLocal     *base.Ipv6T `json:"ip_v6_link_local"`
-	PortV6LinkLocal   uint16      `json:"port_v6_link_local"`
-	ScopeV6           uint32      `json:"scope_v6"`
-	IpV6UniqueLocal   *base.Ipv6T `json:"ip_v6_unique_local"`
-	PortV6UniqueLocal uint16      `json:"port_v6_unique_local"`
-	Name              string      `json:"name"`
-	MacAddress        string      `json:"mac_address"`
+	IpV4            uint32      `json:"ip_v4"`
+	PortV4          uint16      `json:"port_v4"`
+	IpV6Global      *base.Ipv6T `json:"ip_v6_global"`
+	PortV6          uint16      `json:"port_v6"`
+	IpV6Temporary   *base.Ipv6T `json:"ip_v6_temporary"`
+	IpV6LinkLocal   *base.Ipv6T `json:"ip_v6_link_local"`
+	ScopeV6         uint32      `json:"scope_v6"`
+	IpV6UniqueLocal *base.Ipv6T `json:"ip_v6_unique_local"`
+	Name            string      `json:"name"`
+	MacAddress      string      `json:"mac_address"`
 }
 
 func (t *NetInterfaceT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
@@ -41,17 +38,14 @@ func (t *NetInterfaceT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT 
 	NetInterfaceAddPortV4(builder, t.PortV4)
 	ipV6GlobalOffset := t.IpV6Global.Pack(builder)
 	NetInterfaceAddIpV6Global(builder, ipV6GlobalOffset)
-	NetInterfaceAddPortV6Global(builder, t.PortV6Global)
+	NetInterfaceAddPortV6(builder, t.PortV6)
 	ipV6TemporaryOffset := t.IpV6Temporary.Pack(builder)
 	NetInterfaceAddIpV6Temporary(builder, ipV6TemporaryOffset)
-	NetInterfaceAddPortV6Temporary(builder, t.PortV6Temporary)
 	ipV6LinkLocalOffset := t.IpV6LinkLocal.Pack(builder)
 	NetInterfaceAddIpV6LinkLocal(builder, ipV6LinkLocalOffset)
-	NetInterfaceAddPortV6LinkLocal(builder, t.PortV6LinkLocal)
 	NetInterfaceAddScopeV6(builder, t.ScopeV6)
 	ipV6UniqueLocalOffset := t.IpV6UniqueLocal.Pack(builder)
 	NetInterfaceAddIpV6UniqueLocal(builder, ipV6UniqueLocalOffset)
-	NetInterfaceAddPortV6UniqueLocal(builder, t.PortV6UniqueLocal)
 	NetInterfaceAddName(builder, nameOffset)
 	NetInterfaceAddMacAddress(builder, macAddressOffset)
 	return NetInterfaceEnd(builder)
@@ -61,14 +55,11 @@ func (rcv *NetInterface) UnPackTo(t *NetInterfaceT) {
 	t.IpV4 = rcv.IpV4()
 	t.PortV4 = rcv.PortV4()
 	t.IpV6Global = rcv.IpV6Global(nil).UnPack()
-	t.PortV6Global = rcv.PortV6Global()
+	t.PortV6 = rcv.PortV6()
 	t.IpV6Temporary = rcv.IpV6Temporary(nil).UnPack()
-	t.PortV6Temporary = rcv.PortV6Temporary()
 	t.IpV6LinkLocal = rcv.IpV6LinkLocal(nil).UnPack()
-	t.PortV6LinkLocal = rcv.PortV6LinkLocal()
 	t.ScopeV6 = rcv.ScopeV6()
 	t.IpV6UniqueLocal = rcv.IpV6UniqueLocal(nil).UnPack()
-	t.PortV6UniqueLocal = rcv.PortV6UniqueLocal()
 	t.Name = string(rcv.Name())
 	t.MacAddress = string(rcv.MacAddress())
 }
@@ -154,7 +145,7 @@ func (rcv *NetInterface) IpV6Global(obj *base.Ipv6) *base.Ipv6 {
 	return nil
 }
 
-func (rcv *NetInterface) PortV6Global() uint16 {
+func (rcv *NetInterface) PortV6() uint16 {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
 	if o != 0 {
 		return rcv._tab.GetUint16(o + rcv._tab.Pos)
@@ -162,7 +153,7 @@ func (rcv *NetInterface) PortV6Global() uint16 {
 	return 0
 }
 
-func (rcv *NetInterface) MutatePortV6Global(n uint16) bool {
+func (rcv *NetInterface) MutatePortV6(n uint16) bool {
 	return rcv._tab.MutateUint16Slot(10, n)
 }
 
@@ -179,20 +170,8 @@ func (rcv *NetInterface) IpV6Temporary(obj *base.Ipv6) *base.Ipv6 {
 	return nil
 }
 
-func (rcv *NetInterface) PortV6Temporary() uint16 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
-	if o != 0 {
-		return rcv._tab.GetUint16(o + rcv._tab.Pos)
-	}
-	return 0
-}
-
-func (rcv *NetInterface) MutatePortV6Temporary(n uint16) bool {
-	return rcv._tab.MutateUint16Slot(14, n)
-}
-
 func (rcv *NetInterface) IpV6LinkLocal(obj *base.Ipv6) *base.Ipv6 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
@@ -204,20 +183,8 @@ func (rcv *NetInterface) IpV6LinkLocal(obj *base.Ipv6) *base.Ipv6 {
 	return nil
 }
 
-func (rcv *NetInterface) PortV6LinkLocal() uint16 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(18))
-	if o != 0 {
-		return rcv._tab.GetUint16(o + rcv._tab.Pos)
-	}
-	return 0
-}
-
-func (rcv *NetInterface) MutatePortV6LinkLocal(n uint16) bool {
-	return rcv._tab.MutateUint16Slot(18, n)
-}
-
 func (rcv *NetInterface) ScopeV6() uint32 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(20))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
 	if o != 0 {
 		return rcv._tab.GetUint32(o + rcv._tab.Pos)
 	}
@@ -225,11 +192,11 @@ func (rcv *NetInterface) ScopeV6() uint32 {
 }
 
 func (rcv *NetInterface) MutateScopeV6(n uint32) bool {
-	return rcv._tab.MutateUint32Slot(20, n)
+	return rcv._tab.MutateUint32Slot(16, n)
 }
 
 func (rcv *NetInterface) IpV6UniqueLocal(obj *base.Ipv6) *base.Ipv6 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(22))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(18))
 	if o != 0 {
 		x := o + rcv._tab.Pos
 		if obj == nil {
@@ -241,20 +208,8 @@ func (rcv *NetInterface) IpV6UniqueLocal(obj *base.Ipv6) *base.Ipv6 {
 	return nil
 }
 
-func (rcv *NetInterface) PortV6UniqueLocal() uint16 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(24))
-	if o != 0 {
-		return rcv._tab.GetUint16(o + rcv._tab.Pos)
-	}
-	return 0
-}
-
-func (rcv *NetInterface) MutatePortV6UniqueLocal(n uint16) bool {
-	return rcv._tab.MutateUint16Slot(24, n)
-}
-
 func (rcv *NetInterface) Name() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(26))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(20))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
 	}
@@ -262,7 +217,7 @@ func (rcv *NetInterface) Name() []byte {
 }
 
 func (rcv *NetInterface) MacAddress() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(28))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(22))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
 	}
@@ -270,7 +225,7 @@ func (rcv *NetInterface) MacAddress() []byte {
 }
 
 func NetInterfaceStart(builder *flatbuffers.Builder) {
-	builder.StartObject(13)
+	builder.StartObject(10)
 }
 func NetInterfaceAddIpV4(builder *flatbuffers.Builder, ipV4 uint32) {
 	builder.PrependUint32Slot(0, ipV4, 0)
@@ -281,35 +236,26 @@ func NetInterfaceAddPortV4(builder *flatbuffers.Builder, portV4 uint16) {
 func NetInterfaceAddIpV6Global(builder *flatbuffers.Builder, ipV6Global flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(2, flatbuffers.UOffsetT(ipV6Global), 0)
 }
-func NetInterfaceAddPortV6Global(builder *flatbuffers.Builder, portV6Global uint16) {
-	builder.PrependUint16Slot(3, portV6Global, 0)
+func NetInterfaceAddPortV6(builder *flatbuffers.Builder, portV6 uint16) {
+	builder.PrependUint16Slot(3, portV6, 0)
 }
 func NetInterfaceAddIpV6Temporary(builder *flatbuffers.Builder, ipV6Temporary flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(4, flatbuffers.UOffsetT(ipV6Temporary), 0)
 }
-func NetInterfaceAddPortV6Temporary(builder *flatbuffers.Builder, portV6Temporary uint16) {
-	builder.PrependUint16Slot(5, portV6Temporary, 0)
-}
 func NetInterfaceAddIpV6LinkLocal(builder *flatbuffers.Builder, ipV6LinkLocal flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(6, flatbuffers.UOffsetT(ipV6LinkLocal), 0)
-}
-func NetInterfaceAddPortV6LinkLocal(builder *flatbuffers.Builder, portV6LinkLocal uint16) {
-	builder.PrependUint16Slot(7, portV6LinkLocal, 0)
+	builder.PrependStructSlot(5, flatbuffers.UOffsetT(ipV6LinkLocal), 0)
 }
 func NetInterfaceAddScopeV6(builder *flatbuffers.Builder, scopeV6 uint32) {
-	builder.PrependUint32Slot(8, scopeV6, 0)
+	builder.PrependUint32Slot(6, scopeV6, 0)
 }
 func NetInterfaceAddIpV6UniqueLocal(builder *flatbuffers.Builder, ipV6UniqueLocal flatbuffers.UOffsetT) {
-	builder.PrependStructSlot(9, flatbuffers.UOffsetT(ipV6UniqueLocal), 0)
-}
-func NetInterfaceAddPortV6UniqueLocal(builder *flatbuffers.Builder, portV6UniqueLocal uint16) {
-	builder.PrependUint16Slot(10, portV6UniqueLocal, 0)
+	builder.PrependStructSlot(7, flatbuffers.UOffsetT(ipV6UniqueLocal), 0)
 }
 func NetInterfaceAddName(builder *flatbuffers.Builder, name flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(11, flatbuffers.UOffsetT(name), 0)
+	builder.PrependUOffsetTSlot(8, flatbuffers.UOffsetT(name), 0)
 }
 func NetInterfaceAddMacAddress(builder *flatbuffers.Builder, macAddress flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(12, flatbuffers.UOffsetT(macAddress), 0)
+	builder.PrependUOffsetTSlot(9, flatbuffers.UOffsetT(macAddress), 0)
 }
 func NetInterfaceEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

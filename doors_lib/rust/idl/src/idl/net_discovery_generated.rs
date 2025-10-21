@@ -307,16 +307,13 @@ pub mod net_discovery {
         pub const VT_IP_V4: flatbuffers::VOffsetT = 4;
         pub const VT_PORT_V4: flatbuffers::VOffsetT = 6;
         pub const VT_IP_V6_GLOBAL: flatbuffers::VOffsetT = 8;
-        pub const VT_PORT_V6_GLOBAL: flatbuffers::VOffsetT = 10;
+        pub const VT_PORT_V6: flatbuffers::VOffsetT = 10;
         pub const VT_IP_V6_TEMPORARY: flatbuffers::VOffsetT = 12;
-        pub const VT_PORT_V6_TEMPORARY: flatbuffers::VOffsetT = 14;
-        pub const VT_IP_V6_LINK_LOCAL: flatbuffers::VOffsetT = 16;
-        pub const VT_PORT_V6_LINK_LOCAL: flatbuffers::VOffsetT = 18;
-        pub const VT_SCOPE_V6: flatbuffers::VOffsetT = 20;
-        pub const VT_IP_V6_UNIQUE_LOCAL: flatbuffers::VOffsetT = 22;
-        pub const VT_PORT_V6_UNIQUE_LOCAL: flatbuffers::VOffsetT = 24;
-        pub const VT_NAME: flatbuffers::VOffsetT = 26;
-        pub const VT_MAC_ADDRESS: flatbuffers::VOffsetT = 28;
+        pub const VT_IP_V6_LINK_LOCAL: flatbuffers::VOffsetT = 14;
+        pub const VT_SCOPE_V6: flatbuffers::VOffsetT = 16;
+        pub const VT_IP_V6_UNIQUE_LOCAL: flatbuffers::VOffsetT = 18;
+        pub const VT_NAME: flatbuffers::VOffsetT = 20;
+        pub const VT_MAC_ADDRESS: flatbuffers::VOffsetT = 22;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -348,10 +345,7 @@ pub mod net_discovery {
                 builder.add_ip_v6_global(x);
             }
             builder.add_ip_v4(args.ip_v4);
-            builder.add_port_v6_unique_local(args.port_v6_unique_local);
-            builder.add_port_v6_link_local(args.port_v6_link_local);
-            builder.add_port_v6_temporary(args.port_v6_temporary);
-            builder.add_port_v6_global(args.port_v6_global);
+            builder.add_port_v6(args.port_v6);
             builder.add_port_v4(args.port_v4);
             builder.finish()
         }
@@ -360,28 +354,22 @@ pub mod net_discovery {
             let ip_v4 = self.ip_v4();
             let port_v4 = self.port_v4();
             let ip_v6_global = self.ip_v6_global().map(|x| x.unpack());
-            let port_v6_global = self.port_v6_global();
+            let port_v6 = self.port_v6();
             let ip_v6_temporary = self.ip_v6_temporary().map(|x| x.unpack());
-            let port_v6_temporary = self.port_v6_temporary();
             let ip_v6_link_local = self.ip_v6_link_local().map(|x| x.unpack());
-            let port_v6_link_local = self.port_v6_link_local();
             let scope_v6 = self.scope_v6();
             let ip_v6_unique_local = self.ip_v6_unique_local().map(|x| x.unpack());
-            let port_v6_unique_local = self.port_v6_unique_local();
             let name = self.name().map(|x| x.to_string());
             let mac_address = self.mac_address().map(|x| x.to_string());
             NetInterfaceT {
                 ip_v4,
                 port_v4,
                 ip_v6_global,
-                port_v6_global,
+                port_v6,
                 ip_v6_temporary,
-                port_v6_temporary,
                 ip_v6_link_local,
-                port_v6_link_local,
                 scope_v6,
                 ip_v6_unique_local,
-                port_v6_unique_local,
                 name,
                 mac_address,
             }
@@ -409,11 +397,11 @@ pub mod net_discovery {
             unsafe { self._tab.get::<super::base::Ipv6>(NetInterface::VT_IP_V6_GLOBAL, None) }
         }
         #[inline]
-        pub fn port_v6_global(&self) -> u16 {
+        pub fn port_v6(&self) -> u16 {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V6_GLOBAL, Some(0)).unwrap() }
+            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V6, Some(0)).unwrap() }
         }
         #[inline]
         pub fn ip_v6_temporary(&self) -> Option<&'a super::base::Ipv6> {
@@ -423,25 +411,11 @@ pub mod net_discovery {
             unsafe { self._tab.get::<super::base::Ipv6>(NetInterface::VT_IP_V6_TEMPORARY, None) }
         }
         #[inline]
-        pub fn port_v6_temporary(&self) -> u16 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V6_TEMPORARY, Some(0)).unwrap() }
-        }
-        #[inline]
         pub fn ip_v6_link_local(&self) -> Option<&'a super::base::Ipv6> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
             unsafe { self._tab.get::<super::base::Ipv6>(NetInterface::VT_IP_V6_LINK_LOCAL, None) }
-        }
-        #[inline]
-        pub fn port_v6_link_local(&self) -> u16 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V6_LINK_LOCAL, Some(0)).unwrap() }
         }
         #[inline]
         pub fn scope_v6(&self) -> u32 {
@@ -456,13 +430,6 @@ pub mod net_discovery {
             // Created from valid Table for this object
             // which contains a valid value in this slot
             unsafe { self._tab.get::<super::base::Ipv6>(NetInterface::VT_IP_V6_UNIQUE_LOCAL, None) }
-        }
-        #[inline]
-        pub fn port_v6_unique_local(&self) -> u16 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u16>(NetInterface::VT_PORT_V6_UNIQUE_LOCAL, Some(0)).unwrap() }
         }
         #[inline]
         pub fn name(&self) -> Option<&'a str> {
@@ -488,14 +455,11 @@ pub mod net_discovery {
                 .visit_field::<u32>("ip_v4", Self::VT_IP_V4, false)?
                 .visit_field::<u16>("port_v4", Self::VT_PORT_V4, false)?
                 .visit_field::<super::base::Ipv6>("ip_v6_global", Self::VT_IP_V6_GLOBAL, false)?
-                .visit_field::<u16>("port_v6_global", Self::VT_PORT_V6_GLOBAL, false)?
+                .visit_field::<u16>("port_v6", Self::VT_PORT_V6, false)?
                 .visit_field::<super::base::Ipv6>("ip_v6_temporary", Self::VT_IP_V6_TEMPORARY, false)?
-                .visit_field::<u16>("port_v6_temporary", Self::VT_PORT_V6_TEMPORARY, false)?
                 .visit_field::<super::base::Ipv6>("ip_v6_link_local", Self::VT_IP_V6_LINK_LOCAL, false)?
-                .visit_field::<u16>("port_v6_link_local", Self::VT_PORT_V6_LINK_LOCAL, false)?
                 .visit_field::<u32>("scope_v6", Self::VT_SCOPE_V6, false)?
                 .visit_field::<super::base::Ipv6>("ip_v6_unique_local", Self::VT_IP_V6_UNIQUE_LOCAL, false)?
-                .visit_field::<u16>("port_v6_unique_local", Self::VT_PORT_V6_UNIQUE_LOCAL, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("mac_address", Self::VT_MAC_ADDRESS, false)?
                 .finish();
@@ -506,14 +470,11 @@ pub mod net_discovery {
         pub ip_v4: u32,
         pub port_v4: u16,
         pub ip_v6_global: Option<&'a super::base::Ipv6>,
-        pub port_v6_global: u16,
+        pub port_v6: u16,
         pub ip_v6_temporary: Option<&'a super::base::Ipv6>,
-        pub port_v6_temporary: u16,
         pub ip_v6_link_local: Option<&'a super::base::Ipv6>,
-        pub port_v6_link_local: u16,
         pub scope_v6: u32,
         pub ip_v6_unique_local: Option<&'a super::base::Ipv6>,
-        pub port_v6_unique_local: u16,
         pub name: Option<flatbuffers::WIPOffset<&'a str>>,
         pub mac_address: Option<flatbuffers::WIPOffset<&'a str>>,
     }
@@ -524,14 +485,11 @@ pub mod net_discovery {
                 ip_v4: 0,
                 port_v4: 0,
                 ip_v6_global: None,
-                port_v6_global: 0,
+                port_v6: 0,
                 ip_v6_temporary: None,
-                port_v6_temporary: 0,
                 ip_v6_link_local: None,
-                port_v6_link_local: 0,
                 scope_v6: 0,
                 ip_v6_unique_local: None,
-                port_v6_unique_local: 0,
                 name: None,
                 mac_address: None,
             }
@@ -556,8 +514,8 @@ pub mod net_discovery {
             self.fbb_.push_slot_always::<&super::base::Ipv6>(NetInterface::VT_IP_V6_GLOBAL, ip_v6_global);
         }
         #[inline]
-        pub fn add_port_v6_global(&mut self, port_v6_global: u16) {
-            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V6_GLOBAL, port_v6_global, 0);
+        pub fn add_port_v6(&mut self, port_v6: u16) {
+            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V6, port_v6, 0);
         }
         #[inline]
         pub fn add_ip_v6_temporary(&mut self, ip_v6_temporary: &super::base::Ipv6) {
@@ -565,17 +523,9 @@ pub mod net_discovery {
                 .push_slot_always::<&super::base::Ipv6>(NetInterface::VT_IP_V6_TEMPORARY, ip_v6_temporary);
         }
         #[inline]
-        pub fn add_port_v6_temporary(&mut self, port_v6_temporary: u16) {
-            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V6_TEMPORARY, port_v6_temporary, 0);
-        }
-        #[inline]
         pub fn add_ip_v6_link_local(&mut self, ip_v6_link_local: &super::base::Ipv6) {
             self.fbb_
                 .push_slot_always::<&super::base::Ipv6>(NetInterface::VT_IP_V6_LINK_LOCAL, ip_v6_link_local);
-        }
-        #[inline]
-        pub fn add_port_v6_link_local(&mut self, port_v6_link_local: u16) {
-            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V6_LINK_LOCAL, port_v6_link_local, 0);
         }
         #[inline]
         pub fn add_scope_v6(&mut self, scope_v6: u32) {
@@ -585,10 +535,6 @@ pub mod net_discovery {
         pub fn add_ip_v6_unique_local(&mut self, ip_v6_unique_local: &super::base::Ipv6) {
             self.fbb_
                 .push_slot_always::<&super::base::Ipv6>(NetInterface::VT_IP_V6_UNIQUE_LOCAL, ip_v6_unique_local);
-        }
-        #[inline]
-        pub fn add_port_v6_unique_local(&mut self, port_v6_unique_local: u16) {
-            self.fbb_.push_slot::<u16>(NetInterface::VT_PORT_V6_UNIQUE_LOCAL, port_v6_unique_local, 0);
         }
         #[inline]
         pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b str>) {
@@ -617,14 +563,11 @@ pub mod net_discovery {
             ds.field("ip_v4", &self.ip_v4());
             ds.field("port_v4", &self.port_v4());
             ds.field("ip_v6_global", &self.ip_v6_global());
-            ds.field("port_v6_global", &self.port_v6_global());
+            ds.field("port_v6", &self.port_v6());
             ds.field("ip_v6_temporary", &self.ip_v6_temporary());
-            ds.field("port_v6_temporary", &self.port_v6_temporary());
             ds.field("ip_v6_link_local", &self.ip_v6_link_local());
-            ds.field("port_v6_link_local", &self.port_v6_link_local());
             ds.field("scope_v6", &self.scope_v6());
             ds.field("ip_v6_unique_local", &self.ip_v6_unique_local());
-            ds.field("port_v6_unique_local", &self.port_v6_unique_local());
             ds.field("name", &self.name());
             ds.field("mac_address", &self.mac_address());
             ds.finish()
@@ -636,14 +579,11 @@ pub mod net_discovery {
         pub ip_v4: u32,
         pub port_v4: u16,
         pub ip_v6_global: Option<super::base::Ipv6T>,
-        pub port_v6_global: u16,
+        pub port_v6: u16,
         pub ip_v6_temporary: Option<super::base::Ipv6T>,
-        pub port_v6_temporary: u16,
         pub ip_v6_link_local: Option<super::base::Ipv6T>,
-        pub port_v6_link_local: u16,
         pub scope_v6: u32,
         pub ip_v6_unique_local: Option<super::base::Ipv6T>,
-        pub port_v6_unique_local: u16,
         pub name: Option<String>,
         pub mac_address: Option<String>,
     }
@@ -653,14 +593,11 @@ pub mod net_discovery {
                 ip_v4: 0,
                 port_v4: 0,
                 ip_v6_global: None,
-                port_v6_global: 0,
+                port_v6: 0,
                 ip_v6_temporary: None,
-                port_v6_temporary: 0,
                 ip_v6_link_local: None,
-                port_v6_link_local: 0,
                 scope_v6: 0,
                 ip_v6_unique_local: None,
-                port_v6_unique_local: 0,
                 name: None,
                 mac_address: None,
             }
@@ -672,17 +609,14 @@ pub mod net_discovery {
             let port_v4 = self.port_v4;
             let ip_v6_global_tmp = self.ip_v6_global.as_ref().map(|x| x.pack());
             let ip_v6_global = ip_v6_global_tmp.as_ref();
-            let port_v6_global = self.port_v6_global;
+            let port_v6 = self.port_v6;
             let ip_v6_temporary_tmp = self.ip_v6_temporary.as_ref().map(|x| x.pack());
             let ip_v6_temporary = ip_v6_temporary_tmp.as_ref();
-            let port_v6_temporary = self.port_v6_temporary;
             let ip_v6_link_local_tmp = self.ip_v6_link_local.as_ref().map(|x| x.pack());
             let ip_v6_link_local = ip_v6_link_local_tmp.as_ref();
-            let port_v6_link_local = self.port_v6_link_local;
             let scope_v6 = self.scope_v6;
             let ip_v6_unique_local_tmp = self.ip_v6_unique_local.as_ref().map(|x| x.pack());
             let ip_v6_unique_local = ip_v6_unique_local_tmp.as_ref();
-            let port_v6_unique_local = self.port_v6_unique_local;
             let name = self.name.as_ref().map(|x| _fbb.create_string(x));
             let mac_address = self.mac_address.as_ref().map(|x| _fbb.create_string(x));
             NetInterface::create(
@@ -691,14 +625,11 @@ pub mod net_discovery {
                     ip_v4,
                     port_v4,
                     ip_v6_global,
-                    port_v6_global,
+                    port_v6,
                     ip_v6_temporary,
-                    port_v6_temporary,
                     ip_v6_link_local,
-                    port_v6_link_local,
                     scope_v6,
                     ip_v6_unique_local,
-                    port_v6_unique_local,
                     name,
                     mac_address,
                 },
