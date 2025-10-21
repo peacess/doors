@@ -1,4 +1,4 @@
-use std::{ffi::CStr, net::IpAddr};
+use std::{ffi::CStr, net::IpAddr, sync::atomic::Ordering};
 
 use idl::{
     PartnerId, TerminalId, X25519Public,
@@ -16,6 +16,20 @@ pub struct PartnerServiceInfo {
     pub secret: EphemeralSecret,
     pub terminal_id: ulid::Ulid,
     pub net_ips: Vec<NetIp>,
+}
+
+impl std::fmt::Debug for PartnerServiceInfo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("PartnerServiceInfo")
+            .field("partner_id", &self.partner_id)
+            .field("instance_name", &self.instance_name)
+            .field("host_name", &self.host_name)
+            .field("service_type", &self.service_type)
+            .field("secret", &"<hidden>")
+            .field("terminal_id", &self.terminal_id)
+            .field("net_ips", &self.net_ips)
+            .finish()
+    }
 }
 
 impl PartnerServiceInfo {
@@ -83,7 +97,7 @@ impl PartnerServiceInfo {
                                     continue;
                                 }
                                 Ok(_s) => {
-                                    net_ip.port_v4 = port;
+                                    net_ip.port_v4.store(port, Ordering::Relaxed);
                                     break;
                                 }
                             }
@@ -106,13 +120,12 @@ impl PartnerServiceInfo {
                                     continue;
                                 }
                                 Ok(_s) => {
-                                    net_ip.port_v4 = port;
                                     break;
                                 }
                             }
                         }
                         net_ip.ip_v6_link_local = v6;
-                        net_ip.port_v6_link_local = port;
+                        net_ip.port_v6_link_local.store(port, Ordering::Relaxed);
                     } else if v6.is_unique_local() {
                         let mut port = NetIp::DEFAULT_PORT;
                         loop {
@@ -123,13 +136,12 @@ impl PartnerServiceInfo {
                                     continue;
                                 }
                                 Ok(_s) => {
-                                    net_ip.port_v4 = port;
                                     break;
                                 }
                             }
                         }
                         net_ip.ip_v6_unique_local = v6;
-                        net_ip.port_v6_unique_local = port;
+                        net_ip.port_v6_unique_local.store(port, Ordering::Relaxed);
                     } else {
                         let mut port = NetIp::DEFAULT_PORT;
                         loop {
@@ -140,22 +152,22 @@ impl PartnerServiceInfo {
                                     continue;
                                 }
                                 Ok(_s) => {
-                                    net_ip.port_v4 = port;
                                     break;
                                 }
                             }
                         }
                         if net_ip.ip_v6_global.is_unspecified() {
                             net_ip.ip_v6_global = v6;
-                            net_ip.port_v6_global = port;
+                            net_ip.port_v6_global.store(port, Ordering::Relaxed);
                         } else {
                             net_ip.ip_v6_temporary = v6;
-                            net_ip.port_v6_temporary = port;
+                            net_ip.port_v6_temporary.store(port, Ordering::Relaxed);
                         }
                     }
                 }
             }
         }
+        log::debug!("Found net_ip: {:?}", net_ip);
         Some(net_ip)
     }
 
@@ -183,11 +195,23 @@ impl PartnerServiceInfo {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::atomic::Ordering;
+
     use crate::discover::partner_service_info::PartnerServiceInfo;
 
     #[test]
     fn test_net_ip_from_net() {
         env_logger::builder().is_test(false).filter_level(log::LevelFilter::Debug).init();
         let _net_ip = PartnerServiceInfo::new();
+        let mut binds = Vec::with_capacity(10);
+        for net in _net_ip.net_ips.iter() {
+            binds.push(std::net::UdpSocket::bind(core::net::SocketAddrV4::new(
+                net.ip_v4,
+                net.port_v4.load(Ordering::Relaxed),
+            )));
+        }
+        let _net_ip2 = PartnerServiceInfo::new();
+        log::debug!("net_ip1: {:?}", _net_ip);
+        log::debug!("net_ip2: {:?}", _net_ip2);
     }
 }

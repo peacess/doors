@@ -46,10 +46,8 @@ class _ChatPageState extends State<ChatPage> {
             child: ValueListenableBuilder(
               valueListenable: DoorsApp.app.partners.patterns,
               builder: (_, value, _) {
-                return Expanded(
-                  child: Wrap(
-                    children: [for (var it in value) TextButton.icon(onPressed: () {}, label: Text(it.showName))],
-                  ),
+                return Wrap(
+                  children: [for (var it in value) TextButton.icon(onPressed: () {}, label: Text(it.showName))],
                 );
               },
             ),
