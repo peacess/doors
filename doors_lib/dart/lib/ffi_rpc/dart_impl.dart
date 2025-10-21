@@ -101,6 +101,18 @@ class FfiBytesT {
       ..capacity = capacity
       ..bytes = bytes;
   }
+
+  @override
+  bool operator ==(Object other) {
+    // 如果引用相同，直接相等
+    if (identical(this, other)) return true;
+
+    // 判断类型和字段是否相同
+    return other is FfiBytesT && other.bytes == bytes;
+  }
+
+  @override
+  int get hashCode => bytes.hashCode;
 }
 
 abstract class FfiBytesHelper {
