@@ -24,7 +24,7 @@ class NetInterface : Table() {
     val ipV6LinkLocal : base.Ipv6? get() = ipV6LinkLocal(base.Ipv6())
     fun ipV6LinkLocal(obj: base.Ipv6) : base.Ipv6? = lookupField(14, null ) { obj.init(it + bufferPos, bb) }
 
-    val scopeV6 : UInt get() = lookupField(16, 0u ) { bb.getUInt(it + bufferPos) }
+    val indexNetinterface : UInt get() = lookupField(16, 0u ) { bb.getUInt(it + bufferPos) }
 
     val ipV6UniqueLocal : base.Ipv6? get() = ipV6UniqueLocal(base.Ipv6())
     fun ipV6UniqueLocal(obj: base.Ipv6) : base.Ipv6? = lookupField(18, null ) { obj.init(it + bufferPos, bb) }
@@ -67,7 +67,7 @@ class NetInterface : Table() {
         fun addIpV6LinkLocal(builder: FlatBufferBuilder, ipV6LinkLocal: Offset<base.Ipv6>) = builder.addStruct(5, ipV6LinkLocal.value, 0)
 
         @JvmStatic
-        fun addScopeV6(builder: FlatBufferBuilder, scopeV6: UInt) = builder.add(6, scopeV6, 0u)
+        fun addIndexNetinterface(builder: FlatBufferBuilder, indexNetinterface: UInt) = builder.add(6, indexNetinterface, 0u)
 
         @JvmStatic
         fun addIpV6UniqueLocal(builder: FlatBufferBuilder, ipV6UniqueLocal: Offset<base.Ipv6>) = builder.addStruct(7, ipV6UniqueLocal.value, 0)

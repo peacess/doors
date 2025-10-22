@@ -25,7 +25,7 @@ table NetInterface {
     ip_v6_temporary: base.Ipv6;
     ip_v6_link_local: base.Ipv6;
     // index of netinterface
-    scope_v6: uint32;
+    index_netinterface: uint32;
     ip_v6_unique_local: base.Ipv6;
     name: string;
     mac_address: string;

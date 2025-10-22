@@ -207,14 +207,14 @@ class NetInterface {
   int get portV6 => const fb.Uint16Reader().vTableGet(_bc, _bcOffset, 10, 0);
   base.Ipv6? get ipV6Temporary => base.Ipv6.reader.vTableGetNullable(_bc, _bcOffset, 12);
   base.Ipv6? get ipV6LinkLocal => base.Ipv6.reader.vTableGetNullable(_bc, _bcOffset, 14);
-  int get scopeV6 => const fb.Uint32Reader().vTableGet(_bc, _bcOffset, 16, 0);
+  int get indexNetinterface => const fb.Uint32Reader().vTableGet(_bc, _bcOffset, 16, 0);
   base.Ipv6? get ipV6UniqueLocal => base.Ipv6.reader.vTableGetNullable(_bc, _bcOffset, 18);
   String? get name => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 20);
   String? get macAddress => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 22);
 
   @override
   String toString() {
-    return 'NetInterface{ipV4: ${ipV4}, portV4: ${portV4}, ipV6Global: ${ipV6Global}, portV6: ${portV6}, ipV6Temporary: ${ipV6Temporary}, ipV6LinkLocal: ${ipV6LinkLocal}, scopeV6: ${scopeV6}, ipV6UniqueLocal: ${ipV6UniqueLocal}, name: ${name}, macAddress: ${macAddress}}';
+    return 'NetInterface{ipV4: ${ipV4}, portV4: ${portV4}, ipV6Global: ${ipV6Global}, portV6: ${portV6}, ipV6Temporary: ${ipV6Temporary}, ipV6LinkLocal: ${ipV6LinkLocal}, indexNetinterface: ${indexNetinterface}, ipV6UniqueLocal: ${ipV6UniqueLocal}, name: ${name}, macAddress: ${macAddress}}';
   }
 
   NetInterfaceT unpack() => NetInterfaceT(
@@ -224,7 +224,7 @@ class NetInterface {
     portV6: portV6,
     ipV6Temporary: ipV6Temporary?.unpack(),
     ipV6LinkLocal: ipV6LinkLocal?.unpack(),
-    scopeV6: scopeV6,
+    indexNetinterface: indexNetinterface,
     ipV6UniqueLocal: ipV6UniqueLocal?.unpack(),
     name: name,
     macAddress: macAddress,
@@ -243,7 +243,7 @@ class NetInterfaceT implements fb.Packable {
   int portV6;
   base.Ipv6T? ipV6Temporary;
   base.Ipv6T? ipV6LinkLocal;
-  int scopeV6;
+  int indexNetinterface;
   base.Ipv6T? ipV6UniqueLocal;
   String? name;
   String? macAddress;
@@ -255,7 +255,7 @@ class NetInterfaceT implements fb.Packable {
     this.portV6 = 0,
     this.ipV6Temporary,
     this.ipV6LinkLocal,
-    this.scopeV6 = 0,
+    this.indexNetinterface = 0,
     this.ipV6UniqueLocal,
     this.name,
     this.macAddress,
@@ -278,7 +278,7 @@ class NetInterfaceT implements fb.Packable {
     if (ipV6LinkLocal != null) {
       fbBuilder.addStruct(5, ipV6LinkLocal!.pack(fbBuilder));
     }
-    fbBuilder.addUint32(6, scopeV6);
+    fbBuilder.addUint32(6, indexNetinterface);
     if (ipV6UniqueLocal != null) {
       fbBuilder.addStruct(7, ipV6UniqueLocal!.pack(fbBuilder));
     }
@@ -289,7 +289,7 @@ class NetInterfaceT implements fb.Packable {
 
   @override
   String toString() {
-    return 'NetInterfaceT{ipV4: ${ipV4}, portV4: ${portV4}, ipV6Global: ${ipV6Global}, portV6: ${portV6}, ipV6Temporary: ${ipV6Temporary}, ipV6LinkLocal: ${ipV6LinkLocal}, scopeV6: ${scopeV6}, ipV6UniqueLocal: ${ipV6UniqueLocal}, name: ${name}, macAddress: ${macAddress}}';
+    return 'NetInterfaceT{ipV4: ${ipV4}, portV4: ${portV4}, ipV6Global: ${ipV6Global}, portV6: ${portV6}, ipV6Temporary: ${ipV6Temporary}, ipV6LinkLocal: ${ipV6LinkLocal}, indexNetinterface: ${indexNetinterface}, ipV6UniqueLocal: ${ipV6UniqueLocal}, name: ${name}, macAddress: ${macAddress}}';
   }
 }
 
@@ -339,8 +339,8 @@ class NetInterfaceBuilder {
     return fbBuilder.offset;
   }
 
-  int addScopeV6(int? scopeV6) {
-    fbBuilder.addUint32(6, scopeV6);
+  int addIndexNetinterface(int? indexNetinterface) {
+    fbBuilder.addUint32(6, indexNetinterface);
     return fbBuilder.offset;
   }
 
@@ -371,7 +371,7 @@ class NetInterfaceObjectBuilder extends fb.ObjectBuilder {
   final int? _portV6;
   final base.Ipv6ObjectBuilder? _ipV6Temporary;
   final base.Ipv6ObjectBuilder? _ipV6LinkLocal;
-  final int? _scopeV6;
+  final int? _indexNetinterface;
   final base.Ipv6ObjectBuilder? _ipV6UniqueLocal;
   final String? _name;
   final String? _macAddress;
@@ -383,7 +383,7 @@ class NetInterfaceObjectBuilder extends fb.ObjectBuilder {
     int? portV6,
     base.Ipv6ObjectBuilder? ipV6Temporary,
     base.Ipv6ObjectBuilder? ipV6LinkLocal,
-    int? scopeV6,
+    int? indexNetinterface,
     base.Ipv6ObjectBuilder? ipV6UniqueLocal,
     String? name,
     String? macAddress,
@@ -393,7 +393,7 @@ class NetInterfaceObjectBuilder extends fb.ObjectBuilder {
        _portV6 = portV6,
        _ipV6Temporary = ipV6Temporary,
        _ipV6LinkLocal = ipV6LinkLocal,
-       _scopeV6 = scopeV6,
+       _indexNetinterface = indexNetinterface,
        _ipV6UniqueLocal = ipV6UniqueLocal,
        _name = name,
        _macAddress = macAddress;
@@ -416,7 +416,7 @@ class NetInterfaceObjectBuilder extends fb.ObjectBuilder {
     if (_ipV6LinkLocal != null) {
       fbBuilder.addStruct(5, _ipV6LinkLocal!.finish(fbBuilder));
     }
-    fbBuilder.addUint32(6, _scopeV6);
+    fbBuilder.addUint32(6, _indexNetinterface);
     if (_ipV6UniqueLocal != null) {
       fbBuilder.addStruct(7, _ipV6UniqueLocal!.finish(fbBuilder));
     }

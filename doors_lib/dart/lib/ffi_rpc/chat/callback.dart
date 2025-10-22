@@ -21,19 +21,19 @@ enum ChatCallbackType {
 }
 
 base class ChatCallback {
-  void textMessage(Header header, TextMessage text) {}
-  void textMessageAck(Header header, TextMessageAck ack) {}
+  void textMessage(ChatTextMessage text) {}
+  void textMessageAck(ChatTextMessageAck ack) {}
 
-  void callback(fb.BufferContext buffer, Header header, int offset) {
+  void callback(fb.BufferContext buffer, Header header) {
     var tempType = ChatCallbackType.from(header.frameType);
     switch (tempType) {
       case ChatCallbackType.textMessage:
-        var hi = TextMessage.reader.read(buffer, offset);
-        textMessage(header, hi);
+        var text = ChatTextMessage.reader.read(buffer, 0);
+        textMessage(text);
         break;
       case ChatCallbackType.textMessageAck:
-        var hi = TextMessageAck.reader.read(buffer, offset);
-        textMessageAck(header, hi);
+        var ack = ChatTextMessageAck.reader.read(buffer, 0);
+        textMessageAck(ack);
         break;
     }
   }

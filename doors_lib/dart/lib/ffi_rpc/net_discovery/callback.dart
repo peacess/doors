@@ -25,16 +25,16 @@ base class NetDiscoveryCallback {
   final Partners partners;
   NetDiscoveryCallback(this.partners);
 
-  void hiRecv(Header header, Hi hi) {
-    partners.add(Partner.fromHi(hi));
+  void hiRecv(HiFrame hi) {
+    partners.add(Partner.fromHi(hi.hi!));
   }
 
-  void callback(fb.BufferContext buffer, Header header, int offset) {
+  void callback(fb.BufferContext buffer, Header header) {
     var tempType = NetDiscoveryCallbackType.from(header.frameType);
     switch (tempType) {
       case NetDiscoveryCallbackType.hi:
-        var hi = Hi.reader.read(buffer, offset);
-        hiRecv(header, hi);
+        var hi = HiFrame.reader.read(buffer, 0);
+        hiRecv(hi);
         break;
     }
   }

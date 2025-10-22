@@ -19,11 +19,8 @@ use crate::{
 };
 
 pub struct MulticastService {
-    sender_ipv4: tokio::net::UdpSocket,
     reciever_ipv4: Arc<tokio::net::UdpSocket>,
     multicast_ipv4: Arc<tokio::net::UdpSocket>,
-    sender_ipv6: Option<tokio::net::UdpSocket>,
-    reciever_ipv6: Option<Arc<tokio::net::UdpSocket>>,
     multicast_ipv6: Option<Arc<tokio::net::UdpSocket>>,
     service_info: PartnerServiceInfo,
     handle: Handle,
@@ -46,7 +43,7 @@ impl MulticastService {
     pub fn new_with_ips(handle: Handle) -> Result<Arc<Self>, anyhow::Error> {
         let temp_handle = handle.clone();
         temp_handle.block_on(async move {
-            let service_info = PartnerServiceInfo::new();
+            let mut service_info = PartnerServiceInfo::new();
             let ips = &service_info.net_ips;
             let has_ipv6 = ips
                 .iter()
@@ -59,7 +56,8 @@ impl MulticastService {
                     #[cfg(unix)]
                     socket.set_reuse_port(true)?;
                     socket.set_nonblocking(true)?;
-                    socket.set_multicast_loop_v4(false)?;
+                    // if it false, dont work for two program run in same pc
+                    socket.set_multicast_loop_v4(true)?;
                     socket.bind(&listen_addr.into())?;
                     let udp_socket = tokio::net::UdpSocket::from_std(socket.into())?;
                     udp_socket
@@ -72,7 +70,7 @@ impl MulticastService {
 
             let reciever_ipv4 = {
                 let mut port = service_info.port_v4.load(core::sync::atomic::Ordering::Relaxed);
-                let socket = loop {
+                let reciever_ipv4 = loop {
                     match tokio::net::UdpSocket::bind(core::net::SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, port)).await {
                         Err(_e) => {
                             port += 1;
@@ -84,20 +82,23 @@ impl MulticastService {
                         }
                     }
                 };
-                socket.set_multicast_loop_v4(false)?;
+                reciever_ipv4.set_multicast_loop_v4(false)?;
                 // 设置更大的值（如 32）可以允许消息被路由器转发 (如果路由器配置允许)。
                 // socket.set_multicast_ttl_v4(32)?;
-                log::info!("[Sender] bind: {:?}", socket.local_addr()?);
-                Arc::new(socket)
+                log::info!("[Sender] bind: {:?}", reciever_ipv4.local_addr()?);
+                Arc::new(reciever_ipv4)
             };
 
-            let sender_ipv4 = {
-                let listen_addr = SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 0);
-                let socket = tokio::net::UdpSocket::bind(listen_addr).await?;
-                socket.set_multicast_ttl_v4(32)?;
-                log::info!("[Sender] bind: {:?}", socket.local_addr()?);
-                socket
-            };
+            for net_ip in &mut service_info.net_ips {
+                let sender = {
+                    let listen_addr = SocketAddrV4::new(net_ip.ip_v4, 0);
+                    let socket = tokio::net::UdpSocket::bind(listen_addr).await?;
+                    socket.set_multicast_ttl_v4(32)?;
+                    log::info!("[Sender] bind: {:?}", socket.local_addr()?);
+                    Arc::new(socket)
+                };
+                net_ip.sender_ipv4 = Some(sender);
+            }
 
             let multicast_ipv6 = {
                 if has_ipv6 {
@@ -107,10 +108,14 @@ impl MulticastService {
                     #[cfg(unix)]
                     socket.set_reuse_port(true)?;
                     socket.set_nonblocking(true)?;
-                    socket.set_multicast_loop_v6(false)?;
+                    socket.set_multicast_loop_v6(true)?;
+                    socket.set_only_v6(true)?; //dont include the ipv4, for the multicast , ipv6 ipv4 are not same, so dont include
                     socket.bind(&listen_addr.into())?;
                     let udp_socket = tokio::net::UdpSocket::from_std(socket.into())?;
-                    udp_socket.join_multicast_v6(Self::MULTICAST_ADDRV6.ip(), 0)?;
+                    for net in &service_info.net_ips {
+                        udp_socket.join_multicast_v6(Self::MULTICAST_ADDRV6.ip(), net.index_netinterface)?;
+                    }
+
                     log::info!("Successfully connected to multicast server: {}", Self::MULTICAST_ADDRV6);
                     Some(Arc::new(udp_socket))
                 } else {
@@ -118,47 +123,40 @@ impl MulticastService {
                 }
             };
 
-            let reciever_ipv6 = {
-                if has_ipv6 {
-                    let mut port = service_info.port_v6.load(core::sync::atomic::Ordering::Relaxed);
+            for net_ip in &mut service_info.net_ips {
+                if net_ip.ip_v6_global.is_unspecified() {
+                    let mut port = net_ip.recv_port_v6.load(core::sync::atomic::Ordering::Relaxed);
                     let socket = loop {
-                        match tokio::net::UdpSocket::bind(core::net::SocketAddrV6::new(Ipv6Addr::UNSPECIFIED, port, 0, 0)).await {
+                        match tokio::net::UdpSocket::bind(core::net::SocketAddrV6::new(net_ip.ip_v6_global, port, 0, net_ip.index_netinterface)).await {
                             Err(_e) => {
                                 port += 1;
                                 continue;
                             }
                             Ok(s) => {
-                                service_info.port_v6.store(port, core::sync::atomic::Ordering::Relaxed);
+                                net_ip.recv_port_v6.store(port, core::sync::atomic::Ordering::Relaxed);
                                 break s;
                             }
                         }
                     };
                     socket.set_multicast_loop_v6(false)?;
                     log::info!("[Sender] bind: {:?}", socket.local_addr()?);
-                    Some(Arc::new(socket))
-                } else {
-                    None
+                    net_ip.reciver_ipv6 = Some(Arc::new(socket));
                 }
-            };
+            }
 
-            let sender_ipv6 = {
-                if has_ipv6 {
-                    let listen_addr = SocketAddrV6::new(Ipv6Addr::UNSPECIFIED, 0, 0, 0);
+            for net_ip in &mut service_info.net_ips {
+                if net_ip.ip_v6_global.is_unspecified() {
+                    let listen_addr = SocketAddrV6::new(net_ip.ip_v6_global, 0, 0, net_ip.index_netinterface);
                     let socket = tokio::net::UdpSocket::bind(listen_addr).await?;
                     log::info!("[Sender] bind: {:?}", socket.local_addr()?);
-                    Some(socket)
-                } else {
-                    None
+                    net_ip.sender_ipv6 = Some(Arc::new(socket));
                 }
-            };
+            }
 
             Ok::<Arc<Self>, anyhow::Error>(Arc::new(Self {
-                sender_ipv4,
                 reciever_ipv4,
                 multicast_ipv4,
-                sender_ipv6,
-                reciever_ipv6,
-                multicast_ipv6: multicast_ipv6,
+                multicast_ipv6,
                 service_info,
                 handle,
             }))
@@ -206,19 +204,19 @@ impl MulticastService {
 
                 match self.multicast_ipv4.send_to(buffer, &Self::MULTICAST_ADDRV4).await {
                     Ok(sent) => {
-                        log::info!("[Sender] Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV4);
+                        log::info!("ipv4 Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV4);
                     }
                     Err(e) => {
-                        log::error!("[Sender] Error sending to {}: {}", Self::MULTICAST_ADDRV4, e);
+                        log::error!("ipv4 Error sending to {}: {}", Self::MULTICAST_ADDRV4, e);
                     }
                 }
                 if let Some(multicast_ipv6) = &self.multicast_ipv6 {
                     match multicast_ipv6.send_to(buffer, &Self::MULTICAST_ADDRV6).await {
                         Ok(sent) => {
-                            log::info!("[Sender] Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV6);
+                            log::info!("ipv6 Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV6);
                         }
                         Err(e) => {
-                            log::error!("[Sender] Error sending to {}: {}", Self::MULTICAST_ADDRV6, e);
+                            log::error!("ipv6 Error sending to {}: {}", Self::MULTICAST_ADDRV6, e);
                         }
                     }
                 }
@@ -252,22 +250,24 @@ impl MulticastService {
                         }
                     });
                 }
-                if let Some(reciever_ipv6) = &self.reciever_ipv6 {
-                    let it_clone = reciever_ipv6.clone();
-                    join_set.spawn(async move {
-                        let mut buf = vec![0u8; BUFFER_SIZE];
-                        let data = it_clone.recv_from(&mut buf).await;
-                        match data {
-                            Err(e) => {
-                                log::error!("Error receiving data on ipv6: {}", e);
-                                Err(e)
+                for net_ip in &self.service_info.net_ips {
+                    if let Some(reciver_ipv6) = &net_ip.reciver_ipv6 {
+                        let it_clone = reciver_ipv6.clone();
+                        join_set.spawn(async move {
+                            let mut buf = vec![0u8; BUFFER_SIZE];
+                            let data = it_clone.recv_from(&mut buf).await;
+                            match data {
+                                Err(e) => {
+                                    log::error!("Error receiving data on ipv6: {}", e);
+                                    Err(e)
+                                }
+                                Ok((len, addr)) => {
+                                    buf.truncate(len);
+                                    Ok((addr, buf))
+                                }
                             }
-                            Ok((len, addr)) => {
-                                buf.truncate(len);
-                                Ok((addr, buf))
-                            }
-                        }
-                    });
+                        });
+                    }
                 }
                 let multicast_ipv4 = self.multicast_ipv4.clone();
                 join_set.spawn(async move {
@@ -331,7 +331,7 @@ impl MulticastService {
     }
 
     fn handle_recv(&self, data: SocketAddr, buffer: Vec<u8>) {
-        log::debug!("[Receiver] Received {} bytes from {}", buffer.len(), data);
+        log::debug!("Received {} bytes from {}", buffer.len(), data);
         if let Some(app) = LIB_APP.get() {
             if let Some(call) = app.get_callback() {
                 call(FfiBytes::from(buffer));
@@ -400,16 +400,20 @@ mod tests {
             let _re = multicast_service.clone().init(cancel_token.clone());
             tokio::time::sleep(Duration::from_secs(2)).await;
 
-            let re = multicast_service
-                .sender_ipv4
-                .send_to("6test".as_bytes(), &MulticastService::MULTICAST_ADDRV4)
-                .await;
-            log::debug!("send re: {:?}", re);
-
-            if let Some(sender_ipv6) = &multicast_service.sender_ipv6 {
-                let re = sender_ipv6.send_to("6999test".as_bytes(), &MulticastService::MULTICAST_ADDRV6).await;
-                log::debug!("send re: {:?}", re);
+            for net_ip in &multicast_service.service_info.net_ips {
+                if let Some(sender_ipv4) = &net_ip.sender_ipv4 {
+                    let re = sender_ipv4.send_to("6test".as_bytes(), &MulticastService::MULTICAST_ADDRV4).await;
+                    log::debug!("send re: {:?}", re);
+                }
             }
+
+            for net_ip in &multicast_service.service_info.net_ips {
+                if let Some(sender_ipv6) = &net_ip.sender_ipv6 {
+                    let re = sender_ipv6.send_to("6999test".as_bytes(), &MulticastService::MULTICAST_ADDRV6).await;
+                    log::debug!("send re: {:?}", re);
+                }
+            }
+
             tokio::time::sleep(Duration::from_secs(3)).await;
             cancel_token.cancel();
         });

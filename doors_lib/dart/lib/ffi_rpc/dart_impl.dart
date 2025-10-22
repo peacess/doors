@@ -12,7 +12,7 @@ import 'package:flat_buffers/flat_buffers.dart' as fb;
 import 'net_discovery/callback.dart';
 import 'chat/chat.dart';
 
-final logger = Logger();
+final _logger = Logger();
 
 class FfiRpcDart {
   final IdlBindings _idlBindings;
@@ -40,20 +40,21 @@ class FfiRpcDart {
   late final call = dylib.lookupFunction<FfiBytes Function(Pointer<Uint8>, Uint64), FfiBytes Function(Pointer<Uint8>, int)>('call', isLeaf: true);
 
   void callback(FfiBytes data) {
+    _logger.d("callback data:　${data.describe()}");
     final buffer = data.attach();
-    var header = Header.reader.read(buffer, 0);
+    var header = Frame.reader.read(buffer, 0).header!;
     try {
       var headType = HeaderType.from(header.headerType);
       switch (headType) {
         case HeaderType.netDiscovery:
-          netDiscoveryCallback.callback(buffer, header, Header.reader.size);
+          netDiscoveryCallback.callback(buffer, header);
           break;
         case HeaderType.chat:
-          chatCallback.callback(buffer, header, Header.reader.size);
+          chatCallback.callback(buffer, header);
           break;
       }
     } catch (e) {
-      logger.e(e);
+      _logger.e(e);
     }
   }
 
@@ -84,6 +85,11 @@ extension BytesEx on FfiBytes {
   void detach() {
     _bytesFinalizer.detach(FfiBytesT(bytes, len));
     ffiRpc.bytesFree(this);
+  }
+
+  String describe() {
+    final tem = bytes.asTypedList(len);
+    return 'FfiBytes(len: $len, capacity: $capacity, offset: $offset, bytes: $tem)';
   }
 }
 

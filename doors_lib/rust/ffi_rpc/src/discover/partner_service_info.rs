@@ -21,7 +21,6 @@ pub struct PartnerServiceInfo {
     pub terminal_id: ulid::Ulid,
     pub net_ips: Vec<NetIp>,
     pub port_v4: Arc<core::sync::atomic::AtomicU16>,
-    pub port_v6: Arc<core::sync::atomic::AtomicU16>,
 }
 
 impl std::fmt::Debug for PartnerServiceInfo {
@@ -78,7 +77,6 @@ impl PartnerServiceInfo {
             terminal_id: idl::ids::generate_ulid(),
             net_ips,
             port_v4: Arc::new(core::sync::atomic::AtomicU16::new(port_v4)),
-            port_v6: Arc::new(core::sync::atomic::AtomicU16::new(port_v6)),
         }
     }
 
@@ -90,7 +88,7 @@ impl PartnerServiceInfo {
         let mut net_ip = NetIp::default();
         net_ip.name = net.name;
         net_ip.mac_address = net.hw_addr;
-        net_ip.scope_v6 = net.index;
+        net_ip.index_netinterface = net.index;
         for add in net.ips {
             match add.ip {
                 IpAddr::V4(v4) => {
@@ -130,12 +128,8 @@ impl PartnerServiceInfo {
     ) -> flatbuffers::WIPOffset<DnsTerminal<'bldr>> {
         let host_name = builder.create_string(&self.host_name);
         let show_name = builder.create_string("doors_chat");
-        let (port_v4, port_v6) = (self.port_v4.load(Ordering::Relaxed), self.port_v6.load(Ordering::Relaxed));
-        let net_interfaces = self
-            .net_ips
-            .iter()
-            .map(|net| net.to_iet_interface(builder, port_v4, port_v6))
-            .collect::<Vec<_>>();
+        let port_v4 = self.port_v4.load(Ordering::Relaxed);
+        let net_interfaces = self.net_ips.iter().map(|net| net.to_iet_interface(builder, port_v4)).collect::<Vec<_>>();
         let net_interfaces = builder.create_vector(&net_interfaces);
         DnsTerminal::create(
             builder,
