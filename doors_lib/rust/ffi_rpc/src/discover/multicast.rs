@@ -31,10 +31,11 @@ impl MulticastService {
     // ipv6 multicast： FF05::/16
     // const GROUP_IPV4: &'static str = "239.0.0.66:5996";
     // const GROUP_IPV6: &'static str = "FF05::66:5996";
-    const MULTICAST_PORT: u16 = 55996;
+    const MULTICAST_PORT_IPV4: u16 = 55996;
+    const MULTICAST_PORT_IPV6: u16 = 55997;
 
-    const MULTICAST_ADDRV4: SocketAddrV4 = SocketAddrV4::new(Ipv4Addr::new(239, 0, 0, 66), Self::MULTICAST_PORT);
-    const MULTICAST_ADDRV6: SocketAddrV6 = SocketAddrV6::new(Ipv6Addr::new(0xFF05, 0, 0, 0, 0, 0, 0, 66), Self::MULTICAST_PORT, 0, 0);
+    const MULTICAST_ADDRV4: SocketAddrV4 = SocketAddrV4::new(Ipv4Addr::new(239, 0, 0, 66), Self::MULTICAST_PORT_IPV4);
+    const MULTICAST_ADDRV6: Ipv6Addr = Ipv6Addr::new(0xFF05, 0, 0, 0, 0, 0, 0, 66);
 
     pub fn new(handle: Handle) -> Result<Arc<Self>, anyhow::Error> {
         Self::new_with_ips(handle)
@@ -50,10 +51,9 @@ impl MulticastService {
                 .any(|ip| ip.ip_v6_link_local.is_unspecified() || ip.ip_v6_unique_local.is_unspecified());
             let multicast_ipv4 = {
                 let udp_socket = {
-                    let listen_addr = SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, Self::MULTICAST_PORT);
+                    let listen_addr = SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, Self::MULTICAST_PORT_IPV4);
                     let socket = socket2::Socket::new(socket2::Domain::IPV4, socket2::Type::DGRAM, Some(socket2::Protocol::UDP))?;
                     socket.set_reuse_address(true)?;
-                    #[cfg(unix)]
                     socket.set_reuse_port(true)?;
                     socket.set_nonblocking(true)?;
                     // if it false, dont work for two program run in same pc
@@ -102,7 +102,7 @@ impl MulticastService {
 
             let multicast_ipv6 = {
                 if has_ipv6 {
-                    let listen_addr = SocketAddrV6::new(Ipv6Addr::UNSPECIFIED, Self::MULTICAST_PORT, 0, 0);
+                    let listen_addr = SocketAddrV6::new(Ipv6Addr::UNSPECIFIED, Self::MULTICAST_PORT_IPV6, 0, 0);
                     let socket = socket2::Socket::new(socket2::Domain::IPV6, socket2::Type::DGRAM, Some(socket2::Protocol::UDP))?;
                     socket.set_reuse_address(true)?;
                     #[cfg(unix)]
@@ -113,7 +113,7 @@ impl MulticastService {
                     socket.bind(&listen_addr.into())?;
                     let udp_socket = tokio::net::UdpSocket::from_std(socket.into())?;
                     for net in &service_info.net_ips {
-                        udp_socket.join_multicast_v6(Self::MULTICAST_ADDRV6.ip(), net.index_netinterface)?;
+                        udp_socket.join_multicast_v6(&Self::MULTICAST_ADDRV6, net.index_netinterface)?;
                     }
 
                     log::info!("Successfully connected to multicast server: {}", Self::MULTICAST_ADDRV6);
@@ -171,7 +171,7 @@ impl MulticastService {
                 log::info!("Sending initial multicast 'hi' message");
 
                 let mut builder = flatbuffers::FlatBufferBuilder::with_capacity(1024);
-                let buffer = {
+                {
                     let hi = {
                         let show_name = builder.create_string("doors_chat");
                         let dns_terminal = self.service_info.to_dns_terminal(&mut builder);
@@ -199,27 +199,40 @@ impl MulticastService {
                         },
                     );
                     builder.finish(hi_frame, None);
-                    builder.finished_data()
                 };
 
-                match self.multicast_ipv4.send_to(buffer, &Self::MULTICAST_ADDRV4).await {
-                    Ok(sent) => {
-                        log::info!("ipv4 Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV4);
-                    }
-                    Err(e) => {
-                        log::error!("ipv4 Error sending to {}: {}", Self::MULTICAST_ADDRV4, e);
-                    }
-                }
-                if let Some(multicast_ipv6) = &self.multicast_ipv6 {
-                    match multicast_ipv6.send_to(buffer, &Self::MULTICAST_ADDRV6).await {
-                        Ok(sent) => {
-                            log::info!("ipv6 Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV6);
-                        }
-                        Err(e) => {
-                            log::error!("ipv6 Error sending to {}: {}", Self::MULTICAST_ADDRV6, e);
+                let self_clone = self.clone();
+                self.handle.clone().spawn(async move {
+                    let buffer = builder.finished_data();
+                    for net_ip in &self_clone.service_info.net_ips {
+                        if let Some(sender_ipv4) = &net_ip.sender_ipv4 {
+                            match sender_ipv4.send_to(buffer, &Self::MULTICAST_ADDRV4).await {
+                                Ok(sent) => {
+                                    log::info!("ipv4 Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV4);
+                                }
+                                Err(e) => {
+                                    log::error!("ipv4 Error sending to {}: {}", Self::MULTICAST_ADDRV4, e);
+                                }
+                            }
                         }
                     }
-                }
+
+                    if self_clone.multicast_ipv6.is_some() {
+                        for net_ip in &self_clone.service_info.net_ips {
+                            if let Some(sender_ipv6) = &net_ip.sender_ipv6 {
+                                let temp = SocketAddrV6::new(Self::MULTICAST_ADDRV6, Self::MULTICAST_PORT_IPV6, 0, net_ip.index_netinterface);
+                                match sender_ipv6.send_to(buffer, &temp).await {
+                                    Ok(sent) => {
+                                        log::info!("ipv6 Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV6);
+                                    }
+                                    Err(e) => {
+                                        log::error!("ipv6 Error sending to {}: {}", Self::MULTICAST_ADDRV6, e);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
             }
             let mut err_count = 0;
 
@@ -332,6 +345,15 @@ impl MulticastService {
 
     fn handle_recv(&self, data: SocketAddr, buffer: Vec<u8>) {
         log::debug!("Received {} bytes from {}", buffer.len(), data);
+        //if the "hi" message is send by itself, ignore it
+        if data == self.multicast_ipv4.local_addr().unwrap() {
+            return;
+        }
+        if let Some(multicast_ipv6) = &self.multicast_ipv6
+            && multicast_ipv6.local_addr().unwrap() == data
+        {
+            return;
+        }
         if let Some(app) = LIB_APP.get() {
             if let Some(call) = app.get_callback() {
                 call(FfiBytes::from(buffer));
@@ -342,7 +364,7 @@ impl MulticastService {
     pub fn uninit(&self) -> Result<(), anyhow::Error> {
         self.multicast_ipv4.leave_multicast_v4(*Self::MULTICAST_ADDRV4.ip(), Ipv4Addr::UNSPECIFIED)?;
         if let Some(receiver_ipv6) = &self.multicast_ipv6 {
-            receiver_ipv6.leave_multicast_v6(&Self::MULTICAST_ADDRV6.ip(), 0)?;
+            receiver_ipv6.leave_multicast_v6(&Self::MULTICAST_ADDRV6, 0)?;
         }
         Ok(())
     }
@@ -351,7 +373,7 @@ impl MulticastService {
 #[cfg(test)]
 mod tests {
     use std::{
-        net::{Ipv4Addr, SocketAddr, SocketAddrV4},
+        net::{Ipv4Addr, SocketAddr, SocketAddrV4, SocketAddrV6},
         sync::Arc,
         time::Duration,
     };
@@ -409,7 +431,8 @@ mod tests {
 
             for net_ip in &multicast_service.service_info.net_ips {
                 if let Some(sender_ipv6) = &net_ip.sender_ipv6 {
-                    let re = sender_ipv6.send_to("6999test".as_bytes(), &MulticastService::MULTICAST_ADDRV6).await;
+                    let temp = SocketAddrV6::new(MulticastService::MULTICAST_ADDRV6, MulticastService::MULTICAST_PORT_IPV6, 0, 0);
+                    let re = sender_ipv6.send_to("6999test".as_bytes(), &temp).await;
                     log::debug!("send re: {:?}", re);
                 }
             }
@@ -428,7 +451,7 @@ mod tests {
         let _ = runtime.block_on(async {
             let socket = {
                 let udp_socket = {
-                    let listen_addr = SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, MulticastService::MULTICAST_PORT);
+                    let listen_addr = SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, MulticastService::MULTICAST_PORT_IPV4);
                     let socket = socket2::Socket::new(socket2::Domain::IPV4, socket2::Type::DGRAM, Some(socket2::Protocol::UDP))?;
                     // socket.set_reuse_address(true)?;
                     // #[cfg(not(windows))]
@@ -468,7 +491,7 @@ mod tests {
             tokio::time::sleep(Duration::from_secs(2)).await;
             let socket_send = {
                 let udp_socket = {
-                    let listen_addr = SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, MulticastService::MULTICAST_PORT);
+                    let listen_addr = SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, MulticastService::MULTICAST_PORT_IPV4);
                     let socket = socket2::Socket::new(socket2::Domain::IPV4, socket2::Type::DGRAM, Some(socket2::Protocol::UDP))?;
                     // socket.set_reuse_address(true)?;
                     // #[cfg(not(windows))]

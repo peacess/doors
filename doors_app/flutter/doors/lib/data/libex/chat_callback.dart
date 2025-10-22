@@ -4,12 +4,12 @@ import 'package:idl/idl/chat_chat_generated.dart';
 
 final class AppChatCallback extends ChatCallback {
   @override
-  void textMessage(Header header, TextMessage text) {
+  void textMessage(ChatTextMessage text) {
     // print('textMessage: ${text.fromId}, ${text.toId}, ${text.text}');
   }
 
   @override
-  void textMessageAck(Header header, TextMessageAck ack) {
+  void textMessageAck(ChatTextMessageAck ack) {
     // print('textMessageAck: ${ack.messageId}, ${ack.status}');
   }
 }
