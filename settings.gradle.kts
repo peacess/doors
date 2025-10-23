@@ -1,3 +1,3 @@
-rootProject.name = "Doors"
+rootProject.name = "doors"
 
 include(":doors_lib")

@@ -40,7 +40,7 @@ class FfiRpcDart {
   late final call = dylib.lookupFunction<FfiBytes Function(Pointer<Uint8>, Uint64), FfiBytes Function(Pointer<Uint8>, int)>('call', isLeaf: true);
 
   void callback(FfiBytes data) {
-    _logger.d("callback data:　${data.describe()}");
+    // _logger.d("callback data:　${data.describe()}");
     final buffer = data.attach();
     var header = Frame.reader.read(buffer, 0).header!;
     try {
