@@ -1,6 +1,0 @@
-
-*.go linguist-language=go
-*.rs linguist-language=rust
-*.dart linguist-language=dart
-*.kt linguist-language=Kotlin
-*.zig linguist-language=Zig
