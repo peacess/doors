@@ -4,4 +4,82 @@ package netDiscovery
 
 import com.google.flatbuffers.kotlin.*
 import kotlin.jvm.JvmInline
+@Suppress("unused")
+class DnsTerminal : Table() {
 
+    fun init(i: Int, buffer: ReadWriteBuffer) : DnsTerminal = reset(i, buffer)
+
+    val partnerId : base.PartnerId? get() = partnerId(base.PartnerId())
+    fun partnerId(obj: base.PartnerId) : base.PartnerId? = lookupField(4, null ) { obj.init(it + bufferPos, bb) }
+
+    val terminalId : base.TerminalId? get() = terminalId(base.TerminalId())
+    fun terminalId(obj: base.TerminalId) : base.TerminalId? = lookupField(6, null ) { obj.init(it + bufferPos, bb) }
+
+    val key : base.X25519Public? get() = key(base.X25519Public())
+    fun key(obj: base.X25519Public) : base.X25519Public? = lookupField(8, null ) { obj.init(it + bufferPos, bb) }
+
+    val hostName : String? get() = lookupField(10, null ) { string(it + bufferPos) }
+    fun hostNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 10, 1)
+
+    val showName : String? get() = lookupField(12, null ) { string(it + bufferPos) }
+    fun showNameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 12, 1)
+
+    fun netInterfaces(j: Int) : netDiscovery.NetInterface? = netInterfaces(netDiscovery.NetInterface(), j)
+    fun netInterfaces(obj: netDiscovery.NetInterface, j: Int) : netDiscovery.NetInterface? = lookupField(14, null ) { obj.init(indirect(vector(it) + j * 4), bb) }
+    val netInterfacesLength : Int get() = lookupField(14, 0 ) { vectorLength(it) }
+
+    companion object {
+        @JvmStatic
+        fun validateVersion() = VERSION_2_0_8
+
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer) : DnsTerminal = asRoot(buffer, DnsTerminal())
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer, obj: DnsTerminal) : DnsTerminal = obj.init(buffer.getInt(buffer.limit) + buffer.limit, buffer)
+
+
+        @JvmStatic
+        fun startDnsTerminal(builder: FlatBufferBuilder) = builder.startTable(6)
+
+        @JvmStatic
+        fun addPartnerId(builder: FlatBufferBuilder, partnerId: Offset<base.PartnerId>) = builder.addStruct(0, partnerId.value, 0)
+
+        @JvmStatic
+        fun addTerminalId(builder: FlatBufferBuilder, terminalId: Offset<base.TerminalId>) = builder.addStruct(1, terminalId.value, 0)
+
+        @JvmStatic
+        fun addKey(builder: FlatBufferBuilder, key: Offset<base.X25519Public>) = builder.addStruct(2, key.value, 0)
+
+        @JvmStatic
+        fun addHostName(builder: FlatBufferBuilder, hostName: Offset<String>) = builder.add(3, hostName, 0)
+
+        @JvmStatic
+        fun addShowName(builder: FlatBufferBuilder, showName: Offset<String>) = builder.add(4, showName, 0)
+
+        @JvmStatic
+        fun addNetInterfaces(builder: FlatBufferBuilder, netInterfaces: VectorOffset<netDiscovery.NetInterface>) = builder.add(5, netInterfaces, 0)
+
+        @JvmStatic
+        fun createNetInterfacesVector(builder: FlatBufferBuilder, vector:netDiscovery.NetInterfaceOffsetArray) : VectorOffset<netDiscovery.NetInterface> {
+            builder.startVector(4, vector.size, 4)
+            for (i in vector.size - 1 downTo 0) {
+                builder.add(vector[i])
+            }
+            return builder.endVector()
+        }
+
+        @JvmStatic
+        fun startNetInterfacesVector(builder: FlatBufferBuilder, numElems: Int) = builder.startVector(4, numElems, 4)
+
+        @JvmStatic
+        fun endDnsTerminal(builder: FlatBufferBuilder) : Offset<DnsTerminal> {
+            val o: Offset<DnsTerminal> = builder.endTable()
+            return o
+        }
+    }
+}
+
+typealias DnsTerminalOffsetArray = OffsetArray<DnsTerminal>
+
+inline fun DnsTerminalOffsetArray(size: Int, crossinline call: (Int) -> Offset<DnsTerminal>): DnsTerminalOffsetArray =
+    DnsTerminalOffsetArray(IntArray(size) { call(it).value })

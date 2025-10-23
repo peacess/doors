@@ -4,4 +4,89 @@ package netDiscovery
 
 import com.google.flatbuffers.kotlin.*
 import kotlin.jvm.JvmInline
+@Suppress("unused")
+class NetInterface : Table() {
 
+    fun init(i: Int, buffer: ReadWriteBuffer) : NetInterface = reset(i, buffer)
+
+    val ipV4 : UInt get() = lookupField(4, 0u ) { bb.getUInt(it + bufferPos) }
+
+    val portV4 : UShort get() = lookupField(6, 0u ) { bb.getUShort(it + bufferPos) }
+
+    val ipV6Global : base.Ipv6? get() = ipV6Global(base.Ipv6())
+    fun ipV6Global(obj: base.Ipv6) : base.Ipv6? = lookupField(8, null ) { obj.init(it + bufferPos, bb) }
+
+    val portV6 : UShort get() = lookupField(10, 0u ) { bb.getUShort(it + bufferPos) }
+
+    val ipV6Temporary : base.Ipv6? get() = ipV6Temporary(base.Ipv6())
+    fun ipV6Temporary(obj: base.Ipv6) : base.Ipv6? = lookupField(12, null ) { obj.init(it + bufferPos, bb) }
+
+    val ipV6LinkLocal : base.Ipv6? get() = ipV6LinkLocal(base.Ipv6())
+    fun ipV6LinkLocal(obj: base.Ipv6) : base.Ipv6? = lookupField(14, null ) { obj.init(it + bufferPos, bb) }
+
+    val indexNetinterface : UInt get() = lookupField(16, 0u ) { bb.getUInt(it + bufferPos) }
+
+    val ipV6UniqueLocal : base.Ipv6? get() = ipV6UniqueLocal(base.Ipv6())
+    fun ipV6UniqueLocal(obj: base.Ipv6) : base.Ipv6? = lookupField(18, null ) { obj.init(it + bufferPos, bb) }
+
+    val name : String? get() = lookupField(20, null ) { string(it + bufferPos) }
+    fun nameAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 20, 1)
+
+    val macAddress : String? get() = lookupField(22, null ) { string(it + bufferPos) }
+    fun macAddressAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 22, 1)
+
+    companion object {
+        @JvmStatic
+        fun validateVersion() = VERSION_2_0_8
+
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer) : NetInterface = asRoot(buffer, NetInterface())
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer, obj: NetInterface) : NetInterface = obj.init(buffer.getInt(buffer.limit) + buffer.limit, buffer)
+
+
+        @JvmStatic
+        fun startNetInterface(builder: FlatBufferBuilder) = builder.startTable(10)
+
+        @JvmStatic
+        fun addIpV4(builder: FlatBufferBuilder, ipV4: UInt) = builder.add(0, ipV4, 0u)
+
+        @JvmStatic
+        fun addPortV4(builder: FlatBufferBuilder, portV4: UShort) = builder.add(1, portV4, 0u)
+
+        @JvmStatic
+        fun addIpV6Global(builder: FlatBufferBuilder, ipV6Global: Offset<base.Ipv6>) = builder.addStruct(2, ipV6Global.value, 0)
+
+        @JvmStatic
+        fun addPortV6(builder: FlatBufferBuilder, portV6: UShort) = builder.add(3, portV6, 0u)
+
+        @JvmStatic
+        fun addIpV6Temporary(builder: FlatBufferBuilder, ipV6Temporary: Offset<base.Ipv6>) = builder.addStruct(4, ipV6Temporary.value, 0)
+
+        @JvmStatic
+        fun addIpV6LinkLocal(builder: FlatBufferBuilder, ipV6LinkLocal: Offset<base.Ipv6>) = builder.addStruct(5, ipV6LinkLocal.value, 0)
+
+        @JvmStatic
+        fun addIndexNetinterface(builder: FlatBufferBuilder, indexNetinterface: UInt) = builder.add(6, indexNetinterface, 0u)
+
+        @JvmStatic
+        fun addIpV6UniqueLocal(builder: FlatBufferBuilder, ipV6UniqueLocal: Offset<base.Ipv6>) = builder.addStruct(7, ipV6UniqueLocal.value, 0)
+
+        @JvmStatic
+        fun addName(builder: FlatBufferBuilder, name: Offset<String>) = builder.add(8, name, 0)
+
+        @JvmStatic
+        fun addMacAddress(builder: FlatBufferBuilder, macAddress: Offset<String>) = builder.add(9, macAddress, 0)
+
+        @JvmStatic
+        fun endNetInterface(builder: FlatBufferBuilder) : Offset<NetInterface> {
+            val o: Offset<NetInterface> = builder.endTable()
+            return o
+        }
+    }
+}
+
+typealias NetInterfaceOffsetArray = OffsetArray<NetInterface>
+
+inline fun NetInterfaceOffsetArray(size: Int, crossinline call: (Int) -> Offset<NetInterface>): NetInterfaceOffsetArray =
+    NetInterfaceOffsetArray(IntArray(size) { call(it).value })

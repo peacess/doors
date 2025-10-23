@@ -1,6 +1,6 @@
 
 include "base.fbs";
-include "ffi_rpc.fbs";
+// include "ffi_rpc.fbs";
 namespace partner;
 
 table Partner{

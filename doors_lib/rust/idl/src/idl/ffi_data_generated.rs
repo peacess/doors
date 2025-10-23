@@ -10,7 +10,7 @@ extern crate flatbuffers;
 use self::flatbuffers::{EndianScalar, Follow};
 
 #[allow(unused_imports, dead_code)]
-pub mod ffi_rpc {
+pub mod ffi_data {
 
     use core::{cmp::Ordering, mem};
 
@@ -643,4 +643,4 @@ pub mod ffi_rpc {
             FfiRpcPartnerSelfOut::create(_fbb, &FfiRpcPartnerSelfOutArgs { header, message })
         }
     }
-} // pub mod ffi_rpc
+} // pub mod ffi_data

@@ -2,7 +2,7 @@
 include "base.fbs";
 include "net_discovery.fbs";
 
-namespace ffi_rpc;
+namespace ffi_data;
 //
 attribute FfiRpcParameter;
 //

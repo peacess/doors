@@ -4,4 +4,16 @@ package netDiscovery
 
 import com.google.flatbuffers.kotlin.*
 import kotlin.jvm.JvmInline
+@Suppress("unused")
+@JvmInline
+value class NetDiscoveryType (val value: UInt) {
+    companion object {
+        val None = NetDiscoveryType(0u)
+        val Hi = NetDiscoveryType(1u)
+        val names : Array<String> = arrayOf("none", "hi")
+        @JvmStatic
+        fun name(e: NetDiscoveryType) : String = names[e.value.toInt()]
+    }
+}
 
+typealias NetDiscoveryTypeArray = UIntArray

@@ -7,7 +7,6 @@ import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import './base_base_generated.dart' as base;
-import './ffi_rpc_ffi_rpc_generated.dart' as ffi_rpc;
 
 enum NetDiscoveryType {
   none(0),

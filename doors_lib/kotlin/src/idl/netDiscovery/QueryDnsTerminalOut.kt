@@ -4,4 +4,51 @@ package netDiscovery
 
 import com.google.flatbuffers.kotlin.*
 import kotlin.jvm.JvmInline
+@Suppress("unused")
+class QueryDnsTerminalOut : Table() {
 
+    fun init(i: Int, buffer: ReadWriteBuffer) : QueryDnsTerminalOut = reset(i, buffer)
+
+    val id : base.UlidBytes? get() = id(base.UlidBytes())
+    fun id(obj: base.UlidBytes) : base.UlidBytes? = lookupField(4, null ) { obj.init(it + bufferPos, bb) }
+
+    val inId : base.UlidBytes? get() = inId(base.UlidBytes())
+    fun inId(obj: base.UlidBytes) : base.UlidBytes? = lookupField(6, null ) { obj.init(it + bufferPos, bb) }
+
+    val dnsTerminal : netDiscovery.DnsTerminal? get() = dnsTerminal(netDiscovery.DnsTerminal())
+    fun dnsTerminal(obj: netDiscovery.DnsTerminal) : netDiscovery.DnsTerminal? = lookupField(8, null ) { obj.init(indirect(it + bufferPos), bb) }
+
+    companion object {
+        @JvmStatic
+        fun validateVersion() = VERSION_2_0_8
+
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer) : QueryDnsTerminalOut = asRoot(buffer, QueryDnsTerminalOut())
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer, obj: QueryDnsTerminalOut) : QueryDnsTerminalOut = obj.init(buffer.getInt(buffer.limit) + buffer.limit, buffer)
+
+
+        @JvmStatic
+        fun startQueryDnsTerminalOut(builder: FlatBufferBuilder) = builder.startTable(3)
+
+        @JvmStatic
+        fun addId(builder: FlatBufferBuilder, id: Offset<base.UlidBytes>) = builder.addStruct(0, id.value, 0)
+
+        @JvmStatic
+        fun addInId(builder: FlatBufferBuilder, inId: Offset<base.UlidBytes>) = builder.addStruct(1, inId.value, 0)
+
+        @JvmStatic
+        fun addDnsTerminal(builder: FlatBufferBuilder, dnsTerminal: Offset<netDiscovery.DnsTerminal>) = builder.add(2, dnsTerminal, 0)
+
+        @JvmStatic
+        fun endQueryDnsTerminalOut(builder: FlatBufferBuilder) : Offset<QueryDnsTerminalOut> {
+            val o: Offset<QueryDnsTerminalOut> = builder.endTable()
+            return o
+        }
+    }
+}
+
+typealias QueryDnsTerminalOutOffsetArray = OffsetArray<QueryDnsTerminalOut>
+
+inline fun QueryDnsTerminalOutOffsetArray(size: Int, crossinline call: (Int) -> Offset<QueryDnsTerminalOut>): QueryDnsTerminalOutOffsetArray =
+    QueryDnsTerminalOutOffsetArray(IntArray(size) { call(it).value })

@@ -1,5 +1,4 @@
 include "base.fbs";
-include "ffi_rpc.fbs";
 namespace chat;
 
 attribute ChatFrame;

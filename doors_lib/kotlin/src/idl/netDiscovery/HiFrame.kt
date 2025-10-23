@@ -4,4 +4,45 @@ package netDiscovery
 
 import com.google.flatbuffers.kotlin.*
 import kotlin.jvm.JvmInline
+@Suppress("unused")
+class HiFrame : Table() {
 
+    fun init(i: Int, buffer: ReadWriteBuffer) : HiFrame = reset(i, buffer)
+
+    val header : base.Header? get() = header(base.Header())
+    fun header(obj: base.Header) : base.Header? = lookupField(4, null ) { obj.init(it + bufferPos, bb) }
+
+    val hi : netDiscovery.Hi? get() = hi(netDiscovery.Hi())
+    fun hi(obj: netDiscovery.Hi) : netDiscovery.Hi? = lookupField(6, null ) { obj.init(indirect(it + bufferPos), bb) }
+
+    companion object {
+        @JvmStatic
+        fun validateVersion() = VERSION_2_0_8
+
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer) : HiFrame = asRoot(buffer, HiFrame())
+        @JvmStatic
+        fun asRoot(buffer: ReadWriteBuffer, obj: HiFrame) : HiFrame = obj.init(buffer.getInt(buffer.limit) + buffer.limit, buffer)
+
+
+        @JvmStatic
+        fun startHiFrame(builder: FlatBufferBuilder) = builder.startTable(2)
+
+        @JvmStatic
+        fun addHeader(builder: FlatBufferBuilder, header: Offset<base.Header>) = builder.addStruct(0, header.value, 0)
+
+        @JvmStatic
+        fun addHi(builder: FlatBufferBuilder, hi: Offset<netDiscovery.Hi>) = builder.add(1, hi, 0)
+
+        @JvmStatic
+        fun endHiFrame(builder: FlatBufferBuilder) : Offset<HiFrame> {
+            val o: Offset<HiFrame> = builder.endTable()
+            return o
+        }
+    }
+}
+
+typealias HiFrameOffsetArray = OffsetArray<HiFrame>
+
+inline fun HiFrameOffsetArray(size: Int, crossinline call: (Int) -> Offset<HiFrame>): HiFrameOffsetArray =
+    HiFrameOffsetArray(IntArray(size) { call(it).value })
