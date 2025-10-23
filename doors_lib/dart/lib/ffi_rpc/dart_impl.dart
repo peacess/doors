@@ -21,9 +21,9 @@ class FfiRpcDart {
   late final ChatCallback chatCallback;
   late final Chat chat;
 
-  void init({required NetDiscoveryCallback netDiscoveryCallback, ChatCallback? chatCallback, Chat? chat}) {
+  void init({required NetDiscoveryCallback netDiscoveryCallback, required ChatCallback chatCallback, Chat? chat}) {
     this.netDiscoveryCallback = netDiscoveryCallback;
-    this.chatCallback = chatCallback ?? ChatCallback();
+    this.chatCallback = chatCallback;
     this.chat = chat ?? Chat();
     final nativeCallable = NativeCallable<CallBackFunction>.listener(callback);
     var re = _idlBindings.init(nativeCallable.nativeFunction);
@@ -76,7 +76,6 @@ final Finalizer<FfiBytes> _bytesFinalizer = Finalizer((FfiBytes data) {
 
 extension BytesEx on FfiBytes {
   fb.BufferContext attach() {
-    FfiBytes t = Struct.create();
     final buffer = fb.BufferContext.fromBytes(bytes.asTypedList(len));
     _bytesFinalizer.attach(buffer, this, detach: FfiBytesT(bytes, len));
     return buffer;

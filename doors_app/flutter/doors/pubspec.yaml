@@ -19,6 +19,9 @@ dependencies:
 
   isar_community:
   isar_community_flutter_libs:
+
+  scrollable_positioned_list:
+
   idl:
     path:  "../../../doors_lib/dart"
 
@@ -29,6 +32,7 @@ dev_dependencies:
   flutter_lints:
   isar_community_generator: 
   build_runner:
+  icons_launcher:
 
 flutter:
   uses-material-design: true
@@ -41,3 +45,19 @@ platforms:
   macos:
   linux:
   web:
+
+icons_launcher:
+  image_path: "assets/door.jpg"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+    web:
+      enable: true
+    macos:
+      enable: true
+    windows:
+      enable: true
+    linux:
+      enable: true

@@ -1,4 +1,5 @@
 import 'package:idl/ffi_rpc/idl_ex/base.dart';
+import 'package:idl/idl/base_base_generated.dart';
 import 'package:idl/kits/value_notifier_ex.dart';
 
 import './partner.dart';
@@ -24,6 +25,26 @@ class Partners {
 
     patterns.value.removeWhere((it) => it.id.eq(partner.id));
     patterns.notifyListeners();
+  }
+
+  Partner? getByPartner(PartnerIdT id) {
+    for (var it in patterns.value) {
+      if (it.partnerId.eq(id)) {
+        return it;
+      }
+    }
+    return null;
+  }
+
+  Partner? getByTerminal(TerminalIdT id) {
+    for (var it in patterns.value) {
+      for (var t in it.terminals) {
+        if (t.terminalId != null && t.terminalId!.eq(id)) {
+          return it;
+        }
+      }
+    }
+    return null;
   }
 
   // the terminal is not too much, so use the list, not map

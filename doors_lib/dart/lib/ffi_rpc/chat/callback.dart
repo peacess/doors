@@ -2,6 +2,7 @@ import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import '../../idl/base_base_generated.dart';
 import '../../idl/chat_chat_generated.dart';
+import '../partner/partners.dart';
 
 enum ChatCallbackType {
   textMessage(1),
@@ -21,7 +22,17 @@ enum ChatCallbackType {
 }
 
 base class ChatCallback {
-  void textMessage(ChatTextMessage text) {}
+  final Partners partners;
+  ChatCallback(this.partners);
+  void textMessage(ChatTextMessage chatText) {
+    if (chatText.header != null && chatText.message != null) {
+      var partner = partners.getByTerminal(chatText.header!.toTerminalId.unpack());
+      if (partner != null) {
+        partner.addTextMessage(chatText.message!.unpack());
+      }
+    }
+  }
+
   void textMessageAck(ChatTextMessageAck ack) {}
 
   void callback(fb.BufferContext buffer, Header header) {

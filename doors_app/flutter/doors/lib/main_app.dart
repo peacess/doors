@@ -21,7 +21,7 @@ class _DoorsMainApp extends State<DoorsMainApp> {
   void initState() {
     super.initState();
     themeMode.addListener(_refresh);
-    ffiRpc.init(netDiscoveryCallback: AppNetDiscoveryCallback(DoorsApp.app.partners), chatCallback: AppChatCallback());
+    ffiRpc.init(netDiscoveryCallback: AppNetDiscoveryCallback(DoorsApp.app.partners), chatCallback: AppChatCallback(DoorsApp.app.partners));
   }
 
   @override

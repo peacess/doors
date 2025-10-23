@@ -11,5 +11,6 @@ build:
 gen:
 	${flutter} gen-l10n
 	${flutter} pub run build_runner build
+	dart run icons_launcher:create
 install:
 # 	dart pub global activate flutter_gen

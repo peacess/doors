@@ -2,6 +2,9 @@ import 'package:doors/views/category.dart';
 import 'package:doors/views/chat/chat_title_bar.dart';
 import 'package:doors/views/doors_app.dart';
 import 'package:flutter/material.dart';
+import 'package:idl/idl/chat_chat_generated.dart';
+
+import 'message.dart';
 
 class ChatPage extends StatefulWidget {
   ChatPage({super.key});
@@ -17,6 +20,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final ValueNotifier<ValueNotifier<List<TextMessageT>>> messages = ValueNotifier(ValueNotifier([]));
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +29,14 @@ class _ChatPageState extends State<ChatPage> {
         child: Row(
           children: [
             if (!DoorsApp.app.widthIsMobile()) makeLeft(),
-            Expanded(child: Center(child: Text("chat"))),
+            Expanded(
+              child: ValueListenableBuilder(
+                valueListenable: messages,
+                builder: (_, value, _) {
+                  return MessagesWidget(value);
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -49,7 +60,15 @@ class _ChatPageState extends State<ChatPage> {
                 return Wrap(
                   spacing: 8.0,
                   runSpacing: 8.0,
-                  children: [for (var it in value) TextButton.icon(onPressed: () {}, label: Text(it.showName))],
+                  children: [
+                    for (var it in value)
+                      TextButton.icon(
+                        onPressed: () {
+                          messages.value = it.texts;
+                        },
+                        label: Text(it.showName),
+                      ),
+                  ],
                 );
               },
             ),

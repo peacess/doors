@@ -1,10 +1,11 @@
 import 'package:idl/ffi_rpc/chat/callback.dart';
-import 'package:idl/idl/base_base_generated.dart';
 import 'package:idl/idl/chat_chat_generated.dart';
 
 final class AppChatCallback extends ChatCallback {
+  AppChatCallback(super.partners);
+
   @override
-  void textMessage(ChatTextMessage text) {
+  void textMessage(ChatTextMessage chatText) {
     // print('textMessage: ${text.fromId}, ${text.toId}, ${text.text}');
   }
 

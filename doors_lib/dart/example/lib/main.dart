@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:idl/ffi_rpc/chat/callback.dart';
 import 'package:idl/ffi_rpc/partner/partners.dart';
 
 import 'package:idl/idl.dart' as idl;
-import 'package:idl/idl/base_base_generated.dart';
 import 'package:idl/idl/net_discovery_net_discovery_generated.dart';
 import 'package:logger/logger.dart';
 
@@ -25,7 +25,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     sumResult = 0;
-    idl.ffiRpc.init(netDiscoveryCallback: Net(Partners()));
+    final partners = Partners();
+    idl.ffiRpc.init(netDiscoveryCallback: Net(partners), chatCallback: ChatCallback(partners));
   }
 
   @override
