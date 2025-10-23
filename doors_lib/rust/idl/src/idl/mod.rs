@@ -3,6 +3,7 @@
 #![allow(unsafe_op_in_unsafe_fn)]
 #![allow(clippy::all)]
 
+mod base_ex;
 pub mod base_generated;
 pub mod chat_generated;
 pub mod ffi_rpc_generated;

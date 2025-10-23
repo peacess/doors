@@ -34,7 +34,16 @@ impl MulticastService {
     const MULTICAST_PORT_IPV4: u16 = 55996;
     const MULTICAST_PORT_IPV6: u16 = 55997;
 
+    /// 224.0.0.0/24  Local Network Control Block
+    /// 224.0.1.0/24  Internetwork Control Block
+    /// 239.0.0.0/8  Organization-Local
     const MULTICAST_ADDRV4: SocketAddrV4 = SocketAddrV4::new(Ipv4Addr::new(239, 0, 0, 66), Self::MULTICAST_PORT_IPV4);
+    /// ff01: interface-local multicast address
+    /// ff02: link-local multicast address
+    /// ff04: admin-local multicast address
+    /// ff05: site-local multicast address
+    /// ff08: organization-local multicast address
+    /// ff0E: global multicast address
     const MULTICAST_ADDRV6: Ipv6Addr = Ipv6Addr::new(0xFF05, 0, 0, 0, 0, 0, 0, 66);
 
     pub fn new(handle: Handle) -> Result<Arc<Self>, anyhow::Error> {
@@ -64,7 +73,11 @@ impl MulticastService {
                 };
 
                 udp_socket.join_multicast_v4(*Self::MULTICAST_ADDRV4.ip(), Ipv4Addr::UNSPECIFIED)?;
-                log::info!("Successfully connected to multicast server: {}", Self::MULTICAST_ADDRV4);
+                log::info!(
+                    "Successfully connected to multicast ipv4: {} -- {}",
+                    Self::MULTICAST_ADDRV4,
+                    udp_socket.local_addr()?
+                );
                 Arc::new(udp_socket)
             };
 
@@ -105,18 +118,21 @@ impl MulticastService {
                     let listen_addr = SocketAddrV6::new(Ipv6Addr::UNSPECIFIED, Self::MULTICAST_PORT_IPV6, 0, 0);
                     let socket = socket2::Socket::new(socket2::Domain::IPV6, socket2::Type::DGRAM, Some(socket2::Protocol::UDP))?;
                     socket.set_reuse_address(true)?;
-                    #[cfg(unix)]
                     socket.set_reuse_port(true)?;
                     socket.set_nonblocking(true)?;
-                    socket.set_multicast_loop_v6(true)?;
                     socket.set_only_v6(true)?; //dont include the ipv4, for the multicast , ipv6 ipv4 are not same, so dont include
                     socket.bind(&listen_addr.into())?;
                     let udp_socket = tokio::net::UdpSocket::from_std(socket.into())?;
                     for net in &service_info.net_ips {
                         udp_socket.join_multicast_v6(&Self::MULTICAST_ADDRV6, net.index_netinterface)?;
                     }
+                    udp_socket.set_multicast_loop_v6(true)?;
 
-                    log::info!("Successfully connected to multicast server: {}", Self::MULTICAST_ADDRV6);
+                    log::info!(
+                        "Successfully connected to multicast ipv6: {} -- {}",
+                        Self::MULTICAST_ADDRV6,
+                        udp_socket.local_addr()?
+                    );
                     Some(Arc::new(udp_socket))
                 } else {
                     None
@@ -124,7 +140,7 @@ impl MulticastService {
             };
 
             for net_ip in &mut service_info.net_ips {
-                if net_ip.ip_v6_global.is_unspecified() {
+                if !net_ip.ip_v6_global.is_unspecified() {
                     let mut port = net_ip.recv_port_v6.load(core::sync::atomic::Ordering::Relaxed);
                     let socket = loop {
                         match tokio::net::UdpSocket::bind(core::net::SocketAddrV6::new(net_ip.ip_v6_global, port, 0, net_ip.index_netinterface)).await {
@@ -138,17 +154,17 @@ impl MulticastService {
                             }
                         }
                     };
-                    socket.set_multicast_loop_v6(false)?;
-                    log::info!("[Sender] bind: {:?}", socket.local_addr()?);
+                    socket.set_multicast_loop_v6(true)?;
+                    log::info!("receiver ipv6 bind: {}", socket.local_addr()?);
                     net_ip.reciver_ipv6 = Some(Arc::new(socket));
                 }
             }
 
             for net_ip in &mut service_info.net_ips {
-                if net_ip.ip_v6_global.is_unspecified() {
+                if !net_ip.ip_v6_global.is_unspecified() {
                     let listen_addr = SocketAddrV6::new(net_ip.ip_v6_global, 0, 0, net_ip.index_netinterface);
                     let socket = tokio::net::UdpSocket::bind(listen_addr).await?;
-                    log::info!("[Sender] bind: {:?}", socket.local_addr()?);
+                    log::info!("Sender ipv6 bind: {:?}", socket.local_addr()?);
                     net_ip.sender_ipv6 = Some(Arc::new(socket));
                 }
             }
@@ -208,7 +224,12 @@ impl MulticastService {
                         if let Some(sender_ipv4) = &net_ip.sender_ipv4 {
                             match sender_ipv4.send_to(buffer, &Self::MULTICAST_ADDRV4).await {
                                 Ok(sent) => {
-                                    log::info!("ipv4 Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV4);
+                                    log::debug!(
+                                        "ipv4 Sent {} bytes from {} to {}",
+                                        sent,
+                                        sender_ipv4.local_addr().unwrap(),
+                                        Self::MULTICAST_ADDRV4
+                                    );
                                 }
                                 Err(e) => {
                                     log::error!("ipv4 Error sending to {}: {}", Self::MULTICAST_ADDRV4, e);
@@ -218,12 +239,18 @@ impl MulticastService {
                     }
 
                     if self_clone.multicast_ipv6.is_some() {
+                        log::debug!("self_clone.multicast_ipv6.is_some");
                         for net_ip in &self_clone.service_info.net_ips {
                             if let Some(sender_ipv6) = &net_ip.sender_ipv6 {
                                 let temp = SocketAddrV6::new(Self::MULTICAST_ADDRV6, Self::MULTICAST_PORT_IPV6, 0, net_ip.index_netinterface);
                                 match sender_ipv6.send_to(buffer, &temp).await {
                                     Ok(sent) => {
-                                        log::info!("ipv6 Sent {} bytes to {}", sent, Self::MULTICAST_ADDRV6);
+                                        log::debug!(
+                                            "ipv6 Sent {} bytes from {} to {}",
+                                            sent,
+                                            sender_ipv6.local_addr().unwrap(),
+                                            Self::MULTICAST_ADDRV6
+                                        );
                                     }
                                     Err(e) => {
                                         log::error!("ipv6 Error sending to {}: {}", Self::MULTICAST_ADDRV6, e);

@@ -1,3 +1,4 @@
+import 'package:idl/ffi_rpc/idl_ex/base.dart';
 import 'package:idl/kits/value_notifier_ex.dart';
 
 import './partner.dart';
@@ -7,7 +8,7 @@ class Partners {
 
   void add(Partner pattern) {
     for (final it in patterns.value) {
-      if (it.id == pattern.id) {
+      if (it.id.eq(pattern.id)) {
         if (_merge(it, pattern)) {
           patterns.notifyListeners();
         }
@@ -21,7 +22,7 @@ class Partners {
   void remove(Partner partner) {
     // remove first find partner
 
-    patterns.value.removeWhere((it) => it.id == partner.id);
+    patterns.value.removeWhere((it) => it.id.eq(partner.id));
     patterns.notifyListeners();
   }
 
@@ -34,7 +35,7 @@ class Partners {
       bool notFind = true;
       for (int index = 0; index < currentLen; index++) {
         final oldTerminal = newPattern.terminals[index];
-        if (newTerminal.terminalId! == oldTerminal.terminalId!) {
+        if (newTerminal.terminalId!.eq(oldTerminal.terminalId!)) {
           pattern.terminals[index] = newTerminal;
           notFind = false;
           changed = true;

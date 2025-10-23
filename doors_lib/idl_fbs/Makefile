@@ -1,4 +1,4 @@
-.PHONY: clean gen golang rust dart kotlin
+.PHONY: clean gen golang rust dart kotlin zig
 
 golang:
 	flatc --go --go-module-name "github.com/peacess/doors/doors_lib/go/idl" --gen-object-api --gen-mutable -o ../go/idl ./*.fbs
@@ -7,7 +7,6 @@ rust:
 dart:
 	#flatc --dart --gen-object-api --gen-mutable -o ../dart/lib/idl base.fbs partner.fbs
 	flatc --dart --gen-object-api --gen-mutable -o ../dart/lib/idl ./*.fbs
-
 kotlin:
 	flatc --kotlin-kmp --gen-jvmstatic --gen-object-api --gen-mutable -o ../kotlin/src/idl ./*.fbs
 
