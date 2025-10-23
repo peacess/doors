@@ -35,4 +35,10 @@ table ChatTextMessageAck{
     message: TextMessageAck;
 }
 
+enum NetDiscoveryType: uint32{
+    none = 0,
+    text_message = 1,
+    text_message_ack = 2,
+}
+
 

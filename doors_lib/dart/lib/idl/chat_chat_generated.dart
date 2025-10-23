@@ -9,6 +9,44 @@ import 'package:flat_buffers/flat_buffers.dart' as fb;
 import './base_base_generated.dart' as base;
 import './ffi_rpc_ffi_rpc_generated.dart' as ffi_rpc;
 
+enum NetDiscoveryType {
+  none(0),
+  text_message(1),
+  text_message_ack(2);
+
+  final int value;
+  const NetDiscoveryType(this.value);
+
+  factory NetDiscoveryType.fromValue(int value) {
+    switch (value) {
+      case 0:
+        return NetDiscoveryType.none;
+      case 1:
+        return NetDiscoveryType.text_message;
+      case 2:
+        return NetDiscoveryType.text_message_ack;
+      default:
+        throw StateError('Invalid value $value for bit flag enum');
+    }
+  }
+
+  static NetDiscoveryType? _createOrNull(int? value) => value == null ? null : NetDiscoveryType.fromValue(value);
+
+  static const int minValue = 0;
+  static const int maxValue = 2;
+  static const fb.Reader<NetDiscoveryType> reader = _NetDiscoveryTypeReader();
+}
+
+class _NetDiscoveryTypeReader extends fb.Reader<NetDiscoveryType> {
+  const _NetDiscoveryTypeReader();
+
+  @override
+  int get size => 4;
+
+  @override
+  NetDiscoveryType read(fb.BufferContext bc, int offset) => NetDiscoveryType.fromValue(const fb.Uint32Reader().read(bc, offset));
+}
+
 class TextMessage {
   TextMessage._(this._bc, this._bcOffset);
   factory TextMessage(List<int> bytes) {

@@ -19,6 +19,85 @@ pub mod net_discovery {
     extern crate flatbuffers;
     use self::flatbuffers::{EndianScalar, Follow};
 
+    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+    pub const ENUM_MIN_NET_DISCOVERY_TYPE: u32 = 0;
+    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+    pub const ENUM_MAX_NET_DISCOVERY_TYPE: u32 = 1;
+    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+    #[allow(non_camel_case_types)]
+    pub const ENUM_VALUES_NET_DISCOVERY_TYPE: [NetDiscoveryType; 2] = [NetDiscoveryType::none, NetDiscoveryType::hi];
+
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+    #[repr(transparent)]
+    pub struct NetDiscoveryType(pub u32);
+    #[allow(non_upper_case_globals)]
+    impl NetDiscoveryType {
+        pub const none: Self = Self(0);
+        pub const hi: Self = Self(1);
+
+        pub const ENUM_MIN: u32 = 0;
+        pub const ENUM_MAX: u32 = 1;
+        pub const ENUM_VALUES: &'static [Self] = &[Self::none, Self::hi];
+        /// Returns the variant's name or "" if unknown.
+        pub fn variant_name(self) -> Option<&'static str> {
+            match self {
+                Self::none => Some("none"),
+                Self::hi => Some("hi"),
+                _ => None,
+            }
+        }
+    }
+    impl core::fmt::Debug for NetDiscoveryType {
+        fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+            if let Some(name) = self.variant_name() {
+                f.write_str(name)
+            } else {
+                f.write_fmt(format_args!("<UNKNOWN {:?}>", self.0))
+            }
+        }
+    }
+    impl<'a> flatbuffers::Follow<'a> for NetDiscoveryType {
+        type Inner = Self;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            let b = unsafe { flatbuffers::read_scalar_at::<u32>(buf, loc) };
+            Self(b)
+        }
+    }
+
+    impl flatbuffers::Push for NetDiscoveryType {
+        type Output = NetDiscoveryType;
+        #[inline]
+        unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+            unsafe {
+                flatbuffers::emplace_scalar::<u32>(dst, self.0);
+            }
+        }
+    }
+
+    impl flatbuffers::EndianScalar for NetDiscoveryType {
+        type Scalar = u32;
+        #[inline]
+        fn to_little_endian(self) -> u32 {
+            self.0.to_le()
+        }
+        #[inline]
+        #[allow(clippy::wrong_self_convention)]
+        fn from_little_endian(v: u32) -> Self {
+            let b = u32::from_le(v);
+            Self(b)
+        }
+    }
+
+    impl<'a> flatbuffers::Verifiable for NetDiscoveryType {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            u32::run_verifier(v, pos)
+        }
+    }
+
+    impl flatbuffers::SimpleToVerifyInSlice for NetDiscoveryType {}
     pub enum DnsTerminalOffset {}
     #[derive(Copy, Clone, PartialEq)]
 

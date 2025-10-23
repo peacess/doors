@@ -6,89 +6,460 @@ library ffi_rpc;
 import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
-class FfiRpcHeader {
-  FfiRpcHeader._(this._bc, this._bcOffset);
+import './base_base_generated.dart' as base;
+import './net_discovery_net_discovery_generated.dart' as net_discovery;
 
-  static const fb.Reader<FfiRpcHeader> reader = _FfiRpcHeaderReader();
+enum FfiRpcDiscoveryType {
+  none(0),
+  partner_self_in(1),
+  partner_self_out(2);
+
+  final int value;
+  const FfiRpcDiscoveryType(this.value);
+
+  factory FfiRpcDiscoveryType.fromValue(int value) {
+    switch (value) {
+      case 0:
+        return FfiRpcDiscoveryType.none;
+      case 1:
+        return FfiRpcDiscoveryType.partner_self_in;
+      case 2:
+        return FfiRpcDiscoveryType.partner_self_out;
+      default:
+        throw StateError('Invalid value $value for bit flag enum');
+    }
+  }
+
+  static FfiRpcDiscoveryType? _createOrNull(int? value) => value == null ? null : FfiRpcDiscoveryType.fromValue(value);
+
+  static const int minValue = 0;
+  static const int maxValue = 2;
+  static const fb.Reader<FfiRpcDiscoveryType> reader = _FfiRpcDiscoveryTypeReader();
+}
+
+class _FfiRpcDiscoveryTypeReader extends fb.Reader<FfiRpcDiscoveryType> {
+  const _FfiRpcDiscoveryTypeReader();
+
+  @override
+  int get size => 4;
+
+  @override
+  FfiRpcDiscoveryType read(fb.BufferContext bc, int offset) => FfiRpcDiscoveryType.fromValue(const fb.Uint32Reader().read(bc, offset));
+}
+
+class PartnerSelfIn {
+  PartnerSelfIn._(this._bc, this._bcOffset);
+  factory PartnerSelfIn(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<PartnerSelfIn> reader = _PartnerSelfInReader();
 
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  int get headerType => const fb.Uint32Reader().read(_bc, _bcOffset + 0);
-  int get rpcType => const fb.Uint32Reader().read(_bc, _bcOffset + 4);
-  int get len => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
+  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
 
   @override
   String toString() {
-    return 'FfiRpcHeader{headerType: ${headerType}, rpcType: ${rpcType}, len: ${len}}';
+    return 'PartnerSelfIn{id: ${id}}';
   }
 
-  FfiRpcHeaderT unpack() => FfiRpcHeaderT(headerType: headerType, rpcType: rpcType, len: len);
+  PartnerSelfInT unpack() => PartnerSelfInT(id: id?.unpack());
 
-  static int pack(fb.Builder fbBuilder, FfiRpcHeaderT? object) {
+  static int pack(fb.Builder fbBuilder, PartnerSelfInT? object) {
     if (object == null) return 0;
     return object.pack(fbBuilder);
   }
 }
 
-class FfiRpcHeaderT implements fb.Packable {
-  int headerType;
-  int rpcType;
-  int len;
+class PartnerSelfInT implements fb.Packable {
+  base.UlidBytesT? id;
 
-  FfiRpcHeaderT({required this.headerType, required this.rpcType, required this.len});
+  PartnerSelfInT({this.id});
 
   @override
   int pack(fb.Builder fbBuilder) {
-    fbBuilder.putUint64(len);
-    fbBuilder.putUint32(rpcType);
-    fbBuilder.putUint32(headerType);
-    return fbBuilder.offset;
+    fbBuilder.startTable(1);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'FfiRpcHeaderT{headerType: ${headerType}, rpcType: ${rpcType}, len: ${len}}';
+    return 'PartnerSelfInT{id: ${id}}';
   }
 }
 
-class _FfiRpcHeaderReader extends fb.StructReader<FfiRpcHeader> {
-  const _FfiRpcHeaderReader();
+class _PartnerSelfInReader extends fb.TableReader<PartnerSelfIn> {
+  const _PartnerSelfInReader();
 
   @override
-  int get size => 16;
-
-  @override
-  FfiRpcHeader createObject(fb.BufferContext bc, int offset) => FfiRpcHeader._(bc, offset);
+  PartnerSelfIn createObject(fb.BufferContext bc, int offset) => PartnerSelfIn._(bc, offset);
 }
 
-class FfiRpcHeaderBuilder {
-  FfiRpcHeaderBuilder(this.fbBuilder);
+class PartnerSelfInBuilder {
+  PartnerSelfInBuilder(this.fbBuilder);
 
   final fb.Builder fbBuilder;
 
-  int finish(int headerType, int rpcType, int len) {
-    fbBuilder.putUint64(len);
-    fbBuilder.putUint32(rpcType);
-    fbBuilder.putUint32(headerType);
+  void begin() {
+    fbBuilder.startTable(1);
+  }
+
+  int addId(int offset) {
+    fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
   }
 }
 
-class FfiRpcHeaderObjectBuilder extends fb.ObjectBuilder {
-  final int _headerType;
-  final int _rpcType;
-  final int _len;
+class PartnerSelfInObjectBuilder extends fb.ObjectBuilder {
+  final base.UlidBytesObjectBuilder? _id;
 
-  FfiRpcHeaderObjectBuilder({required int headerType, required int rpcType, required int len}) : _headerType = headerType, _rpcType = rpcType, _len = len;
+  PartnerSelfInObjectBuilder({base.UlidBytesObjectBuilder? id}) : _id = id;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    fbBuilder.putUint64(_len);
-    fbBuilder.putUint32(_rpcType);
-    fbBuilder.putUint32(_headerType);
+    fbBuilder.startTable(1);
+    if (_id != null) {
+      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
+    }
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class PartnerSelfOut {
+  PartnerSelfOut._(this._bc, this._bcOffset);
+  factory PartnerSelfOut(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<PartnerSelfOut> reader = _PartnerSelfOutReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  net_discovery.DnsTerminal? get terminal => net_discovery.DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'PartnerSelfOut{id: ${id}, terminal: ${terminal}}';
+  }
+
+  PartnerSelfOutT unpack() => PartnerSelfOutT(id: id?.unpack(), terminal: terminal?.unpack());
+
+  static int pack(fb.Builder fbBuilder, PartnerSelfOutT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class PartnerSelfOutT implements fb.Packable {
+  base.UlidBytesT? id;
+  net_discovery.DnsTerminalT? terminal;
+
+  PartnerSelfOutT({this.id, this.terminal});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? terminalOffset = terminal?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, terminalOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'PartnerSelfOutT{id: ${id}, terminal: ${terminal}}';
+  }
+}
+
+class _PartnerSelfOutReader extends fb.TableReader<PartnerSelfOut> {
+  const _PartnerSelfOutReader();
+
+  @override
+  PartnerSelfOut createObject(fb.BufferContext bc, int offset) => PartnerSelfOut._(bc, offset);
+}
+
+class PartnerSelfOutBuilder {
+  PartnerSelfOutBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addId(int offset) {
+    fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
+  }
+
+  int addTerminalOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class PartnerSelfOutObjectBuilder extends fb.ObjectBuilder {
+  final base.UlidBytesObjectBuilder? _id;
+  final net_discovery.DnsTerminalObjectBuilder? _terminal;
+
+  PartnerSelfOutObjectBuilder({base.UlidBytesObjectBuilder? id, net_discovery.DnsTerminalObjectBuilder? terminal}) : _id = id, _terminal = terminal;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? terminalOffset = _terminal?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_id != null) {
+      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, terminalOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class FfiRpcPartnerSelfIn {
+  FfiRpcPartnerSelfIn._(this._bc, this._bcOffset);
+  factory FfiRpcPartnerSelfIn(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<FfiRpcPartnerSelfIn> reader = _FfiRpcPartnerSelfInReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  PartnerSelfIn? get message => PartnerSelfIn.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'FfiRpcPartnerSelfIn{header: ${header}, message: ${message}}';
+  }
+
+  FfiRpcPartnerSelfInT unpack() => FfiRpcPartnerSelfInT(header: header?.unpack(), message: message?.unpack());
+
+  static int pack(fb.Builder fbBuilder, FfiRpcPartnerSelfInT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class FfiRpcPartnerSelfInT implements fb.Packable {
+  base.HeaderT? header;
+  PartnerSelfInT? message;
+
+  FfiRpcPartnerSelfInT({this.header, this.message});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? messageOffset = message?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (header != null) {
+      fbBuilder.addStruct(0, header!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'FfiRpcPartnerSelfInT{header: ${header}, message: ${message}}';
+  }
+}
+
+class _FfiRpcPartnerSelfInReader extends fb.TableReader<FfiRpcPartnerSelfIn> {
+  const _FfiRpcPartnerSelfInReader();
+
+  @override
+  FfiRpcPartnerSelfIn createObject(fb.BufferContext bc, int offset) => FfiRpcPartnerSelfIn._(bc, offset);
+}
+
+class FfiRpcPartnerSelfInBuilder {
+  FfiRpcPartnerSelfInBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addHeader(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addMessageOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class FfiRpcPartnerSelfInObjectBuilder extends fb.ObjectBuilder {
+  final base.HeaderObjectBuilder? _header;
+  final PartnerSelfInObjectBuilder? _message;
+
+  FfiRpcPartnerSelfInObjectBuilder({base.HeaderObjectBuilder? header, PartnerSelfInObjectBuilder? message}) : _header = header, _message = message;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? messageOffset = _message?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_header != null) {
+      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class FfiRpcPartnerSelfOut {
+  FfiRpcPartnerSelfOut._(this._bc, this._bcOffset);
+  factory FfiRpcPartnerSelfOut(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<FfiRpcPartnerSelfOut> reader = _FfiRpcPartnerSelfOutReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  PartnerSelfOut? get message => PartnerSelfOut.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'FfiRpcPartnerSelfOut{header: ${header}, message: ${message}}';
+  }
+
+  FfiRpcPartnerSelfOutT unpack() => FfiRpcPartnerSelfOutT(header: header?.unpack(), message: message?.unpack());
+
+  static int pack(fb.Builder fbBuilder, FfiRpcPartnerSelfOutT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class FfiRpcPartnerSelfOutT implements fb.Packable {
+  base.HeaderT? header;
+  PartnerSelfOutT? message;
+
+  FfiRpcPartnerSelfOutT({this.header, this.message});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? messageOffset = message?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (header != null) {
+      fbBuilder.addStruct(0, header!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'FfiRpcPartnerSelfOutT{header: ${header}, message: ${message}}';
+  }
+}
+
+class _FfiRpcPartnerSelfOutReader extends fb.TableReader<FfiRpcPartnerSelfOut> {
+  const _FfiRpcPartnerSelfOutReader();
+
+  @override
+  FfiRpcPartnerSelfOut createObject(fb.BufferContext bc, int offset) => FfiRpcPartnerSelfOut._(bc, offset);
+}
+
+class FfiRpcPartnerSelfOutBuilder {
+  FfiRpcPartnerSelfOutBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addHeader(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addMessageOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class FfiRpcPartnerSelfOutObjectBuilder extends fb.ObjectBuilder {
+  final base.HeaderObjectBuilder? _header;
+  final PartnerSelfOutObjectBuilder? _message;
+
+  FfiRpcPartnerSelfOutObjectBuilder({base.HeaderObjectBuilder? header, PartnerSelfOutObjectBuilder? message}) : _header = header, _message = message;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? messageOffset = _message?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_header != null) {
+      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, messageOffset);
+    return fbBuilder.endTable();
   }
 
   /// Convenience method to serialize to byte list.

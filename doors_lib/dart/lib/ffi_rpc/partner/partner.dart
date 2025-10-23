@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:idl/ffi_rpc/idl_ex/base.dart';
 import 'package:idl/idl/base_base_generated.dart';
 import 'package:idl/idl/chat_chat_generated.dart';

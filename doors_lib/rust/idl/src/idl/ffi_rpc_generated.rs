@@ -4,6 +4,8 @@
 
 use core::{cmp::Ordering, mem};
 
+use crate::{base_generated::*, net_discovery_generated::*};
+
 extern crate flatbuffers;
 use self::flatbuffers::{EndianScalar, Follow};
 
@@ -12,179 +14,633 @@ pub mod ffi_rpc {
 
     use core::{cmp::Ordering, mem};
 
+    use crate::{base_generated::*, net_discovery_generated::*};
+
     extern crate flatbuffers;
     use self::flatbuffers::{EndianScalar, Follow};
 
-    // struct FfiRpcHeader, aligned to 8
+    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+    pub const ENUM_MIN_FFI_RPC_DISCOVERY_TYPE: u32 = 0;
+    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+    pub const ENUM_MAX_FFI_RPC_DISCOVERY_TYPE: u32 = 2;
+    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+    #[allow(non_camel_case_types)]
+    pub const ENUM_VALUES_FFI_RPC_DISCOVERY_TYPE: [FfiRpcDiscoveryType; 3] = [
+        FfiRpcDiscoveryType::none,
+        FfiRpcDiscoveryType::partner_self_in,
+        FfiRpcDiscoveryType::partner_self_out,
+    ];
+
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
     #[repr(transparent)]
-    #[derive(Clone, Copy, PartialEq)]
-    pub struct FfiRpcHeader(pub [u8; 16]);
-    impl Default for FfiRpcHeader {
-        fn default() -> Self {
-            Self([0; 16])
+    pub struct FfiRpcDiscoveryType(pub u32);
+    #[allow(non_upper_case_globals)]
+    impl FfiRpcDiscoveryType {
+        pub const none: Self = Self(0);
+        pub const partner_self_in: Self = Self(1);
+        pub const partner_self_out: Self = Self(2);
+
+        pub const ENUM_MIN: u32 = 0;
+        pub const ENUM_MAX: u32 = 2;
+        pub const ENUM_VALUES: &'static [Self] = &[Self::none, Self::partner_self_in, Self::partner_self_out];
+        /// Returns the variant's name or "" if unknown.
+        pub fn variant_name(self) -> Option<&'static str> {
+            match self {
+                Self::none => Some("none"),
+                Self::partner_self_in => Some("partner_self_in"),
+                Self::partner_self_out => Some("partner_self_out"),
+                _ => None,
+            }
         }
     }
-    impl core::fmt::Debug for FfiRpcHeader {
+    impl core::fmt::Debug for FfiRpcDiscoveryType {
         fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-            f.debug_struct("FfiRpcHeader")
-                .field("header_type", &self.header_type())
-                .field("rpc_type", &self.rpc_type())
-                .field("len", &self.len())
-                .finish()
+            if let Some(name) = self.variant_name() {
+                f.write_str(name)
+            } else {
+                f.write_fmt(format_args!("<UNKNOWN {:?}>", self.0))
+            }
+        }
+    }
+    impl<'a> flatbuffers::Follow<'a> for FfiRpcDiscoveryType {
+        type Inner = Self;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            let b = unsafe { flatbuffers::read_scalar_at::<u32>(buf, loc) };
+            Self(b)
         }
     }
 
-    impl flatbuffers::SimpleToVerifyInSlice for FfiRpcHeader {}
-    impl<'a> flatbuffers::Follow<'a> for FfiRpcHeader {
-        type Inner = &'a FfiRpcHeader;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            unsafe { <&'a FfiRpcHeader>::follow(buf, loc) }
-        }
-    }
-    impl<'a> flatbuffers::Follow<'a> for &'a FfiRpcHeader {
-        type Inner = &'a FfiRpcHeader;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            unsafe { flatbuffers::follow_cast_ref::<FfiRpcHeader>(buf, loc) }
-        }
-    }
-    impl<'b> flatbuffers::Push for FfiRpcHeader {
-        type Output = FfiRpcHeader;
+    impl flatbuffers::Push for FfiRpcDiscoveryType {
+        type Output = FfiRpcDiscoveryType;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-            let src = unsafe { ::core::slice::from_raw_parts(self as *const FfiRpcHeader as *const u8, <Self as flatbuffers::Push>::size()) };
-            dst.copy_from_slice(src);
-        }
-        #[inline]
-        fn alignment() -> flatbuffers::PushAlignment {
-            flatbuffers::PushAlignment::new(8)
+            unsafe {
+                flatbuffers::emplace_scalar::<u32>(dst, self.0);
+            }
         }
     }
 
-    impl<'a> flatbuffers::Verifiable for FfiRpcHeader {
+    impl flatbuffers::EndianScalar for FfiRpcDiscoveryType {
+        type Scalar = u32;
+        #[inline]
+        fn to_little_endian(self) -> u32 {
+            self.0.to_le()
+        }
+        #[inline]
+        #[allow(clippy::wrong_self_convention)]
+        fn from_little_endian(v: u32) -> Self {
+            let b = u32::from_le(v);
+            Self(b)
+        }
+    }
+
+    impl<'a> flatbuffers::Verifiable for FfiRpcDiscoveryType {
         #[inline]
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
-            v.in_buffer::<Self>(pos)
+            u32::run_verifier(v, pos)
         }
     }
 
-    impl<'a> FfiRpcHeader {
-        #[allow(clippy::too_many_arguments)]
-        pub fn new(header_type: u32, rpc_type: u32, len: u64) -> Self {
-            let mut s = Self([0; 16]);
-            s.set_header_type(header_type);
-            s.set_rpc_type(rpc_type);
-            s.set_len(len);
-            s
-        }
+    impl flatbuffers::SimpleToVerifyInSlice for FfiRpcDiscoveryType {}
+    pub enum PartnerSelfInOffset {}
+    #[derive(Copy, Clone, PartialEq)]
 
-        pub fn header_type(&self) -> u32 {
-            let mut mem = core::mem::MaybeUninit::<<u32 as EndianScalar>::Scalar>::uninit();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            EndianScalar::from_little_endian(unsafe {
-                core::ptr::copy_nonoverlapping(
-                    self.0[0..].as_ptr(),
-                    mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-                mem.assume_init()
-            })
-        }
+    pub struct PartnerSelfIn<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
 
-        pub fn set_header_type(&mut self, x: u32) {
-            let x_le = x.to_little_endian();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    &x_le as *const _ as *const u8,
-                    self.0[0..].as_mut_ptr(),
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-            }
-        }
-
-        pub fn rpc_type(&self) -> u32 {
-            let mut mem = core::mem::MaybeUninit::<<u32 as EndianScalar>::Scalar>::uninit();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            EndianScalar::from_little_endian(unsafe {
-                core::ptr::copy_nonoverlapping(
-                    self.0[4..].as_ptr(),
-                    mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-                mem.assume_init()
-            })
-        }
-
-        pub fn set_rpc_type(&mut self, x: u32) {
-            let x_le = x.to_little_endian();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    &x_le as *const _ as *const u8,
-                    self.0[4..].as_mut_ptr(),
-                    core::mem::size_of::<<u32 as EndianScalar>::Scalar>(),
-                );
-            }
-        }
-
-        pub fn len(&self) -> u64 {
-            let mut mem = core::mem::MaybeUninit::<<u64 as EndianScalar>::Scalar>::uninit();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            EndianScalar::from_little_endian(unsafe {
-                core::ptr::copy_nonoverlapping(
-                    self.0[8..].as_ptr(),
-                    mem.as_mut_ptr() as *mut u8,
-                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
-                );
-                mem.assume_init()
-            })
-        }
-
-        pub fn set_len(&mut self, x: u64) {
-            let x_le = x.to_little_endian();
-            // Safety:
-            // Created from a valid Table for this object
-            // Which contains a valid value in this slot
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    &x_le as *const _ as *const u8,
-                    self.0[8..].as_mut_ptr(),
-                    core::mem::size_of::<<u64 as EndianScalar>::Scalar>(),
-                );
-            }
-        }
-
-        pub fn unpack(&self) -> FfiRpcHeaderT {
-            FfiRpcHeaderT {
-                header_type: self.header_type(),
-                rpc_type: self.rpc_type(),
-                len: self.len(),
+    impl<'a> flatbuffers::Follow<'a> for PartnerSelfIn<'a> {
+        type Inner = PartnerSelfIn<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
             }
         }
     }
 
-    #[derive(Debug, Clone, PartialEq, Default)]
-    pub struct FfiRpcHeaderT {
-        pub header_type: u32,
-        pub rpc_type: u32,
-        pub len: u64,
+    impl<'a> PartnerSelfIn<'a> {
+        pub const VT_ID: flatbuffers::VOffsetT = 4;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            PartnerSelfIn { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args PartnerSelfInArgs<'args>,
+        ) -> flatbuffers::WIPOffset<PartnerSelfIn<'bldr>> {
+            let mut builder = PartnerSelfInBuilder::new(_fbb);
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> PartnerSelfInT {
+            let id = self.id().map(|x| x.unpack());
+            PartnerSelfInT { id }
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(PartnerSelfIn::VT_ID, None) }
+        }
     }
-    impl FfiRpcHeaderT {
-        pub fn pack(&self) -> FfiRpcHeader {
-            FfiRpcHeader::new(self.header_type, self.rpc_type, self.len)
+
+    impl flatbuffers::Verifiable for PartnerSelfIn<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?.visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?.finish();
+            Ok(())
+        }
+    }
+    pub struct PartnerSelfInArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+    }
+    impl<'a> Default for PartnerSelfInArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            PartnerSelfInArgs { id: None }
+        }
+    }
+
+    pub struct PartnerSelfInBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> PartnerSelfInBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(PartnerSelfIn::VT_ID, id);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> PartnerSelfInBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            PartnerSelfInBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<PartnerSelfIn<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for PartnerSelfIn<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("PartnerSelfIn");
+            ds.field("id", &self.id());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct PartnerSelfInT {
+        pub id: Option<super::base::UlidBytesT>,
+    }
+    impl Default for PartnerSelfInT {
+        fn default() -> Self {
+            Self { id: None }
+        }
+    }
+    impl PartnerSelfInT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<PartnerSelfIn<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            PartnerSelfIn::create(_fbb, &PartnerSelfInArgs { id })
+        }
+    }
+    pub enum PartnerSelfOutOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct PartnerSelfOut<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for PartnerSelfOut<'a> {
+        type Inner = PartnerSelfOut<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
+            }
+        }
+    }
+
+    impl<'a> PartnerSelfOut<'a> {
+        pub const VT_ID: flatbuffers::VOffsetT = 4;
+        pub const VT_TERMINAL: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            PartnerSelfOut { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args PartnerSelfOutArgs<'args>,
+        ) -> flatbuffers::WIPOffset<PartnerSelfOut<'bldr>> {
+            let mut builder = PartnerSelfOutBuilder::new(_fbb);
+            if let Some(x) = args.terminal {
+                builder.add_terminal(x);
+            }
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> PartnerSelfOutT {
+            let id = self.id().map(|x| x.unpack());
+            let terminal = self.terminal().map(|x| Box::new(x.unpack()));
+            PartnerSelfOutT { id, terminal }
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(PartnerSelfOut::VT_ID, None) }
+        }
+        #[inline]
+        pub fn terminal(&self) -> Option<super::net_discovery::DnsTerminal<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<flatbuffers::ForwardsUOffset<super::net_discovery::DnsTerminal>>(PartnerSelfOut::VT_TERMINAL, None)
+            }
+        }
+    }
+
+    impl flatbuffers::Verifiable for PartnerSelfOut<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<super::net_discovery::DnsTerminal>>("terminal", Self::VT_TERMINAL, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct PartnerSelfOutArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+        pub terminal: Option<flatbuffers::WIPOffset<super::net_discovery::DnsTerminal<'a>>>,
+    }
+    impl<'a> Default for PartnerSelfOutArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            PartnerSelfOutArgs { id: None, terminal: None }
+        }
+    }
+
+    pub struct PartnerSelfOutBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> PartnerSelfOutBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(PartnerSelfOut::VT_ID, id);
+        }
+        #[inline]
+        pub fn add_terminal(&mut self, terminal: flatbuffers::WIPOffset<super::net_discovery::DnsTerminal<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<super::net_discovery::DnsTerminal>>(PartnerSelfOut::VT_TERMINAL, terminal);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> PartnerSelfOutBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            PartnerSelfOutBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<PartnerSelfOut<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for PartnerSelfOut<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("PartnerSelfOut");
+            ds.field("id", &self.id());
+            ds.field("terminal", &self.terminal());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct PartnerSelfOutT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub terminal: Option<Box<super::net_discovery::DnsTerminalT>>,
+    }
+    impl Default for PartnerSelfOutT {
+        fn default() -> Self {
+            Self { id: None, terminal: None }
+        }
+    }
+    impl PartnerSelfOutT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<PartnerSelfOut<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let terminal = self.terminal.as_ref().map(|x| x.pack(_fbb));
+            PartnerSelfOut::create(_fbb, &PartnerSelfOutArgs { id, terminal })
+        }
+    }
+    pub enum FfiRpcPartnerSelfInOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct FfiRpcPartnerSelfIn<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for FfiRpcPartnerSelfIn<'a> {
+        type Inner = FfiRpcPartnerSelfIn<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
+            }
+        }
+    }
+
+    impl<'a> FfiRpcPartnerSelfIn<'a> {
+        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
+        pub const VT_MESSAGE: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            FfiRpcPartnerSelfIn { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args FfiRpcPartnerSelfInArgs<'args>,
+        ) -> flatbuffers::WIPOffset<FfiRpcPartnerSelfIn<'bldr>> {
+            let mut builder = FfiRpcPartnerSelfInBuilder::new(_fbb);
+            if let Some(x) = args.message {
+                builder.add_message(x);
+            }
+            if let Some(x) = args.header {
+                builder.add_header(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> FfiRpcPartnerSelfInT {
+            let header = self.header().map(|x| x.unpack());
+            let message = self.message().map(|x| Box::new(x.unpack()));
+            FfiRpcPartnerSelfInT { header, message }
+        }
+
+        #[inline]
+        pub fn header(&self) -> Option<&'a super::base::Header> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::Header>(FfiRpcPartnerSelfIn::VT_HEADER, None) }
+        }
+        #[inline]
+        pub fn message(&self) -> Option<PartnerSelfIn<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<flatbuffers::ForwardsUOffset<PartnerSelfIn>>(FfiRpcPartnerSelfIn::VT_MESSAGE, None)
+            }
+        }
+    }
+
+    impl flatbuffers::Verifiable for FfiRpcPartnerSelfIn<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<PartnerSelfIn>>("message", Self::VT_MESSAGE, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct FfiRpcPartnerSelfInArgs<'a> {
+        pub header: Option<&'a super::base::Header>,
+        pub message: Option<flatbuffers::WIPOffset<PartnerSelfIn<'a>>>,
+    }
+    impl<'a> Default for FfiRpcPartnerSelfInArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            FfiRpcPartnerSelfInArgs { header: None, message: None }
+        }
+    }
+
+    pub struct FfiRpcPartnerSelfInBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> FfiRpcPartnerSelfInBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_header(&mut self, header: &super::base::Header) {
+            self.fbb_.push_slot_always::<&super::base::Header>(FfiRpcPartnerSelfIn::VT_HEADER, header);
+        }
+        #[inline]
+        pub fn add_message(&mut self, message: flatbuffers::WIPOffset<PartnerSelfIn<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<PartnerSelfIn>>(FfiRpcPartnerSelfIn::VT_MESSAGE, message);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> FfiRpcPartnerSelfInBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            FfiRpcPartnerSelfInBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<FfiRpcPartnerSelfIn<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for FfiRpcPartnerSelfIn<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("FfiRpcPartnerSelfIn");
+            ds.field("header", &self.header());
+            ds.field("message", &self.message());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FfiRpcPartnerSelfInT {
+        pub header: Option<super::base::HeaderT>,
+        pub message: Option<Box<PartnerSelfInT>>,
+    }
+    impl Default for FfiRpcPartnerSelfInT {
+        fn default() -> Self {
+            Self { header: None, message: None }
+        }
+    }
+    impl FfiRpcPartnerSelfInT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> flatbuffers::WIPOffset<FfiRpcPartnerSelfIn<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let message = self.message.as_ref().map(|x| x.pack(_fbb));
+            FfiRpcPartnerSelfIn::create(_fbb, &FfiRpcPartnerSelfInArgs { header, message })
+        }
+    }
+    pub enum FfiRpcPartnerSelfOutOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct FfiRpcPartnerSelfOut<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for FfiRpcPartnerSelfOut<'a> {
+        type Inner = FfiRpcPartnerSelfOut<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
+            }
+        }
+    }
+
+    impl<'a> FfiRpcPartnerSelfOut<'a> {
+        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
+        pub const VT_MESSAGE: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            FfiRpcPartnerSelfOut { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args FfiRpcPartnerSelfOutArgs<'args>,
+        ) -> flatbuffers::WIPOffset<FfiRpcPartnerSelfOut<'bldr>> {
+            let mut builder = FfiRpcPartnerSelfOutBuilder::new(_fbb);
+            if let Some(x) = args.message {
+                builder.add_message(x);
+            }
+            if let Some(x) = args.header {
+                builder.add_header(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> FfiRpcPartnerSelfOutT {
+            let header = self.header().map(|x| x.unpack());
+            let message = self.message().map(|x| Box::new(x.unpack()));
+            FfiRpcPartnerSelfOutT { header, message }
+        }
+
+        #[inline]
+        pub fn header(&self) -> Option<&'a super::base::Header> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::Header>(FfiRpcPartnerSelfOut::VT_HEADER, None) }
+        }
+        #[inline]
+        pub fn message(&self) -> Option<PartnerSelfOut<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<flatbuffers::ForwardsUOffset<PartnerSelfOut>>(FfiRpcPartnerSelfOut::VT_MESSAGE, None)
+            }
+        }
+    }
+
+    impl flatbuffers::Verifiable for FfiRpcPartnerSelfOut<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<PartnerSelfOut>>("message", Self::VT_MESSAGE, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct FfiRpcPartnerSelfOutArgs<'a> {
+        pub header: Option<&'a super::base::Header>,
+        pub message: Option<flatbuffers::WIPOffset<PartnerSelfOut<'a>>>,
+    }
+    impl<'a> Default for FfiRpcPartnerSelfOutArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            FfiRpcPartnerSelfOutArgs { header: None, message: None }
+        }
+    }
+
+    pub struct FfiRpcPartnerSelfOutBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> FfiRpcPartnerSelfOutBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_header(&mut self, header: &super::base::Header) {
+            self.fbb_.push_slot_always::<&super::base::Header>(FfiRpcPartnerSelfOut::VT_HEADER, header);
+        }
+        #[inline]
+        pub fn add_message(&mut self, message: flatbuffers::WIPOffset<PartnerSelfOut<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<PartnerSelfOut>>(FfiRpcPartnerSelfOut::VT_MESSAGE, message);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> FfiRpcPartnerSelfOutBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            FfiRpcPartnerSelfOutBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<FfiRpcPartnerSelfOut<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for FfiRpcPartnerSelfOut<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("FfiRpcPartnerSelfOut");
+            ds.field("header", &self.header());
+            ds.field("message", &self.message());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FfiRpcPartnerSelfOutT {
+        pub header: Option<super::base::HeaderT>,
+        pub message: Option<Box<PartnerSelfOutT>>,
+    }
+    impl Default for FfiRpcPartnerSelfOutT {
+        fn default() -> Self {
+            Self { header: None, message: None }
+        }
+    }
+    impl FfiRpcPartnerSelfOutT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> flatbuffers::WIPOffset<FfiRpcPartnerSelfOut<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let message = self.message.as_ref().map(|x| x.pack(_fbb));
+            FfiRpcPartnerSelfOut::create(_fbb, &FfiRpcPartnerSelfOutArgs { header, message })
         }
     }
 } // pub mod ffi_rpc

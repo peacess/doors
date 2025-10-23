@@ -1,4 +1,7 @@
 
+include "base.fbs";
+include "net_discovery.fbs";
+
 namespace ffi_rpc;
 //
 attribute FfiRpcParameter;
@@ -7,17 +10,30 @@ attribute FfiRpcRetrun;
 
 attribute FfiRpcCallback;
 
-
-
 attribute ChatCallback;
 
-struct FfiRpcHeader {
-    header_type: uint32;
-    rpc_type: uint32;
-    len:uint64;
+
+table PartnerSelfIn(FfiRpcParameter:"PartnerSelfOut") {
+    id: base.UlidBytes;
 }
 
-// enum HeaderType: uint16{
-//    net_discovery = 1,
-//    chat = 2,
-//}
+table PartnerSelfOut(FfiRpcRetrun) {
+    id: base.UlidBytes;
+    terminal: net_discovery.DnsTerminal;    
+}
+
+table FfiRpcPartnerSelfIn{
+    header: base.Header;
+    message: PartnerSelfIn;
+}
+
+table FfiRpcPartnerSelfOut{
+    header: base.Header;
+    message: PartnerSelfOut;
+}
+
+enum FfiRpcDiscoveryType: uint32{
+    none = 0,
+    partner_self_in = 1,
+    partner_self_out = 2,
+}

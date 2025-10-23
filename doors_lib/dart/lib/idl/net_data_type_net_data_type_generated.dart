@@ -8,40 +8,43 @@ import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import './base_base_generated.dart' as base;
 
-enum NetDataType {
+enum HeaderType {
   none(0),
   net_discovery(1),
-  chat(2);
+  chat(2),
+  ffi_rpc(3);
 
   final int value;
-  const NetDataType(this.value);
+  const HeaderType(this.value);
 
-  factory NetDataType.fromValue(int value) {
+  factory HeaderType.fromValue(int value) {
     switch (value) {
       case 0:
-        return NetDataType.none;
+        return HeaderType.none;
       case 1:
-        return NetDataType.net_discovery;
+        return HeaderType.net_discovery;
       case 2:
-        return NetDataType.chat;
+        return HeaderType.chat;
+      case 3:
+        return HeaderType.ffi_rpc;
       default:
         throw StateError('Invalid value $value for bit flag enum');
     }
   }
 
-  static NetDataType? _createOrNull(int? value) => value == null ? null : NetDataType.fromValue(value);
+  static HeaderType? _createOrNull(int? value) => value == null ? null : HeaderType.fromValue(value);
 
   static const int minValue = 0;
-  static const int maxValue = 2;
-  static const fb.Reader<NetDataType> reader = _NetDataTypeReader();
+  static const int maxValue = 3;
+  static const fb.Reader<HeaderType> reader = _HeaderTypeReader();
 }
 
-class _NetDataTypeReader extends fb.Reader<NetDataType> {
-  const _NetDataTypeReader();
+class _HeaderTypeReader extends fb.Reader<HeaderType> {
+  const _HeaderTypeReader();
 
   @override
   int get size => 4;
 
   @override
-  NetDataType read(fb.BufferContext bc, int offset) => NetDataType.fromValue(const fb.Uint32Reader().read(bc, offset));
+  HeaderType read(fb.BufferContext bc, int offset) => HeaderType.fromValue(const fb.Uint32Reader().read(bc, offset));
 }

@@ -4,7 +4,7 @@
 
 use core::{cmp::Ordering, mem};
 
-use crate::{base_generated::*, ffi_rpc_generated::*};
+use crate::{base_generated::*, ffi_rpc_generated::*, net_discovery_generated::*};
 
 extern crate flatbuffers;
 use self::flatbuffers::{EndianScalar, Follow};
@@ -14,7 +14,7 @@ pub mod partner {
 
     use core::{cmp::Ordering, mem};
 
-    use crate::{base_generated::*, ffi_rpc_generated::*};
+    use crate::{base_generated::*, ffi_rpc_generated::*, net_discovery_generated::*};
 
     extern crate flatbuffers;
     use self::flatbuffers::{EndianScalar, Follow};

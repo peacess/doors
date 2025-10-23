@@ -20,36 +20,38 @@ pub mod net_data_type {
     use self::flatbuffers::{EndianScalar, Follow};
 
     #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-    pub const ENUM_MIN_NET_DATA_TYPE: u32 = 0;
+    pub const ENUM_MIN_HEADER_TYPE: u32 = 0;
     #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-    pub const ENUM_MAX_NET_DATA_TYPE: u32 = 2;
+    pub const ENUM_MAX_HEADER_TYPE: u32 = 3;
     #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
     #[allow(non_camel_case_types)]
-    pub const ENUM_VALUES_NET_DATA_TYPE: [NetDataType; 3] = [NetDataType::none, NetDataType::net_discovery, NetDataType::chat];
+    pub const ENUM_VALUES_HEADER_TYPE: [HeaderType; 4] = [HeaderType::none, HeaderType::net_discovery, HeaderType::chat, HeaderType::ffi_rpc];
 
     #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
     #[repr(transparent)]
-    pub struct NetDataType(pub u32);
+    pub struct HeaderType(pub u32);
     #[allow(non_upper_case_globals)]
-    impl NetDataType {
+    impl HeaderType {
         pub const none: Self = Self(0);
         pub const net_discovery: Self = Self(1);
         pub const chat: Self = Self(2);
+        pub const ffi_rpc: Self = Self(3);
 
         pub const ENUM_MIN: u32 = 0;
-        pub const ENUM_MAX: u32 = 2;
-        pub const ENUM_VALUES: &'static [Self] = &[Self::none, Self::net_discovery, Self::chat];
+        pub const ENUM_MAX: u32 = 3;
+        pub const ENUM_VALUES: &'static [Self] = &[Self::none, Self::net_discovery, Self::chat, Self::ffi_rpc];
         /// Returns the variant's name or "" if unknown.
         pub fn variant_name(self) -> Option<&'static str> {
             match self {
                 Self::none => Some("none"),
                 Self::net_discovery => Some("net_discovery"),
                 Self::chat => Some("chat"),
+                Self::ffi_rpc => Some("ffi_rpc"),
                 _ => None,
             }
         }
     }
-    impl core::fmt::Debug for NetDataType {
+    impl core::fmt::Debug for HeaderType {
         fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
             if let Some(name) = self.variant_name() {
                 f.write_str(name)
@@ -58,7 +60,7 @@ pub mod net_data_type {
             }
         }
     }
-    impl<'a> flatbuffers::Follow<'a> for NetDataType {
+    impl<'a> flatbuffers::Follow<'a> for HeaderType {
         type Inner = Self;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
@@ -67,8 +69,8 @@ pub mod net_data_type {
         }
     }
 
-    impl flatbuffers::Push for NetDataType {
-        type Output = NetDataType;
+    impl flatbuffers::Push for HeaderType {
+        type Output = HeaderType;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
             unsafe {
@@ -77,7 +79,7 @@ pub mod net_data_type {
         }
     }
 
-    impl flatbuffers::EndianScalar for NetDataType {
+    impl flatbuffers::EndianScalar for HeaderType {
         type Scalar = u32;
         #[inline]
         fn to_little_endian(self) -> u32 {
@@ -91,7 +93,7 @@ pub mod net_data_type {
         }
     }
 
-    impl<'a> flatbuffers::Verifiable for NetDataType {
+    impl<'a> flatbuffers::Verifiable for HeaderType {
         #[inline]
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
@@ -99,5 +101,5 @@ pub mod net_data_type {
         }
     }
 
-    impl flatbuffers::SimpleToVerifyInSlice for NetDataType {}
+    impl flatbuffers::SimpleToVerifyInSlice for HeaderType {}
 } // pub mod net_data_type

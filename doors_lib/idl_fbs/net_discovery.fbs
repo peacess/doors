@@ -64,3 +64,8 @@ table QueryPartnersIn(NetDiscoveryFfiRpcIn:"QueryPartnersOut") {
     id: base.UlidBytes;
     terminal: DnsTerminal;
 }
+
+enum NetDiscoveryType: uint32{
+    none = 0,
+    hi = 1,
+}
