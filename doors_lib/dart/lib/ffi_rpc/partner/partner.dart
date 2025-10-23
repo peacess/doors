@@ -18,7 +18,7 @@ class Partner {
     var data = PartnerT();
     data.id = hi.id!.unpack();
     var dnsTerminal = hi.dnsTerminal!;
-    var showName = dnsTerminal.showName ?? dnsTerminal.hostName ?? "";
+    var showName = hi.showName ?? dnsTerminal.showName ?? dnsTerminal.hostName ?? "";
     final partner = Partner(hi.id!.unpack(), dnsTerminal.partnerId!.unpack(), showName: showName);
     {
       var terminal = dnsTerminal.unpack();

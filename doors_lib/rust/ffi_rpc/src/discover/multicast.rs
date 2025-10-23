@@ -189,7 +189,7 @@ impl MulticastService {
                 let mut builder = flatbuffers::FlatBufferBuilder::with_capacity(1024);
                 {
                     let hi = {
-                        let show_name = builder.create_string("doors_chat");
+                        let show_name = builder.create_string(&self.service_info.host_name);
                         let dns_terminal = self.service_info.to_dns_terminal(&mut builder);
                         Hi::create(
                             &mut builder,

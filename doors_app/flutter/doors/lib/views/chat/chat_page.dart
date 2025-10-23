@@ -41,12 +41,14 @@ class _ChatPageState extends State<ChatPage> {
         return Visibility(
           visible: value,
           child: Container(
-            width: 120,
+            width: 360,
             padding: EdgeInsets.only(left: 6),
             child: ValueListenableBuilder(
               valueListenable: DoorsApp.app.partners.patterns,
               builder: (_, value, _) {
                 return Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
                   children: [for (var it in value) TextButton.icon(onPressed: () {}, label: Text(it.showName))],
                 );
               },
