@@ -1,5 +1,6 @@
 use std::{sync::Arc, time::Duration};
 
+use idl::{Frame, net_data_type_generated::net_data_type::HeaderType};
 use tokio::runtime::Handle;
 use tokio_util::sync::CancellationToken;
 
@@ -90,6 +91,28 @@ impl LibApp {
             }
             app.cancel_token.cancel();
         }
+    }
+
+    pub fn call(&self, bytes: &[u8]) -> Vec<u8> {
+        match flatbuffers::root::<Frame>(bytes) {
+            Err(e) => {
+                log::error!("{}", e);
+                return vec![];
+            }
+            Ok(frame) => {
+                if let Some(header) = frame.header() {
+                    match header.header_type() {
+                        HeaderType::net_discovery => {}
+                        HeaderType::chat => {}
+                        HeaderType::none => {}
+                        _ => {}
+                    }
+                } else {
+                    return vec![];
+                }
+            }
+        }
+        vec![]
     }
 
     pub fn app() -> Option<&'static Self> {

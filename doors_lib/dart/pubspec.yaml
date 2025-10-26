@@ -18,10 +18,14 @@ dependencies:
   ulid:
   ffi:
 
+  cryptography:
+
 dev_dependencies:
   ffigen:
   test:
   flutter_lints:
+#  hooks: ^0.20.4
+#  code_assets: ^0.19.9
 
 flutter:
   plugin:

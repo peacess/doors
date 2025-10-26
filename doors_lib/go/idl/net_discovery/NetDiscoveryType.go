@@ -7,18 +7,24 @@ import "strconv"
 type NetDiscoveryType uint32
 
 const (
-	NetDiscoveryTypenone NetDiscoveryType = 0
-	NetDiscoveryTypehi   NetDiscoveryType = 1
+	NetDiscoveryTypenone      NetDiscoveryType = 0
+	NetDiscoveryTypehi        NetDiscoveryType = 1
+	NetDiscoveryTypemy_self   NetDiscoveryType = 2
+	NetDiscoveryTypedata_self NetDiscoveryType = 3
 )
 
 var EnumNamesNetDiscoveryType = map[NetDiscoveryType]string{
-	NetDiscoveryTypenone: "none",
-	NetDiscoveryTypehi:   "hi",
+	NetDiscoveryTypenone:      "none",
+	NetDiscoveryTypehi:        "hi",
+	NetDiscoveryTypemy_self:   "my_self",
+	NetDiscoveryTypedata_self: "data_self",
 }
 
 var EnumValuesNetDiscoveryType = map[string]NetDiscoveryType{
-	"none": NetDiscoveryTypenone,
-	"hi":   NetDiscoveryTypehi,
+	"none":      NetDiscoveryTypenone,
+	"hi":        NetDiscoveryTypehi,
+	"my_self":   NetDiscoveryTypemy_self,
+	"data_self": NetDiscoveryTypedata_self,
 }
 
 func (v NetDiscoveryType) String() string {

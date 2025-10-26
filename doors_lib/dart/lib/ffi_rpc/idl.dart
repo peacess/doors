@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import '../idl_bindings_generated.dart';
+import '../kits/environment.dart';
 
 const String _libName = 'ffi_rpc';
 
@@ -11,7 +12,11 @@ final DynamicLibrary dylib = () {
     return DynamicLibrary.open('$_libName.framework/$_libName');
   }
   if (Platform.isAndroid || Platform.isLinux) {
-    return DynamicLibrary.open('lib$_libName.so');
+    if (Environment.isRunningTest) {
+      return DynamicLibrary.open('linux/lib$_libName.so');
+    } else {
+      return DynamicLibrary.open('lib$_libName.so');
+    }
   }
   if (Platform.isWindows) {
     return DynamicLibrary.open('$_libName.dll');

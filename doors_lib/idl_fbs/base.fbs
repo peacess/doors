@@ -82,3 +82,5 @@ struct FrameConfirm(FrameType){
     // the frame id is confirmed
     frame_id: UlidBytes;
 }
+
+root_type Frame;

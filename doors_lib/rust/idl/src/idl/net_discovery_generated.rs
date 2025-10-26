@@ -22,10 +22,15 @@ pub mod net_discovery {
     #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
     pub const ENUM_MIN_NET_DISCOVERY_TYPE: u32 = 0;
     #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-    pub const ENUM_MAX_NET_DISCOVERY_TYPE: u32 = 1;
+    pub const ENUM_MAX_NET_DISCOVERY_TYPE: u32 = 3;
     #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
     #[allow(non_camel_case_types)]
-    pub const ENUM_VALUES_NET_DISCOVERY_TYPE: [NetDiscoveryType; 2] = [NetDiscoveryType::none, NetDiscoveryType::hi];
+    pub const ENUM_VALUES_NET_DISCOVERY_TYPE: [NetDiscoveryType; 4] = [
+        NetDiscoveryType::none,
+        NetDiscoveryType::hi,
+        NetDiscoveryType::my_self,
+        NetDiscoveryType::data_self,
+    ];
 
     #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
     #[repr(transparent)]
@@ -34,15 +39,19 @@ pub mod net_discovery {
     impl NetDiscoveryType {
         pub const none: Self = Self(0);
         pub const hi: Self = Self(1);
+        pub const my_self: Self = Self(2);
+        pub const data_self: Self = Self(3);
 
         pub const ENUM_MIN: u32 = 0;
-        pub const ENUM_MAX: u32 = 1;
-        pub const ENUM_VALUES: &'static [Self] = &[Self::none, Self::hi];
+        pub const ENUM_MAX: u32 = 3;
+        pub const ENUM_VALUES: &'static [Self] = &[Self::none, Self::hi, Self::my_self, Self::data_self];
         /// Returns the variant's name or "" if unknown.
         pub fn variant_name(self) -> Option<&'static str> {
             match self {
                 Self::none => Some("none"),
                 Self::hi => Some("hi"),
+                Self::my_self => Some("my_self"),
+                Self::data_self => Some("data_self"),
                 _ => None,
             }
         }
@@ -98,6 +107,92 @@ pub mod net_discovery {
     }
 
     impl flatbuffers::SimpleToVerifyInSlice for NetDiscoveryType {}
+    // struct MySelf, aligned to 8
+    #[repr(transparent)]
+    #[derive(Clone, Copy, PartialEq)]
+    pub struct MySelf(pub [u8; 16]);
+    impl Default for MySelf {
+        fn default() -> Self {
+            Self([0; 16])
+        }
+    }
+    impl core::fmt::Debug for MySelf {
+        fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+            f.debug_struct("MySelf").field("id", &self.id()).finish()
+        }
+    }
+
+    impl flatbuffers::SimpleToVerifyInSlice for MySelf {}
+    impl<'a> flatbuffers::Follow<'a> for MySelf {
+        type Inner = &'a MySelf;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            unsafe { <&'a MySelf>::follow(buf, loc) }
+        }
+    }
+    impl<'a> flatbuffers::Follow<'a> for &'a MySelf {
+        type Inner = &'a MySelf;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            unsafe { flatbuffers::follow_cast_ref::<MySelf>(buf, loc) }
+        }
+    }
+    impl<'b> flatbuffers::Push for MySelf {
+        type Output = MySelf;
+        #[inline]
+        unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+            let src = unsafe { ::core::slice::from_raw_parts(self as *const MySelf as *const u8, <Self as flatbuffers::Push>::size()) };
+            dst.copy_from_slice(src);
+        }
+        #[inline]
+        fn alignment() -> flatbuffers::PushAlignment {
+            flatbuffers::PushAlignment::new(8)
+        }
+    }
+
+    impl<'a> flatbuffers::Verifiable for MySelf {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.in_buffer::<Self>(pos)
+        }
+    }
+
+    impl<'a> MySelf {
+        #[allow(clippy::too_many_arguments)]
+        pub fn new(id: &super::base::UlidBytes) -> Self {
+            let mut s = Self([0; 16]);
+            s.set_id(id);
+            s
+        }
+
+        pub fn id(&self) -> &super::base::UlidBytes {
+            // Safety:
+            // Created from a valid Table for this object
+            // Which contains a valid struct in this slot
+            unsafe { &*(self.0[0..].as_ptr() as *const super::base::UlidBytes) }
+        }
+
+        #[allow(clippy::identity_op)]
+        pub fn set_id(&mut self, x: &super::base::UlidBytes) {
+            self.0[0..0 + 16].copy_from_slice(&x.0)
+        }
+
+        pub fn unpack(&self) -> MySelfT {
+            MySelfT { id: self.id().unpack() }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Default)]
+    pub struct MySelfT {
+        pub id: super::base::UlidBytesT,
+    }
+    impl MySelfT {
+        pub fn pack(&self) -> MySelf {
+            MySelf::new(&self.id.pack())
+        }
+    }
+
     pub enum DnsTerminalOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -1017,15 +1112,15 @@ pub mod net_discovery {
             Hi::create(_fbb, &HiArgs { id, dns_terminal, show_name })
         }
     }
-    pub enum QueryDnsTerminalOutOffset {}
+    pub enum MySelfFrameOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
-    pub struct QueryDnsTerminalOut<'a> {
+    pub struct MySelfFrame<'a> {
         pub _tab: flatbuffers::Table<'a>,
     }
 
-    impl<'a> flatbuffers::Follow<'a> for QueryDnsTerminalOut<'a> {
-        type Inner = QueryDnsTerminalOut<'a>;
+    impl<'a> flatbuffers::Follow<'a> for MySelfFrame<'a> {
+        type Inner = MySelfFrame<'a>;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
             Self {
@@ -1034,26 +1129,296 @@ pub mod net_discovery {
         }
     }
 
-    impl<'a> QueryDnsTerminalOut<'a> {
-        pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_IN_ID: flatbuffers::VOffsetT = 6;
-        pub const VT_DNS_TERMINAL: flatbuffers::VOffsetT = 8;
+    impl<'a> MySelfFrame<'a> {
+        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
+        pub const VT_MY_SELF: flatbuffers::VOffsetT = 6;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            QueryDnsTerminalOut { _tab: table }
+            MySelfFrame { _tab: table }
         }
         #[allow(unused_mut)]
         pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
             _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args QueryDnsTerminalOutArgs<'args>,
-        ) -> flatbuffers::WIPOffset<QueryDnsTerminalOut<'bldr>> {
-            let mut builder = QueryDnsTerminalOutBuilder::new(_fbb);
+            args: &'args MySelfFrameArgs<'args>,
+        ) -> flatbuffers::WIPOffset<MySelfFrame<'bldr>> {
+            let mut builder = MySelfFrameBuilder::new(_fbb);
+            if let Some(x) = args.my_self {
+                builder.add_my_self(x);
+            }
+            if let Some(x) = args.header {
+                builder.add_header(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> MySelfFrameT {
+            let header = self.header().map(|x| x.unpack());
+            let my_self = self.my_self().map(|x| x.unpack());
+            MySelfFrameT { header, my_self }
+        }
+
+        #[inline]
+        pub fn header(&self) -> Option<&'a super::base::Header> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::Header>(MySelfFrame::VT_HEADER, None) }
+        }
+        #[inline]
+        pub fn my_self(&self) -> Option<&'a MySelf> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<MySelf>(MySelfFrame::VT_MY_SELF, None) }
+        }
+    }
+
+    impl flatbuffers::Verifiable for MySelfFrame<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
+                .visit_field::<MySelf>("my_self", Self::VT_MY_SELF, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct MySelfFrameArgs<'a> {
+        pub header: Option<&'a super::base::Header>,
+        pub my_self: Option<&'a MySelf>,
+    }
+    impl<'a> Default for MySelfFrameArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            MySelfFrameArgs { header: None, my_self: None }
+        }
+    }
+
+    pub struct MySelfFrameBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MySelfFrameBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_header(&mut self, header: &super::base::Header) {
+            self.fbb_.push_slot_always::<&super::base::Header>(MySelfFrame::VT_HEADER, header);
+        }
+        #[inline]
+        pub fn add_my_self(&mut self, my_self: &MySelf) {
+            self.fbb_.push_slot_always::<&MySelf>(MySelfFrame::VT_MY_SELF, my_self);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MySelfFrameBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            MySelfFrameBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<MySelfFrame<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for MySelfFrame<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("MySelfFrame");
+            ds.field("header", &self.header());
+            ds.field("my_self", &self.my_self());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MySelfFrameT {
+        pub header: Option<super::base::HeaderT>,
+        pub my_self: Option<MySelfT>,
+    }
+    impl Default for MySelfFrameT {
+        fn default() -> Self {
+            Self { header: None, my_self: None }
+        }
+    }
+    impl MySelfFrameT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<MySelfFrame<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let my_self_tmp = self.my_self.as_ref().map(|x| x.pack());
+            let my_self = my_self_tmp.as_ref();
+            MySelfFrame::create(_fbb, &MySelfFrameArgs { header, my_self })
+        }
+    }
+    pub enum DataSelfFrameOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct DataSelfFrame<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for DataSelfFrame<'a> {
+        type Inner = DataSelfFrame<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
+            }
+        }
+    }
+
+    impl<'a> DataSelfFrame<'a> {
+        pub const VT_HEADER: flatbuffers::VOffsetT = 4;
+        pub const VT_DATA_SELF: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            DataSelfFrame { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args DataSelfFrameArgs<'args>,
+        ) -> flatbuffers::WIPOffset<DataSelfFrame<'bldr>> {
+            let mut builder = DataSelfFrameBuilder::new(_fbb);
+            if let Some(x) = args.data_self {
+                builder.add_data_self(x);
+            }
+            if let Some(x) = args.header {
+                builder.add_header(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> DataSelfFrameT {
+            let header = self.header().map(|x| x.unpack());
+            let data_self = self.data_self().map(|x| Box::new(x.unpack()));
+            DataSelfFrameT { header, data_self }
+        }
+
+        #[inline]
+        pub fn header(&self) -> Option<&'a super::base::Header> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::Header>(DataSelfFrame::VT_HEADER, None) }
+        }
+        #[inline]
+        pub fn data_self(&self) -> Option<DataSelf<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DataSelf>>(DataSelfFrame::VT_DATA_SELF, None) }
+        }
+    }
+
+    impl flatbuffers::Verifiable for DataSelfFrame<'_> {
+        #[inline]
+        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+            use self::flatbuffers::Verifiable;
+            v.visit_table(pos)?
+                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<DataSelf>>("data_self", Self::VT_DATA_SELF, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct DataSelfFrameArgs<'a> {
+        pub header: Option<&'a super::base::Header>,
+        pub data_self: Option<flatbuffers::WIPOffset<DataSelf<'a>>>,
+    }
+    impl<'a> Default for DataSelfFrameArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            DataSelfFrameArgs { header: None, data_self: None }
+        }
+    }
+
+    pub struct DataSelfFrameBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DataSelfFrameBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_header(&mut self, header: &super::base::Header) {
+            self.fbb_.push_slot_always::<&super::base::Header>(DataSelfFrame::VT_HEADER, header);
+        }
+        #[inline]
+        pub fn add_data_self(&mut self, data_self: flatbuffers::WIPOffset<DataSelf<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<DataSelf>>(DataSelfFrame::VT_DATA_SELF, data_self);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DataSelfFrameBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            DataSelfFrameBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> flatbuffers::WIPOffset<DataSelfFrame<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl core::fmt::Debug for DataSelfFrame<'_> {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut ds = f.debug_struct("DataSelfFrame");
+            ds.field("header", &self.header());
+            ds.field("data_self", &self.data_self());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct DataSelfFrameT {
+        pub header: Option<super::base::HeaderT>,
+        pub data_self: Option<Box<DataSelfT>>,
+    }
+    impl Default for DataSelfFrameT {
+        fn default() -> Self {
+            Self { header: None, data_self: None }
+        }
+    }
+    impl DataSelfFrameT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<DataSelfFrame<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let data_self = self.data_self.as_ref().map(|x| x.pack(_fbb));
+            DataSelfFrame::create(_fbb, &DataSelfFrameArgs { header, data_self })
+        }
+    }
+    pub enum DataSelfOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct DataSelf<'a> {
+        pub _tab: flatbuffers::Table<'a>,
+    }
+
+    impl<'a> flatbuffers::Follow<'a> for DataSelf<'a> {
+        type Inner = DataSelf<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
+            }
+        }
+    }
+
+    impl<'a> DataSelf<'a> {
+        pub const VT_ID: flatbuffers::VOffsetT = 4;
+        pub const VT_DNS_TERMINAL: flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+            DataSelf { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args DataSelfArgs<'args>,
+        ) -> flatbuffers::WIPOffset<DataSelf<'bldr>> {
+            let mut builder = DataSelfBuilder::new(_fbb);
             if let Some(x) = args.dns_terminal {
                 builder.add_dns_terminal(x);
-            }
-            if let Some(x) = args.in_id {
-                builder.add_in_id(x);
             }
             if let Some(x) = args.id {
                 builder.add_id(x);
@@ -1061,11 +1426,10 @@ pub mod net_discovery {
             builder.finish()
         }
 
-        pub fn unpack(&self) -> QueryDnsTerminalOutT {
+        pub fn unpack(&self) -> DataSelfT {
             let id = self.id().map(|x| x.unpack());
-            let in_id = self.in_id().map(|x| x.unpack());
             let dns_terminal = self.dns_terminal().map(|x| Box::new(x.unpack()));
-            QueryDnsTerminalOutT { id, in_id, dns_terminal }
+            DataSelfT { id, dns_terminal }
         }
 
         #[inline]
@@ -1073,560 +1437,90 @@ pub mod net_discovery {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(QueryDnsTerminalOut::VT_ID, None) }
-        }
-        #[inline]
-        pub fn in_id(&self) -> Option<&'a super::base::UlidBytes> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(QueryDnsTerminalOut::VT_IN_ID, None) }
+            unsafe { self._tab.get::<super::base::UlidBytes>(DataSelf::VT_ID, None) }
         }
         #[inline]
         pub fn dns_terminal(&self) -> Option<DnsTerminal<'a>> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe {
-                self._tab
-                    .get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(QueryDnsTerminalOut::VT_DNS_TERMINAL, None)
-            }
+            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(DataSelf::VT_DNS_TERMINAL, None) }
         }
     }
 
-    impl flatbuffers::Verifiable for QueryDnsTerminalOut<'_> {
+    impl flatbuffers::Verifiable for DataSelf<'_> {
         #[inline]
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
                 .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-                .visit_field::<super::base::UlidBytes>("in_id", Self::VT_IN_ID, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<DnsTerminal>>("dns_terminal", Self::VT_DNS_TERMINAL, false)?
                 .finish();
             Ok(())
         }
     }
-    pub struct QueryDnsTerminalOutArgs<'a> {
+    pub struct DataSelfArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
-        pub in_id: Option<&'a super::base::UlidBytes>,
         pub dns_terminal: Option<flatbuffers::WIPOffset<DnsTerminal<'a>>>,
     }
-    impl<'a> Default for QueryDnsTerminalOutArgs<'a> {
+    impl<'a> Default for DataSelfArgs<'a> {
         #[inline]
         fn default() -> Self {
-            QueryDnsTerminalOutArgs {
-                id: None,
-                in_id: None,
-                dns_terminal: None,
-            }
+            DataSelfArgs { id: None, dns_terminal: None }
         }
     }
 
-    pub struct QueryDnsTerminalOutBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+    pub struct DataSelfBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
         fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
         start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
     }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryDnsTerminalOutBuilder<'a, 'b, A> {
+    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DataSelfBuilder<'a, 'b, A> {
         #[inline]
         pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryDnsTerminalOut::VT_ID, id);
-        }
-        #[inline]
-        pub fn add_in_id(&mut self, in_id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryDnsTerminalOut::VT_IN_ID, in_id);
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(DataSelf::VT_ID, id);
         }
         #[inline]
         pub fn add_dns_terminal(&mut self, dns_terminal: flatbuffers::WIPOffset<DnsTerminal<'b>>) {
             self.fbb_
-                .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(QueryDnsTerminalOut::VT_DNS_TERMINAL, dns_terminal);
+                .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(DataSelf::VT_DNS_TERMINAL, dns_terminal);
         }
         #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryDnsTerminalOutBuilder<'a, 'b, A> {
+        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DataSelfBuilder<'a, 'b, A> {
             let start = _fbb.start_table();
-            QueryDnsTerminalOutBuilder { fbb_: _fbb, start_: start }
+            DataSelfBuilder { fbb_: _fbb, start_: start }
         }
         #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<QueryDnsTerminalOut<'a>> {
+        pub fn finish(self) -> flatbuffers::WIPOffset<DataSelf<'a>> {
             let o = self.fbb_.end_table(self.start_);
             flatbuffers::WIPOffset::new(o.value())
         }
     }
 
-    impl core::fmt::Debug for QueryDnsTerminalOut<'_> {
+    impl core::fmt::Debug for DataSelf<'_> {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("QueryDnsTerminalOut");
+            let mut ds = f.debug_struct("DataSelf");
             ds.field("id", &self.id());
-            ds.field("in_id", &self.in_id());
             ds.field("dns_terminal", &self.dns_terminal());
             ds.finish()
         }
     }
     #[non_exhaustive]
     #[derive(Debug, Clone, PartialEq)]
-    pub struct QueryDnsTerminalOutT {
+    pub struct DataSelfT {
         pub id: Option<super::base::UlidBytesT>,
-        pub in_id: Option<super::base::UlidBytesT>,
         pub dns_terminal: Option<Box<DnsTerminalT>>,
     }
-    impl Default for QueryDnsTerminalOutT {
+    impl Default for DataSelfT {
         fn default() -> Self {
-            Self {
-                id: None,
-                in_id: None,
-                dns_terminal: None,
-            }
+            Self { id: None, dns_terminal: None }
         }
     }
-    impl QueryDnsTerminalOutT {
-        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
-            &self,
-            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
-        ) -> flatbuffers::WIPOffset<QueryDnsTerminalOut<'b>> {
+    impl DataSelfT {
+        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<DataSelf<'b>> {
             let id_tmp = self.id.as_ref().map(|x| x.pack());
             let id = id_tmp.as_ref();
-            let in_id_tmp = self.in_id.as_ref().map(|x| x.pack());
-            let in_id = in_id_tmp.as_ref();
             let dns_terminal = self.dns_terminal.as_ref().map(|x| x.pack(_fbb));
-            QueryDnsTerminalOut::create(_fbb, &QueryDnsTerminalOutArgs { id, in_id, dns_terminal })
-        }
-    }
-    pub enum QueryDnsTerminalInOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct QueryDnsTerminalIn<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for QueryDnsTerminalIn<'a> {
-        type Inner = QueryDnsTerminalIn<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
-            }
-        }
-    }
-
-    impl<'a> QueryDnsTerminalIn<'a> {
-        pub const VT_ID: flatbuffers::VOffsetT = 4;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            QueryDnsTerminalIn { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args QueryDnsTerminalInArgs<'args>,
-        ) -> flatbuffers::WIPOffset<QueryDnsTerminalIn<'bldr>> {
-            let mut builder = QueryDnsTerminalInBuilder::new(_fbb);
-            if let Some(x) = args.id {
-                builder.add_id(x);
-            }
-            builder.finish()
-        }
-
-        pub fn unpack(&self) -> QueryDnsTerminalInT {
-            let id = self.id().map(|x| x.unpack());
-            QueryDnsTerminalInT { id }
-        }
-
-        #[inline]
-        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(QueryDnsTerminalIn::VT_ID, None) }
-        }
-    }
-
-    impl flatbuffers::Verifiable for QueryDnsTerminalIn<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?.visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?.finish();
-            Ok(())
-        }
-    }
-    pub struct QueryDnsTerminalInArgs<'a> {
-        pub id: Option<&'a super::base::UlidBytes>,
-    }
-    impl<'a> Default for QueryDnsTerminalInArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            QueryDnsTerminalInArgs { id: None }
-        }
-    }
-
-    pub struct QueryDnsTerminalInBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryDnsTerminalInBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryDnsTerminalIn::VT_ID, id);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryDnsTerminalInBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            QueryDnsTerminalInBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<QueryDnsTerminalIn<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for QueryDnsTerminalIn<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("QueryDnsTerminalIn");
-            ds.field("id", &self.id());
-            ds.finish()
-        }
-    }
-    #[non_exhaustive]
-    #[derive(Debug, Clone, PartialEq)]
-    pub struct QueryDnsTerminalInT {
-        pub id: Option<super::base::UlidBytesT>,
-    }
-    impl Default for QueryDnsTerminalInT {
-        fn default() -> Self {
-            Self { id: None }
-        }
-    }
-    impl QueryDnsTerminalInT {
-        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
-            &self,
-            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
-        ) -> flatbuffers::WIPOffset<QueryDnsTerminalIn<'b>> {
-            let id_tmp = self.id.as_ref().map(|x| x.pack());
-            let id = id_tmp.as_ref();
-            QueryDnsTerminalIn::create(_fbb, &QueryDnsTerminalInArgs { id })
-        }
-    }
-    pub enum QueryPartnersOutOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct QueryPartnersOut<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for QueryPartnersOut<'a> {
-        type Inner = QueryPartnersOut<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
-            }
-        }
-    }
-
-    impl<'a> QueryPartnersOut<'a> {
-        pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_IN_ID: flatbuffers::VOffsetT = 6;
-        pub const VT_DNS_PARTNERS: flatbuffers::VOffsetT = 8;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            QueryPartnersOut { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args QueryPartnersOutArgs<'args>,
-        ) -> flatbuffers::WIPOffset<QueryPartnersOut<'bldr>> {
-            let mut builder = QueryPartnersOutBuilder::new(_fbb);
-            if let Some(x) = args.dns_partners {
-                builder.add_dns_partners(x);
-            }
-            if let Some(x) = args.in_id {
-                builder.add_in_id(x);
-            }
-            if let Some(x) = args.id {
-                builder.add_id(x);
-            }
-            builder.finish()
-        }
-
-        pub fn unpack(&self) -> QueryPartnersOutT {
-            let id = self.id().map(|x| x.unpack());
-            let in_id = self.in_id().map(|x| x.unpack());
-            let dns_partners = self.dns_partners().map(|x| x.iter().map(|t| t.unpack()).collect());
-            QueryPartnersOutT { id, in_id, dns_partners }
-        }
-
-        #[inline]
-        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(QueryPartnersOut::VT_ID, None) }
-        }
-        #[inline]
-        pub fn in_id(&self) -> Option<&'a super::base::UlidBytes> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(QueryPartnersOut::VT_IN_ID, None) }
-        }
-        #[inline]
-        pub fn dns_partners(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsTerminal<'a>>>> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe {
-                self._tab
-                    .get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsTerminal>>>>(
-                        QueryPartnersOut::VT_DNS_PARTNERS,
-                        None,
-                    )
-            }
-        }
-    }
-
-    impl flatbuffers::Verifiable for QueryPartnersOut<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?
-                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-                .visit_field::<super::base::UlidBytes>("in_id", Self::VT_IN_ID, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DnsTerminal>>>>(
-                    "dns_partners",
-                    Self::VT_DNS_PARTNERS,
-                    false,
-                )?
-                .finish();
-            Ok(())
-        }
-    }
-    pub struct QueryPartnersOutArgs<'a> {
-        pub id: Option<&'a super::base::UlidBytes>,
-        pub in_id: Option<&'a super::base::UlidBytes>,
-        pub dns_partners: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DnsTerminal<'a>>>>>,
-    }
-    impl<'a> Default for QueryPartnersOutArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            QueryPartnersOutArgs {
-                id: None,
-                in_id: None,
-                dns_partners: None,
-            }
-        }
-    }
-
-    pub struct QueryPartnersOutBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryPartnersOutBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryPartnersOut::VT_ID, id);
-        }
-        #[inline]
-        pub fn add_in_id(&mut self, in_id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryPartnersOut::VT_IN_ID, in_id);
-        }
-        #[inline]
-        pub fn add_dns_partners(&mut self, dns_partners: flatbuffers::WIPOffset<flatbuffers::Vector<'b, flatbuffers::ForwardsUOffset<DnsTerminal<'b>>>>) {
-            self.fbb_
-                .push_slot_always::<flatbuffers::WIPOffset<_>>(QueryPartnersOut::VT_DNS_PARTNERS, dns_partners);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryPartnersOutBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            QueryPartnersOutBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<QueryPartnersOut<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for QueryPartnersOut<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("QueryPartnersOut");
-            ds.field("id", &self.id());
-            ds.field("in_id", &self.in_id());
-            ds.field("dns_partners", &self.dns_partners());
-            ds.finish()
-        }
-    }
-    #[non_exhaustive]
-    #[derive(Debug, Clone, PartialEq)]
-    pub struct QueryPartnersOutT {
-        pub id: Option<super::base::UlidBytesT>,
-        pub in_id: Option<super::base::UlidBytesT>,
-        pub dns_partners: Option<Vec<DnsTerminalT>>,
-    }
-    impl Default for QueryPartnersOutT {
-        fn default() -> Self {
-            Self {
-                id: None,
-                in_id: None,
-                dns_partners: None,
-            }
-        }
-    }
-    impl QueryPartnersOutT {
-        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
-            &self,
-            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
-        ) -> flatbuffers::WIPOffset<QueryPartnersOut<'b>> {
-            let id_tmp = self.id.as_ref().map(|x| x.pack());
-            let id = id_tmp.as_ref();
-            let in_id_tmp = self.in_id.as_ref().map(|x| x.pack());
-            let in_id = in_id_tmp.as_ref();
-            let dns_partners = self.dns_partners.as_ref().map(|x| {
-                let w: Vec<_> = x.iter().map(|t| t.pack(_fbb)).collect();
-                _fbb.create_vector(&w)
-            });
-            QueryPartnersOut::create(_fbb, &QueryPartnersOutArgs { id, in_id, dns_partners })
-        }
-    }
-    pub enum QueryPartnersInOffset {}
-    #[derive(Copy, Clone, PartialEq)]
-
-    pub struct QueryPartnersIn<'a> {
-        pub _tab: flatbuffers::Table<'a>,
-    }
-
-    impl<'a> flatbuffers::Follow<'a> for QueryPartnersIn<'a> {
-        type Inner = QueryPartnersIn<'a>;
-        #[inline]
-        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-            Self {
-                _tab: unsafe { flatbuffers::Table::new(buf, loc) },
-            }
-        }
-    }
-
-    impl<'a> QueryPartnersIn<'a> {
-        pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_TERMINAL: flatbuffers::VOffsetT = 6;
-
-        #[inline]
-        pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
-            QueryPartnersIn { _tab: table }
-        }
-        #[allow(unused_mut)]
-        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
-            _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
-            args: &'args QueryPartnersInArgs<'args>,
-        ) -> flatbuffers::WIPOffset<QueryPartnersIn<'bldr>> {
-            let mut builder = QueryPartnersInBuilder::new(_fbb);
-            if let Some(x) = args.terminal {
-                builder.add_terminal(x);
-            }
-            if let Some(x) = args.id {
-                builder.add_id(x);
-            }
-            builder.finish()
-        }
-
-        pub fn unpack(&self) -> QueryPartnersInT {
-            let id = self.id().map(|x| x.unpack());
-            let terminal = self.terminal().map(|x| Box::new(x.unpack()));
-            QueryPartnersInT { id, terminal }
-        }
-
-        #[inline]
-        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<super::base::UlidBytes>(QueryPartnersIn::VT_ID, None) }
-        }
-        #[inline]
-        pub fn terminal(&self) -> Option<DnsTerminal<'a>> {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(QueryPartnersIn::VT_TERMINAL, None) }
-        }
-    }
-
-    impl flatbuffers::Verifiable for QueryPartnersIn<'_> {
-        #[inline]
-        fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
-            use self::flatbuffers::Verifiable;
-            v.visit_table(pos)?
-                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<DnsTerminal>>("terminal", Self::VT_TERMINAL, false)?
-                .finish();
-            Ok(())
-        }
-    }
-    pub struct QueryPartnersInArgs<'a> {
-        pub id: Option<&'a super::base::UlidBytes>,
-        pub terminal: Option<flatbuffers::WIPOffset<DnsTerminal<'a>>>,
-    }
-    impl<'a> Default for QueryPartnersInArgs<'a> {
-        #[inline]
-        fn default() -> Self {
-            QueryPartnersInArgs { id: None, terminal: None }
-        }
-    }
-
-    pub struct QueryPartnersInBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
-        fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
-        start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
-    }
-    impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> QueryPartnersInBuilder<'a, 'b, A> {
-        #[inline]
-        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-            self.fbb_.push_slot_always::<&super::base::UlidBytes>(QueryPartnersIn::VT_ID, id);
-        }
-        #[inline]
-        pub fn add_terminal(&mut self, terminal: flatbuffers::WIPOffset<DnsTerminal<'b>>) {
-            self.fbb_
-                .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(QueryPartnersIn::VT_TERMINAL, terminal);
-        }
-        #[inline]
-        pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> QueryPartnersInBuilder<'a, 'b, A> {
-            let start = _fbb.start_table();
-            QueryPartnersInBuilder { fbb_: _fbb, start_: start }
-        }
-        #[inline]
-        pub fn finish(self) -> flatbuffers::WIPOffset<QueryPartnersIn<'a>> {
-            let o = self.fbb_.end_table(self.start_);
-            flatbuffers::WIPOffset::new(o.value())
-        }
-    }
-
-    impl core::fmt::Debug for QueryPartnersIn<'_> {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            let mut ds = f.debug_struct("QueryPartnersIn");
-            ds.field("id", &self.id());
-            ds.field("terminal", &self.terminal());
-            ds.finish()
-        }
-    }
-    #[non_exhaustive]
-    #[derive(Debug, Clone, PartialEq)]
-    pub struct QueryPartnersInT {
-        pub id: Option<super::base::UlidBytesT>,
-        pub terminal: Option<Box<DnsTerminalT>>,
-    }
-    impl Default for QueryPartnersInT {
-        fn default() -> Self {
-            Self { id: None, terminal: None }
-        }
-    }
-    impl QueryPartnersInT {
-        pub fn pack<'b, A: flatbuffers::Allocator + 'b>(
-            &self,
-            _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>,
-        ) -> flatbuffers::WIPOffset<QueryPartnersIn<'b>> {
-            let id_tmp = self.id.as_ref().map(|x| x.pack());
-            let id = id_tmp.as_ref();
-            let terminal = self.terminal.as_ref().map(|x| x.pack(_fbb));
-            QueryPartnersIn::create(_fbb, &QueryPartnersInArgs { id, terminal })
+            DataSelf::create(_fbb, &DataSelfArgs { id, dns_terminal })
         }
     }
 } // pub mod net_discovery

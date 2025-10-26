@@ -69,10 +69,10 @@ packages:
     dependency: transitive
     description:
       name: build_daemon
-      sha256: "8e928697a82be082206edb0b9c99c5a4ad6bc31c9e9b8b2f291ae65cd4a25daa"
+      sha256: "409002f1adeea601018715d613115cfaf0e31f512cb80ae4534c79867ae2363d"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.0.4"
+    version: "4.1.0"
   build_resolvers:
     dependency: transitive
     description:
@@ -186,13 +186,21 @@ packages:
     source: hosted
     version: "1.15.0"
   crypto:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: crypto
       sha256: "1e445881f28f22d6140f181e07737b22f1e099a5e1ff94b0af2f9e4a463f4855"
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.6"
+  cryptography:
+    dependency: "direct main"
+    description:
+      name: cryptography
+      sha256: d146b76d33d94548cf035233fbc2f4338c1242fa119013bead807d033fc4ae05
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.7.0"
   cupertino_icons:
     dependency: transitive
     description:
@@ -388,10 +396,10 @@ packages:
     dependency: transitive
     description:
       name: js
-      sha256: "53385261521cc4a0c4658fd0ad07a7d14591cf8fc33abbceae306ddb974888dc"
+      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.7.2"
+    version: "0.6.7"
   json_annotation:
     dependency: transitive
     description:

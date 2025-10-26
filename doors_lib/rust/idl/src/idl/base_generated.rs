@@ -2081,4 +2081,76 @@ pub mod base {
             Frame::create(_fbb, &FrameArgs { header, bytes })
         }
     }
+    #[inline]
+    /// Verifies that a buffer of bytes contains a `Frame`
+    /// and returns it.
+    /// Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `root_as_frame_unchecked`.
+    pub fn root_as_frame(buf: &[u8]) -> Result<Frame, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::root::<Frame>(buf)
+    }
+    #[inline]
+    /// Verifies that a buffer of bytes contains a size prefixed
+    /// `Frame` and returns it.
+    /// Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `size_prefixed_root_as_frame_unchecked`.
+    pub fn size_prefixed_root_as_frame(buf: &[u8]) -> Result<Frame, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::size_prefixed_root::<Frame>(buf)
+    }
+    #[inline]
+    /// Verifies, with the given options, that a buffer of bytes
+    /// contains a `Frame` and returns it.
+    /// Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `root_as_frame_unchecked`.
+    pub fn root_as_frame_with_opts<'b, 'o>(opts: &'o flatbuffers::VerifierOptions, buf: &'b [u8]) -> Result<Frame<'b>, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::root_with_opts::<Frame<'b>>(opts, buf)
+    }
+    #[inline]
+    /// Verifies, with the given verifier options, that a buffer of
+    /// bytes contains a size prefixed `Frame` and returns
+    /// it. Note that verification is still experimental and may not
+    /// catch every error, or be maximally performant. For the
+    /// previous, unchecked, behavior use
+    /// `root_as_frame_unchecked`.
+    pub fn size_prefixed_root_as_frame_with_opts<'b, 'o>(
+        opts: &'o flatbuffers::VerifierOptions,
+        buf: &'b [u8],
+    ) -> Result<Frame<'b>, flatbuffers::InvalidFlatbuffer> {
+        flatbuffers::size_prefixed_root_with_opts::<Frame<'b>>(opts, buf)
+    }
+    #[inline]
+    /// Assumes, without verification, that a buffer of bytes contains a Frame and returns it.
+    /// # Safety
+    /// Callers must trust the given bytes do indeed contain a valid `Frame`.
+    pub unsafe fn root_as_frame_unchecked(buf: &[u8]) -> Frame {
+        unsafe { flatbuffers::root_unchecked::<Frame>(buf) }
+    }
+    #[inline]
+    /// Assumes, without verification, that a buffer of bytes contains a size prefixed Frame and returns it.
+    /// # Safety
+    /// Callers must trust the given bytes do indeed contain a valid size prefixed `Frame`.
+    pub unsafe fn size_prefixed_root_as_frame_unchecked(buf: &[u8]) -> Frame {
+        unsafe { flatbuffers::size_prefixed_root_unchecked::<Frame>(buf) }
+    }
+    #[inline]
+    pub fn finish_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
+        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        root: flatbuffers::WIPOffset<Frame<'a>>,
+    ) {
+        fbb.finish(root, None);
+    }
+
+    #[inline]
+    pub fn finish_size_prefixed_frame_buffer<'a, 'b, A: flatbuffers::Allocator + 'a>(
+        fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+        root: flatbuffers::WIPOffset<Frame<'a>>,
+    ) {
+        fbb.finish_size_prefixed(root, None);
+    }
 } // pub mod base

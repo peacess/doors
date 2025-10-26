@@ -23,6 +23,9 @@ dependencies:
   isar_community: ^3.3.0-dev.2
   isar_community_flutter_libs: ^3.3.0-dev.2
 
+  cryptography: ^2.7.0
+  crypto: ^3.0.6
+
   scrollable_positioned_list: ^0.3.8
 
 # dependency_overrides:

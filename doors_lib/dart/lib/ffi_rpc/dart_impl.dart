@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:typed_data';
 import 'package:ffi/ffi.dart' as ffi;
 import 'package:idl/ffi_rpc/chat/chat_callback.dart';
 import 'package:logger/logger.dart';
@@ -22,7 +23,7 @@ class FfiRpcDart {
   void init({required NetDiscoveryCallback netDiscoveryCallback, required ChatCallback chatCallback}) {
     this.netDiscoveryCallback = netDiscoveryCallback;
     this.chatCallback = chatCallback;
-    final nativeCallable = NativeCallable<CallBackFunction>.listener(callback);
+    final nativeCallable = NativeCallable<CallBackFunction>.listener(_callback);
     var re = _idlBindings.init(nativeCallable.nativeFunction);
     _idlBindings.bytes_free(re);
   }
@@ -32,7 +33,7 @@ class FfiRpcDart {
     _idlBindings.bytes_free(re);
   }
 
-  void callback(FfiBytes data) {
+  void _callback(FfiBytes data) {
     // _logger.d("callback data:　${data.describe()}");
     final buffer = data.attach();
     var header = Frame.reader.read(buffer, 0).header!;
@@ -57,6 +58,8 @@ class FfiRpcDart {
     }
   }
 
+  late final call = _idlBindings.call;
+
   void bytesFree(FfiBytes data) {
     _idlBindings.bytes_free(data);
     data.bytes = nullptr;
@@ -64,7 +67,29 @@ class FfiRpcDart {
     data.capacity = 0;
     data.offset = 0;
   }
+
+  Uint8List generateUlid() {
+    final p = ffi.calloc<Uint8>(16);
+    _idlBindings.generate_ulid(p);
+    var d = p.asTypedList(16).sublist(0);
+    ffi.calloc.free(p);
+    return d;
+  }
+
+  Uint8List generateUuidV7() {
+    final p = ffi.calloc<Uint8>(16);
+    _idlBindings.generate_uuid_v7(p);
+    var d = p.asTypedList(16).sublist(0);
+    ffi.calloc.free(p);
+    return d;
+  }
 }
+
+// @Native<Void Function(Pointer<Uint8>)>(symbol: 'generate_ulid', isLeaf: true)
+// external void _generateUlid(Pointer<Uint8> bytes);
+//
+// @Native<Void Function(Pointer<Uint8>)>(symbol: 'generate_uuid_v7', isLeaf: true)
+// external void _generateUuidV7(Pointer<Uint8> bytes);
 
 final ffiRpc = FfiRpcDart(idlBindings);
 

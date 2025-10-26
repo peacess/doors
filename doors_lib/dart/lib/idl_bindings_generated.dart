@@ -56,7 +56,7 @@ class IdlBindings {
   }
 
   late final _generate_ulidPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Uint8>)>>('generate_ulid');
-  late final _generate_ulid = _generate_ulidPtr.asFunction<void Function(ffi.Pointer<ffi.Uint8>)>();
+  late final _generate_ulid = _generate_ulidPtr.asFunction<void Function(ffi.Pointer<ffi.Uint8>)>(isLeaf: true);
 
   /// remove the length for performance
   void generate_uuid_v7(ffi.Pointer<ffi.Uint8> bytes) {
@@ -64,7 +64,7 @@ class IdlBindings {
   }
 
   late final _generate_uuid_v7Ptr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Uint8>)>>('generate_uuid_v7');
-  late final _generate_uuid_v7 = _generate_uuid_v7Ptr.asFunction<void Function(ffi.Pointer<ffi.Uint8>)>();
+  late final _generate_uuid_v7 = _generate_uuid_v7Ptr.asFunction<void Function(ffi.Pointer<ffi.Uint8>)>(isLeaf: true);
 }
 
 final class FfiBytes extends ffi.Struct {

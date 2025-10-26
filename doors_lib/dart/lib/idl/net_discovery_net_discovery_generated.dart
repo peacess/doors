@@ -10,7 +10,9 @@ import './base_base_generated.dart' as base;
 
 enum NetDiscoveryType {
   none(0),
-  hi(1);
+  hi(1),
+  my_self(2),
+  data_self(3);
 
   final int value;
   const NetDiscoveryType(this.value);
@@ -21,6 +23,10 @@ enum NetDiscoveryType {
         return NetDiscoveryType.none;
       case 1:
         return NetDiscoveryType.hi;
+      case 2:
+        return NetDiscoveryType.my_self;
+      case 3:
+        return NetDiscoveryType.data_self;
       default:
         throw StateError('Invalid value $value for bit flag enum');
     }
@@ -29,7 +35,7 @@ enum NetDiscoveryType {
   static NetDiscoveryType? _createOrNull(int? value) => value == null ? null : NetDiscoveryType.fromValue(value);
 
   static const int minValue = 0;
-  static const int maxValue = 1;
+  static const int maxValue = 3;
   static const fb.Reader<NetDiscoveryType> reader = _NetDiscoveryTypeReader();
 }
 
@@ -701,415 +707,67 @@ class HiObjectBuilder extends fb.ObjectBuilder {
   }
 }
 
-class QueryDnsTerminalOut {
-  QueryDnsTerminalOut._(this._bc, this._bcOffset);
-  factory QueryDnsTerminalOut(List<int> bytes) {
+class MySelfFrame {
+  MySelfFrame._(this._bc, this._bcOffset);
+  factory MySelfFrame(List<int> bytes) {
     final rootRef = fb.BufferContext.fromBytes(bytes);
     return reader.read(rootRef, 0);
   }
 
-  static const fb.Reader<QueryDnsTerminalOut> reader = _QueryDnsTerminalOutReader();
+  static const fb.Reader<MySelfFrame> reader = _MySelfFrameReader();
 
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  base.UlidBytes? get inId => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 6);
-  DnsTerminal? get dnsTerminal => DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 8);
+  base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  MySelf? get mySelf => MySelf.reader.vTableGetNullable(_bc, _bcOffset, 6);
 
   @override
   String toString() {
-    return 'QueryDnsTerminalOut{id: ${id}, inId: ${inId}, dnsTerminal: ${dnsTerminal}}';
+    return 'MySelfFrame{header: ${header}, mySelf: ${mySelf}}';
   }
 
-  QueryDnsTerminalOutT unpack() => QueryDnsTerminalOutT(id: id?.unpack(), inId: inId?.unpack(), dnsTerminal: dnsTerminal?.unpack());
+  MySelfFrameT unpack() => MySelfFrameT(header: header?.unpack(), mySelf: mySelf?.unpack());
 
-  static int pack(fb.Builder fbBuilder, QueryDnsTerminalOutT? object) {
+  static int pack(fb.Builder fbBuilder, MySelfFrameT? object) {
     if (object == null) return 0;
     return object.pack(fbBuilder);
   }
 }
 
-class QueryDnsTerminalOutT implements fb.Packable {
-  base.UlidBytesT? id;
-  base.UlidBytesT? inId;
-  DnsTerminalT? dnsTerminal;
+class MySelfFrameT implements fb.Packable {
+  base.HeaderT? header;
+  MySelfT? mySelf;
 
-  QueryDnsTerminalOutT({this.id, this.inId, this.dnsTerminal});
-
-  @override
-  int pack(fb.Builder fbBuilder) {
-    final int? dnsTerminalOffset = dnsTerminal?.pack(fbBuilder);
-    fbBuilder.startTable(3);
-    if (id != null) {
-      fbBuilder.addStruct(0, id!.pack(fbBuilder));
-    }
-    if (inId != null) {
-      fbBuilder.addStruct(1, inId!.pack(fbBuilder));
-    }
-    fbBuilder.addOffset(2, dnsTerminalOffset);
-    return fbBuilder.endTable();
-  }
-
-  @override
-  String toString() {
-    return 'QueryDnsTerminalOutT{id: ${id}, inId: ${inId}, dnsTerminal: ${dnsTerminal}}';
-  }
-}
-
-class _QueryDnsTerminalOutReader extends fb.TableReader<QueryDnsTerminalOut> {
-  const _QueryDnsTerminalOutReader();
-
-  @override
-  QueryDnsTerminalOut createObject(fb.BufferContext bc, int offset) => QueryDnsTerminalOut._(bc, offset);
-}
-
-class QueryDnsTerminalOutBuilder {
-  QueryDnsTerminalOutBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  void begin() {
-    fbBuilder.startTable(3);
-  }
-
-  int addId(int offset) {
-    fbBuilder.addStruct(0, offset);
-    return fbBuilder.offset;
-  }
-
-  int addInId(int offset) {
-    fbBuilder.addStruct(1, offset);
-    return fbBuilder.offset;
-  }
-
-  int addDnsTerminalOffset(int? offset) {
-    fbBuilder.addOffset(2, offset);
-    return fbBuilder.offset;
-  }
-
-  int finish() {
-    return fbBuilder.endTable();
-  }
-}
-
-class QueryDnsTerminalOutObjectBuilder extends fb.ObjectBuilder {
-  final base.UlidBytesObjectBuilder? _id;
-  final base.UlidBytesObjectBuilder? _inId;
-  final DnsTerminalObjectBuilder? _dnsTerminal;
-
-  QueryDnsTerminalOutObjectBuilder({base.UlidBytesObjectBuilder? id, base.UlidBytesObjectBuilder? inId, DnsTerminalObjectBuilder? dnsTerminal})
-    : _id = id,
-      _inId = inId,
-      _dnsTerminal = dnsTerminal;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    final int? dnsTerminalOffset = _dnsTerminal?.getOrCreateOffset(fbBuilder);
-    fbBuilder.startTable(3);
-    if (_id != null) {
-      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
-    }
-    if (_inId != null) {
-      fbBuilder.addStruct(1, _inId!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(2, dnsTerminalOffset);
-    return fbBuilder.endTable();
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class QueryDnsTerminalIn {
-  QueryDnsTerminalIn._(this._bc, this._bcOffset);
-  factory QueryDnsTerminalIn(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
-
-  static const fb.Reader<QueryDnsTerminalIn> reader = _QueryDnsTerminalInReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-
-  @override
-  String toString() {
-    return 'QueryDnsTerminalIn{id: ${id}}';
-  }
-
-  QueryDnsTerminalInT unpack() => QueryDnsTerminalInT(id: id?.unpack());
-
-  static int pack(fb.Builder fbBuilder, QueryDnsTerminalInT? object) {
-    if (object == null) return 0;
-    return object.pack(fbBuilder);
-  }
-}
-
-class QueryDnsTerminalInT implements fb.Packable {
-  base.UlidBytesT? id;
-
-  QueryDnsTerminalInT({this.id});
+  MySelfFrameT({this.header, this.mySelf});
 
   @override
   int pack(fb.Builder fbBuilder) {
-    fbBuilder.startTable(1);
-    if (id != null) {
-      fbBuilder.addStruct(0, id!.pack(fbBuilder));
-    }
-    return fbBuilder.endTable();
-  }
-
-  @override
-  String toString() {
-    return 'QueryDnsTerminalInT{id: ${id}}';
-  }
-}
-
-class _QueryDnsTerminalInReader extends fb.TableReader<QueryDnsTerminalIn> {
-  const _QueryDnsTerminalInReader();
-
-  @override
-  QueryDnsTerminalIn createObject(fb.BufferContext bc, int offset) => QueryDnsTerminalIn._(bc, offset);
-}
-
-class QueryDnsTerminalInBuilder {
-  QueryDnsTerminalInBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  void begin() {
-    fbBuilder.startTable(1);
-  }
-
-  int addId(int offset) {
-    fbBuilder.addStruct(0, offset);
-    return fbBuilder.offset;
-  }
-
-  int finish() {
-    return fbBuilder.endTable();
-  }
-}
-
-class QueryDnsTerminalInObjectBuilder extends fb.ObjectBuilder {
-  final base.UlidBytesObjectBuilder? _id;
-
-  QueryDnsTerminalInObjectBuilder({base.UlidBytesObjectBuilder? id}) : _id = id;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    fbBuilder.startTable(1);
-    if (_id != null) {
-      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
-    }
-    return fbBuilder.endTable();
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class QueryPartnersOut {
-  QueryPartnersOut._(this._bc, this._bcOffset);
-  factory QueryPartnersOut(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
-
-  static const fb.Reader<QueryPartnersOut> reader = _QueryPartnersOutReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  base.UlidBytes? get inId => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 6);
-  List<DnsTerminal>? get dnsPartners => const fb.ListReader<DnsTerminal>(DnsTerminal.reader).vTableGetNullable(_bc, _bcOffset, 8);
-
-  @override
-  String toString() {
-    return 'QueryPartnersOut{id: ${id}, inId: ${inId}, dnsPartners: ${dnsPartners}}';
-  }
-
-  QueryPartnersOutT unpack() => QueryPartnersOutT(id: id?.unpack(), inId: inId?.unpack(), dnsPartners: dnsPartners?.map((e) => e.unpack()).toList());
-
-  static int pack(fb.Builder fbBuilder, QueryPartnersOutT? object) {
-    if (object == null) return 0;
-    return object.pack(fbBuilder);
-  }
-}
-
-class QueryPartnersOutT implements fb.Packable {
-  base.UlidBytesT? id;
-  base.UlidBytesT? inId;
-  List<DnsTerminalT>? dnsPartners;
-
-  QueryPartnersOutT({this.id, this.inId, this.dnsPartners});
-
-  @override
-  int pack(fb.Builder fbBuilder) {
-    final int? dnsPartnersOffset = dnsPartners == null ? null : fbBuilder.writeList(dnsPartners!.map((b) => b.pack(fbBuilder)).toList());
-    fbBuilder.startTable(3);
-    if (id != null) {
-      fbBuilder.addStruct(0, id!.pack(fbBuilder));
-    }
-    if (inId != null) {
-      fbBuilder.addStruct(1, inId!.pack(fbBuilder));
-    }
-    fbBuilder.addOffset(2, dnsPartnersOffset);
-    return fbBuilder.endTable();
-  }
-
-  @override
-  String toString() {
-    return 'QueryPartnersOutT{id: ${id}, inId: ${inId}, dnsPartners: ${dnsPartners}}';
-  }
-}
-
-class _QueryPartnersOutReader extends fb.TableReader<QueryPartnersOut> {
-  const _QueryPartnersOutReader();
-
-  @override
-  QueryPartnersOut createObject(fb.BufferContext bc, int offset) => QueryPartnersOut._(bc, offset);
-}
-
-class QueryPartnersOutBuilder {
-  QueryPartnersOutBuilder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  void begin() {
-    fbBuilder.startTable(3);
-  }
-
-  int addId(int offset) {
-    fbBuilder.addStruct(0, offset);
-    return fbBuilder.offset;
-  }
-
-  int addInId(int offset) {
-    fbBuilder.addStruct(1, offset);
-    return fbBuilder.offset;
-  }
-
-  int addDnsPartnersOffset(int? offset) {
-    fbBuilder.addOffset(2, offset);
-    return fbBuilder.offset;
-  }
-
-  int finish() {
-    return fbBuilder.endTable();
-  }
-}
-
-class QueryPartnersOutObjectBuilder extends fb.ObjectBuilder {
-  final base.UlidBytesObjectBuilder? _id;
-  final base.UlidBytesObjectBuilder? _inId;
-  final List<DnsTerminalObjectBuilder>? _dnsPartners;
-
-  QueryPartnersOutObjectBuilder({base.UlidBytesObjectBuilder? id, base.UlidBytesObjectBuilder? inId, List<DnsTerminalObjectBuilder>? dnsPartners})
-    : _id = id,
-      _inId = inId,
-      _dnsPartners = dnsPartners;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    final int? dnsPartnersOffset = _dnsPartners == null ? null : fbBuilder.writeList(_dnsPartners!.map((b) => b.getOrCreateOffset(fbBuilder)).toList());
-    fbBuilder.startTable(3);
-    if (_id != null) {
-      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
-    }
-    if (_inId != null) {
-      fbBuilder.addStruct(1, _inId!.finish(fbBuilder));
-    }
-    fbBuilder.addOffset(2, dnsPartnersOffset);
-    return fbBuilder.endTable();
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class QueryPartnersIn {
-  QueryPartnersIn._(this._bc, this._bcOffset);
-  factory QueryPartnersIn(List<int> bytes) {
-    final rootRef = fb.BufferContext.fromBytes(bytes);
-    return reader.read(rootRef, 0);
-  }
-
-  static const fb.Reader<QueryPartnersIn> reader = _QueryPartnersInReader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  DnsTerminal? get terminal => DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 6);
-
-  @override
-  String toString() {
-    return 'QueryPartnersIn{id: ${id}, terminal: ${terminal}}';
-  }
-
-  QueryPartnersInT unpack() => QueryPartnersInT(id: id?.unpack(), terminal: terminal?.unpack());
-
-  static int pack(fb.Builder fbBuilder, QueryPartnersInT? object) {
-    if (object == null) return 0;
-    return object.pack(fbBuilder);
-  }
-}
-
-class QueryPartnersInT implements fb.Packable {
-  base.UlidBytesT? id;
-  DnsTerminalT? terminal;
-
-  QueryPartnersInT({this.id, this.terminal});
-
-  @override
-  int pack(fb.Builder fbBuilder) {
-    final int? terminalOffset = terminal?.pack(fbBuilder);
     fbBuilder.startTable(2);
-    if (id != null) {
-      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    if (header != null) {
+      fbBuilder.addStruct(0, header!.pack(fbBuilder));
     }
-    fbBuilder.addOffset(1, terminalOffset);
+    if (mySelf != null) {
+      fbBuilder.addStruct(1, mySelf!.pack(fbBuilder));
+    }
     return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'QueryPartnersInT{id: ${id}, terminal: ${terminal}}';
+    return 'MySelfFrameT{header: ${header}, mySelf: ${mySelf}}';
   }
 }
 
-class _QueryPartnersInReader extends fb.TableReader<QueryPartnersIn> {
-  const _QueryPartnersInReader();
+class _MySelfFrameReader extends fb.TableReader<MySelfFrame> {
+  const _MySelfFrameReader();
 
   @override
-  QueryPartnersIn createObject(fb.BufferContext bc, int offset) => QueryPartnersIn._(bc, offset);
+  MySelfFrame createObject(fb.BufferContext bc, int offset) => MySelfFrame._(bc, offset);
 }
 
-class QueryPartnersInBuilder {
-  QueryPartnersInBuilder(this.fbBuilder);
+class MySelfFrameBuilder {
+  MySelfFrameBuilder(this.fbBuilder);
 
   final fb.Builder fbBuilder;
 
@@ -1117,12 +775,204 @@ class QueryPartnersInBuilder {
     fbBuilder.startTable(2);
   }
 
-  int addId(int offset) {
+  int addHeader(int offset) {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
 
-  int addTerminalOffset(int? offset) {
+  int addMySelf(int offset) {
+    fbBuilder.addStruct(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class MySelfFrameObjectBuilder extends fb.ObjectBuilder {
+  final base.HeaderObjectBuilder? _header;
+  final MySelfObjectBuilder? _mySelf;
+
+  MySelfFrameObjectBuilder({base.HeaderObjectBuilder? header, MySelfObjectBuilder? mySelf}) : _header = header, _mySelf = mySelf;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    fbBuilder.startTable(2);
+    if (_header != null) {
+      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
+    }
+    if (_mySelf != null) {
+      fbBuilder.addStruct(1, _mySelf!.finish(fbBuilder));
+    }
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class MySelf {
+  MySelf._(this._bc, this._bcOffset);
+
+  static const fb.Reader<MySelf> reader = _MySelfReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.UlidBytes get id => base.UlidBytes.reader.read(_bc, _bcOffset + 0);
+
+  @override
+  String toString() {
+    return 'MySelf{id: ${id}}';
+  }
+
+  MySelfT unpack() => MySelfT(id: id.unpack());
+
+  static int pack(fb.Builder fbBuilder, MySelfT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class MySelfT implements fb.Packable {
+  base.UlidBytesT id;
+
+  MySelfT({required this.id});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    id.pack(fbBuilder);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'MySelfT{id: ${id}}';
+  }
+}
+
+class _MySelfReader extends fb.StructReader<MySelf> {
+  const _MySelfReader();
+
+  @override
+  int get size => 16;
+
+  @override
+  MySelf createObject(fb.BufferContext bc, int offset) => MySelf._(bc, offset);
+}
+
+class MySelfBuilder {
+  MySelfBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  int finish(fb.StructBuilder id) {
+    id();
+    return fbBuilder.offset;
+  }
+}
+
+class MySelfObjectBuilder extends fb.ObjectBuilder {
+  final base.UlidBytesObjectBuilder _id;
+
+  MySelfObjectBuilder({required base.UlidBytesObjectBuilder id}) : _id = id;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    _id.finish(fbBuilder);
+    return fbBuilder.offset;
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class DataSelfFrame {
+  DataSelfFrame._(this._bc, this._bcOffset);
+  factory DataSelfFrame(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<DataSelfFrame> reader = _DataSelfFrameReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.Header? get header => base.Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  DataSelf? get dataSelf => DataSelf.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'DataSelfFrame{header: ${header}, dataSelf: ${dataSelf}}';
+  }
+
+  DataSelfFrameT unpack() => DataSelfFrameT(header: header?.unpack(), dataSelf: dataSelf?.unpack());
+
+  static int pack(fb.Builder fbBuilder, DataSelfFrameT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class DataSelfFrameT implements fb.Packable {
+  base.HeaderT? header;
+  DataSelfT? dataSelf;
+
+  DataSelfFrameT({this.header, this.dataSelf});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? dataSelfOffset = dataSelf?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (header != null) {
+      fbBuilder.addStruct(0, header!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, dataSelfOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'DataSelfFrameT{header: ${header}, dataSelf: ${dataSelf}}';
+  }
+}
+
+class _DataSelfFrameReader extends fb.TableReader<DataSelfFrame> {
+  const _DataSelfFrameReader();
+
+  @override
+  DataSelfFrame createObject(fb.BufferContext bc, int offset) => DataSelfFrame._(bc, offset);
+}
+
+class DataSelfFrameBuilder {
+  DataSelfFrameBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addHeader(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addDataSelfOffset(int? offset) {
     fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
   }
@@ -1132,21 +982,130 @@ class QueryPartnersInBuilder {
   }
 }
 
-class QueryPartnersInObjectBuilder extends fb.ObjectBuilder {
-  final base.UlidBytesObjectBuilder? _id;
-  final DnsTerminalObjectBuilder? _terminal;
+class DataSelfFrameObjectBuilder extends fb.ObjectBuilder {
+  final base.HeaderObjectBuilder? _header;
+  final DataSelfObjectBuilder? _dataSelf;
 
-  QueryPartnersInObjectBuilder({base.UlidBytesObjectBuilder? id, DnsTerminalObjectBuilder? terminal}) : _id = id, _terminal = terminal;
+  DataSelfFrameObjectBuilder({base.HeaderObjectBuilder? header, DataSelfObjectBuilder? dataSelf}) : _header = header, _dataSelf = dataSelf;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    final int? terminalOffset = _terminal?.getOrCreateOffset(fbBuilder);
+    final int? dataSelfOffset = _dataSelf?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_header != null) {
+      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, dataSelfOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class DataSelf {
+  DataSelf._(this._bc, this._bcOffset);
+  factory DataSelf(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<DataSelf> reader = _DataSelfReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  DnsTerminal? get dnsTerminal => DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'DataSelf{id: ${id}, dnsTerminal: ${dnsTerminal}}';
+  }
+
+  DataSelfT unpack() => DataSelfT(id: id?.unpack(), dnsTerminal: dnsTerminal?.unpack());
+
+  static int pack(fb.Builder fbBuilder, DataSelfT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class DataSelfT implements fb.Packable {
+  base.UlidBytesT? id;
+  DnsTerminalT? dnsTerminal;
+
+  DataSelfT({this.id, this.dnsTerminal});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? dnsTerminalOffset = dnsTerminal?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, dnsTerminalOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'DataSelfT{id: ${id}, dnsTerminal: ${dnsTerminal}}';
+  }
+}
+
+class _DataSelfReader extends fb.TableReader<DataSelf> {
+  const _DataSelfReader();
+
+  @override
+  DataSelf createObject(fb.BufferContext bc, int offset) => DataSelf._(bc, offset);
+}
+
+class DataSelfBuilder {
+  DataSelfBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addId(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addDnsTerminalOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class DataSelfObjectBuilder extends fb.ObjectBuilder {
+  final base.UlidBytesObjectBuilder? _id;
+  final DnsTerminalObjectBuilder? _dnsTerminal;
+
+  DataSelfObjectBuilder({base.UlidBytesObjectBuilder? id, DnsTerminalObjectBuilder? dnsTerminal}) : _id = id, _dnsTerminal = dnsTerminal;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? dnsTerminalOffset = _dnsTerminal?.getOrCreateOffset(fbBuilder);
     fbBuilder.startTable(2);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
-    fbBuilder.addOffset(1, terminalOffset);
+    fbBuilder.addOffset(1, dnsTerminalOffset);
     return fbBuilder.endTable();
   }
 

@@ -38,34 +38,32 @@ table HiFrame {
 
 //
 table Hi(NetDiscovery,NetDiscoveryCallback) {
-    // 消息的唯一标识
     id: base.UlidBytes;
     dns_terminal: DnsTerminal;
     show_name: string;
 }
 
-table QueryDnsTerminalOut(NetDiscoveryFfiRpcOut) {
-    id: base.UlidBytes;
-    in_id: base.UlidBytes;
-    dns_terminal: DnsTerminal;
+table MySelfFrame {
+    header: base.Header;
+    my_self: MySelf;
 }
-// query parameters just send request, dont return partners, the result will get from the "FfiRpcCallback"
-table QueryDnsTerminalIn(NetDiscoveryFfiRpcIn:"QueryDnsTerminalOut") {
+struct MySelf{
     id: base.UlidBytes;
 }
 
-table QueryPartnersOut(NetDiscoveryFfiRpcOut) {
-    id: base.UlidBytes;
-    in_id: base.UlidBytes;
-    dns_partners: [DnsTerminal];
+table DataSelfFrame {
+    header: base.Header;
+    data_self: DataSelf;
 }
-// query parameters just send request, dont return partners, the result will get from the "FfiRpcCallback"
-table QueryPartnersIn(NetDiscoveryFfiRpcIn:"QueryPartnersOut") {
+table DataSelf{
     id: base.UlidBytes;
-    terminal: DnsTerminal;
+    dns_terminal: DnsTerminal;
 }
 
 enum NetDiscoveryType: uint32{
     none = 0,
     hi = 1,
+    // the self is keyword, so add "my_"
+    my_self = 2,
+    data_self = 3,
 }

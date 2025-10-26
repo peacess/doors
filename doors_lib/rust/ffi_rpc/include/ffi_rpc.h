@@ -21,7 +21,7 @@ struct FfiBytes init(CallBack callback);
 
 struct FfiBytes un_init(void);
 
-struct FfiBytes call(const uint8_t *bytes, uint64_t length);
+struct FfiBytes call(uint8_t *bytes, uint64_t length);
 
 void bytes_free(struct FfiBytes data);
 

@@ -10,7 +10,9 @@ value class NetDiscoveryType (val value: UInt) {
     companion object {
         val None = NetDiscoveryType(0u)
         val Hi = NetDiscoveryType(1u)
-        val names : Array<String> = arrayOf("none", "hi")
+        val MySelf = NetDiscoveryType(2u)
+        val DataSelf = NetDiscoveryType(3u)
+        val names : Array<String> = arrayOf("none", "hi", "my_self", "data_self")
         @JvmStatic
         fun name(e: NetDiscoveryType) : String = names[e.value.toInt()]
     }

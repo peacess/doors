@@ -17,3 +17,10 @@ preamble: |
 comments:
   style: any
   length: full
+#ffi-native:
+##  asset-id: 'package:idl/idl_bindings_generated.dart'
+functions:
+  leaf:
+    include:
+      - 'generate_ulid'
+      - 'generate_uuid_v7'
