@@ -1,5 +1,6 @@
 use std::{sync::Arc, time::Duration};
 
+use flatbuffers::EndianScalar;
 use idl::{Frame, net_data_type_generated::net_data_type::HeaderType};
 use tokio::runtime::Handle;
 use tokio_util::sync::CancellationToken;
@@ -101,11 +102,12 @@ impl LibApp {
             }
             Ok(frame) => {
                 if let Some(header) = frame.header() {
-                    match header.header_type() {
+                    match HeaderType::from_little_endian(header.header_type()) {
+                        HeaderType::none => {}
                         HeaderType::net_discovery => {}
                         HeaderType::chat => {}
-                        HeaderType::none => {}
-                        _ => {}
+                        HeaderType::ffi_rpc => {}
+                        HeaderType(3_u32..=u32::MAX) => todo!(),
                     }
                 } else {
                     return vec![];

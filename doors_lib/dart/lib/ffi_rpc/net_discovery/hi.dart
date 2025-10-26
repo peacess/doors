@@ -22,6 +22,12 @@ base class NetDiscoveryCallback {
         var hiFrame = HiFrame.reader.read(buffer, 0);
         hi(hiFrame);
         break;
+      case NetDiscoveryType.my_self:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case NetDiscoveryType.data_self:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

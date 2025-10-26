@@ -1,3 +1,5 @@
+use std::mem::ManuallyDrop;
+
 use crate::lib_app::LibApp;
 
 #[repr(C)]
@@ -48,23 +50,15 @@ pub extern "C" fn un_init() -> FfiBytes {
 #[unsafe(no_mangle)]
 pub extern "C" fn call(bytes: *mut u8, length: u64) -> FfiBytes {
     //todo
-    let c = {
-        let temp = unsafe { Vec::from_raw_parts(bytes, length as usize, length as usize) };
-        let copy = temp.clone();
-        core::mem::forget(temp);
-        copy
-    };
+    let raw_bytes = unsafe { core::slice::from_raw_parts(bytes, length as usize) };
     if let Some(app) = LibApp::app() {
-        let mut data = app.call(&c);
-        let bytes = data.as_mut_ptr();
-        let len = data.len() as u64;
-        let capacity = data.capacity() as u64;
-        std::mem::forget(data);
+        let data = app.call(raw_bytes);
+        let mut data = ManuallyDrop::new(data);
         return FfiBytes {
-            len,
-            capacity,
+            len: data.len() as u64,
+            capacity: data.capacity() as u64,
             offset: 0,
-            bytes,
+            bytes: data.as_mut_ptr(),
         };
     } else {
         log::error!("Error calling lib app");
@@ -83,6 +77,9 @@ pub extern "C" fn bytes_free(mut data: FfiBytes) {
         let _ = unsafe { Vec::from_raw_parts(data.bytes, data.len as usize, data.capacity as usize) };
         //maybe it don't work, but it is a good code
         data.bytes = core::ptr::null_mut();
+        data.len = 0;
+        data.capacity = 0;
+        data.offset = 0;
     }
 }
 
