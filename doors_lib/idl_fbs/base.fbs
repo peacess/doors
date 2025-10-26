@@ -3,60 +3,16 @@ namespace base;
 //
 attribute FrameType;
 
-// 在编译为 go时，不支持 v:[ubyte:8],这样数组类型，所以才使用一个byte一个字段
-struct UByte8{
-    ub1: ubyte;
-    ub2: ubyte;
-    ub3: ubyte;
-    ub4: ubyte;
-    ub5: ubyte;
-    ub6: ubyte;
-    ub7: ubyte;
-    ub8: ubyte;
-}
-
-//使用int 128来存放uuid, 由于部分语言不支持int128,所以后byte来存放
-//它也可以使用来存放public key
-//在内存直接转换时，如果主机的字节序为大端，需要转换字节序
-//flatbuffers使用小端字节序
-// 在编译为 go时，不支持 v:[ubyte:16],这样数组类型，所以才使用一个byte一个字段
-struct UByte16{
-    ub1: ubyte;
-    ub2: ubyte;
-    ub3: ubyte;
-    ub4: ubyte;
-    ub5: ubyte;
-    ub6: ubyte;
-    ub7: ubyte;
-    ub8: ubyte;
-    ub9: ubyte;
-    ub10: ubyte;
-    ub11: ubyte;
-    ub12: ubyte;
-    ub13: ubyte;
-    ub14: ubyte;
-    ub15: ubyte;
-    ub16: ubyte;
-}
 // ulid,  ulid is big-endian, so can't use uint128 to store it directly. 
 // the flatbuffers is little-endian（see, https://flatbuffers.dev/internals/）, if machine is big-endian, flatbuffers will auto convert the byte order when serialize/deserialize
 struct UlidBytes{
-    ts1: ubyte;
-    ts2: ubyte;
-    ts3: ubyte;
-    ts4: ubyte;
-    ts5: ubyte;
-    ts6: ubyte;
-    rand7: ubyte;
-    rand8: ubyte;
-    rand9: ubyte;
-    rand10: ubyte;
-    rand11: ubyte;
-    rand12: ubyte;
-    rand13: ubyte;
-    rand14: ubyte;
-    rand15: ubyte;
-    rand16: ubyte;
+    low: uint64;
+    high: uint64;
+}
+
+struct UuidV7Bytes{
+    low: uint64;
+    high: uint64;
 }
 
 struct Ipv6{

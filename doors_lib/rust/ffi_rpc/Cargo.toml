@@ -30,6 +30,7 @@ ulid.workspace = true
 
 
 idl = { path = "../idl" }
+uuid = { version = "1.18.1", features = ["v4"] }
 
 [build-dependencies]
 cbindgen.workspace = true

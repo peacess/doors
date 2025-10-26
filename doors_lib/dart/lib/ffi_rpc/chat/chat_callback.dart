@@ -4,23 +4,6 @@ import '../../idl/base_base_generated.dart';
 import '../../idl/chat_chat_generated.dart';
 import '../partner/partners.dart';
 
-enum ChatCallbackType {
-  textMessage(1),
-  textMessageAck(2);
-
-  final int callback;
-  const ChatCallbackType(this.callback);
-
-  factory ChatCallbackType.from(int chatCallbackType) {
-    for (var it in ChatCallbackType.values) {
-      if (it.callback == chatCallbackType) {
-        return it;
-      }
-    }
-    throw ArgumentError('Unknown header type: $chatCallbackType');
-  }
-}
-
 base class ChatCallback {
   final Partners partners;
   ChatCallback(this.partners);
@@ -36,13 +19,15 @@ base class ChatCallback {
   void textMessageAck(ChatTextMessageAck ack) {}
 
   void callback(fb.BufferContext buffer, Header header) {
-    var tempType = ChatCallbackType.from(header.frameType);
+    var tempType = ChatType.fromValue(header.frameType);
     switch (tempType) {
-      case ChatCallbackType.textMessage:
+      case ChatType.none:
+        break;
+      case ChatType.text_message:
         var text = ChatTextMessage.reader.read(buffer, 0);
         textMessage(text);
         break;
-      case ChatCallbackType.textMessageAck:
+      case ChatType.text_message_ack:
         var ack = ChatTextMessageAck.reader.read(buffer, 0);
         textMessageAck(ack);
         break;

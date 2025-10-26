@@ -1,4 +1,4 @@
-import 'package:idl/ffi_rpc/net_discovery/callback.dart';
+import 'package:idl/ffi_rpc/net_discovery/hi.dart';
 
 final class AppNetDiscoveryCallback extends NetDiscoveryCallback {
   AppNetDiscoveryCallback(super.partners);

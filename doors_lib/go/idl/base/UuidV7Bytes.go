@@ -6,59 +6,59 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
-type UlidBytesT struct {
+type UuidV7BytesT struct {
 	Low  uint64 `json:"low"`
 	High uint64 `json:"high"`
 }
 
-func (t *UlidBytesT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+func (t *UuidV7BytesT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	if t == nil {
 		return 0
 	}
-	return CreateUlidBytes(builder, t.Low, t.High)
+	return CreateUuidV7Bytes(builder, t.Low, t.High)
 }
-func (rcv *UlidBytes) UnPackTo(t *UlidBytesT) {
+func (rcv *UuidV7Bytes) UnPackTo(t *UuidV7BytesT) {
 	t.Low = rcv.Low()
 	t.High = rcv.High()
 }
 
-func (rcv *UlidBytes) UnPack() *UlidBytesT {
+func (rcv *UuidV7Bytes) UnPack() *UuidV7BytesT {
 	if rcv == nil {
 		return nil
 	}
-	t := &UlidBytesT{}
+	t := &UuidV7BytesT{}
 	rcv.UnPackTo(t)
 	return t
 }
 
-type UlidBytes struct {
+type UuidV7Bytes struct {
 	_tab flatbuffers.Struct
 }
 
-func (rcv *UlidBytes) Init(buf []byte, i flatbuffers.UOffsetT) {
+func (rcv *UuidV7Bytes) Init(buf []byte, i flatbuffers.UOffsetT) {
 	rcv._tab.Bytes = buf
 	rcv._tab.Pos = i
 }
 
-func (rcv *UlidBytes) Table() flatbuffers.Table {
+func (rcv *UuidV7Bytes) Table() flatbuffers.Table {
 	return rcv._tab.Table
 }
 
-func (rcv *UlidBytes) Low() uint64 {
+func (rcv *UuidV7Bytes) Low() uint64 {
 	return rcv._tab.GetUint64(rcv._tab.Pos + flatbuffers.UOffsetT(0))
 }
-func (rcv *UlidBytes) MutateLow(n uint64) bool {
+func (rcv *UuidV7Bytes) MutateLow(n uint64) bool {
 	return rcv._tab.MutateUint64(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
 }
 
-func (rcv *UlidBytes) High() uint64 {
+func (rcv *UuidV7Bytes) High() uint64 {
 	return rcv._tab.GetUint64(rcv._tab.Pos + flatbuffers.UOffsetT(8))
 }
-func (rcv *UlidBytes) MutateHigh(n uint64) bool {
+func (rcv *UuidV7Bytes) MutateHigh(n uint64) bool {
 	return rcv._tab.MutateUint64(rcv._tab.Pos+flatbuffers.UOffsetT(8), n)
 }
 
-func CreateUlidBytes(builder *flatbuffers.Builder, low uint64, high uint64) flatbuffers.UOffsetT {
+func CreateUuidV7Bytes(builder *flatbuffers.Builder, low uint64, high uint64) flatbuffers.UOffsetT {
 	builder.Prep(8, 16)
 	builder.PrependUint64(high)
 	builder.PrependUint64(low)

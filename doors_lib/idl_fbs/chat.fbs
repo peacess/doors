@@ -8,12 +8,13 @@ attribute ChatFfiRpcOut;
 attribute ChatCallback;
 
 table TextMessage(ChatFrame,ChatFfiRpcIn,ChatCallback){
-    //message id
+    //id
     id: base.UlidBytes;
     from_partner_id: base.PartnerId;
     to_partner_id: base.PartnerId;
     from_terminal_id: base.TerminalId;
     to_terminal_id: base.TerminalId;
+    message_id: base.UlidBytes;
     text: string;
 }
 
@@ -34,7 +35,7 @@ table ChatTextMessageAck{
     message: TextMessageAck;
 }
 
-enum NetDiscoveryType: uint32{
+enum ChatType: uint32{
     none = 0,
     text_message = 1,
     text_message_ack = 2,

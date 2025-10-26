@@ -14,6 +14,7 @@ type TextMessageT struct {
 	ToPartnerId    *base.PartnerIdT  `json:"to_partner_id"`
 	FromTerminalId *base.TerminalIdT `json:"from_terminal_id"`
 	ToTerminalId   *base.TerminalIdT `json:"to_terminal_id"`
+	MessageId      *base.UlidBytesT  `json:"message_id"`
 	Text           string            `json:"text"`
 }
 
@@ -36,6 +37,8 @@ func (t *TextMessageT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	TextMessageAddFromTerminalId(builder, fromTerminalIdOffset)
 	toTerminalIdOffset := t.ToTerminalId.Pack(builder)
 	TextMessageAddToTerminalId(builder, toTerminalIdOffset)
+	messageIdOffset := t.MessageId.Pack(builder)
+	TextMessageAddMessageId(builder, messageIdOffset)
 	TextMessageAddText(builder, textOffset)
 	return TextMessageEnd(builder)
 }
@@ -46,6 +49,7 @@ func (rcv *TextMessage) UnPackTo(t *TextMessageT) {
 	t.ToPartnerId = rcv.ToPartnerId(nil).UnPack()
 	t.FromTerminalId = rcv.FromTerminalId(nil).UnPack()
 	t.ToTerminalId = rcv.ToTerminalId(nil).UnPack()
+	t.MessageId = rcv.MessageId(nil).UnPack()
 	t.Text = string(rcv.Text())
 }
 
@@ -158,8 +162,21 @@ func (rcv *TextMessage) ToTerminalId(obj *base.TerminalId) *base.TerminalId {
 	return nil
 }
 
-func (rcv *TextMessage) Text() []byte {
+func (rcv *TextMessage) MessageId(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(14))
+	if o != 0 {
+		x := o + rcv._tab.Pos
+		if obj == nil {
+			obj = new(base.UlidBytes)
+		}
+		obj.Init(rcv._tab.Bytes, x)
+		return obj
+	}
+	return nil
+}
+
+func (rcv *TextMessage) Text() []byte {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(16))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
 	}
@@ -167,7 +184,7 @@ func (rcv *TextMessage) Text() []byte {
 }
 
 func TextMessageStart(builder *flatbuffers.Builder) {
-	builder.StartObject(6)
+	builder.StartObject(7)
 }
 func TextMessageAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
@@ -184,8 +201,11 @@ func TextMessageAddFromTerminalId(builder *flatbuffers.Builder, fromTerminalId f
 func TextMessageAddToTerminalId(builder *flatbuffers.Builder, toTerminalId flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(4, flatbuffers.UOffsetT(toTerminalId), 0)
 }
+func TextMessageAddMessageId(builder *flatbuffers.Builder, messageId flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(5, flatbuffers.UOffsetT(messageId), 0)
+}
 func TextMessageAddText(builder *flatbuffers.Builder, text flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(5, flatbuffers.UOffsetT(text), 0)
+	builder.PrependUOffsetTSlot(6, flatbuffers.UOffsetT(text), 0)
 }
 func TextMessageEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()

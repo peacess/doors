@@ -15,7 +15,7 @@ func (t *FrameConfirmT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT 
 	if t == nil {
 		return 0
 	}
-	return CreateFrameConfirm(builder, t.Id.Ts1, t.Id.Ts2, t.Id.Ts3, t.Id.Ts4, t.Id.Ts5, t.Id.Ts6, t.Id.Rand7, t.Id.Rand8, t.Id.Rand9, t.Id.Rand10, t.Id.Rand11, t.Id.Rand12, t.Id.Rand13, t.Id.Rand14, t.Id.Rand15, t.Id.Rand16, t.FrameId.Ts1, t.FrameId.Ts2, t.FrameId.Ts3, t.FrameId.Ts4, t.FrameId.Ts5, t.FrameId.Ts6, t.FrameId.Rand7, t.FrameId.Rand8, t.FrameId.Rand9, t.FrameId.Rand10, t.FrameId.Rand11, t.FrameId.Rand12, t.FrameId.Rand13, t.FrameId.Rand14, t.FrameId.Rand15, t.FrameId.Rand16)
+	return CreateFrameConfirm(builder, t.Id.Low, t.Id.High, t.FrameId.Low, t.FrameId.High)
 }
 func (rcv *FrameConfirm) UnPackTo(t *FrameConfirmT) {
 	t.Id = rcv.Id(nil).UnPack()
@@ -59,41 +59,13 @@ func (rcv *FrameConfirm) FrameId(obj *UlidBytes) *UlidBytes {
 	return obj
 }
 
-func CreateFrameConfirm(builder *flatbuffers.Builder, id_ts1 byte, id_ts2 byte, id_ts3 byte, id_ts4 byte, id_ts5 byte, id_ts6 byte, id_rand7 byte, id_rand8 byte, id_rand9 byte, id_rand10 byte, id_rand11 byte, id_rand12 byte, id_rand13 byte, id_rand14 byte, id_rand15 byte, id_rand16 byte, frame_id_ts1 byte, frame_id_ts2 byte, frame_id_ts3 byte, frame_id_ts4 byte, frame_id_ts5 byte, frame_id_ts6 byte, frame_id_rand7 byte, frame_id_rand8 byte, frame_id_rand9 byte, frame_id_rand10 byte, frame_id_rand11 byte, frame_id_rand12 byte, frame_id_rand13 byte, frame_id_rand14 byte, frame_id_rand15 byte, frame_id_rand16 byte) flatbuffers.UOffsetT {
-	builder.Prep(1, 32)
-	builder.Prep(1, 16)
-	builder.PrependByte(frame_id_rand16)
-	builder.PrependByte(frame_id_rand15)
-	builder.PrependByte(frame_id_rand14)
-	builder.PrependByte(frame_id_rand13)
-	builder.PrependByte(frame_id_rand12)
-	builder.PrependByte(frame_id_rand11)
-	builder.PrependByte(frame_id_rand10)
-	builder.PrependByte(frame_id_rand9)
-	builder.PrependByte(frame_id_rand8)
-	builder.PrependByte(frame_id_rand7)
-	builder.PrependByte(frame_id_ts6)
-	builder.PrependByte(frame_id_ts5)
-	builder.PrependByte(frame_id_ts4)
-	builder.PrependByte(frame_id_ts3)
-	builder.PrependByte(frame_id_ts2)
-	builder.PrependByte(frame_id_ts1)
-	builder.Prep(1, 16)
-	builder.PrependByte(id_rand16)
-	builder.PrependByte(id_rand15)
-	builder.PrependByte(id_rand14)
-	builder.PrependByte(id_rand13)
-	builder.PrependByte(id_rand12)
-	builder.PrependByte(id_rand11)
-	builder.PrependByte(id_rand10)
-	builder.PrependByte(id_rand9)
-	builder.PrependByte(id_rand8)
-	builder.PrependByte(id_rand7)
-	builder.PrependByte(id_ts6)
-	builder.PrependByte(id_ts5)
-	builder.PrependByte(id_ts4)
-	builder.PrependByte(id_ts3)
-	builder.PrependByte(id_ts2)
-	builder.PrependByte(id_ts1)
+func CreateFrameConfirm(builder *flatbuffers.Builder, id_low uint64, id_high uint64, frame_id_low uint64, frame_id_high uint64) flatbuffers.UOffsetT {
+	builder.Prep(8, 32)
+	builder.Prep(8, 16)
+	builder.PrependUint64(frame_id_high)
+	builder.PrependUint64(frame_id_low)
+	builder.Prep(8, 16)
+	builder.PrependUint64(id_high)
+	builder.PrependUint64(id_low)
 	return builder.Offset()
 }

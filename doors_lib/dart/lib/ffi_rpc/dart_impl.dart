@@ -1,16 +1,15 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart' as ffi;
-import 'package:idl/ffi_rpc/chat/callback.dart';
-import 'package:idl/ffi_rpc/header_type.dart';
+import 'package:idl/ffi_rpc/chat/chat_callback.dart';
 import 'package:logger/logger.dart';
 
 import '../idl/base_base_generated.dart';
+import '../idl/net_data_type_net_data_type_generated.dart';
 import '../idl_bindings_generated.dart';
 import './idl.dart';
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
-import 'net_discovery/callback.dart';
-import 'chat/chat.dart';
+import 'net_discovery/hi.dart';
 
 final _logger = Logger();
 
@@ -19,12 +18,10 @@ class FfiRpcDart {
   FfiRpcDart(this._idlBindings);
   late final NetDiscoveryCallback netDiscoveryCallback;
   late final ChatCallback chatCallback;
-  late final Chat chat;
 
-  void init({required NetDiscoveryCallback netDiscoveryCallback, required ChatCallback chatCallback, Chat? chat}) {
+  void init({required NetDiscoveryCallback netDiscoveryCallback, required ChatCallback chatCallback}) {
     this.netDiscoveryCallback = netDiscoveryCallback;
     this.chatCallback = chatCallback;
-    this.chat = chat ?? Chat();
     final nativeCallable = NativeCallable<CallBackFunction>.listener(callback);
     var re = _idlBindings.init(nativeCallable.nativeFunction);
     _idlBindings.bytes_free(re);
@@ -35,23 +32,25 @@ class FfiRpcDart {
     _idlBindings.bytes_free(re);
   }
 
-  // @Native<FfiBytes Function(Pointer<Uint8>, Uint64)>(symbol: 'call',isLeaf: true)
-  // external FfiBytes call(Pointer<Uint8> bytes, int length);
-  late final call = dylib.lookupFunction<FfiBytes Function(Pointer<Uint8>, Uint64), FfiBytes Function(Pointer<Uint8>, int)>('call', isLeaf: true);
-
   void callback(FfiBytes data) {
     // _logger.d("callback data:　${data.describe()}");
     final buffer = data.attach();
     var header = Frame.reader.read(buffer, 0).header!;
     try {
-      var headType = HeaderType.from(header.headerType);
+      var headType = HeaderType.fromValue(header.headerType);
       switch (headType) {
-        case HeaderType.netDiscovery:
+        case HeaderType.net_discovery:
           netDiscoveryCallback.callback(buffer, header);
           break;
         case HeaderType.chat:
           chatCallback.callback(buffer, header);
           break;
+        case HeaderType.none:
+          _logger.e("the header type is none(0)");
+          break;
+        case HeaderType.ffi_rpc:
+          // TODO: Handle this case.
+          throw UnimplementedError();
       }
     } catch (e) {
       _logger.e(e);

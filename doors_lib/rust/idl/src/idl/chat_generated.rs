@@ -20,19 +20,18 @@ pub mod chat {
     use self::flatbuffers::{EndianScalar, Follow};
 
     #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-    pub const ENUM_MIN_NET_DISCOVERY_TYPE: u32 = 0;
+    pub const ENUM_MIN_CHAT_TYPE: u32 = 0;
     #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-    pub const ENUM_MAX_NET_DISCOVERY_TYPE: u32 = 2;
+    pub const ENUM_MAX_CHAT_TYPE: u32 = 2;
     #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
     #[allow(non_camel_case_types)]
-    pub const ENUM_VALUES_NET_DISCOVERY_TYPE: [NetDiscoveryType; 3] =
-        [NetDiscoveryType::none, NetDiscoveryType::text_message, NetDiscoveryType::text_message_ack];
+    pub const ENUM_VALUES_CHAT_TYPE: [ChatType; 3] = [ChatType::none, ChatType::text_message, ChatType::text_message_ack];
 
     #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
     #[repr(transparent)]
-    pub struct NetDiscoveryType(pub u32);
+    pub struct ChatType(pub u32);
     #[allow(non_upper_case_globals)]
-    impl NetDiscoveryType {
+    impl ChatType {
         pub const none: Self = Self(0);
         pub const text_message: Self = Self(1);
         pub const text_message_ack: Self = Self(2);
@@ -50,7 +49,7 @@ pub mod chat {
             }
         }
     }
-    impl core::fmt::Debug for NetDiscoveryType {
+    impl core::fmt::Debug for ChatType {
         fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
             if let Some(name) = self.variant_name() {
                 f.write_str(name)
@@ -59,7 +58,7 @@ pub mod chat {
             }
         }
     }
-    impl<'a> flatbuffers::Follow<'a> for NetDiscoveryType {
+    impl<'a> flatbuffers::Follow<'a> for ChatType {
         type Inner = Self;
         #[inline]
         unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
@@ -68,8 +67,8 @@ pub mod chat {
         }
     }
 
-    impl flatbuffers::Push for NetDiscoveryType {
-        type Output = NetDiscoveryType;
+    impl flatbuffers::Push for ChatType {
+        type Output = ChatType;
         #[inline]
         unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
             unsafe {
@@ -78,7 +77,7 @@ pub mod chat {
         }
     }
 
-    impl flatbuffers::EndianScalar for NetDiscoveryType {
+    impl flatbuffers::EndianScalar for ChatType {
         type Scalar = u32;
         #[inline]
         fn to_little_endian(self) -> u32 {
@@ -92,7 +91,7 @@ pub mod chat {
         }
     }
 
-    impl<'a> flatbuffers::Verifiable for NetDiscoveryType {
+    impl<'a> flatbuffers::Verifiable for ChatType {
         #[inline]
         fn run_verifier(v: &mut flatbuffers::Verifier, pos: usize) -> Result<(), flatbuffers::InvalidFlatbuffer> {
             use self::flatbuffers::Verifiable;
@@ -100,7 +99,7 @@ pub mod chat {
         }
     }
 
-    impl flatbuffers::SimpleToVerifyInSlice for NetDiscoveryType {}
+    impl flatbuffers::SimpleToVerifyInSlice for ChatType {}
     pub enum TextMessageOffset {}
     #[derive(Copy, Clone, PartialEq)]
 
@@ -124,7 +123,8 @@ pub mod chat {
         pub const VT_TO_PARTNER_ID: flatbuffers::VOffsetT = 8;
         pub const VT_FROM_TERMINAL_ID: flatbuffers::VOffsetT = 10;
         pub const VT_TO_TERMINAL_ID: flatbuffers::VOffsetT = 12;
-        pub const VT_TEXT: flatbuffers::VOffsetT = 14;
+        pub const VT_MESSAGE_ID: flatbuffers::VOffsetT = 14;
+        pub const VT_TEXT: flatbuffers::VOffsetT = 16;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -138,6 +138,9 @@ pub mod chat {
             let mut builder = TextMessageBuilder::new(_fbb);
             if let Some(x) = args.text {
                 builder.add_text(x);
+            }
+            if let Some(x) = args.message_id {
+                builder.add_message_id(x);
             }
             if let Some(x) = args.to_terminal_id {
                 builder.add_to_terminal_id(x);
@@ -163,6 +166,7 @@ pub mod chat {
             let to_partner_id = self.to_partner_id().map(|x| x.unpack());
             let from_terminal_id = self.from_terminal_id().map(|x| x.unpack());
             let to_terminal_id = self.to_terminal_id().map(|x| x.unpack());
+            let message_id = self.message_id().map(|x| x.unpack());
             let text = self.text().map(|x| x.to_string());
             TextMessageT {
                 id,
@@ -170,6 +174,7 @@ pub mod chat {
                 to_partner_id,
                 from_terminal_id,
                 to_terminal_id,
+                message_id,
                 text,
             }
         }
@@ -210,6 +215,13 @@ pub mod chat {
             unsafe { self._tab.get::<super::base::TerminalId>(TextMessage::VT_TO_TERMINAL_ID, None) }
         }
         #[inline]
+        pub fn message_id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(TextMessage::VT_MESSAGE_ID, None) }
+        }
+        #[inline]
         pub fn text(&self) -> Option<&'a str> {
             // Safety:
             // Created from valid Table for this object
@@ -228,6 +240,7 @@ pub mod chat {
                 .visit_field::<super::base::PartnerId>("to_partner_id", Self::VT_TO_PARTNER_ID, false)?
                 .visit_field::<super::base::TerminalId>("from_terminal_id", Self::VT_FROM_TERMINAL_ID, false)?
                 .visit_field::<super::base::TerminalId>("to_terminal_id", Self::VT_TO_TERMINAL_ID, false)?
+                .visit_field::<super::base::UlidBytes>("message_id", Self::VT_MESSAGE_ID, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<&str>>("text", Self::VT_TEXT, false)?
                 .finish();
             Ok(())
@@ -239,6 +252,7 @@ pub mod chat {
         pub to_partner_id: Option<&'a super::base::PartnerId>,
         pub from_terminal_id: Option<&'a super::base::TerminalId>,
         pub to_terminal_id: Option<&'a super::base::TerminalId>,
+        pub message_id: Option<&'a super::base::UlidBytes>,
         pub text: Option<flatbuffers::WIPOffset<&'a str>>,
     }
     impl<'a> Default for TextMessageArgs<'a> {
@@ -250,6 +264,7 @@ pub mod chat {
                 to_partner_id: None,
                 from_terminal_id: None,
                 to_terminal_id: None,
+                message_id: None,
                 text: None,
             }
         }
@@ -285,6 +300,10 @@ pub mod chat {
                 .push_slot_always::<&super::base::TerminalId>(TextMessage::VT_TO_TERMINAL_ID, to_terminal_id);
         }
         #[inline]
+        pub fn add_message_id(&mut self, message_id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessage::VT_MESSAGE_ID, message_id);
+        }
+        #[inline]
         pub fn add_text(&mut self, text: flatbuffers::WIPOffset<&'b str>) {
             self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(TextMessage::VT_TEXT, text);
         }
@@ -308,6 +327,7 @@ pub mod chat {
             ds.field("to_partner_id", &self.to_partner_id());
             ds.field("from_terminal_id", &self.from_terminal_id());
             ds.field("to_terminal_id", &self.to_terminal_id());
+            ds.field("message_id", &self.message_id());
             ds.field("text", &self.text());
             ds.finish()
         }
@@ -320,6 +340,7 @@ pub mod chat {
         pub to_partner_id: Option<super::base::PartnerIdT>,
         pub from_terminal_id: Option<super::base::TerminalIdT>,
         pub to_terminal_id: Option<super::base::TerminalIdT>,
+        pub message_id: Option<super::base::UlidBytesT>,
         pub text: Option<String>,
     }
     impl Default for TextMessageT {
@@ -330,6 +351,7 @@ pub mod chat {
                 to_partner_id: None,
                 from_terminal_id: None,
                 to_terminal_id: None,
+                message_id: None,
                 text: None,
             }
         }
@@ -346,6 +368,8 @@ pub mod chat {
             let from_terminal_id = from_terminal_id_tmp.as_ref();
             let to_terminal_id_tmp = self.to_terminal_id.as_ref().map(|x| x.pack());
             let to_terminal_id = to_terminal_id_tmp.as_ref();
+            let message_id_tmp = self.message_id.as_ref().map(|x| x.pack());
+            let message_id = message_id_tmp.as_ref();
             let text = self.text.as_ref().map(|x| _fbb.create_string(x));
             TextMessage::create(
                 _fbb,
@@ -355,6 +379,7 @@ pub mod chat {
                     to_partner_id,
                     from_terminal_id,
                     to_terminal_id,
+                    message_id,
                     text,
                 },
             )

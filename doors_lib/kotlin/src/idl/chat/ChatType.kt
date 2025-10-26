@@ -6,15 +6,15 @@ import com.google.flatbuffers.kotlin.*
 import kotlin.jvm.JvmInline
 @Suppress("unused")
 @JvmInline
-value class NetDiscoveryType (val value: UInt) {
+value class ChatType (val value: UInt) {
     companion object {
-        val None = NetDiscoveryType(0u)
-        val TextMessage = NetDiscoveryType(1u)
-        val TextMessageAck = NetDiscoveryType(2u)
+        val None = ChatType(0u)
+        val TextMessage = ChatType(1u)
+        val TextMessageAck = ChatType(2u)
         val names : Array<String> = arrayOf("none", "text_message", "text_message_ack")
         @JvmStatic
-        fun name(e: NetDiscoveryType) : String = names[e.value.toInt()]
+        fun name(e: ChatType) : String = names[e.value.toInt()]
     }
 }
 
-typealias NetDiscoveryTypeArray = UIntArray
+typealias ChatTypeArray = UIntArray

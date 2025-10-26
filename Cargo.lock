@@ -1497,6 +1497,7 @@ dependencies = [
  "tokio",
  "tokio-util",
  "ulid",
+ "uuid 1.18.1",
  "x25519-dalek 2.0.1",
 ]
 

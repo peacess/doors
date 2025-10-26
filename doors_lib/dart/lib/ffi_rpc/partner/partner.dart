@@ -13,6 +13,7 @@ class Partner {
   UlidBytesT id;
   PartnerIdT partnerId;
   String showName;
+
   List<DnsTerminalT> terminals = [];
   ValueNotifierEx<List<TextMessageT>> texts = ValueNotifierEx([]);
 

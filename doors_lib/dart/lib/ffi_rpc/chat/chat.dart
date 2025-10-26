@@ -1,53 +1,29 @@
-import 'dart:ffi';
-
-import 'package:ffi/ffi.dart' as ffi;
-import 'package:idl/ffi_rpc/dart_impl.dart';
 import 'package:flat_buffers/flat_buffers.dart' as fb;
+import 'package:idl/ffi_rpc/partner/partner.dart';
 
+import '../../idl/base_base_generated.dart';
 import '../../idl/chat_chat_generated.dart';
+import '../partner/partners.dart';
 
-enum ChatType {
-  textMessage(1),
-  textMessageAck(2);
-
-  final int value;
-  const ChatType(this.value);
-
-  factory ChatType.from(int chatType) {
-    for (var it in ChatType.values) {
-      if (it.value == chatType) {
-        return it;
-      }
+abstract class Chat {
+  static void textMessage(String text, Partner from, Partner to) {
+    var fbBuilder = fb.Builder(initialSize: 1024);
+    var textMessage = TextMessageBuilder(fbBuilder);
+    {
+      var id = UlidBytesBuilder(fbBuilder).finish(0, 0);
+      var fromPartner = PartnerIdBuilder(fbBuilder).finish(from.partnerId.low, from.partnerId.high);
+      var toPartner = PartnerIdBuilder(fbBuilder).finish(to.partnerId.low, to.partnerId.high);
+      // var fromTeminal = TerminalIdBuilder(fbBuilder).finish(from, high)
     }
-    throw ArgumentError('Unknown header type: $chatType');
-  }
-}
-
-base class Chat {
-  // dont call the TextMessageBuilder.finish()
-  void textMessage(TextMessageBuilder builder) {
-    var chatBuilder = ChatTextMessageBuilder(builder.fbBuilder);
-    chatBuilder.begin();
-    var offset = builder.finish();
-    chatBuilder.addMessageOffset(offset);
-
-    //todo
-    // headerBuild.finish(HeaderType.chat.value, ChatType.textMessage.value, text.fbBuilder.size());
+    // if (chatText.header != null && chatText.message != null) {
+    //   var partner = partners.getByTerminal(chatText.header!.toTerminalId.unpack());
+    //   if (partner != null) {
+    //     partner.addTextMessage(chatText.message!.unpack());
+    //   }
+    // }
   }
 
-  // dont call the TextMessageAckBuilder.finish()
-  void textMessageAck(TextMessageAckBuilder ack) {}
+  static void textMessageAck(ChatTextMessageAck ack) {}
 
-  void call(fb.Builder builder) {
-    var buffer = builder.buffer;
-    // final call = dylib.lookupFunction<FfiBytes Function(Pointer<Uint8>, Uint64), FfiBytes Function(Pointer<Uint8>, int)>('call',isLeaf: true);
-    final pointer = ffi.calloc<Uint8>(buffer.length);
-    try {
-      pointer.asTypedList(buffer.length).setAll(0, buffer);
-      var ffiBytes = ffiRpc.call(pointer, buffer.length);
-      ffiRpc.bytesFree(ffiBytes);
-    } finally {
-      ffi.calloc.free(pointer);
-    }
-  }
+  void call(fb.BufferContext buffer, Header header) {}
 }

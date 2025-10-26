@@ -25,4 +25,14 @@ struct FfiBytes call(const uint8_t *bytes, uint64_t length);
 
 void bytes_free(struct FfiBytes data);
 
+/**
+ * remove the length for performance
+ */
+void generate_ulid(uint8_t *bytes);
+
+/**
+ * remove the length for performance
+ */
+void generate_uuid_v7(uint8_t *bytes);
+
 #endif  /* DOORS_LIB_FFI_RCP_HEADER */

@@ -24,8 +24,11 @@ class TextMessage : Table() {
     val toTerminalId : base.TerminalId? get() = toTerminalId(base.TerminalId())
     fun toTerminalId(obj: base.TerminalId) : base.TerminalId? = lookupField(12, null ) { obj.init(it + bufferPos, bb) }
 
-    val text : String? get() = lookupField(14, null ) { string(it + bufferPos) }
-    fun textAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 14, 1)
+    val messageId : base.UlidBytes? get() = messageId(base.UlidBytes())
+    fun messageId(obj: base.UlidBytes) : base.UlidBytes? = lookupField(14, null ) { obj.init(it + bufferPos, bb) }
+
+    val text : String? get() = lookupField(16, null ) { string(it + bufferPos) }
+    fun textAsBuffer() : ReadBuffer = vectorAsBuffer(bb, 16, 1)
 
     companion object {
         @JvmStatic
@@ -38,7 +41,7 @@ class TextMessage : Table() {
 
 
         @JvmStatic
-        fun startTextMessage(builder: FlatBufferBuilder) = builder.startTable(6)
+        fun startTextMessage(builder: FlatBufferBuilder) = builder.startTable(7)
 
         @JvmStatic
         fun addId(builder: FlatBufferBuilder, id: Offset<base.UlidBytes>) = builder.addStruct(0, id.value, 0)
@@ -56,7 +59,10 @@ class TextMessage : Table() {
         fun addToTerminalId(builder: FlatBufferBuilder, toTerminalId: Offset<base.TerminalId>) = builder.addStruct(4, toTerminalId.value, 0)
 
         @JvmStatic
-        fun addText(builder: FlatBufferBuilder, text: Offset<String>) = builder.add(5, text, 0)
+        fun addMessageId(builder: FlatBufferBuilder, messageId: Offset<base.UlidBytes>) = builder.addStruct(5, messageId.value, 0)
+
+        @JvmStatic
+        fun addText(builder: FlatBufferBuilder, text: Offset<String>) = builder.add(6, text, 0)
 
         @JvmStatic
         fun endTextMessage(builder: FlatBufferBuilder) : Offset<TextMessage> {

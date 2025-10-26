@@ -1,6 +1,6 @@
 use crate::{
     PartnerId, TerminalId,
-    idl::{UByte16, UlidBytes, X25519Public},
+    idl::{UlidBytes, X25519Public},
     partner_generated::partner::Partner,
 };
 

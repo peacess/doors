@@ -67,6 +67,27 @@ pub extern "C" fn bytes_free(mut data: FfiBytes) {
     }
 }
 
+/// remove the length for performance
+#[unsafe(no_mangle)]
+pub extern "C" fn generate_ulid(bytes: *mut u8) {
+    let bs = ulid::Ulid::new().to_bytes();
+    // debug_assert_eq!(bs.len(), length as usize);
+    unsafe {
+        core::ptr::copy_nonoverlapping(bs.as_ptr(), bytes, bs.len());
+    }
+}
+
+/// remove the length for performance
+#[unsafe(no_mangle)]
+pub extern "C" fn generate_uuid_v7(bytes: *mut u8) {
+    let v7 = uuid::Uuid::now_v7();
+    let bs = v7.as_bytes();
+    // debug_assert_eq!(bs.len(), length as usize);
+    unsafe {
+        core::ptr::copy_nonoverlapping(bs.as_ptr(), bytes, bs.len());
+    }
+}
+
 /// 回调用函数的返回值在dart中并不支持，所以没有返回值
 pub type CallBack = extern "C" fn(FfiBytes);
 

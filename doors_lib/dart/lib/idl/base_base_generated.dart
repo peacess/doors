@@ -6,410 +6,6 @@ library base;
 import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
-class Ubyte8 {
-  Ubyte8._(this._bc, this._bcOffset);
-
-  static const fb.Reader<Ubyte8> reader = _Ubyte8Reader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  int get ub1 => const fb.Uint8Reader().read(_bc, _bcOffset + 0);
-  int get ub2 => const fb.Uint8Reader().read(_bc, _bcOffset + 1);
-  int get ub3 => const fb.Uint8Reader().read(_bc, _bcOffset + 2);
-  int get ub4 => const fb.Uint8Reader().read(_bc, _bcOffset + 3);
-  int get ub5 => const fb.Uint8Reader().read(_bc, _bcOffset + 4);
-  int get ub6 => const fb.Uint8Reader().read(_bc, _bcOffset + 5);
-  int get ub7 => const fb.Uint8Reader().read(_bc, _bcOffset + 6);
-  int get ub8 => const fb.Uint8Reader().read(_bc, _bcOffset + 7);
-
-  @override
-  String toString() {
-    return 'Ubyte8{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}}';
-  }
-
-  Ubyte8T unpack() => Ubyte8T(ub1: ub1, ub2: ub2, ub3: ub3, ub4: ub4, ub5: ub5, ub6: ub6, ub7: ub7, ub8: ub8);
-
-  static int pack(fb.Builder fbBuilder, Ubyte8T? object) {
-    if (object == null) return 0;
-    return object.pack(fbBuilder);
-  }
-}
-
-class Ubyte8T implements fb.Packable {
-  int ub1;
-  int ub2;
-  int ub3;
-  int ub4;
-  int ub5;
-  int ub6;
-  int ub7;
-  int ub8;
-
-  Ubyte8T({
-    required this.ub1,
-    required this.ub2,
-    required this.ub3,
-    required this.ub4,
-    required this.ub5,
-    required this.ub6,
-    required this.ub7,
-    required this.ub8,
-  });
-
-  @override
-  int pack(fb.Builder fbBuilder) {
-    fbBuilder.putUint8(ub8);
-    fbBuilder.putUint8(ub7);
-    fbBuilder.putUint8(ub6);
-    fbBuilder.putUint8(ub5);
-    fbBuilder.putUint8(ub4);
-    fbBuilder.putUint8(ub3);
-    fbBuilder.putUint8(ub2);
-    fbBuilder.putUint8(ub1);
-    return fbBuilder.offset;
-  }
-
-  @override
-  String toString() {
-    return 'Ubyte8T{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}}';
-  }
-}
-
-class _Ubyte8Reader extends fb.StructReader<Ubyte8> {
-  const _Ubyte8Reader();
-
-  @override
-  int get size => 8;
-
-  @override
-  Ubyte8 createObject(fb.BufferContext bc, int offset) => Ubyte8._(bc, offset);
-}
-
-class Ubyte8Builder {
-  Ubyte8Builder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  int finish(int ub1, int ub2, int ub3, int ub4, int ub5, int ub6, int ub7, int ub8) {
-    fbBuilder.putUint8(ub8);
-    fbBuilder.putUint8(ub7);
-    fbBuilder.putUint8(ub6);
-    fbBuilder.putUint8(ub5);
-    fbBuilder.putUint8(ub4);
-    fbBuilder.putUint8(ub3);
-    fbBuilder.putUint8(ub2);
-    fbBuilder.putUint8(ub1);
-    return fbBuilder.offset;
-  }
-}
-
-class Ubyte8ObjectBuilder extends fb.ObjectBuilder {
-  final int _ub1;
-  final int _ub2;
-  final int _ub3;
-  final int _ub4;
-  final int _ub5;
-  final int _ub6;
-  final int _ub7;
-  final int _ub8;
-
-  Ubyte8ObjectBuilder({
-    required int ub1,
-    required int ub2,
-    required int ub3,
-    required int ub4,
-    required int ub5,
-    required int ub6,
-    required int ub7,
-    required int ub8,
-  }) : _ub1 = ub1,
-       _ub2 = ub2,
-       _ub3 = ub3,
-       _ub4 = ub4,
-       _ub5 = ub5,
-       _ub6 = ub6,
-       _ub7 = ub7,
-       _ub8 = ub8;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    fbBuilder.putUint8(_ub8);
-    fbBuilder.putUint8(_ub7);
-    fbBuilder.putUint8(_ub6);
-    fbBuilder.putUint8(_ub5);
-    fbBuilder.putUint8(_ub4);
-    fbBuilder.putUint8(_ub3);
-    fbBuilder.putUint8(_ub2);
-    fbBuilder.putUint8(_ub1);
-    return fbBuilder.offset;
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
-class Ubyte16 {
-  Ubyte16._(this._bc, this._bcOffset);
-
-  static const fb.Reader<Ubyte16> reader = _Ubyte16Reader();
-
-  final fb.BufferContext _bc;
-  final int _bcOffset;
-
-  int get ub1 => const fb.Uint8Reader().read(_bc, _bcOffset + 0);
-  int get ub2 => const fb.Uint8Reader().read(_bc, _bcOffset + 1);
-  int get ub3 => const fb.Uint8Reader().read(_bc, _bcOffset + 2);
-  int get ub4 => const fb.Uint8Reader().read(_bc, _bcOffset + 3);
-  int get ub5 => const fb.Uint8Reader().read(_bc, _bcOffset + 4);
-  int get ub6 => const fb.Uint8Reader().read(_bc, _bcOffset + 5);
-  int get ub7 => const fb.Uint8Reader().read(_bc, _bcOffset + 6);
-  int get ub8 => const fb.Uint8Reader().read(_bc, _bcOffset + 7);
-  int get ub9 => const fb.Uint8Reader().read(_bc, _bcOffset + 8);
-  int get ub10 => const fb.Uint8Reader().read(_bc, _bcOffset + 9);
-  int get ub11 => const fb.Uint8Reader().read(_bc, _bcOffset + 10);
-  int get ub12 => const fb.Uint8Reader().read(_bc, _bcOffset + 11);
-  int get ub13 => const fb.Uint8Reader().read(_bc, _bcOffset + 12);
-  int get ub14 => const fb.Uint8Reader().read(_bc, _bcOffset + 13);
-  int get ub15 => const fb.Uint8Reader().read(_bc, _bcOffset + 14);
-  int get ub16 => const fb.Uint8Reader().read(_bc, _bcOffset + 15);
-
-  @override
-  String toString() {
-    return 'Ubyte16{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}, ub9: ${ub9}, ub10: ${ub10}, ub11: ${ub11}, ub12: ${ub12}, ub13: ${ub13}, ub14: ${ub14}, ub15: ${ub15}, ub16: ${ub16}}';
-  }
-
-  Ubyte16T unpack() => Ubyte16T(
-    ub1: ub1,
-    ub2: ub2,
-    ub3: ub3,
-    ub4: ub4,
-    ub5: ub5,
-    ub6: ub6,
-    ub7: ub7,
-    ub8: ub8,
-    ub9: ub9,
-    ub10: ub10,
-    ub11: ub11,
-    ub12: ub12,
-    ub13: ub13,
-    ub14: ub14,
-    ub15: ub15,
-    ub16: ub16,
-  );
-
-  static int pack(fb.Builder fbBuilder, Ubyte16T? object) {
-    if (object == null) return 0;
-    return object.pack(fbBuilder);
-  }
-}
-
-class Ubyte16T implements fb.Packable {
-  int ub1;
-  int ub2;
-  int ub3;
-  int ub4;
-  int ub5;
-  int ub6;
-  int ub7;
-  int ub8;
-  int ub9;
-  int ub10;
-  int ub11;
-  int ub12;
-  int ub13;
-  int ub14;
-  int ub15;
-  int ub16;
-
-  Ubyte16T({
-    required this.ub1,
-    required this.ub2,
-    required this.ub3,
-    required this.ub4,
-    required this.ub5,
-    required this.ub6,
-    required this.ub7,
-    required this.ub8,
-    required this.ub9,
-    required this.ub10,
-    required this.ub11,
-    required this.ub12,
-    required this.ub13,
-    required this.ub14,
-    required this.ub15,
-    required this.ub16,
-  });
-
-  @override
-  int pack(fb.Builder fbBuilder) {
-    fbBuilder.putUint8(ub16);
-    fbBuilder.putUint8(ub15);
-    fbBuilder.putUint8(ub14);
-    fbBuilder.putUint8(ub13);
-    fbBuilder.putUint8(ub12);
-    fbBuilder.putUint8(ub11);
-    fbBuilder.putUint8(ub10);
-    fbBuilder.putUint8(ub9);
-    fbBuilder.putUint8(ub8);
-    fbBuilder.putUint8(ub7);
-    fbBuilder.putUint8(ub6);
-    fbBuilder.putUint8(ub5);
-    fbBuilder.putUint8(ub4);
-    fbBuilder.putUint8(ub3);
-    fbBuilder.putUint8(ub2);
-    fbBuilder.putUint8(ub1);
-    return fbBuilder.offset;
-  }
-
-  @override
-  String toString() {
-    return 'Ubyte16T{ub1: ${ub1}, ub2: ${ub2}, ub3: ${ub3}, ub4: ${ub4}, ub5: ${ub5}, ub6: ${ub6}, ub7: ${ub7}, ub8: ${ub8}, ub9: ${ub9}, ub10: ${ub10}, ub11: ${ub11}, ub12: ${ub12}, ub13: ${ub13}, ub14: ${ub14}, ub15: ${ub15}, ub16: ${ub16}}';
-  }
-}
-
-class _Ubyte16Reader extends fb.StructReader<Ubyte16> {
-  const _Ubyte16Reader();
-
-  @override
-  int get size => 16;
-
-  @override
-  Ubyte16 createObject(fb.BufferContext bc, int offset) => Ubyte16._(bc, offset);
-}
-
-class Ubyte16Builder {
-  Ubyte16Builder(this.fbBuilder);
-
-  final fb.Builder fbBuilder;
-
-  int finish(
-    int ub1,
-    int ub2,
-    int ub3,
-    int ub4,
-    int ub5,
-    int ub6,
-    int ub7,
-    int ub8,
-    int ub9,
-    int ub10,
-    int ub11,
-    int ub12,
-    int ub13,
-    int ub14,
-    int ub15,
-    int ub16,
-  ) {
-    fbBuilder.putUint8(ub16);
-    fbBuilder.putUint8(ub15);
-    fbBuilder.putUint8(ub14);
-    fbBuilder.putUint8(ub13);
-    fbBuilder.putUint8(ub12);
-    fbBuilder.putUint8(ub11);
-    fbBuilder.putUint8(ub10);
-    fbBuilder.putUint8(ub9);
-    fbBuilder.putUint8(ub8);
-    fbBuilder.putUint8(ub7);
-    fbBuilder.putUint8(ub6);
-    fbBuilder.putUint8(ub5);
-    fbBuilder.putUint8(ub4);
-    fbBuilder.putUint8(ub3);
-    fbBuilder.putUint8(ub2);
-    fbBuilder.putUint8(ub1);
-    return fbBuilder.offset;
-  }
-}
-
-class Ubyte16ObjectBuilder extends fb.ObjectBuilder {
-  final int _ub1;
-  final int _ub2;
-  final int _ub3;
-  final int _ub4;
-  final int _ub5;
-  final int _ub6;
-  final int _ub7;
-  final int _ub8;
-  final int _ub9;
-  final int _ub10;
-  final int _ub11;
-  final int _ub12;
-  final int _ub13;
-  final int _ub14;
-  final int _ub15;
-  final int _ub16;
-
-  Ubyte16ObjectBuilder({
-    required int ub1,
-    required int ub2,
-    required int ub3,
-    required int ub4,
-    required int ub5,
-    required int ub6,
-    required int ub7,
-    required int ub8,
-    required int ub9,
-    required int ub10,
-    required int ub11,
-    required int ub12,
-    required int ub13,
-    required int ub14,
-    required int ub15,
-    required int ub16,
-  }) : _ub1 = ub1,
-       _ub2 = ub2,
-       _ub3 = ub3,
-       _ub4 = ub4,
-       _ub5 = ub5,
-       _ub6 = ub6,
-       _ub7 = ub7,
-       _ub8 = ub8,
-       _ub9 = ub9,
-       _ub10 = ub10,
-       _ub11 = ub11,
-       _ub12 = ub12,
-       _ub13 = ub13,
-       _ub14 = ub14,
-       _ub15 = ub15,
-       _ub16 = ub16;
-
-  /// Finish building, and store into the [fbBuilder].
-  @override
-  int finish(fb.Builder fbBuilder) {
-    fbBuilder.putUint8(_ub16);
-    fbBuilder.putUint8(_ub15);
-    fbBuilder.putUint8(_ub14);
-    fbBuilder.putUint8(_ub13);
-    fbBuilder.putUint8(_ub12);
-    fbBuilder.putUint8(_ub11);
-    fbBuilder.putUint8(_ub10);
-    fbBuilder.putUint8(_ub9);
-    fbBuilder.putUint8(_ub8);
-    fbBuilder.putUint8(_ub7);
-    fbBuilder.putUint8(_ub6);
-    fbBuilder.putUint8(_ub5);
-    fbBuilder.putUint8(_ub4);
-    fbBuilder.putUint8(_ub3);
-    fbBuilder.putUint8(_ub2);
-    fbBuilder.putUint8(_ub1);
-    return fbBuilder.offset;
-  }
-
-  /// Convenience method to serialize to byte list.
-  @override
-  Uint8List toBytes([String? fileIdentifier]) {
-    final fbBuilder = fb.Builder(deduplicateTables: false);
-    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
-    return fbBuilder.buffer;
-  }
-}
-
 class UlidBytes {
   UlidBytes._(this._bc, this._bcOffset);
 
@@ -418,46 +14,15 @@ class UlidBytes {
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  int get ts1 => const fb.Uint8Reader().read(_bc, _bcOffset + 0);
-  int get ts2 => const fb.Uint8Reader().read(_bc, _bcOffset + 1);
-  int get ts3 => const fb.Uint8Reader().read(_bc, _bcOffset + 2);
-  int get ts4 => const fb.Uint8Reader().read(_bc, _bcOffset + 3);
-  int get ts5 => const fb.Uint8Reader().read(_bc, _bcOffset + 4);
-  int get ts6 => const fb.Uint8Reader().read(_bc, _bcOffset + 5);
-  int get rand7 => const fb.Uint8Reader().read(_bc, _bcOffset + 6);
-  int get rand8 => const fb.Uint8Reader().read(_bc, _bcOffset + 7);
-  int get rand9 => const fb.Uint8Reader().read(_bc, _bcOffset + 8);
-  int get rand10 => const fb.Uint8Reader().read(_bc, _bcOffset + 9);
-  int get rand11 => const fb.Uint8Reader().read(_bc, _bcOffset + 10);
-  int get rand12 => const fb.Uint8Reader().read(_bc, _bcOffset + 11);
-  int get rand13 => const fb.Uint8Reader().read(_bc, _bcOffset + 12);
-  int get rand14 => const fb.Uint8Reader().read(_bc, _bcOffset + 13);
-  int get rand15 => const fb.Uint8Reader().read(_bc, _bcOffset + 14);
-  int get rand16 => const fb.Uint8Reader().read(_bc, _bcOffset + 15);
+  int get low => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
+  int get high => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
 
   @override
   String toString() {
-    return 'UlidBytes{ts1: ${ts1}, ts2: ${ts2}, ts3: ${ts3}, ts4: ${ts4}, ts5: ${ts5}, ts6: ${ts6}, rand7: ${rand7}, rand8: ${rand8}, rand9: ${rand9}, rand10: ${rand10}, rand11: ${rand11}, rand12: ${rand12}, rand13: ${rand13}, rand14: ${rand14}, rand15: ${rand15}, rand16: ${rand16}}';
+    return 'UlidBytes{low: ${low}, high: ${high}}';
   }
 
-  UlidBytesT unpack() => UlidBytesT(
-    ts1: ts1,
-    ts2: ts2,
-    ts3: ts3,
-    ts4: ts4,
-    ts5: ts5,
-    ts6: ts6,
-    rand7: rand7,
-    rand8: rand8,
-    rand9: rand9,
-    rand10: rand10,
-    rand11: rand11,
-    rand12: rand12,
-    rand13: rand13,
-    rand14: rand14,
-    rand15: rand15,
-    rand16: rand16,
-  );
+  UlidBytesT unpack() => UlidBytesT(low: low, high: high);
 
   static int pack(fb.Builder fbBuilder, UlidBytesT? object) {
     if (object == null) return 0;
@@ -466,66 +31,21 @@ class UlidBytes {
 }
 
 class UlidBytesT implements fb.Packable {
-  int ts1;
-  int ts2;
-  int ts3;
-  int ts4;
-  int ts5;
-  int ts6;
-  int rand7;
-  int rand8;
-  int rand9;
-  int rand10;
-  int rand11;
-  int rand12;
-  int rand13;
-  int rand14;
-  int rand15;
-  int rand16;
+  int low;
+  int high;
 
-  UlidBytesT({
-    required this.ts1,
-    required this.ts2,
-    required this.ts3,
-    required this.ts4,
-    required this.ts5,
-    required this.ts6,
-    required this.rand7,
-    required this.rand8,
-    required this.rand9,
-    required this.rand10,
-    required this.rand11,
-    required this.rand12,
-    required this.rand13,
-    required this.rand14,
-    required this.rand15,
-    required this.rand16,
-  });
+  UlidBytesT({required this.low, required this.high});
 
   @override
   int pack(fb.Builder fbBuilder) {
-    fbBuilder.putUint8(rand16);
-    fbBuilder.putUint8(rand15);
-    fbBuilder.putUint8(rand14);
-    fbBuilder.putUint8(rand13);
-    fbBuilder.putUint8(rand12);
-    fbBuilder.putUint8(rand11);
-    fbBuilder.putUint8(rand10);
-    fbBuilder.putUint8(rand9);
-    fbBuilder.putUint8(rand8);
-    fbBuilder.putUint8(rand7);
-    fbBuilder.putUint8(ts6);
-    fbBuilder.putUint8(ts5);
-    fbBuilder.putUint8(ts4);
-    fbBuilder.putUint8(ts3);
-    fbBuilder.putUint8(ts2);
-    fbBuilder.putUint8(ts1);
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
     return fbBuilder.offset;
   }
 
   @override
   String toString() {
-    return 'UlidBytesT{ts1: ${ts1}, ts2: ${ts2}, ts3: ${ts3}, ts4: ${ts4}, ts5: ${ts5}, ts6: ${ts6}, rand7: ${rand7}, rand8: ${rand8}, rand9: ${rand9}, rand10: ${rand10}, rand11: ${rand11}, rand12: ${rand12}, rand13: ${rand13}, rand14: ${rand14}, rand15: ${rand15}, rand16: ${rand16}}';
+    return 'UlidBytesT{low: ${low}, high: ${high}}';
   }
 }
 
@@ -544,115 +64,112 @@ class UlidBytesBuilder {
 
   final fb.Builder fbBuilder;
 
-  int finish(
-    int ts1,
-    int ts2,
-    int ts3,
-    int ts4,
-    int ts5,
-    int ts6,
-    int rand7,
-    int rand8,
-    int rand9,
-    int rand10,
-    int rand11,
-    int rand12,
-    int rand13,
-    int rand14,
-    int rand15,
-    int rand16,
-  ) {
-    fbBuilder.putUint8(rand16);
-    fbBuilder.putUint8(rand15);
-    fbBuilder.putUint8(rand14);
-    fbBuilder.putUint8(rand13);
-    fbBuilder.putUint8(rand12);
-    fbBuilder.putUint8(rand11);
-    fbBuilder.putUint8(rand10);
-    fbBuilder.putUint8(rand9);
-    fbBuilder.putUint8(rand8);
-    fbBuilder.putUint8(rand7);
-    fbBuilder.putUint8(ts6);
-    fbBuilder.putUint8(ts5);
-    fbBuilder.putUint8(ts4);
-    fbBuilder.putUint8(ts3);
-    fbBuilder.putUint8(ts2);
-    fbBuilder.putUint8(ts1);
+  int finish(int low, int high) {
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
     return fbBuilder.offset;
   }
 }
 
 class UlidBytesObjectBuilder extends fb.ObjectBuilder {
-  final int _ts1;
-  final int _ts2;
-  final int _ts3;
-  final int _ts4;
-  final int _ts5;
-  final int _ts6;
-  final int _rand7;
-  final int _rand8;
-  final int _rand9;
-  final int _rand10;
-  final int _rand11;
-  final int _rand12;
-  final int _rand13;
-  final int _rand14;
-  final int _rand15;
-  final int _rand16;
+  final int _low;
+  final int _high;
 
-  UlidBytesObjectBuilder({
-    required int ts1,
-    required int ts2,
-    required int ts3,
-    required int ts4,
-    required int ts5,
-    required int ts6,
-    required int rand7,
-    required int rand8,
-    required int rand9,
-    required int rand10,
-    required int rand11,
-    required int rand12,
-    required int rand13,
-    required int rand14,
-    required int rand15,
-    required int rand16,
-  }) : _ts1 = ts1,
-       _ts2 = ts2,
-       _ts3 = ts3,
-       _ts4 = ts4,
-       _ts5 = ts5,
-       _ts6 = ts6,
-       _rand7 = rand7,
-       _rand8 = rand8,
-       _rand9 = rand9,
-       _rand10 = rand10,
-       _rand11 = rand11,
-       _rand12 = rand12,
-       _rand13 = rand13,
-       _rand14 = rand14,
-       _rand15 = rand15,
-       _rand16 = rand16;
+  UlidBytesObjectBuilder({required int low, required int high}) : _low = low, _high = high;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    fbBuilder.putUint8(_rand16);
-    fbBuilder.putUint8(_rand15);
-    fbBuilder.putUint8(_rand14);
-    fbBuilder.putUint8(_rand13);
-    fbBuilder.putUint8(_rand12);
-    fbBuilder.putUint8(_rand11);
-    fbBuilder.putUint8(_rand10);
-    fbBuilder.putUint8(_rand9);
-    fbBuilder.putUint8(_rand8);
-    fbBuilder.putUint8(_rand7);
-    fbBuilder.putUint8(_ts6);
-    fbBuilder.putUint8(_ts5);
-    fbBuilder.putUint8(_ts4);
-    fbBuilder.putUint8(_ts3);
-    fbBuilder.putUint8(_ts2);
-    fbBuilder.putUint8(_ts1);
+    fbBuilder.putUint64(_high);
+    fbBuilder.putUint64(_low);
+    return fbBuilder.offset;
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class UuidV7Bytes {
+  UuidV7Bytes._(this._bc, this._bcOffset);
+
+  static const fb.Reader<UuidV7Bytes> reader = _UuidV7BytesReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  int get low => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
+  int get high => const fb.Uint64Reader().read(_bc, _bcOffset + 8);
+
+  @override
+  String toString() {
+    return 'UuidV7Bytes{low: ${low}, high: ${high}}';
+  }
+
+  UuidV7BytesT unpack() => UuidV7BytesT(low: low, high: high);
+
+  static int pack(fb.Builder fbBuilder, UuidV7BytesT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class UuidV7BytesT implements fb.Packable {
+  int low;
+  int high;
+
+  UuidV7BytesT({required this.low, required this.high});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
+    return fbBuilder.offset;
+  }
+
+  @override
+  String toString() {
+    return 'UuidV7BytesT{low: ${low}, high: ${high}}';
+  }
+}
+
+class _UuidV7BytesReader extends fb.StructReader<UuidV7Bytes> {
+  const _UuidV7BytesReader();
+
+  @override
+  int get size => 16;
+
+  @override
+  UuidV7Bytes createObject(fb.BufferContext bc, int offset) => UuidV7Bytes._(bc, offset);
+}
+
+class UuidV7BytesBuilder {
+  UuidV7BytesBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  int finish(int low, int high) {
+    fbBuilder.putUint64(high);
+    fbBuilder.putUint64(low);
+    return fbBuilder.offset;
+  }
+}
+
+class UuidV7BytesObjectBuilder extends fb.ObjectBuilder {
+  final int _low;
+  final int _high;
+
+  UuidV7BytesObjectBuilder({required int low, required int high}) : _low = low, _high = high;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    fbBuilder.putUint64(_high);
+    fbBuilder.putUint64(_low);
     return fbBuilder.offset;
   }
 

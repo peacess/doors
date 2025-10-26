@@ -3,20 +3,15 @@ use std::{
     sync::Arc,
 };
 
-use flatbuffers::bitflags::iter;
 use idl::{
     Header, PartnerId, TerminalId, UlidBytes, X25519Public,
-    net_discovery_generated::net_discovery::{DnsTerminal, DnsTerminalArgs, Hi, HiArgs, HiFrame, HiFrameArgs},
+    net_data_type_generated::net_data_type::HeaderType,
+    net_discovery_generated::net_discovery::{DnsTerminal, DnsTerminalArgs, Hi, HiArgs, HiFrame, HiFrameArgs, NetDiscoveryType},
 };
 use tokio::runtime::Handle;
 use x25519_dalek::PublicKey;
 
-use crate::{
-    HeaderType,
-    discover::{net_discover_type::NetDiscoverType, partner_service_info::PartnerServiceInfo},
-    ffi::FfiBytes,
-    lib_app::LIB_APP,
-};
+use crate::{discover::partner_service_info::PartnerServiceInfo, ffi::FfiBytes, lib_app::LIB_APP};
 
 pub struct MulticastService {
     reciever_ipv4: Arc<tokio::net::UdpSocket>,
@@ -202,8 +197,8 @@ impl MulticastService {
                     };
                     let header = Header::new(
                         hi.value() as u64,
-                        HeaderType::NetDiscovery.to_u32(),
-                        NetDiscoverType::Hi.to_u32(),
+                        HeaderType::net_discovery.0,
+                        NetDiscoveryType::hi.0,
                         &TerminalId::from(self.service_info.terminal_id),
                         &X25519Public::from(&PublicKey::from(&self.service_info.secret)),
                     );

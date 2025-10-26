@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:idl/ffi_rpc/chat/callback.dart';
+import 'package:idl/ffi_rpc/chat/chat_callback.dart';
 import 'package:idl/ffi_rpc/partner/partners.dart';
 
 import 'package:idl/idl.dart' as idl;
