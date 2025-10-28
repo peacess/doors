@@ -3,7 +3,6 @@ import 'dart:ffi';
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 import 'package:idl/ffi_rpc/partner/partner.dart';
 import 'package:idl/idl.dart';
-import 'package:idl/idl/net_data_type_net_data_type_generated.dart';
 import 'package:ffi/ffi.dart' as ffi;
 
 import '../../idl/base_base_generated.dart';

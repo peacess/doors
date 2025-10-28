@@ -5,7 +5,6 @@ import 'package:idl/ffi_rpc/chat/chat_callback.dart';
 import 'package:logger/logger.dart';
 
 import '../idl/base_base_generated.dart';
-import '../idl/net_data_type_net_data_type_generated.dart';
 import '../idl_bindings_generated.dart';
 import './idl.dart';
 import 'package:flat_buffers/flat_buffers.dart' as fb;
@@ -50,6 +49,9 @@ class FfiRpcDart {
           _logger.e("the header type is none(0)");
           break;
         case HeaderType.ffi_rpc:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+        case HeaderType.error_info:
           // TODO: Handle this case.
           throw UnimplementedError();
       }
