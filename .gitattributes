@@ -19,3 +19,5 @@ CMakeLists.txt linguist-vendored=true
 *.hh    linguist-vendored=true
 *.hpp   linguist-vendored=true
 *.hxx   linguist-vendored=true
+
+*.html   linguist-vendored=true
