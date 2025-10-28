@@ -3,4 +3,4 @@ mod lib_app;
 mod net;
 
 mod chat;
-mod ffi;
+pub mod ffi_impl;

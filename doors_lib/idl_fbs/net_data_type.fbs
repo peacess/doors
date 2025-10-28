@@ -1,9 +1,0 @@
-include "base.fbs";
-namespace net_data_type;
-
-enum HeaderType: uint32{
-    none = 0,
-    net_discovery = 1,
-    chat = 2,
-    ffi_rpc = 3,
-}

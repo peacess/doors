@@ -57,7 +57,9 @@ table DataSelfFrame {
 }
 table DataSelf{
     id: base.UlidBytes;
+    req_id: base.UlidBytes;
     dns_terminal: DnsTerminal;
+    error_info: base.ErrorInfo;
 }
 
 enum NetDiscoveryType: uint32{

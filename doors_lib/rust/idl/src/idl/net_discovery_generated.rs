@@ -1405,7 +1405,9 @@ pub mod net_discovery {
 
     impl<'a> DataSelf<'a> {
         pub const VT_ID: flatbuffers::VOffsetT = 4;
-        pub const VT_DNS_TERMINAL: flatbuffers::VOffsetT = 6;
+        pub const VT_REQ_ID: flatbuffers::VOffsetT = 6;
+        pub const VT_DNS_TERMINAL: flatbuffers::VOffsetT = 8;
+        pub const VT_ERROR_INFO: flatbuffers::VOffsetT = 10;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -1417,8 +1419,14 @@ pub mod net_discovery {
             args: &'args DataSelfArgs<'args>,
         ) -> flatbuffers::WIPOffset<DataSelf<'bldr>> {
             let mut builder = DataSelfBuilder::new(_fbb);
+            if let Some(x) = args.error_info {
+                builder.add_error_info(x);
+            }
             if let Some(x) = args.dns_terminal {
                 builder.add_dns_terminal(x);
+            }
+            if let Some(x) = args.req_id {
+                builder.add_req_id(x);
             }
             if let Some(x) = args.id {
                 builder.add_id(x);
@@ -1428,8 +1436,15 @@ pub mod net_discovery {
 
         pub fn unpack(&self) -> DataSelfT {
             let id = self.id().map(|x| x.unpack());
+            let req_id = self.req_id().map(|x| x.unpack());
             let dns_terminal = self.dns_terminal().map(|x| Box::new(x.unpack()));
-            DataSelfT { id, dns_terminal }
+            let error_info = self.error_info().map(|x| Box::new(x.unpack()));
+            DataSelfT {
+                id,
+                req_id,
+                dns_terminal,
+                error_info,
+            }
         }
 
         #[inline]
@@ -1440,11 +1455,28 @@ pub mod net_discovery {
             unsafe { self._tab.get::<super::base::UlidBytes>(DataSelf::VT_ID, None) }
         }
         #[inline]
+        pub fn req_id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(DataSelf::VT_REQ_ID, None) }
+        }
+        #[inline]
         pub fn dns_terminal(&self) -> Option<DnsTerminal<'a>> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
             unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<DnsTerminal>>(DataSelf::VT_DNS_TERMINAL, None) }
+        }
+        #[inline]
+        pub fn error_info(&self) -> Option<super::base::ErrorInfo<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<flatbuffers::ForwardsUOffset<super::base::ErrorInfo>>(DataSelf::VT_ERROR_INFO, None)
+            }
         }
     }
 
@@ -1454,19 +1486,28 @@ pub mod net_discovery {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
                 .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<super::base::UlidBytes>("req_id", Self::VT_REQ_ID, false)?
                 .visit_field::<flatbuffers::ForwardsUOffset<DnsTerminal>>("dns_terminal", Self::VT_DNS_TERMINAL, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<super::base::ErrorInfo>>("error_info", Self::VT_ERROR_INFO, false)?
                 .finish();
             Ok(())
         }
     }
     pub struct DataSelfArgs<'a> {
         pub id: Option<&'a super::base::UlidBytes>,
+        pub req_id: Option<&'a super::base::UlidBytes>,
         pub dns_terminal: Option<flatbuffers::WIPOffset<DnsTerminal<'a>>>,
+        pub error_info: Option<flatbuffers::WIPOffset<super::base::ErrorInfo<'a>>>,
     }
     impl<'a> Default for DataSelfArgs<'a> {
         #[inline]
         fn default() -> Self {
-            DataSelfArgs { id: None, dns_terminal: None }
+            DataSelfArgs {
+                id: None,
+                req_id: None,
+                dns_terminal: None,
+                error_info: None,
+            }
         }
     }
 
@@ -1480,9 +1521,18 @@ pub mod net_discovery {
             self.fbb_.push_slot_always::<&super::base::UlidBytes>(DataSelf::VT_ID, id);
         }
         #[inline]
+        pub fn add_req_id(&mut self, req_id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(DataSelf::VT_REQ_ID, req_id);
+        }
+        #[inline]
         pub fn add_dns_terminal(&mut self, dns_terminal: flatbuffers::WIPOffset<DnsTerminal<'b>>) {
             self.fbb_
                 .push_slot_always::<flatbuffers::WIPOffset<DnsTerminal>>(DataSelf::VT_DNS_TERMINAL, dns_terminal);
+        }
+        #[inline]
+        pub fn add_error_info(&mut self, error_info: flatbuffers::WIPOffset<super::base::ErrorInfo<'b>>) {
+            self.fbb_
+                .push_slot_always::<flatbuffers::WIPOffset<super::base::ErrorInfo>>(DataSelf::VT_ERROR_INFO, error_info);
         }
         #[inline]
         pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DataSelfBuilder<'a, 'b, A> {
@@ -1500,7 +1550,9 @@ pub mod net_discovery {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             let mut ds = f.debug_struct("DataSelf");
             ds.field("id", &self.id());
+            ds.field("req_id", &self.req_id());
             ds.field("dns_terminal", &self.dns_terminal());
+            ds.field("error_info", &self.error_info());
             ds.finish()
         }
     }
@@ -1508,19 +1560,37 @@ pub mod net_discovery {
     #[derive(Debug, Clone, PartialEq)]
     pub struct DataSelfT {
         pub id: Option<super::base::UlidBytesT>,
+        pub req_id: Option<super::base::UlidBytesT>,
         pub dns_terminal: Option<Box<DnsTerminalT>>,
+        pub error_info: Option<Box<super::base::ErrorInfoT>>,
     }
     impl Default for DataSelfT {
         fn default() -> Self {
-            Self { id: None, dns_terminal: None }
+            Self {
+                id: None,
+                req_id: None,
+                dns_terminal: None,
+                error_info: None,
+            }
         }
     }
     impl DataSelfT {
         pub fn pack<'b, A: flatbuffers::Allocator + 'b>(&self, _fbb: &mut flatbuffers::FlatBufferBuilder<'b, A>) -> flatbuffers::WIPOffset<DataSelf<'b>> {
             let id_tmp = self.id.as_ref().map(|x| x.pack());
             let id = id_tmp.as_ref();
+            let req_id_tmp = self.req_id.as_ref().map(|x| x.pack());
+            let req_id = req_id_tmp.as_ref();
             let dns_terminal = self.dns_terminal.as_ref().map(|x| x.pack(_fbb));
-            DataSelf::create(_fbb, &DataSelfArgs { id, dns_terminal })
+            let error_info = self.error_info.as_ref().map(|x| x.pack(_fbb));
+            DataSelf::create(
+                _fbb,
+                &DataSelfArgs {
+                    id,
+                    req_id,
+                    dns_terminal,
+                    error_info,
+                },
+            )
         }
     }
 } // pub mod net_discovery

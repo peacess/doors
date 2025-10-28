@@ -3,10 +3,9 @@ use std::{
     sync::{Arc, atomic::Ordering},
 };
 
-use flatbuffers::FlatBufferBuilder;
 use idl::{
     Ipv6,
-    net_discovery_generated::net_discovery::{NetInterface, NetInterfaceArgs, NetInterfaceT},
+    net_discovery_generated::net_discovery::{NetInterface, NetInterfaceArgs},
 };
 
 #[derive(Debug)]

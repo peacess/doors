@@ -3,7 +3,17 @@ namespace base;
 //
 attribute FrameType;
 
-// ulid,  ulid is big-endian, so can't use uint128 to store it directly. 
+
+enum HeaderType: uint32{
+    none = 0,
+    net_discovery = 1,
+    chat = 2,
+    ffi_rpc = 3,
+    // error is a important mod in rust, add "_info" to avoid conflict
+    error_info = 2147483647
+}
+
+// ulid,  ulid is big-endian, so can't use uint128 to store it directly.
 // the flatbuffers is little-endian（see, https://flatbuffers.dev/internals/）, if machine is big-endian, flatbuffers will auto convert the byte order when serialize/deserialize
 struct UlidBytes{
     low: uint64;
@@ -68,7 +78,8 @@ table Frame{
 }
 
 struct Header{
-    len:uint64;
+    // the total length of the frame, don't include the header length
+    len:    uint32;
     header_type: uint32;
     frame_type: uint32;
     to_terminal_id: TerminalId;
@@ -81,6 +92,18 @@ struct FrameConfirm(FrameType){
     id: UlidBytes;
     // the frame id is confirmed
     frame_id: UlidBytes;
+}
+
+table ErrorInfo{
+    id: UlidBytes;
+    req_id: UlidBytes;
+    code: uint32;
+    message: string;
+}
+
+table FrameError{
+    header: Header;
+    error_info: ErrorInfo;
 }
 
 root_type Frame;

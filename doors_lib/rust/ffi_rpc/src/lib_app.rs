@@ -1,24 +1,24 @@
 use std::{sync::Arc, time::Duration};
 
 use flatbuffers::EndianScalar;
-use idl::{Frame, net_data_type_generated::net_data_type::HeaderType};
+use idl::{Frame, base_generated::base::HeaderType};
 use tokio::runtime::Handle;
 use tokio_util::sync::CancellationToken;
 
-use crate::discover::MulticastService;
+use crate::{discover::MulticastService, ffi_impl::FfiBytes};
 
 pub struct LibApp {
-    handle: Handle,
+    runtime_handle: Handle,
     cancel_token: CancellationToken,
     running_handle: Arc<std::sync::atomic::AtomicBool>,
     multicast_service: Arc<MulticastService>,
-    call_back: Option<crate::ffi::CallBack>,
+    call_back: Option<crate::ffi_impl::CallBack>,
 }
 
 pub static LIB_APP: std::sync::OnceLock<LibApp> = std::sync::OnceLock::new();
 
 impl LibApp {
-    fn make_app(call_back: crate::ffi::CallBack) -> Result<Self, anyhow::Error> {
+    fn make_app(call_back: crate::ffi_impl::CallBack) -> Result<Self, anyhow::Error> {
         let runtime = tokio::runtime::Builder::new_multi_thread().worker_threads(4).enable_all().build()?;
         let cancel_token = CancellationToken::new();
         let handle = runtime.handle().clone();
@@ -47,7 +47,7 @@ impl LibApp {
         let multicast_service = MulticastService::new(handle.clone())?;
 
         Ok(Self {
-            handle,
+            runtime_handle: handle,
             cancel_token,
             running_handle,
             multicast_service,
@@ -55,7 +55,7 @@ impl LibApp {
         })
     }
 
-    pub fn init(call_back: crate::ffi::CallBack) -> Result<(), anyhow::Error> {
+    pub fn init(call_back: crate::ffi_impl::CallBack) -> Result<(), anyhow::Error> {
         let result = std::panic::catch_unwind(|| {
             let _ = LIB_APP.get_or_init(|| match Self::make_app(call_back) {
                 Ok(app) => {
@@ -94,60 +94,66 @@ impl LibApp {
         }
     }
 
-    pub fn call(&self, bytes: &[u8]) -> Vec<u8> {
-        match flatbuffers::root::<Frame>(bytes) {
-            Err(e) => {
-                log::error!("{}", e);
-                return vec![];
-            }
-            Ok(frame) => {
-                if let Some(header) = frame.header() {
-                    match HeaderType::from_little_endian(header.header_type()) {
-                        HeaderType::none => {}
-                        HeaderType::net_discovery => {}
-                        HeaderType::chat => {}
-                        HeaderType::ffi_rpc => {}
-                        HeaderType(3_u32..=u32::MAX) => todo!(),
-                    }
-                } else {
-                    return vec![];
+    pub fn call(&self, bytes: &[u8]) -> Result<FfiBytes, anyhow::Error> {
+        let frame = flatbuffers::root::<Frame>(bytes)?;
+        if let Some(header) = frame.header() {
+            match HeaderType::from_little_endian(header.header_type()) {
+                HeaderType::none => {
+                    let err = anyhow::anyhow!("the header type is None");
+                    log::error!("{}", err);
+                    Err(err)
+                }
+                HeaderType::net_discovery => self.multicast_service.call(header, bytes),
+                HeaderType::chat => {
+                    unimplemented!()
+                }
+                HeaderType::ffi_rpc => {
+                    unimplemented!()
+                }
+                HeaderType(a) => {
+                    let err = anyhow::anyhow!("the header type {} is out of , ", a);
+                    log::error!("{}", err);
+                    Err(err)
                 }
             }
+        } else {
+            let err = anyhow::anyhow!("the header of frame is None");
+            log::error!("{}", err);
+            Err(err)
         }
-        vec![]
     }
 
     pub fn app() -> Option<&'static Self> {
         LIB_APP.get()
     }
 
-    pub fn handle(&self) -> Option<&Handle> {
+    pub fn runtime_handle(&self) -> Option<&Handle> {
         if self.running_handle.load(std::sync::atomic::Ordering::Relaxed) {
-            Some(&self.handle)
+            Some(&self.runtime_handle)
         } else {
             None
         }
     }
 
-    pub fn set_callback(&mut self, callback: Option<crate::ffi::CallBack>) {
-        self.call_back = callback;
-    }
+    // pub fn set_callback(&mut self, callback: Option<crate::ffi_impl::CallBack>) {
+    //     self.call_back = callback;
+    // }
 
-    pub fn get_callback(&self) -> Option<&crate::ffi::CallBack> {
+    pub fn get_callback(&self) -> Option<&crate::ffi_impl::CallBack> {
         self.call_back.as_ref()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{ffi::FfiBytes, lib_app::LibApp};
+    use crate::{ffi_impl::FfiBytes, lib_app::LibApp};
 
     #[test]
     fn it_works() {
         extern "C" fn empty_call(_t: FfiBytes) {}
         LibApp::init(empty_call).unwrap();
         if let Some(app) = LibApp::app() {
-            app.handle.spawn(async {});
+            app.runtime_handle.spawn(async {});
         }
         LibApp::uninit();
     }

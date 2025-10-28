@@ -12,8 +12,14 @@ class DataSelf : Table() {
     val id : base.UlidBytes? get() = id(base.UlidBytes())
     fun id(obj: base.UlidBytes) : base.UlidBytes? = lookupField(4, null ) { obj.init(it + bufferPos, bb) }
 
+    val reqId : base.UlidBytes? get() = reqId(base.UlidBytes())
+    fun reqId(obj: base.UlidBytes) : base.UlidBytes? = lookupField(6, null ) { obj.init(it + bufferPos, bb) }
+
     val dnsTerminal : netDiscovery.DnsTerminal? get() = dnsTerminal(netDiscovery.DnsTerminal())
-    fun dnsTerminal(obj: netDiscovery.DnsTerminal) : netDiscovery.DnsTerminal? = lookupField(6, null ) { obj.init(indirect(it + bufferPos), bb) }
+    fun dnsTerminal(obj: netDiscovery.DnsTerminal) : netDiscovery.DnsTerminal? = lookupField(8, null ) { obj.init(indirect(it + bufferPos), bb) }
+
+    val errorInfo : base.ErrorInfo? get() = errorInfo(base.ErrorInfo())
+    fun errorInfo(obj: base.ErrorInfo) : base.ErrorInfo? = lookupField(10, null ) { obj.init(indirect(it + bufferPos), bb) }
 
     companion object {
         @JvmStatic
@@ -26,13 +32,19 @@ class DataSelf : Table() {
 
 
         @JvmStatic
-        fun startDataSelf(builder: FlatBufferBuilder) = builder.startTable(2)
+        fun startDataSelf(builder: FlatBufferBuilder) = builder.startTable(4)
 
         @JvmStatic
         fun addId(builder: FlatBufferBuilder, id: Offset<base.UlidBytes>) = builder.addStruct(0, id.value, 0)
 
         @JvmStatic
-        fun addDnsTerminal(builder: FlatBufferBuilder, dnsTerminal: Offset<netDiscovery.DnsTerminal>) = builder.add(1, dnsTerminal, 0)
+        fun addReqId(builder: FlatBufferBuilder, reqId: Offset<base.UlidBytes>) = builder.addStruct(1, reqId.value, 0)
+
+        @JvmStatic
+        fun addDnsTerminal(builder: FlatBufferBuilder, dnsTerminal: Offset<netDiscovery.DnsTerminal>) = builder.add(2, dnsTerminal, 0)
+
+        @JvmStatic
+        fun addErrorInfo(builder: FlatBufferBuilder, errorInfo: Offset<base.ErrorInfo>) = builder.add(3, errorInfo, 0)
 
         @JvmStatic
         fun endDataSelf(builder: FlatBufferBuilder) : Offset<DataSelf> {

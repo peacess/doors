@@ -4,20 +4,20 @@ use std::{
 };
 
 use idl::{
-    Header, PartnerId, TerminalId, UlidBytes, X25519Public,
-    net_data_type_generated::net_data_type::HeaderType,
-    net_discovery_generated::net_discovery::{DnsTerminal, DnsTerminalArgs, Hi, HiArgs, HiFrame, HiFrameArgs, NetDiscoveryType},
+    Header, TerminalId, UlidBytes, X25519Public,
+    base_generated::base::HeaderType,
+    net_discovery_generated::net_discovery::{Hi, HiArgs, HiFrame, HiFrameArgs, NetDiscoveryType},
 };
 use tokio::runtime::Handle;
 use x25519_dalek::PublicKey;
 
-use crate::{discover::partner_service_info::PartnerServiceInfo, ffi::FfiBytes, lib_app::LIB_APP};
+use crate::{discover::partner_service_info::PartnerServiceInfo, ffi_impl::FfiBytes, lib_app::LIB_APP};
 
 pub struct MulticastService {
     reciever_ipv4: Arc<tokio::net::UdpSocket>,
     multicast_ipv4: Arc<tokio::net::UdpSocket>,
     multicast_ipv6: Option<Arc<tokio::net::UdpSocket>>,
-    service_info: PartnerServiceInfo,
+    pub(crate) service_info: PartnerServiceInfo,
     handle: Handle,
 }
 
@@ -63,8 +63,8 @@ impl MulticastService {
                     // if it false, dont work for two program run in same pc
                     socket.set_multicast_loop_v4(true)?;
                     socket.bind(&listen_addr.into())?;
-                    let udp_socket = tokio::net::UdpSocket::from_std(socket.into())?;
-                    udp_socket
+
+                    tokio::net::UdpSocket::from_std(socket.into())?
                 };
 
                 udp_socket.join_multicast_v4(*Self::MULTICAST_ADDRV4.ip(), Ipv4Addr::UNSPECIFIED)?;
@@ -196,7 +196,7 @@ impl MulticastService {
                         )
                     };
                     let header = Header::new(
-                        hi.value() as u64,
+                        hi.value() as u32,
                         HeaderType::net_discovery.0,
                         NetDiscoveryType::hi.0,
                         &TerminalId::from(self.service_info.terminal_id),
@@ -376,10 +376,10 @@ impl MulticastService {
         {
             return;
         }
-        if let Some(app) = LIB_APP.get() {
-            if let Some(call) = app.get_callback() {
-                call(FfiBytes::from(buffer));
-            }
+        if let Some(app) = LIB_APP.get()
+            && let Some(call) = app.get_callback()
+        {
+            call(FfiBytes::from(buffer));
         }
     }
 

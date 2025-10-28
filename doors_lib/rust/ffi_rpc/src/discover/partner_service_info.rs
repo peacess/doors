@@ -1,12 +1,12 @@
 use std::{
     ffi::CStr,
-    net::{IpAddr, Ipv4Addr, Ipv6Addr},
+    net::IpAddr,
     sync::{Arc, atomic::Ordering},
 };
 
 use idl::{
     PartnerId, TerminalId, X25519Public,
-    net_discovery_generated::net_discovery::{DnsTerminal, DnsTerminalArgs, NetInterface},
+    net_discovery_generated::net_discovery::{DnsTerminal, DnsTerminalArgs},
 };
 use x25519_dalek::{EphemeralSecret, PublicKey};
 
@@ -66,7 +66,7 @@ impl PartnerServiceInfo {
         };
 
         let port_v4 = NetIp::DEFAULT_PORT;
-        let port_v6 = NetIp::DEFAULT_PORT;
+        // let port_v6 = NetIp::DEFAULT_PORT;
 
         PartnerServiceInfo {
             partner_id: idl::ids::generate_ulid(),
@@ -85,10 +85,12 @@ impl PartnerServiceInfo {
             return None;
         }
 
-        let mut net_ip = NetIp::default();
-        net_ip.name = net.name;
-        net_ip.mac_address = net.hw_addr;
-        net_ip.index_netinterface = net.index;
+        let mut net_ip = NetIp {
+            name: net.name,
+            mac_address: net.hw_addr,
+            index_netinterface: net.index,
+            ..Default::default()
+        };
         for add in net.ips {
             match add.ip {
                 IpAddr::V4(v4) => {
@@ -108,12 +110,10 @@ impl PartnerServiceInfo {
                         net_ip.ip_v6_link_local = v6;
                     } else if v6.is_unique_local() {
                         net_ip.ip_v6_unique_local = v6;
+                    } else if net_ip.ip_v6_global.is_unspecified() {
+                        net_ip.ip_v6_global = v6;
                     } else {
-                        if net_ip.ip_v6_global.is_unspecified() {
-                            net_ip.ip_v6_global = v6;
-                        } else {
-                            net_ip.ip_v6_temporary = v6;
-                        }
+                        net_ip.ip_v6_temporary = v6;
                     }
                 }
             }

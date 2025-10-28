@@ -7,7 +7,7 @@ import (
 )
 
 type HeaderT struct {
-	Len          uint64         `json:"len"`
+	Len          uint32         `json:"len"`
 	HeaderType   uint32         `json:"header_type"`
 	FrameType    uint32         `json:"frame_type"`
 	ToTerminalId *TerminalIdT   `json:"to_terminal_id"`
@@ -50,25 +50,25 @@ func (rcv *Header) Table() flatbuffers.Table {
 	return rcv._tab.Table
 }
 
-func (rcv *Header) Len() uint64 {
-	return rcv._tab.GetUint64(rcv._tab.Pos + flatbuffers.UOffsetT(0))
+func (rcv *Header) Len() uint32 {
+	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(0))
 }
-func (rcv *Header) MutateLen(n uint64) bool {
-	return rcv._tab.MutateUint64(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
+func (rcv *Header) MutateLen(n uint32) bool {
+	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
 }
 
 func (rcv *Header) HeaderType() uint32 {
-	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(8))
+	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(4))
 }
 func (rcv *Header) MutateHeaderType(n uint32) bool {
-	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(8), n)
+	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(4), n)
 }
 
 func (rcv *Header) FrameType() uint32 {
-	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(12))
+	return rcv._tab.GetUint32(rcv._tab.Pos + flatbuffers.UOffsetT(8))
 }
 func (rcv *Header) MutateFrameType(n uint32) bool {
-	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(12), n)
+	return rcv._tab.MutateUint32(rcv._tab.Pos+flatbuffers.UOffsetT(8), n)
 }
 
 func (rcv *Header) ToTerminalId(obj *TerminalId) *TerminalId {
@@ -86,7 +86,7 @@ func (rcv *Header) Key(obj *X25519Public) *X25519Public {
 	return obj
 }
 
-func CreateHeader(builder *flatbuffers.Builder, len uint64, headerType uint32, frameType uint32, to_terminal_id_low uint64, to_terminal_id_high uint64, key_key1 uint64, key_key2 uint64, key_key3 uint64, key_key4 uint64) flatbuffers.UOffsetT {
+func CreateHeader(builder *flatbuffers.Builder, len uint32, headerType uint32, frameType uint32, to_terminal_id_low uint64, to_terminal_id_high uint64, key_key1 uint64, key_key2 uint64, key_key3 uint64, key_key4 uint64) flatbuffers.UOffsetT {
 	builder.Prep(8, 64)
 	builder.Prep(8, 32)
 	builder.PrependUint64(key_key4)
@@ -96,8 +96,9 @@ func CreateHeader(builder *flatbuffers.Builder, len uint64, headerType uint32, f
 	builder.Prep(8, 16)
 	builder.PrependUint64(to_terminal_id_high)
 	builder.PrependUint64(to_terminal_id_low)
+	builder.Pad(4)
 	builder.PrependUint32(frameType)
 	builder.PrependUint32(headerType)
-	builder.PrependUint64(len)
+	builder.PrependUint32(len)
 	return builder.Offset()
 }

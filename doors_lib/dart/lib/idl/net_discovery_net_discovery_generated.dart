@@ -1022,14 +1022,16 @@ class DataSelf {
   final int _bcOffset;
 
   base.UlidBytes? get id => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  DnsTerminal? get dnsTerminal => DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  base.UlidBytes? get reqId => base.UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  DnsTerminal? get dnsTerminal => DnsTerminal.reader.vTableGetNullable(_bc, _bcOffset, 8);
+  base.ErrorInfo? get errorInfo => base.ErrorInfo.reader.vTableGetNullable(_bc, _bcOffset, 10);
 
   @override
   String toString() {
-    return 'DataSelf{id: ${id}, dnsTerminal: ${dnsTerminal}}';
+    return 'DataSelf{id: ${id}, reqId: ${reqId}, dnsTerminal: ${dnsTerminal}, errorInfo: ${errorInfo}}';
   }
 
-  DataSelfT unpack() => DataSelfT(id: id?.unpack(), dnsTerminal: dnsTerminal?.unpack());
+  DataSelfT unpack() => DataSelfT(id: id?.unpack(), reqId: reqId?.unpack(), dnsTerminal: dnsTerminal?.unpack(), errorInfo: errorInfo?.unpack());
 
   static int pack(fb.Builder fbBuilder, DataSelfT? object) {
     if (object == null) return 0;
@@ -1039,24 +1041,31 @@ class DataSelf {
 
 class DataSelfT implements fb.Packable {
   base.UlidBytesT? id;
+  base.UlidBytesT? reqId;
   DnsTerminalT? dnsTerminal;
+  base.ErrorInfoT? errorInfo;
 
-  DataSelfT({this.id, this.dnsTerminal});
+  DataSelfT({this.id, this.reqId, this.dnsTerminal, this.errorInfo});
 
   @override
   int pack(fb.Builder fbBuilder) {
     final int? dnsTerminalOffset = dnsTerminal?.pack(fbBuilder);
-    fbBuilder.startTable(2);
+    final int? errorInfoOffset = errorInfo?.pack(fbBuilder);
+    fbBuilder.startTable(4);
     if (id != null) {
       fbBuilder.addStruct(0, id!.pack(fbBuilder));
     }
-    fbBuilder.addOffset(1, dnsTerminalOffset);
+    if (reqId != null) {
+      fbBuilder.addStruct(1, reqId!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(2, dnsTerminalOffset);
+    fbBuilder.addOffset(3, errorInfoOffset);
     return fbBuilder.endTable();
   }
 
   @override
   String toString() {
-    return 'DataSelfT{id: ${id}, dnsTerminal: ${dnsTerminal}}';
+    return 'DataSelfT{id: ${id}, reqId: ${reqId}, dnsTerminal: ${dnsTerminal}, errorInfo: ${errorInfo}}';
   }
 }
 
@@ -1073,7 +1082,7 @@ class DataSelfBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(2);
+    fbBuilder.startTable(4);
   }
 
   int addId(int offset) {
@@ -1081,8 +1090,18 @@ class DataSelfBuilder {
     return fbBuilder.offset;
   }
 
+  int addReqId(int offset) {
+    fbBuilder.addStruct(1, offset);
+    return fbBuilder.offset;
+  }
+
   int addDnsTerminalOffset(int? offset) {
-    fbBuilder.addOffset(1, offset);
+    fbBuilder.addOffset(2, offset);
+    return fbBuilder.offset;
+  }
+
+  int addErrorInfoOffset(int? offset) {
+    fbBuilder.addOffset(3, offset);
     return fbBuilder.offset;
   }
 
@@ -1093,19 +1112,34 @@ class DataSelfBuilder {
 
 class DataSelfObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
+  final base.UlidBytesObjectBuilder? _reqId;
   final DnsTerminalObjectBuilder? _dnsTerminal;
+  final base.ErrorInfoObjectBuilder? _errorInfo;
 
-  DataSelfObjectBuilder({base.UlidBytesObjectBuilder? id, DnsTerminalObjectBuilder? dnsTerminal}) : _id = id, _dnsTerminal = dnsTerminal;
+  DataSelfObjectBuilder({
+    base.UlidBytesObjectBuilder? id,
+    base.UlidBytesObjectBuilder? reqId,
+    DnsTerminalObjectBuilder? dnsTerminal,
+    base.ErrorInfoObjectBuilder? errorInfo,
+  }) : _id = id,
+       _reqId = reqId,
+       _dnsTerminal = dnsTerminal,
+       _errorInfo = errorInfo;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
     final int? dnsTerminalOffset = _dnsTerminal?.getOrCreateOffset(fbBuilder);
-    fbBuilder.startTable(2);
+    final int? errorInfoOffset = _errorInfo?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(4);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
     }
-    fbBuilder.addOffset(1, dnsTerminalOffset);
+    if (_reqId != null) {
+      fbBuilder.addStruct(1, _reqId!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(2, dnsTerminalOffset);
+    fbBuilder.addOffset(3, errorInfoOffset);
     return fbBuilder.endTable();
   }
 

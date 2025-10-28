@@ -6,6 +6,50 @@ library base;
 import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
+enum HeaderType {
+  none(0),
+  net_discovery(1),
+  chat(2),
+  ffi_rpc(3),
+  error_info(2147483647);
+
+  final int value;
+  const HeaderType(this.value);
+
+  factory HeaderType.fromValue(int value) {
+    switch (value) {
+      case 0:
+        return HeaderType.none;
+      case 1:
+        return HeaderType.net_discovery;
+      case 2:
+        return HeaderType.chat;
+      case 3:
+        return HeaderType.ffi_rpc;
+      case 2147483647:
+        return HeaderType.error_info;
+      default:
+        throw StateError('Invalid value $value for bit flag enum');
+    }
+  }
+
+  static HeaderType? _createOrNull(int? value) => value == null ? null : HeaderType.fromValue(value);
+
+  static const int minValue = 0;
+  static const int maxValue = 2147483647;
+  static const fb.Reader<HeaderType> reader = _HeaderTypeReader();
+}
+
+class _HeaderTypeReader extends fb.Reader<HeaderType> {
+  const _HeaderTypeReader();
+
+  @override
+  int get size => 4;
+
+  @override
+  HeaderType read(fb.BufferContext bc, int offset) => HeaderType.fromValue(const fb.Uint32Reader().read(bc, offset));
+}
+
 class UlidBytes {
   UlidBytes._(this._bc, this._bcOffset);
 
@@ -1004,9 +1048,9 @@ class Header {
   final fb.BufferContext _bc;
   final int _bcOffset;
 
-  int get len => const fb.Uint64Reader().read(_bc, _bcOffset + 0);
-  int get headerType => const fb.Uint32Reader().read(_bc, _bcOffset + 8);
-  int get frameType => const fb.Uint32Reader().read(_bc, _bcOffset + 12);
+  int get len => const fb.Uint32Reader().read(_bc, _bcOffset + 0);
+  int get headerType => const fb.Uint32Reader().read(_bc, _bcOffset + 4);
+  int get frameType => const fb.Uint32Reader().read(_bc, _bcOffset + 8);
   TerminalId get toTerminalId => TerminalId.reader.read(_bc, _bcOffset + 16);
   X25519Public get key => X25519Public.reader.read(_bc, _bcOffset + 32);
 
@@ -1036,9 +1080,10 @@ class HeaderT implements fb.Packable {
   int pack(fb.Builder fbBuilder) {
     key.pack(fbBuilder);
     toTerminalId.pack(fbBuilder);
+    fbBuilder.pad(4);
     fbBuilder.putUint32(frameType);
     fbBuilder.putUint32(headerType);
-    fbBuilder.putUint64(len);
+    fbBuilder.putUint32(len);
     return fbBuilder.offset;
   }
 
@@ -1066,9 +1111,10 @@ class HeaderBuilder {
   int finish(int len, int headerType, int frameType, fb.StructBuilder toTerminalId, fb.StructBuilder key) {
     key();
     toTerminalId();
+    fbBuilder.pad(4);
     fbBuilder.putUint32(frameType);
     fbBuilder.putUint32(headerType);
-    fbBuilder.putUint64(len);
+    fbBuilder.putUint32(len);
     return fbBuilder.offset;
   }
 }
@@ -1097,9 +1143,10 @@ class HeaderObjectBuilder extends fb.ObjectBuilder {
   int finish(fb.Builder fbBuilder) {
     _key.finish(fbBuilder);
     _toTerminalId.finish(fbBuilder);
+    fbBuilder.pad(4);
     fbBuilder.putUint32(_frameType);
     fbBuilder.putUint32(_headerType);
-    fbBuilder.putUint64(_len);
+    fbBuilder.putUint32(_len);
     return fbBuilder.offset;
   }
 
@@ -1189,6 +1236,252 @@ class FrameConfirmObjectBuilder extends fb.ObjectBuilder {
     _frameId.finish(fbBuilder);
     _id.finish(fbBuilder);
     return fbBuilder.offset;
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class ErrorInfo {
+  ErrorInfo._(this._bc, this._bcOffset);
+  factory ErrorInfo(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<ErrorInfo> reader = _ErrorInfoReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  UlidBytes? get id => UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  UlidBytes? get reqId => UlidBytes.reader.vTableGetNullable(_bc, _bcOffset, 6);
+  int get code => const fb.Uint32Reader().vTableGet(_bc, _bcOffset, 8, 0);
+  String? get message => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
+
+  @override
+  String toString() {
+    return 'ErrorInfo{id: ${id}, reqId: ${reqId}, code: ${code}, message: ${message}}';
+  }
+
+  ErrorInfoT unpack() => ErrorInfoT(id: id?.unpack(), reqId: reqId?.unpack(), code: code, message: message);
+
+  static int pack(fb.Builder fbBuilder, ErrorInfoT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class ErrorInfoT implements fb.Packable {
+  UlidBytesT? id;
+  UlidBytesT? reqId;
+  int code;
+  String? message;
+
+  ErrorInfoT({this.id, this.reqId, this.code = 0, this.message});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? messageOffset = message == null ? null : fbBuilder.writeString(message!);
+    fbBuilder.startTable(4);
+    if (id != null) {
+      fbBuilder.addStruct(0, id!.pack(fbBuilder));
+    }
+    if (reqId != null) {
+      fbBuilder.addStruct(1, reqId!.pack(fbBuilder));
+    }
+    fbBuilder.addUint32(2, code);
+    fbBuilder.addOffset(3, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'ErrorInfoT{id: ${id}, reqId: ${reqId}, code: ${code}, message: ${message}}';
+  }
+}
+
+class _ErrorInfoReader extends fb.TableReader<ErrorInfo> {
+  const _ErrorInfoReader();
+
+  @override
+  ErrorInfo createObject(fb.BufferContext bc, int offset) => ErrorInfo._(bc, offset);
+}
+
+class ErrorInfoBuilder {
+  ErrorInfoBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(4);
+  }
+
+  int addId(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addReqId(int offset) {
+    fbBuilder.addStruct(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int addCode(int? code) {
+    fbBuilder.addUint32(2, code);
+    return fbBuilder.offset;
+  }
+
+  int addMessageOffset(int? offset) {
+    fbBuilder.addOffset(3, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class ErrorInfoObjectBuilder extends fb.ObjectBuilder {
+  final UlidBytesObjectBuilder? _id;
+  final UlidBytesObjectBuilder? _reqId;
+  final int? _code;
+  final String? _message;
+
+  ErrorInfoObjectBuilder({UlidBytesObjectBuilder? id, UlidBytesObjectBuilder? reqId, int? code, String? message})
+    : _id = id,
+      _reqId = reqId,
+      _code = code,
+      _message = message;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? messageOffset = _message == null ? null : fbBuilder.writeString(_message!);
+    fbBuilder.startTable(4);
+    if (_id != null) {
+      fbBuilder.addStruct(0, _id!.finish(fbBuilder));
+    }
+    if (_reqId != null) {
+      fbBuilder.addStruct(1, _reqId!.finish(fbBuilder));
+    }
+    fbBuilder.addUint32(2, _code);
+    fbBuilder.addOffset(3, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+
+class FrameError {
+  FrameError._(this._bc, this._bcOffset);
+  factory FrameError(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<FrameError> reader = _FrameErrorReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  Header? get header => Header.reader.vTableGetNullable(_bc, _bcOffset, 4);
+  ErrorInfo? get errorInfo => ErrorInfo.reader.vTableGetNullable(_bc, _bcOffset, 6);
+
+  @override
+  String toString() {
+    return 'FrameError{header: ${header}, errorInfo: ${errorInfo}}';
+  }
+
+  FrameErrorT unpack() => FrameErrorT(header: header?.unpack(), errorInfo: errorInfo?.unpack());
+
+  static int pack(fb.Builder fbBuilder, FrameErrorT? object) {
+    if (object == null) return 0;
+    return object.pack(fbBuilder);
+  }
+}
+
+class FrameErrorT implements fb.Packable {
+  HeaderT? header;
+  ErrorInfoT? errorInfo;
+
+  FrameErrorT({this.header, this.errorInfo});
+
+  @override
+  int pack(fb.Builder fbBuilder) {
+    final int? errorInfoOffset = errorInfo?.pack(fbBuilder);
+    fbBuilder.startTable(2);
+    if (header != null) {
+      fbBuilder.addStruct(0, header!.pack(fbBuilder));
+    }
+    fbBuilder.addOffset(1, errorInfoOffset);
+    return fbBuilder.endTable();
+  }
+
+  @override
+  String toString() {
+    return 'FrameErrorT{header: ${header}, errorInfo: ${errorInfo}}';
+  }
+}
+
+class _FrameErrorReader extends fb.TableReader<FrameError> {
+  const _FrameErrorReader();
+
+  @override
+  FrameError createObject(fb.BufferContext bc, int offset) => FrameError._(bc, offset);
+}
+
+class FrameErrorBuilder {
+  FrameErrorBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(2);
+  }
+
+  int addHeader(int offset) {
+    fbBuilder.addStruct(0, offset);
+    return fbBuilder.offset;
+  }
+
+  int addErrorInfoOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class FrameErrorObjectBuilder extends fb.ObjectBuilder {
+  final HeaderObjectBuilder? _header;
+  final ErrorInfoObjectBuilder? _errorInfo;
+
+  FrameErrorObjectBuilder({HeaderObjectBuilder? header, ErrorInfoObjectBuilder? errorInfo}) : _header = header, _errorInfo = errorInfo;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? errorInfoOffset = _errorInfo?.getOrCreateOffset(fbBuilder);
+    fbBuilder.startTable(2);
+    if (_header != null) {
+      fbBuilder.addStruct(0, _header!.finish(fbBuilder));
+    }
+    fbBuilder.addOffset(1, errorInfoOffset);
+    return fbBuilder.endTable();
   }
 
   /// Convenience method to serialize to byte list.

@@ -10,7 +10,9 @@ import (
 
 type DataSelfT struct {
 	Id          *base.UlidBytesT `json:"id"`
+	ReqId       *base.UlidBytesT `json:"req_id"`
 	DnsTerminal *DnsTerminalT    `json:"dns_terminal"`
+	ErrorInfo   *base.ErrorInfoT `json:"error_info"`
 }
 
 func (t *DataSelfT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
@@ -18,16 +20,22 @@ func (t *DataSelfT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 		return 0
 	}
 	dnsTerminalOffset := t.DnsTerminal.Pack(builder)
+	errorInfoOffset := t.ErrorInfo.Pack(builder)
 	DataSelfStart(builder)
 	idOffset := t.Id.Pack(builder)
 	DataSelfAddId(builder, idOffset)
+	reqIdOffset := t.ReqId.Pack(builder)
+	DataSelfAddReqId(builder, reqIdOffset)
 	DataSelfAddDnsTerminal(builder, dnsTerminalOffset)
+	DataSelfAddErrorInfo(builder, errorInfoOffset)
 	return DataSelfEnd(builder)
 }
 
 func (rcv *DataSelf) UnPackTo(t *DataSelfT) {
 	t.Id = rcv.Id(nil).UnPack()
+	t.ReqId = rcv.ReqId(nil).UnPack()
 	t.DnsTerminal = rcv.DnsTerminal(nil).UnPack()
+	t.ErrorInfo = rcv.ErrorInfo(nil).UnPack()
 }
 
 func (rcv *DataSelf) UnPack() *DataSelfT {
@@ -87,8 +95,21 @@ func (rcv *DataSelf) Id(obj *base.UlidBytes) *base.UlidBytes {
 	return nil
 }
 
-func (rcv *DataSelf) DnsTerminal(obj *DnsTerminal) *DnsTerminal {
+func (rcv *DataSelf) ReqId(obj *base.UlidBytes) *base.UlidBytes {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
+	if o != 0 {
+		x := o + rcv._tab.Pos
+		if obj == nil {
+			obj = new(base.UlidBytes)
+		}
+		obj.Init(rcv._tab.Bytes, x)
+		return obj
+	}
+	return nil
+}
+
+func (rcv *DataSelf) DnsTerminal(obj *DnsTerminal) *DnsTerminal {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		x := rcv._tab.Indirect(o + rcv._tab.Pos)
 		if obj == nil {
@@ -100,14 +121,33 @@ func (rcv *DataSelf) DnsTerminal(obj *DnsTerminal) *DnsTerminal {
 	return nil
 }
 
+func (rcv *DataSelf) ErrorInfo(obj *base.ErrorInfo) *base.ErrorInfo {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
+	if o != 0 {
+		x := rcv._tab.Indirect(o + rcv._tab.Pos)
+		if obj == nil {
+			obj = new(base.ErrorInfo)
+		}
+		obj.Init(rcv._tab.Bytes, x)
+		return obj
+	}
+	return nil
+}
+
 func DataSelfStart(builder *flatbuffers.Builder) {
-	builder.StartObject(2)
+	builder.StartObject(4)
 }
 func DataSelfAddId(builder *flatbuffers.Builder, id flatbuffers.UOffsetT) {
 	builder.PrependStructSlot(0, flatbuffers.UOffsetT(id), 0)
 }
+func DataSelfAddReqId(builder *flatbuffers.Builder, reqId flatbuffers.UOffsetT) {
+	builder.PrependStructSlot(1, flatbuffers.UOffsetT(reqId), 0)
+}
 func DataSelfAddDnsTerminal(builder *flatbuffers.Builder, dnsTerminal flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(dnsTerminal), 0)
+	builder.PrependUOffsetTSlot(2, flatbuffers.UOffsetT(dnsTerminal), 0)
+}
+func DataSelfAddErrorInfo(builder *flatbuffers.Builder, errorInfo flatbuffers.UOffsetT) {
+	builder.PrependUOffsetTSlot(3, flatbuffers.UOffsetT(errorInfo), 0)
 }
 func DataSelfEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()
