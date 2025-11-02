@@ -1,4 +1,4 @@
-use super::base_generated::base::{Header, HeaderType, TerminalId, UlidBytes, X25519Public};
+use super::base_generated::base::{Header, HeaderType, PartnerId, TerminalId, UlidBytes, X25519Public};
 
 impl UlidBytes {
     pub fn to_u128(&self) -> u128 {
@@ -12,9 +12,21 @@ impl Header {
     }
 }
 
+impl PartnerId {
+    pub fn zero() -> Self {
+        PartnerId::new(0, 0)
+    }
+    pub fn to_u128(&self) -> u128 {
+        ulid::Ulid::from_bytes(self.0).0
+    }
+}
+
 impl TerminalId {
     pub fn zero() -> Self {
         TerminalId::new(0, 0)
+    }
+    pub fn to_u128(&self) -> u128 {
+        ulid::Ulid::from_bytes(self.0).0
     }
 }
 

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define NetIp_DEFAULT_PORT 59933
+#define NetIpHost_DEFAULT_PORT 59933
 
 typedef struct FfiBytes {
   uint64_t len;

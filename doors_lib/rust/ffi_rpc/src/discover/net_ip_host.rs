@@ -9,12 +9,13 @@ use idl::{
 };
 
 #[derive(Debug)]
-pub struct NetIp {
+pub struct NetIpHost {
     pub ip_v4: Ipv4Addr,
     pub ip_v6_global: Ipv6Addr,
     pub ip_v6_temporary: Ipv6Addr,
     pub ip_v6_link_local: Ipv6Addr,
     pub ip_v6_unique_local: Ipv6Addr,
+    pub recv_port_v4: Arc<core::sync::atomic::AtomicU16>,
     pub recv_port_v6: Arc<core::sync::atomic::AtomicU16>,
     // Internal index identifying netinterface, other name is scope
     pub index_netinterface: u32,
@@ -26,7 +27,7 @@ pub struct NetIp {
     pub reciver_ipv6: Option<Arc<tokio::net::UdpSocket>>,
 }
 
-impl NetIp {
+impl NetIpHost {
     pub const DEFAULT_PORT: u16 = 59933;
 
     pub fn to_iet_interface<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
@@ -54,7 +55,7 @@ impl NetIp {
     }
 }
 
-impl Default for NetIp {
+impl Default for NetIpHost {
     fn default() -> Self {
         Self {
             ip_v4: Ipv4Addr::from_bits(0),
@@ -62,6 +63,7 @@ impl Default for NetIp {
             ip_v6_temporary: Ipv6Addr::from_bits(0),
             ip_v6_link_local: Ipv6Addr::from_bits(0),
             ip_v6_unique_local: Ipv6Addr::from_bits(0),
+            recv_port_v4: Arc::new(core::sync::atomic::AtomicU16::new(0)),
             recv_port_v6: Arc::new(core::sync::atomic::AtomicU16::new(Self::DEFAULT_PORT)),
             index_netinterface: 0,
             name: "".to_string(),

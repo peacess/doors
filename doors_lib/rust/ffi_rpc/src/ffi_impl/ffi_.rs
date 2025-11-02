@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use idl::{ErrorInfo, ErrorInfoArgs, FrameError, FrameErrorArgs, Header, UlidBytes};
 
 use super::ffi_bytes::FfiBytes;
@@ -7,7 +9,7 @@ use crate::lib_app::LibApp;
 pub extern "C" fn init(callback: CallBack) -> FfiBytes {
     env_logger::builder().is_test(false).filter_level(log::LevelFilter::Debug).init();
     log::info!("init rust lib rpc ffi");
-    if let Err(e) = LibApp::init(callback) {
+    if let Err(e) = LibApp::init(Arc::new(Some(callback))) {
         log::error!("Error building tokio runtime: {}", e);
         let mut info = format!("{}", e).as_bytes().to_vec();
         let bytes = info.as_mut_ptr();

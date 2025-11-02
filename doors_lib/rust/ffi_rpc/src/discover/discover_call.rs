@@ -10,7 +10,7 @@ use super::multicast::MulticastService;
 use crate::ffi_impl::FfiBytes;
 
 impl MulticastService {
-    pub fn call(&self, header: &Header, data: &[u8]) -> Result<FfiBytes, anyhow::Error> {
+    pub fn call_net_disovery(&self, header: &Header, data: &[u8]) -> Result<FfiBytes, anyhow::Error> {
         let frame_type = NetDiscoveryType::from_little_endian(header.frame_type());
         let data = match frame_type {
             NetDiscoveryType::none => vec![],
@@ -61,7 +61,7 @@ impl MulticastService {
                                 None
                             }
                         };
-                        dns_terminal = Some(self.service_info.to_dns_terminal(&mut builder));
+                        dns_terminal = Some(self.partner_host.to_dns_terminal(&mut builder));
                     }
                 }
                 DataSelf::create(
@@ -79,8 +79,8 @@ impl MulticastService {
                 data.value() as u32, //todo check the value
                 HeaderType::net_discovery.0,
                 NetDiscoveryType::hi.0,
-                &TerminalId::from(self.service_info.terminal_id),
-                &X25519Public::from(&PublicKey::from(&self.service_info.secret)),
+                &TerminalId::from(self.partner_host.terminal_id),
+                &X25519Public::from(&PublicKey::from(self.partner_host.secret.as_ref().unwrap())),
             );
             let data_frame = DataSelfFrame::create(
                 &mut builder,

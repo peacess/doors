@@ -10,26 +10,24 @@ use idl::{
 };
 use x25519_dalek::{EphemeralSecret, PublicKey};
 
-use super::net_ip::NetIp;
+use super::net_ip_host::NetIpHost;
 
-pub struct PartnerServiceInfo {
+pub struct PartnerServiceHost {
     pub partner_id: ulid::Ulid,
     pub instance_name: String,
     pub host_name: String,
-    pub service_type: String,
-    pub secret: EphemeralSecret,
+    pub secret: Option<EphemeralSecret>,
     pub terminal_id: ulid::Ulid,
-    pub net_ips: Vec<NetIp>,
+    pub net_ips: Vec<NetIpHost>,
     pub port_v4: Arc<core::sync::atomic::AtomicU16>,
 }
 
-impl std::fmt::Debug for PartnerServiceInfo {
+impl std::fmt::Debug for PartnerServiceHost {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("PartnerServiceInfo")
             .field("partner_id", &self.partner_id)
             .field("instance_name", &self.instance_name)
             .field("host_name", &self.host_name)
-            .field("service_type", &self.service_type)
             .field("secret", &"<hidden>")
             .field("terminal_id", &self.terminal_id)
             .field("net_ips", &self.net_ips)
@@ -37,9 +35,9 @@ impl std::fmt::Debug for PartnerServiceInfo {
     }
 }
 
-impl PartnerServiceInfo {
-    pub fn new() -> PartnerServiceInfo {
-        let secret = EphemeralSecret::random();
+impl PartnerServiceHost {
+    pub fn new_host() -> PartnerServiceHost {
+        let secret = Some(EphemeralSecret::random());
 
         let mut net_ips = Vec::new();
         match netwatcher::list_interfaces() {
@@ -65,14 +63,13 @@ impl PartnerServiceInfo {
             }
         };
 
-        let port_v4 = NetIp::DEFAULT_PORT;
+        let port_v4 = NetIpHost::DEFAULT_PORT;
         // let port_v6 = NetIp::DEFAULT_PORT;
 
-        PartnerServiceInfo {
+        PartnerServiceHost {
             partner_id: idl::ids::generate_ulid(),
             instance_name: "doors_chat".into(),
             host_name,
-            service_type: "_http._tcp".into(),
             secret,
             terminal_id: idl::ids::generate_ulid(),
             net_ips,
@@ -80,12 +77,24 @@ impl PartnerServiceInfo {
         }
     }
 
-    fn net_ip_from_net(net: netwatcher::Interface) -> Option<NetIp> {
+    pub fn new_from_net() -> PartnerServiceHost {
+        PartnerServiceHost {
+            partner_id: idl::ids::generate_ulid(),
+            instance_name: "".to_string(),
+            host_name: "".to_string(),
+            secret: None,
+            terminal_id: idl::ids::generate_ulid(),
+            net_ips: vec![],
+            port_v4: Arc::new(core::sync::atomic::AtomicU16::new(0)),
+        }
+    }
+
+    fn net_ip_from_net(net: netwatcher::Interface) -> Option<NetIpHost> {
         if net.ips.is_empty() || net.hw_addr == "00:00:00:00:00:00" {
             return None;
         }
 
-        let mut net_ip = NetIp {
+        let mut net_ip = NetIpHost {
             name: net.name,
             mac_address: net.hw_addr,
             index_netinterface: net.index,
@@ -136,7 +145,7 @@ impl PartnerServiceInfo {
             &DnsTerminalArgs {
                 partner_id: Some(&PartnerId::from(self.partner_id)),
                 terminal_id: Some(&TerminalId::from(self.terminal_id)),
-                key: Some(&X25519Public::from(&PublicKey::from(&self.secret))),
+                key: Some(&X25519Public::from(&PublicKey::from(self.secret.as_ref().unwrap()))),
                 host_name: Some(host_name),
                 show_name: Some(show_name),
                 net_interfaces: Some(net_interfaces),
@@ -149,12 +158,12 @@ impl PartnerServiceInfo {
 mod tests {
     use std::sync::atomic::Ordering;
 
-    use crate::discover::partner_service_info::PartnerServiceInfo;
+    use crate::discover::partner_service_host::PartnerServiceHost;
 
     #[test]
     fn test_net_ip_from_net() {
         env_logger::builder().is_test(false).filter_level(log::LevelFilter::Debug).init();
-        let net_ip = PartnerServiceInfo::new();
+        let net_ip = PartnerServiceHost::new_host();
         let mut binds = Vec::with_capacity(10);
         for net in net_ip.net_ips.iter() {
             binds.push(std::net::UdpSocket::bind(core::net::SocketAddrV4::new(
@@ -162,7 +171,7 @@ mod tests {
                 net_ip.port_v4.load(Ordering::Relaxed),
             )));
         }
-        let _net_ip2 = PartnerServiceInfo::new();
+        let _net_ip2 = PartnerServiceHost::new_host();
         log::debug!("net_ip1: {:?}", net_ip);
         log::debug!("net_ip2: {:?}", _net_ip2);
     }

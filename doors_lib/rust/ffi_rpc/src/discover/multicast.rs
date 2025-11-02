@@ -4,21 +4,27 @@ use std::{
 };
 
 use idl::{
-    Header, TerminalId, UlidBytes, X25519Public,
+    Frame, Header, TerminalId, UlidBytes, X25519Public,
     base_generated::base::HeaderType,
     net_discovery_generated::net_discovery::{Hi, HiArgs, HiFrame, HiFrameArgs, NetDiscoveryType},
 };
+use parking_lot::Mutex;
 use tokio::runtime::Handle;
 use x25519_dalek::PublicKey;
 
-use crate::{discover::partner_service_info::PartnerServiceInfo, ffi_impl::FfiBytes, lib_app::LIB_APP};
+use crate::{
+    discover::{partner_service_guest::PartnerServiceGuest, partner_service_host::PartnerServiceHost},
+    ffi_impl::{CallBack, FfiBytes},
+};
 
 pub struct MulticastService {
-    reciever_ipv4: Arc<tokio::net::UdpSocket>,
+    pub(crate) reciever_ipv4: Arc<tokio::net::UdpSocket>,
     multicast_ipv4: Arc<tokio::net::UdpSocket>,
     multicast_ipv6: Option<Arc<tokio::net::UdpSocket>>,
-    pub(crate) service_info: PartnerServiceInfo,
-    handle: Handle,
+    pub(crate) partner_host: PartnerServiceHost,
+    pub(crate) partners_guest: Mutex<Vec<PartnerServiceGuest>>,
+    pub(crate) handle: Handle,
+    pub(crate) call_back: Arc<Option<CallBack>>,
 }
 
 impl MulticastService {
@@ -32,23 +38,25 @@ impl MulticastService {
     /// 224.0.0.0/24  Local Network Control Block
     /// 224.0.1.0/24  Internetwork Control Block
     /// 239.0.0.0/8  Organization-Local
-    const MULTICAST_ADDRV4: SocketAddrV4 = SocketAddrV4::new(Ipv4Addr::new(239, 0, 0, 66), Self::MULTICAST_PORT_IPV4);
+    pub(crate) const MULTICAST_ADDRV4: SocketAddrV4 = SocketAddrV4::new(Ipv4Addr::new(239, 0, 0, 66), Self::MULTICAST_PORT_IPV4);
     /// ff01: interface-local multicast address
     /// ff02: link-local multicast address
     /// ff04: admin-local multicast address
     /// ff05: site-local multicast address
     /// ff08: organization-local multicast address
     /// ff0E: global multicast address
-    const MULTICAST_ADDRV6: Ipv6Addr = Ipv6Addr::new(0xFF05, 0, 0, 0, 0, 0, 0, 66);
+    pub(crate) const MULTICAST_ADDRV6: Ipv6Addr = Ipv6Addr::new(0xFF05, 0, 0, 0, 0, 0, 0, 66);
 
-    pub fn new(handle: Handle) -> Result<Arc<Self>, anyhow::Error> {
-        Self::new_with_ips(handle)
+    pub(crate) const BUFFER_SIZE: usize = 65507;
+
+    pub fn new(handle: Handle, call_back: Arc<Option<CallBack>>) -> Result<Arc<Self>, anyhow::Error> {
+        Self::new_with_ips(handle, call_back)
     }
 
-    pub fn new_with_ips(handle: Handle) -> Result<Arc<Self>, anyhow::Error> {
+    pub fn new_with_ips(handle: Handle, call_back: Arc<Option<CallBack>>) -> Result<Arc<Self>, anyhow::Error> {
         let temp_handle = handle.clone();
         temp_handle.block_on(async move {
-            let mut service_info = PartnerServiceInfo::new();
+            let mut service_info = PartnerServiceHost::new_host();
             let ips = &service_info.net_ips;
             let has_ipv6 = ips
                 .iter()
@@ -168,14 +176,14 @@ impl MulticastService {
                 reciever_ipv4,
                 multicast_ipv4,
                 multicast_ipv6,
-                service_info,
+                partner_host: service_info,
+                partners_guest: Mutex::new(Vec::with_capacity(16)),
                 handle,
+                call_back,
             }))
         })
     }
     pub fn init(self: Arc<Self>, cancel_token: tokio_util::sync::CancellationToken) -> tokio::task::JoinHandle<Result<(), anyhow::Error>> {
-        const BUFFER_SIZE: usize = 4096;
-
         self.handle.clone().spawn(async move {
             {
                 // send hi
@@ -184,8 +192,8 @@ impl MulticastService {
                 let mut builder = flatbuffers::FlatBufferBuilder::with_capacity(1024);
                 {
                     let hi = {
-                        let show_name = builder.create_string(&self.service_info.host_name);
-                        let dns_terminal = self.service_info.to_dns_terminal(&mut builder);
+                        let show_name = builder.create_string(&self.partner_host.host_name);
+                        let dns_terminal = self.partner_host.to_dns_terminal(&mut builder);
                         Hi::create(
                             &mut builder,
                             &HiArgs {
@@ -199,8 +207,8 @@ impl MulticastService {
                         hi.value() as u32,
                         HeaderType::net_discovery.0,
                         NetDiscoveryType::hi.0,
-                        &TerminalId::from(self.service_info.terminal_id),
-                        &X25519Public::from(&PublicKey::from(&self.service_info.secret)),
+                        &TerminalId::from(self.partner_host.terminal_id),
+                        &X25519Public::from(&PublicKey::from(self.partner_host.secret.as_ref().unwrap())),
                     );
                     let hi_frame = HiFrame::create(
                         &mut builder,
@@ -215,7 +223,7 @@ impl MulticastService {
                 let self_clone = self.clone();
                 self.handle.clone().spawn(async move {
                     let buffer = builder.finished_data();
-                    for net_ip in &self_clone.service_info.net_ips {
+                    for net_ip in &self_clone.partner_host.net_ips {
                         if let Some(sender_ipv4) = &net_ip.sender_ipv4 {
                             match sender_ipv4.send_to(buffer, &Self::MULTICAST_ADDRV4).await {
                                 Ok(sent) => {
@@ -235,7 +243,7 @@ impl MulticastService {
 
                     if self_clone.multicast_ipv6.is_some() {
                         log::debug!("self_clone.multicast_ipv6.is_some");
-                        for net_ip in &self_clone.service_info.net_ips {
+                        for net_ip in &self_clone.partner_host.net_ips {
                             if let Some(sender_ipv6) = &net_ip.sender_ipv6 {
                                 let temp = SocketAddrV6::new(Self::MULTICAST_ADDRV6, Self::MULTICAST_PORT_IPV6, 0, net_ip.index_netinterface);
                                 match sender_ipv6.send_to(buffer, &temp).await {
@@ -256,8 +264,9 @@ impl MulticastService {
                     }
                 });
             }
-            let mut err_count = 0;
 
+            self.init_chat(&cancel_token)?;
+            let mut err_count = 0;
             loop {
                 if cancel_token.is_cancelled() {
                     log::info!("net discovery cancelled");
@@ -268,45 +277,9 @@ impl MulticastService {
                     break;
                 }
                 let mut join_set = tokio::task::JoinSet::new();
-                {
-                    let it_clone = self.reciever_ipv4.clone();
-                    join_set.spawn(async move {
-                        let mut buf = vec![0u8; BUFFER_SIZE];
-                        let data = it_clone.recv_from(&mut buf).await;
-                        match data {
-                            Err(e) => {
-                                log::error!("Error receiving data on ipv4: {}", e);
-                                Err(e)
-                            }
-                            Ok((len, addr)) => {
-                                buf.truncate(len);
-                                Ok((addr, buf))
-                            }
-                        }
-                    });
-                }
-                for net_ip in &self.service_info.net_ips {
-                    if let Some(reciver_ipv6) = &net_ip.reciver_ipv6 {
-                        let it_clone = reciver_ipv6.clone();
-                        join_set.spawn(async move {
-                            let mut buf = vec![0u8; BUFFER_SIZE];
-                            let data = it_clone.recv_from(&mut buf).await;
-                            match data {
-                                Err(e) => {
-                                    log::error!("Error receiving data on ipv6: {}", e);
-                                    Err(e)
-                                }
-                                Ok((len, addr)) => {
-                                    buf.truncate(len);
-                                    Ok((addr, buf))
-                                }
-                            }
-                        });
-                    }
-                }
                 let multicast_ipv4 = self.multicast_ipv4.clone();
                 join_set.spawn(async move {
-                    let mut buf = vec![0u8; BUFFER_SIZE];
+                    let mut buf = vec![0u8; Self::BUFFER_SIZE];
                     let data = multicast_ipv4.recv_from(&mut buf).await;
                     match data {
                         Err(e) => {
@@ -322,7 +295,7 @@ impl MulticastService {
                 if let Some(receiver_ipv6) = &self.multicast_ipv6 {
                     let receiver_ipv6 = receiver_ipv6.clone();
                     join_set.spawn(async move {
-                        let mut buf = vec![0u8; BUFFER_SIZE];
+                        let mut buf = vec![0u8; Self::BUFFER_SIZE];
                         let data = receiver_ipv6.recv_from(&mut buf).await;
                         match data {
                             Err(e) => {
@@ -349,7 +322,7 @@ impl MulticastService {
                     match data {
                         Ok(Ok((addr, buf))) => {
                             err_count = 0;
-                            self.handle_recv(addr, buf);
+                            self.handle_mulitcast_recv(addr, buf, self.call_back.as_ref());
                         }
                         Ok(Err(_e)) => {
                             err_count += 1;
@@ -365,7 +338,7 @@ impl MulticastService {
         })
     }
 
-    fn handle_recv(&self, data: SocketAddr, buffer: Vec<u8>) {
+    fn handle_mulitcast_recv(&self, data: SocketAddr, buffer: Vec<u8>, call_back: &Option<CallBack>) {
         log::debug!("Received {} bytes from {}", buffer.len(), data);
         //if the "hi" message is send by itself, ignore it
         if data == self.multicast_ipv4.local_addr().unwrap() {
@@ -376,10 +349,32 @@ impl MulticastService {
         {
             return;
         }
-        if let Some(app) = LIB_APP.get()
-            && let Some(call) = app.get_callback()
-        {
+
+        //record the
+        {}
+
+        if let Some(call) = call_back {
             call(FfiBytes::from(buffer));
+        }
+    }
+
+    fn add_partner(&self, buffer: &[u8]) {
+        if let Ok(frame) = flatbuffers::root::<Frame>(buffer)
+            && let Some(header) = frame.header()
+            && header.header_type() == HeaderType::net_discovery.0
+            && header.frame_type() == NetDiscoveryType::hi.0
+            && let Ok(hi_frame) = flatbuffers::root::<HiFrame>(buffer)
+            && let Some(hi) = &hi_frame.hi()
+        {
+            let partner_guest = PartnerServiceGuest::from(hi);
+            let mut partners = self.partners_guest.lock();
+            let find = partners.iter_mut().find(|it| it.partner_id == partner_guest.partner_id);
+            if let Some(partner) = find {
+                // todo merge
+                *partner = partner_guest;
+            } else {
+                partners.push(partner_guest);
+            }
         }
     }
 
@@ -401,6 +396,9 @@ mod tests {
     };
 
     use super::MulticastService;
+    use crate::ffi_impl::FfiBytes;
+
+    extern "C" fn empty_call(_t: FfiBytes) {}
 
     #[tokio::test]
     async fn test_tokio_select() {
@@ -438,20 +436,20 @@ mod tests {
     fn test_multicast_service() -> Result<(), anyhow::Error> {
         let _ = env_logger::builder().is_test(false).filter_level(log::LevelFilter::Debug).try_init();
         let runtime = tokio::runtime::Builder::new_multi_thread().worker_threads(4).enable_all().build()?;
-        let multicast_service = MulticastService::new(runtime.handle().clone()).unwrap();
+        let multicast_service = MulticastService::new(runtime.handle().clone(), Arc::new(None)).unwrap();
         runtime.block_on(async {
             let cancel_token = tokio_util::sync::CancellationToken::new();
             let _re = multicast_service.clone().init(cancel_token.clone());
             tokio::time::sleep(Duration::from_secs(2)).await;
 
-            for net_ip in &multicast_service.service_info.net_ips {
+            for net_ip in &multicast_service.partner_host.net_ips {
                 if let Some(sender_ipv4) = &net_ip.sender_ipv4 {
                     let re = sender_ipv4.send_to("6test".as_bytes(), &MulticastService::MULTICAST_ADDRV4).await;
                     log::debug!("send re: {:?}", re);
                 }
             }
 
-            for net_ip in &multicast_service.service_info.net_ips {
+            for net_ip in &multicast_service.partner_host.net_ips {
                 if let Some(sender_ipv6) = &net_ip.sender_ipv6 {
                     let temp = SocketAddrV6::new(MulticastService::MULTICAST_ADDRV6, MulticastService::MULTICAST_PORT_IPV6, 0, 0);
                     let re = sender_ipv6.send_to("6999test".as_bytes(), &temp).await;
