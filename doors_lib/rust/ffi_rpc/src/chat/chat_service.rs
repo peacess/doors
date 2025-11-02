@@ -3,7 +3,6 @@ use std::net::SocketAddr;
 use flatbuffers::EndianScalar;
 use idl::{
     Header,
-    base_generated::base::HeaderType,
     chat_generated::chat::{ChatTextMessage, ChatType},
     net_discovery_generated::net_discovery::{DataSelf, DataSelfArgs, DataSelfFrame, DataSelfFrameArgs, MySelfFrame, NetDiscoveryType},
 };
