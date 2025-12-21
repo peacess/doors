@@ -33,7 +33,7 @@ const PartnerSchema = CollectionSchema(
   getId: _partnerGetId,
   getLinks: _partnerGetLinks,
   attach: _partnerAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _partnerEstimateSize(Partner object, List<int> offsets, Map<Type, List<int>> allOffsets) {

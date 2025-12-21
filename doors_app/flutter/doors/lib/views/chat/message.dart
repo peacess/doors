@@ -38,7 +38,7 @@ class _MessagesWidgetState extends State<MessagesWidget> {
                 prefix: IconButton(onPressed: _enter, icon: Icon(Icons.done)),
                 suffix: IconButton(onPressed: _enter, icon: Icon(Icons.done)),
               ),
-              onSubmitted: (_v) => _enter(),
+              onSubmitted: (_) => _enter(),
               textInputAction: TextInputAction.send,
             ),
           ],
@@ -48,7 +48,7 @@ class _MessagesWidgetState extends State<MessagesWidget> {
   }
 
   void _enter() {
-    final text = _controller.text;
+    // final text = _controller.text;
     //todo send text message
   }
 }

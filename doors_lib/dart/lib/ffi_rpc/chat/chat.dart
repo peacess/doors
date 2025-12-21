@@ -8,7 +8,6 @@ import 'package:ffi/ffi.dart' as ffi;
 import '../../idl/base_base_generated.dart';
 import '../../idl/chat_chat_generated.dart';
 import '../../kits/ulid.dart';
-import '../partner/partners.dart';
 
 abstract class Chat {
   static void textMessage(String text, Partner from, Partner to) {
@@ -57,12 +56,12 @@ abstract class Chat {
       }
 
       var chat = ChatTextMessageBuilder(fbBuilder);
-      var bytesOffset = 0;
+      // var bytesOffset = 0;
       {
         chat.begin();
         chat.addHeader(headerOffset);
         chat.addMessageOffset(textMessageOffset);
-        bytesOffset = chat.finish();
+        // bytesOffset = chat.finish();
       }
       call(fbBuilder);
     }

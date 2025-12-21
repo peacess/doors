@@ -2,12 +2,9 @@ import 'package:idl/ffi_rpc/idl_ex/base.dart';
 import 'package:idl/idl/base_base_generated.dart';
 import 'package:idl/idl/chat_chat_generated.dart';
 import 'package:idl/idl/net_discovery_net_discovery_generated.dart';
-import 'package:logger/logger.dart';
 
 import '../../idl/partner_partner_generated.dart';
 import '../../kits/value_notifier_ex.dart';
-
-final _logger = Logger();
 
 class Partner {
   UlidBytesT id;

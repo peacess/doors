@@ -15,3 +15,5 @@ gen_icon:
 	dart run icons_launcher:create
 install:
 # 	dart pub global activate flutter_gen
+upgrade:
+	${flutter} pub upgrade

@@ -23,6 +23,7 @@ build: gen
 upgrade:
 	cd doors_app && make upgrade
 	cd doors_lib && make upgrade
+	cargo upgrade && flutter pub upgrade
 
 install:
 	mkdir "temp"

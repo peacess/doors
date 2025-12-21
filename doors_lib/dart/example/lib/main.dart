@@ -75,7 +75,7 @@ final class Net extends idl.NetDiscoveryCallback {
   Net(super.partners);
 
   @override
-  void hiRecv(HiFrame hi) {
+  void hi(HiFrame hi) {
     logger.i("call back data");
   }
 }
