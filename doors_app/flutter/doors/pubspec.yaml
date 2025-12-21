@@ -3,16 +3,15 @@ description: "life door -- safe life tools"
 version: "0.1.0"
 publish_to: none
 
-
 environment:
-  sdk: ^3.9.2
+  sdk: ^3.10.4
 
 resolution: workspace
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations: 
+  flutter_localizations:
     sdk: flutter
   intl:
   ulid:
@@ -23,14 +22,13 @@ dependencies:
   scrollable_positioned_list:
 
   idl:
-    path:  "../../../doors_lib/dart"
-
+    path: "../../../doors_lib/dart"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints:
-  isar_community_generator: 
+  isar_community_generator:
   build_runner:
   icons_launcher:
 

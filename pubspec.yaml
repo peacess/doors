@@ -1,8 +1,8 @@
 name: doors_workspace
 publish_to: none
 environment:
-  sdk: ^3.9.2
-  flutter: ^3.35.4
+  sdk: ^3.10.4
+  flutter: ^3.35.5
 workspace:
   - doors_app/flutter/doors
   - doors_lib/dart
@@ -11,20 +11,20 @@ workspace:
 dependencies:
   logger: ^2.6.2
 
-  plugin_platform_interface: ^2.0.2
+  plugin_platform_interface: ^2.1.8
 
   intl: 0.20.2
   path: 1.9.1
-  flat_buffers: ^23.5.26
-  uuid: ^4.5.1
+  flat_buffers: ^25.9.23
+  uuid: ^4.5.2
   ulid: ^2.0.1
   ffi: ^2.1.4
 
   isar_community: ^3.3.0-dev.2
   isar_community_flutter_libs: ^3.3.0-dev.2
 
-  cryptography: ^2.7.0
-  crypto: ^3.0.6
+  cryptography: ^2.9.0
+  crypto: ^3.0.7
 
   scrollable_positioned_list: ^0.3.8
 
@@ -33,8 +33,8 @@ dependencies:
 
 dev_dependencies:
   lints: ^6.0.0
-  test: ^1.25.6
+  test: ^1.26.3
   isar_community_generator: ^3.3.0-dev.2
-  build_runner: 
-  ffigen: 19.1.0
+  build_runner:
+  ffigen: 20.1.1
   icons_launcher: ^3.0.3

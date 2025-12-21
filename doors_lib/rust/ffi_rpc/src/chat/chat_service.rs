@@ -1,11 +1,7 @@
 use std::net::SocketAddr;
 
 use flatbuffers::EndianScalar;
-use idl::{
-    Header,
-    chat_generated::chat::{ChatTextMessage, ChatType},
-    net_discovery_generated::net_discovery::{DataSelf, DataSelfArgs, DataSelfFrame, DataSelfFrameArgs, MySelfFrame, NetDiscoveryType},
-};
+use idl::{Header, chat_generated::chat::ChatType};
 
 use crate::{
     discover::MulticastService,

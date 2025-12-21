@@ -951,7 +951,7 @@ class Frame {
     return 'Frame{header: ${header}, bytes: ${bytes}}';
   }
 
-  FrameT unpack() => FrameT(header: header?.unpack(), bytes: const fb.Int8ListReader(lazy: false).vTableGetNullable(_bc, _bcOffset, 6));
+  FrameT unpack() => FrameT(header: header?.unpack(), bytes: bytes?.toList());
 
   static int pack(fb.Builder fbBuilder, FrameT? object) {
     if (object == null) return 0;

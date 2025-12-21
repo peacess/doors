@@ -7,16 +7,17 @@ format:
 	cd doors_lib && make format
 
 clean:
-	cargo clean
-	${flutter} clean
 	cd doors_app && make clean
 	cd doors_lib && make clean
+	cargo clean && rm -f Cargo.lock
+	${flutter} clean && rm -f pubspec.lock
 gen:
 	cd doors_lib/idl_fbs && make gen
 	cd doors_lib && make gen
 	cd doors_app && make gen
 
 build: gen
+	dart pub get
 	cd doors_app && make build
 	cd doors_lib && make build
 
@@ -26,10 +27,9 @@ upgrade:
 	cargo upgrade && flutter pub upgrade
 
 install:
-	mkdir "temp"
-	cd temp
-	wget -o temp_flatc.zip https://github.com/google/flatbuffers/releases/download/v25.2.10/Linux.flatc.binary.clang++-18.zip
-	unzip -o temp_flatc.zip && chmod +x ./flatc
-	sudo cp -f flatc /usr/local/bin/flatc
-	cd ../
+	mkdir -p temp
+	cd temp && wget -O temp_flatc.zip https://github.com/google/flatbuffers/releases/download/v25.12.19/Linux.flatc.binary.clang++-18.zip
+	cd temp && unzip -o temp_flatc.zip && chmod +x ./flatc
+	sudo cp -f temp/flatc /usr/local/bin/flatc
 	rm -rf ./temp
+	flatc --version

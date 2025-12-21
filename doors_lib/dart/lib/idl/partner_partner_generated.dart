@@ -51,7 +51,7 @@ class PartnerT implements fb.Packable {
   int pack(fb.Builder fbBuilder) {
     int? terminalIdsOffset;
     if (terminalIds != null) {
-      for (var e in terminalIds!) {
+      for (var e in terminalIds!.reversed) {
         e.pack(fbBuilder);
       }
       terminalIdsOffset = fbBuilder.endStructVector(terminalIds!.length);
