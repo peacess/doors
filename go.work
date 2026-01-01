@@ -1,8 +1,8 @@
-go 1.25.1
+go 1.25.5
 
 use (
-    ./doors_app/go/doors
-    ./doors_lib/go
-    ./doors_lib/go/gen_ffi_rpc
-    ./doors_lib/go/go_lib
+	./doors_app/go/doors
+	./doors_lib/go
+	./doors_lib/go/gen_ffi_rpc
+	./doors_lib/go/go_lib
 )

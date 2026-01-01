@@ -1,6 +1,6 @@
 module github.com/peacess/doors/doors_app/go/doors
 
-go 1.25.1
+go 1.25.5
 
 require fyne.io/fyne/v2 v2.7.1
 
