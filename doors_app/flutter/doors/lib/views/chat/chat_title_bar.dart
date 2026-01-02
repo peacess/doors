@@ -1,5 +1,7 @@
 import 'package:doors/views/doors_app.dart';
 import 'package:flutter/material.dart';
+import 'package:idl/kits/platform.dart';
+import 'package:window_manager/window_manager.dart';
 
 class ChatTitleBar extends StatefulWidget implements PreferredSizeWidget {
   ChatTitleBar(this.showLeft, {super.key});
@@ -17,6 +19,22 @@ class ChatTitleBar extends StatefulWidget implements PreferredSizeWidget {
 class _ChatTitleBarState extends State<ChatTitleBar> {
   @override
   Widget build(BuildContext context) {
+    return PlatformEx.isDesktop
+        ? GestureDetector(
+            onDoubleTap: () async {
+              bool isMaximized = await windowManager.isMaximized();
+              if (isMaximized) {
+                await windowManager.unmaximize();
+              } else {
+                await windowManager.maximize();
+              }
+            },
+            child: DragToMoveArea(child: makeAppBar()),
+          )
+        : makeAppBar();
+  }
+
+  AppBar makeAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
       leading: null,
@@ -48,6 +66,33 @@ class _ChatTitleBarState extends State<ChatTitleBar> {
           ),
         ],
       ),
+      actions: PlatformEx.isDesktop
+          ? [
+              IconButton(
+                icon: const Icon(Icons.minimize),
+                onPressed: () {
+                  windowManager.minimize();
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.crop_square),
+                onPressed: () async {
+                  bool isMaximized = await windowManager.isMaximized();
+                  if (isMaximized) {
+                    await windowManager.unmaximize();
+                  } else {
+                    await windowManager.maximize();
+                  }
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  windowManager.close();
+                },
+              ),
+            ]
+          : null,
     );
   }
 }

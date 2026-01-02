@@ -29,6 +29,14 @@ upgrade:
 	cd doors_lib && make upgrade
 	cargo upgrade && flutter pub upgrade
 
+release_linux_flutter_rust:gen
+	cd doors_lib/rust && make release_linux
+	cd doors_app/flutter/doors && make build_linux
+
+debug_linux_flutter_rust:gen
+	cd doors_lib/rust && make debug_linux
+	cd doors_app/flutter/doors && make debug_linux
+
 install_cargo:
 	cargo install cargo-edit
 

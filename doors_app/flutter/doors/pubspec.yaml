@@ -16,6 +16,8 @@ dependencies:
   intl:
   ulid:
 
+  window_manager:
+
   isar_community:
   isar_community_flutter_libs:
 

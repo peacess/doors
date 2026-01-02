@@ -20,6 +20,8 @@ dependencies:
   ulid: ^2.0.1
   ffi: ^2.1.4
 
+  window_manager: ^0.5.1
+
   isar_community: ^3.3.0-dev.2
   isar_community_flutter_libs: ^3.3.0-dev.2
 

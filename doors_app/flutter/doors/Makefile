@@ -8,6 +8,10 @@ clean:
 	${flutter} clean
 build:
 	${flutter} analyze
+release_linux:
+	${flutter} build linux --release
+debug_linux:
+	${flutter} build linux --debug
 gen:
 	${flutter} gen-l10n
 	${flutter} pub run build_runner build
