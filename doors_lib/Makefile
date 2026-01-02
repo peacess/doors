@@ -10,14 +10,15 @@ format:
 	cd zig/ffi_rpc && zig fmt ./
 
 clean:
-	cd go && ${go} clean
+	cd go && rm -rf go.sum go_lin/go.sum gen_ffi_rpc/go.sum build
 	cd dart && ${flutter} clean
 	cd rust && make clean
 	cd idl_fbs && make clean
 build:
 	cd go && ${go} build -ldflags="-s -w" ./...
+	cd go && ${go} build -ldflags="-s -w" -o build/chat_server ./cmd/chat_server/main.go
 	cd rust && make build
-	cd dart && dart run ffigen --config ffigen.yaml && ${flutter} analyze
+	cd dart && ${flutter} analyze
 	cd zig/ffi_rpc && zig build
 
 upgrade:
@@ -28,4 +29,3 @@ upgrade:
 gen:
 	cd rust/ffi_rpc && cargo build --bin build_rs
 	cd dart && dart run ffigen --config=ffigen.yaml
-	

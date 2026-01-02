@@ -1,3 +1,5 @@
+# [net]
+# git-fetch-with-cli = true
 [source.crates-io]
 replace-with = 'rsproxy'
 [source.rsproxy]
