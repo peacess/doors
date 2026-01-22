@@ -43,7 +43,7 @@ os_info = "3.14.0"
 libsignal-protocol = { git = "https://github.com/signalapp/libsignal", tag = "v0.17.0" }
 x25519-dalek = { version = "2.0.1", features = ["static_secrets","getrandom"] }
 curve25519-dalek = "4.1.3"
-rand_core = "0.9.3"
+rand_core = "0.9.5"
 uuid = { version = "1.19.0", features = ["v7"] }
 ulid = "1.2.1"
 
