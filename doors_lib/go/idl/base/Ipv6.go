@@ -7,15 +7,15 @@ import (
 )
 
 type Ipv6T struct {
-	Ub1 byte `json:"ub1"`
-	Ub2 byte `json:"ub2"`
-	Ub3 byte `json:"ub3"`
-	Ub4 byte `json:"ub4"`
-	Ub5 byte `json:"ub5"`
-	Ub6 byte `json:"ub6"`
-	Ub7 byte `json:"ub7"`
-	Ub8 byte `json:"ub8"`
-	Ub9 byte `json:"ub9"`
+	Ub1  byte `json:"ub1"`
+	Ub2  byte `json:"ub2"`
+	Ub3  byte `json:"ub3"`
+	Ub4  byte `json:"ub4"`
+	Ub5  byte `json:"ub5"`
+	Ub6  byte `json:"ub6"`
+	Ub7  byte `json:"ub7"`
+	Ub8  byte `json:"ub8"`
+	Ub9  byte `json:"ub9"`
 	Ub10 byte `json:"ub10"`
 	Ub11 byte `json:"ub11"`
 	Ub12 byte `json:"ub12"`

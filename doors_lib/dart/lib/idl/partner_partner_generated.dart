@@ -6,7 +6,6 @@ library partner;
 import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
-
 import './base_base_generated.dart' as base;
 
 class Partner {
@@ -31,11 +30,8 @@ class Partner {
     return 'Partner{id: ${id}, terminalIds: ${terminalIds}, partnerId: ${partnerId}, showName: ${showName}}';
   }
 
-  PartnerT unpack() => PartnerT(
-      id: id?.unpack(),
-      terminalIds: terminalIds?.map((e) => e.unpack()).toList(),
-      partnerId: partnerId?.unpack(),
-      showName: showName);
+  PartnerT unpack() =>
+      PartnerT(id: id?.unpack(), terminalIds: terminalIds?.map((e) => e.unpack()).toList(), partnerId: partnerId?.unpack(), showName: showName);
 
   static int pack(fb.Builder fbBuilder, PartnerT? object) {
     if (object == null) return 0;
@@ -49,21 +45,18 @@ class PartnerT implements fb.Packable {
   base.PartnerIdT? partnerId;
   String? showName;
 
-  PartnerT({
-      this.id,
-      this.terminalIds,
-      this.partnerId,
-      this.showName});
+  PartnerT({this.id, this.terminalIds, this.partnerId, this.showName});
 
   @override
   int pack(fb.Builder fbBuilder) {
     int? terminalIdsOffset;
     if (terminalIds != null) {
-      for (var e in terminalIds!.reversed) { e.pack(fbBuilder); }
+      for (var e in terminalIds!.reversed) {
+        e.pack(fbBuilder);
+      }
       terminalIdsOffset = fbBuilder.endStructVector(terminalIds!.length);
     }
-    final int? showNameOffset = showName == null ? null
-        : fbBuilder.writeString(showName!);
+    final int? showNameOffset = showName == null ? null : fbBuilder.writeString(showName!);
     fbBuilder.startTable(4);
     if (id != null) {
       fbBuilder.addStruct(0, id!.pack(fbBuilder));
@@ -86,8 +79,7 @@ class _PartnerReader extends fb.TableReader<Partner> {
   const _PartnerReader();
 
   @override
-  Partner createObject(fb.BufferContext bc, int offset) => 
-    Partner._(bc, offset);
+  Partner createObject(fb.BufferContext bc, int offset) => Partner._(bc, offset);
 }
 
 class PartnerBuilder {
@@ -103,14 +95,17 @@ class PartnerBuilder {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
+
   int addTerminalIdsOffset(int? offset) {
     fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
   }
+
   int addPartnerId(int offset) {
     fbBuilder.addStruct(2, offset);
     return fbBuilder.offset;
   }
+
   int addShowNameOffset(int? offset) {
     fbBuilder.addOffset(3, offset);
     return fbBuilder.offset;
@@ -132,19 +127,16 @@ class PartnerObjectBuilder extends fb.ObjectBuilder {
     List<base.TerminalIdObjectBuilder>? terminalIds,
     base.PartnerIdObjectBuilder? partnerId,
     String? showName,
-  })
-      : _id = id,
-        _terminalIds = terminalIds,
-        _partnerId = partnerId,
-        _showName = showName;
+  }) : _id = id,
+       _terminalIds = terminalIds,
+       _partnerId = partnerId,
+       _showName = showName;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    final int? terminalIdsOffset = _terminalIds == null ? null
-        : fbBuilder.writeListOfStructs(_terminalIds!);
-    final int? showNameOffset = _showName == null ? null
-        : fbBuilder.writeString(_showName!);
+    final int? terminalIdsOffset = _terminalIds == null ? null : fbBuilder.writeListOfStructs(_terminalIds!);
+    final int? showNameOffset = _showName == null ? null : fbBuilder.writeString(_showName!);
     fbBuilder.startTable(4);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));

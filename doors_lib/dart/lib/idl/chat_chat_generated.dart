@@ -6,7 +6,6 @@ library chat;
 import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
-
 import './base_base_generated.dart' as base;
 
 enum ChatType {
@@ -19,15 +18,18 @@ enum ChatType {
 
   factory ChatType.fromValue(int value) {
     switch (value) {
-      case 0: return ChatType.none;
-      case 1: return ChatType.text_message;
-      case 2: return ChatType.text_message_ack;
-      default: throw StateError('Invalid value $value for bit flag enum');
+      case 0:
+        return ChatType.none;
+      case 1:
+        return ChatType.text_message;
+      case 2:
+        return ChatType.text_message_ack;
+      default:
+        throw StateError('Invalid value $value for bit flag enum');
     }
   }
 
-  static ChatType? _createOrNull(int? value) =>
-      value == null ? null : ChatType.fromValue(value);
+  static ChatType? _createOrNull(int? value) => value == null ? null : ChatType.fromValue(value);
 
   static const int minValue = 0;
   static const int maxValue = 2;
@@ -41,8 +43,7 @@ class _ChatTypeReader extends fb.Reader<ChatType> {
   int get size => 4;
 
   @override
-  ChatType read(fb.BufferContext bc, int offset) =>
-      ChatType.fromValue(const fb.Uint32Reader().read(bc, offset));
+  ChatType read(fb.BufferContext bc, int offset) => ChatType.fromValue(const fb.Uint32Reader().read(bc, offset));
 }
 
 class TextMessage {
@@ -71,13 +72,14 @@ class TextMessage {
   }
 
   TextMessageT unpack() => TextMessageT(
-      id: id?.unpack(),
-      fromPartnerId: fromPartnerId?.unpack(),
-      toPartnerId: toPartnerId?.unpack(),
-      fromTerminalId: fromTerminalId?.unpack(),
-      toTerminalId: toTerminalId?.unpack(),
-      messageId: messageId?.unpack(),
-      text: text);
+    id: id?.unpack(),
+    fromPartnerId: fromPartnerId?.unpack(),
+    toPartnerId: toPartnerId?.unpack(),
+    fromTerminalId: fromTerminalId?.unpack(),
+    toTerminalId: toTerminalId?.unpack(),
+    messageId: messageId?.unpack(),
+    text: text,
+  );
 
   static int pack(fb.Builder fbBuilder, TextMessageT? object) {
     if (object == null) return 0;
@@ -94,19 +96,11 @@ class TextMessageT implements fb.Packable {
   base.UlidBytesT? messageId;
   String? text;
 
-  TextMessageT({
-      this.id,
-      this.fromPartnerId,
-      this.toPartnerId,
-      this.fromTerminalId,
-      this.toTerminalId,
-      this.messageId,
-      this.text});
+  TextMessageT({this.id, this.fromPartnerId, this.toPartnerId, this.fromTerminalId, this.toTerminalId, this.messageId, this.text});
 
   @override
   int pack(fb.Builder fbBuilder) {
-    final int? textOffset = text == null ? null
-        : fbBuilder.writeString(text!);
+    final int? textOffset = text == null ? null : fbBuilder.writeString(text!);
     fbBuilder.startTable(7);
     if (id != null) {
       fbBuilder.addStruct(0, id!.pack(fbBuilder));
@@ -140,8 +134,7 @@ class _TextMessageReader extends fb.TableReader<TextMessage> {
   const _TextMessageReader();
 
   @override
-  TextMessage createObject(fb.BufferContext bc, int offset) => 
-    TextMessage._(bc, offset);
+  TextMessage createObject(fb.BufferContext bc, int offset) => TextMessage._(bc, offset);
 }
 
 class TextMessageBuilder {
@@ -157,26 +150,32 @@ class TextMessageBuilder {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
+
   int addFromPartnerId(int offset) {
     fbBuilder.addStruct(1, offset);
     return fbBuilder.offset;
   }
+
   int addToPartnerId(int offset) {
     fbBuilder.addStruct(2, offset);
     return fbBuilder.offset;
   }
+
   int addFromTerminalId(int offset) {
     fbBuilder.addStruct(3, offset);
     return fbBuilder.offset;
   }
+
   int addToTerminalId(int offset) {
     fbBuilder.addStruct(4, offset);
     return fbBuilder.offset;
   }
+
   int addMessageId(int offset) {
     fbBuilder.addStruct(5, offset);
     return fbBuilder.offset;
   }
+
   int addTextOffset(int? offset) {
     fbBuilder.addOffset(6, offset);
     return fbBuilder.offset;
@@ -204,20 +203,18 @@ class TextMessageObjectBuilder extends fb.ObjectBuilder {
     base.TerminalIdObjectBuilder? toTerminalId,
     base.UlidBytesObjectBuilder? messageId,
     String? text,
-  })
-      : _id = id,
-        _fromPartnerId = fromPartnerId,
-        _toPartnerId = toPartnerId,
-        _fromTerminalId = fromTerminalId,
-        _toTerminalId = toTerminalId,
-        _messageId = messageId,
-        _text = text;
+  }) : _id = id,
+       _fromPartnerId = fromPartnerId,
+       _toPartnerId = toPartnerId,
+       _fromTerminalId = fromTerminalId,
+       _toTerminalId = toTerminalId,
+       _messageId = messageId,
+       _text = text;
 
   /// Finish building, and store into the [fbBuilder].
   @override
   int finish(fb.Builder fbBuilder) {
-    final int? textOffset = _text == null ? null
-        : fbBuilder.writeString(_text!);
+    final int? textOffset = _text == null ? null : fbBuilder.writeString(_text!);
     fbBuilder.startTable(7);
     if (_id != null) {
       fbBuilder.addStruct(0, _id!.finish(fbBuilder));
@@ -249,6 +246,7 @@ class TextMessageObjectBuilder extends fb.ObjectBuilder {
     return fbBuilder.buffer;
   }
 }
+
 class TextMessageAck {
   TextMessageAck._(this._bc, this._bcOffset);
   factory TextMessageAck(List<int> bytes) {
@@ -269,9 +267,7 @@ class TextMessageAck {
     return 'TextMessageAck{id: ${id}, sendId: ${sendId}}';
   }
 
-  TextMessageAckT unpack() => TextMessageAckT(
-      id: id?.unpack(),
-      sendId: sendId?.unpack());
+  TextMessageAckT unpack() => TextMessageAckT(id: id?.unpack(), sendId: sendId?.unpack());
 
   static int pack(fb.Builder fbBuilder, TextMessageAckT? object) {
     if (object == null) return 0;
@@ -283,9 +279,7 @@ class TextMessageAckT implements fb.Packable {
   base.UlidBytesT? id;
   base.UlidBytesT? sendId;
 
-  TextMessageAckT({
-      this.id,
-      this.sendId});
+  TextMessageAckT({this.id, this.sendId});
 
   @override
   int pack(fb.Builder fbBuilder) {
@@ -309,8 +303,7 @@ class _TextMessageAckReader extends fb.TableReader<TextMessageAck> {
   const _TextMessageAckReader();
 
   @override
-  TextMessageAck createObject(fb.BufferContext bc, int offset) => 
-    TextMessageAck._(bc, offset);
+  TextMessageAck createObject(fb.BufferContext bc, int offset) => TextMessageAck._(bc, offset);
 }
 
 class TextMessageAckBuilder {
@@ -326,6 +319,7 @@ class TextMessageAckBuilder {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
+
   int addSendId(int offset) {
     fbBuilder.addStruct(1, offset);
     return fbBuilder.offset;
@@ -340,12 +334,7 @@ class TextMessageAckObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
   final base.UlidBytesObjectBuilder? _sendId;
 
-  TextMessageAckObjectBuilder({
-    base.UlidBytesObjectBuilder? id,
-    base.UlidBytesObjectBuilder? sendId,
-  })
-      : _id = id,
-        _sendId = sendId;
+  TextMessageAckObjectBuilder({base.UlidBytesObjectBuilder? id, base.UlidBytesObjectBuilder? sendId}) : _id = id, _sendId = sendId;
 
   /// Finish building, and store into the [fbBuilder].
   @override
@@ -368,6 +357,7 @@ class TextMessageAckObjectBuilder extends fb.ObjectBuilder {
     return fbBuilder.buffer;
   }
 }
+
 class ChatTextMessage {
   ChatTextMessage._(this._bc, this._bcOffset);
   factory ChatTextMessage(List<int> bytes) {
@@ -388,9 +378,7 @@ class ChatTextMessage {
     return 'ChatTextMessage{header: ${header}, message: ${message}}';
   }
 
-  ChatTextMessageT unpack() => ChatTextMessageT(
-      header: header?.unpack(),
-      message: message?.unpack());
+  ChatTextMessageT unpack() => ChatTextMessageT(header: header?.unpack(), message: message?.unpack());
 
   static int pack(fb.Builder fbBuilder, ChatTextMessageT? object) {
     if (object == null) return 0;
@@ -402,9 +390,7 @@ class ChatTextMessageT implements fb.Packable {
   base.HeaderT? header;
   TextMessageT? message;
 
-  ChatTextMessageT({
-      this.header,
-      this.message});
+  ChatTextMessageT({this.header, this.message});
 
   @override
   int pack(fb.Builder fbBuilder) {
@@ -427,8 +413,7 @@ class _ChatTextMessageReader extends fb.TableReader<ChatTextMessage> {
   const _ChatTextMessageReader();
 
   @override
-  ChatTextMessage createObject(fb.BufferContext bc, int offset) => 
-    ChatTextMessage._(bc, offset);
+  ChatTextMessage createObject(fb.BufferContext bc, int offset) => ChatTextMessage._(bc, offset);
 }
 
 class ChatTextMessageBuilder {
@@ -444,6 +429,7 @@ class ChatTextMessageBuilder {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
+
   int addMessageOffset(int? offset) {
     fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
@@ -458,12 +444,7 @@ class ChatTextMessageObjectBuilder extends fb.ObjectBuilder {
   final base.HeaderObjectBuilder? _header;
   final TextMessageObjectBuilder? _message;
 
-  ChatTextMessageObjectBuilder({
-    base.HeaderObjectBuilder? header,
-    TextMessageObjectBuilder? message,
-  })
-      : _header = header,
-        _message = message;
+  ChatTextMessageObjectBuilder({base.HeaderObjectBuilder? header, TextMessageObjectBuilder? message}) : _header = header, _message = message;
 
   /// Finish building, and store into the [fbBuilder].
   @override
@@ -485,6 +466,7 @@ class ChatTextMessageObjectBuilder extends fb.ObjectBuilder {
     return fbBuilder.buffer;
   }
 }
+
 class ChatTextMessageAck {
   ChatTextMessageAck._(this._bc, this._bcOffset);
   factory ChatTextMessageAck(List<int> bytes) {
@@ -505,9 +487,7 @@ class ChatTextMessageAck {
     return 'ChatTextMessageAck{header: ${header}, message: ${message}}';
   }
 
-  ChatTextMessageAckT unpack() => ChatTextMessageAckT(
-      header: header?.unpack(),
-      message: message?.unpack());
+  ChatTextMessageAckT unpack() => ChatTextMessageAckT(header: header?.unpack(), message: message?.unpack());
 
   static int pack(fb.Builder fbBuilder, ChatTextMessageAckT? object) {
     if (object == null) return 0;
@@ -519,9 +499,7 @@ class ChatTextMessageAckT implements fb.Packable {
   base.HeaderT? header;
   TextMessageAckT? message;
 
-  ChatTextMessageAckT({
-      this.header,
-      this.message});
+  ChatTextMessageAckT({this.header, this.message});
 
   @override
   int pack(fb.Builder fbBuilder) {
@@ -544,8 +522,7 @@ class _ChatTextMessageAckReader extends fb.TableReader<ChatTextMessageAck> {
   const _ChatTextMessageAckReader();
 
   @override
-  ChatTextMessageAck createObject(fb.BufferContext bc, int offset) => 
-    ChatTextMessageAck._(bc, offset);
+  ChatTextMessageAck createObject(fb.BufferContext bc, int offset) => ChatTextMessageAck._(bc, offset);
 }
 
 class ChatTextMessageAckBuilder {
@@ -561,6 +538,7 @@ class ChatTextMessageAckBuilder {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
+
   int addMessageOffset(int? offset) {
     fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
@@ -575,12 +553,7 @@ class ChatTextMessageAckObjectBuilder extends fb.ObjectBuilder {
   final base.HeaderObjectBuilder? _header;
   final TextMessageAckObjectBuilder? _message;
 
-  ChatTextMessageAckObjectBuilder({
-    base.HeaderObjectBuilder? header,
-    TextMessageAckObjectBuilder? message,
-  })
-      : _header = header,
-        _message = message;
+  ChatTextMessageAckObjectBuilder({base.HeaderObjectBuilder? header, TextMessageAckObjectBuilder? message}) : _header = header, _message = message;
 
   /// Finish building, and store into the [fbBuilder].
   @override

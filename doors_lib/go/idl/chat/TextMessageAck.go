@@ -9,7 +9,7 @@ import (
 )
 
 type TextMessageAckT struct {
-	Id *base.UlidBytesT `json:"id"`
+	Id     *base.UlidBytesT `json:"id"`
 	SendId *base.UlidBytesT `json:"send_id"`
 }
 

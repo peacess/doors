@@ -9,10 +9,10 @@ import (
 )
 
 type DataSelfT struct {
-	Id *base.UlidBytesT `json:"id"`
-	ReqId *base.UlidBytesT `json:"req_id"`
-	DnsTerminal *DnsTerminalT `json:"dns_terminal"`
-	ErrorInfo *base.ErrorInfoT `json:"error_info"`
+	Id          *base.UlidBytesT `json:"id"`
+	ReqId       *base.UlidBytesT `json:"req_id"`
+	DnsTerminal *DnsTerminalT    `json:"dns_terminal"`
+	ErrorInfo   *base.ErrorInfoT `json:"error_info"`
 }
 
 func (t *DataSelfT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

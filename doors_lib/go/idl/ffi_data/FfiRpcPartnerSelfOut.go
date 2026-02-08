@@ -9,7 +9,7 @@ import (
 )
 
 type FfiRpcPartnerSelfOutT struct {
-	Header *base.HeaderT `json:"header"`
+	Header  *base.HeaderT    `json:"header"`
 	Message *PartnerSelfOutT `json:"message"`
 }
 

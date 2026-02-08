@@ -9,9 +9,9 @@ import (
 )
 
 type HiT struct {
-	Id *base.UlidBytesT `json:"id"`
-	DnsTerminal *DnsTerminalT `json:"dns_terminal"`
-	ShowName string `json:"show_name"`
+	Id          *base.UlidBytesT `json:"id"`
+	DnsTerminal *DnsTerminalT    `json:"dns_terminal"`
+	ShowName    string           `json:"show_name"`
 }
 
 func (t *HiT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

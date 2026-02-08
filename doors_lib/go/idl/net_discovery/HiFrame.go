@@ -10,7 +10,7 @@ import (
 
 type HiFrameT struct {
 	Header *base.HeaderT `json:"header"`
-	Hi *HiT `json:"hi"`
+	Hi     *HiT          `json:"hi"`
 }
 
 func (t *HiFrameT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

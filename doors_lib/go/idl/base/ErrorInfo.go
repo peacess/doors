@@ -7,10 +7,10 @@ import (
 )
 
 type ErrorInfoT struct {
-	Id *UlidBytesT `json:"id"`
-	ReqId *UlidBytesT `json:"req_id"`
-	Code uint32 `json:"code"`
-	Message string `json:"message"`
+	Id      *UlidBytesT `json:"id"`
+	ReqId   *UlidBytesT `json:"req_id"`
+	Code    uint32      `json:"code"`
+	Message string      `json:"message"`
 }
 
 func (t *ErrorInfoT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

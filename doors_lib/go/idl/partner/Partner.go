@@ -9,10 +9,10 @@ import (
 )
 
 type PartnerT struct {
-	Id *base.UlidBytesT `json:"id"`
+	Id          *base.UlidBytesT    `json:"id"`
 	TerminalIds []*base.TerminalIdT `json:"terminal_ids"`
-	PartnerId *base.PartnerIdT `json:"partner_id"`
-	ShowName string `json:"show_name"`
+	PartnerId   *base.PartnerIdT    `json:"partner_id"`
+	ShowName    string              `json:"show_name"`
 }
 
 func (t *PartnerT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

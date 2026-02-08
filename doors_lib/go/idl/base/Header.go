@@ -7,11 +7,11 @@ import (
 )
 
 type HeaderT struct {
-	Len uint32 `json:"len"`
-	HeaderType uint32 `json:"header_type"`
-	FrameType uint32 `json:"frame_type"`
-	ToTerminalId *TerminalIdT `json:"to_terminal_id"`
-	Key *X25519PublicT `json:"key"`
+	Len          uint32         `json:"len"`
+	HeaderType   uint32         `json:"header_type"`
+	FrameType    uint32         `json:"frame_type"`
+	ToTerminalId *TerminalIdT   `json:"to_terminal_id"`
+	Key          *X25519PublicT `json:"key"`
 }
 
 func (t *HeaderT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

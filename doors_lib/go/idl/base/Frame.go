@@ -8,7 +8,7 @@ import (
 
 type FrameT struct {
 	Header *HeaderT `json:"header"`
-	Bytes []int8 `json:"bytes"`
+	Bytes  []int8   `json:"bytes"`
 }
 
 func (t *FrameT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

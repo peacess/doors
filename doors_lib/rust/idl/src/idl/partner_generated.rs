@@ -7,215 +7,218 @@ use crate::base_generated::*;
 #[allow(unused_imports, dead_code)]
 pub mod partner {
 
-  use crate::base_generated::*;
+    use crate::base_generated::*;
 
-pub enum PartnerOffset {}
-#[derive(Copy, Clone, PartialEq)]
+    pub enum PartnerOffset {}
+    #[derive(Copy, Clone, PartialEq)]
 
-pub struct Partner<'a> {
-  pub _tab: ::flatbuffers::Table<'a>,
-}
-
-impl<'a> ::flatbuffers::Follow<'a> for Partner<'a> {
-  type Inner = Partner<'a>;
-  #[inline]
-  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    Self { _tab: unsafe { ::flatbuffers::Table::new(buf, loc) } }
-  }
-}
-
-impl<'a> Partner<'a> {
-  pub const VT_ID: ::flatbuffers::VOffsetT = 4;
-  pub const VT_TERMINAL_IDS: ::flatbuffers::VOffsetT = 6;
-  pub const VT_PARTNER_ID: ::flatbuffers::VOffsetT = 8;
-  pub const VT_SHOW_NAME: ::flatbuffers::VOffsetT = 10;
-
-  #[inline]
-  pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
-    Partner { _tab: table }
-  }
-  #[allow(unused_mut)]
-  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
-    _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
-    args: &'args PartnerArgs<'args>
-  ) -> ::flatbuffers::WIPOffset<Partner<'bldr>> {
-    let mut builder = PartnerBuilder::new(_fbb);
-    if let Some(x) = args.show_name { builder.add_show_name(x); }
-    if let Some(x) = args.partner_id { builder.add_partner_id(x); }
-    if let Some(x) = args.terminal_ids { builder.add_terminal_ids(x); }
-    if let Some(x) = args.id { builder.add_id(x); }
-    builder.finish()
-  }
-
-  pub fn unpack(&self) -> PartnerT {
-    let id = self.id().map(|x| {
-      x.unpack()
-    });
-    let terminal_ids = self.terminal_ids().map(|x| {
-      x.iter().map(|t| t.unpack()).collect()
-    });
-    let partner_id = self.partner_id().map(|x| {
-      x.unpack()
-    });
-    let show_name = self.show_name().map(|x| {
-      alloc::string::ToString::to_string(x)
-    });
-    PartnerT {
-      id,
-      terminal_ids,
-      partner_id,
-      show_name,
+    pub struct Partner<'a> {
+        pub _tab: ::flatbuffers::Table<'a>,
     }
-  }
 
-  #[inline]
-  pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::UlidBytes>(Partner::VT_ID, None)}
-  }
-  #[inline]
-  pub fn terminal_ids(&self) -> Option<::flatbuffers::Vector<'a, super::base::TerminalId>> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<::flatbuffers::ForwardsUOffset<::flatbuffers::Vector<'a, super::base::TerminalId>>>(Partner::VT_TERMINAL_IDS, None)}
-  }
-  #[inline]
-  pub fn partner_id(&self) -> Option<&'a super::base::PartnerId> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::PartnerId>(Partner::VT_PARTNER_ID, None)}
-  }
-  #[inline]
-  pub fn show_name(&self) -> Option<&'a str> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<::flatbuffers::ForwardsUOffset<&str>>(Partner::VT_SHOW_NAME, None)}
-  }
-}
-
-impl ::flatbuffers::Verifiable for Partner<'_> {
-  #[inline]
-  fn run_verifier(
-    v: &mut ::flatbuffers::Verifier, pos: usize
-  ) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
-    v.visit_table(pos)?
-     .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-     .visit_field::<::flatbuffers::ForwardsUOffset<::flatbuffers::Vector<'_, super::base::TerminalId>>>("terminal_ids", Self::VT_TERMINAL_IDS, false)?
-     .visit_field::<super::base::PartnerId>("partner_id", Self::VT_PARTNER_ID, false)?
-     .visit_field::<::flatbuffers::ForwardsUOffset<&str>>("show_name", Self::VT_SHOW_NAME, false)?
-     .finish();
-    Ok(())
-  }
-}
-pub struct PartnerArgs<'a> {
-    pub id: Option<&'a super::base::UlidBytes>,
-    pub terminal_ids: Option<::flatbuffers::WIPOffset<::flatbuffers::Vector<'a, super::base::TerminalId>>>,
-    pub partner_id: Option<&'a super::base::PartnerId>,
-    pub show_name: Option<::flatbuffers::WIPOffset<&'a str>>,
-}
-impl<'a> Default for PartnerArgs<'a> {
-  #[inline]
-  fn default() -> Self {
-    PartnerArgs {
-      id: None,
-      terminal_ids: None,
-      partner_id: None,
-      show_name: None,
+    impl<'a> ::flatbuffers::Follow<'a> for Partner<'a> {
+        type Inner = Partner<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { ::flatbuffers::Table::new(buf, loc) },
+            }
+        }
     }
-  }
-}
 
-pub struct PartnerBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
-  fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
-  start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
-}
-impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> PartnerBuilder<'a, 'b, A> {
-  #[inline]
-  pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-    self.fbb_.push_slot_always::<&super::base::UlidBytes>(Partner::VT_ID, id);
-  }
-  #[inline]
-  pub fn add_terminal_ids(&mut self, terminal_ids: ::flatbuffers::WIPOffset<::flatbuffers::Vector<'b , super::base::TerminalId>>) {
-    self.fbb_.push_slot_always::<::flatbuffers::WIPOffset<_>>(Partner::VT_TERMINAL_IDS, terminal_ids);
-  }
-  #[inline]
-  pub fn add_partner_id(&mut self, partner_id: &super::base::PartnerId) {
-    self.fbb_.push_slot_always::<&super::base::PartnerId>(Partner::VT_PARTNER_ID, partner_id);
-  }
-  #[inline]
-  pub fn add_show_name(&mut self, show_name: ::flatbuffers::WIPOffset<&'b  str>) {
-    self.fbb_.push_slot_always::<::flatbuffers::WIPOffset<_>>(Partner::VT_SHOW_NAME, show_name);
-  }
-  #[inline]
-  pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> PartnerBuilder<'a, 'b, A> {
-    let start = _fbb.start_table();
-    PartnerBuilder {
-      fbb_: _fbb,
-      start_: start,
+    impl<'a> Partner<'a> {
+        pub const VT_ID: ::flatbuffers::VOffsetT = 4;
+        pub const VT_TERMINAL_IDS: ::flatbuffers::VOffsetT = 6;
+        pub const VT_PARTNER_ID: ::flatbuffers::VOffsetT = 8;
+        pub const VT_SHOW_NAME: ::flatbuffers::VOffsetT = 10;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
+            Partner { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args PartnerArgs<'args>,
+        ) -> ::flatbuffers::WIPOffset<Partner<'bldr>> {
+            let mut builder = PartnerBuilder::new(_fbb);
+            if let Some(x) = args.show_name {
+                builder.add_show_name(x);
+            }
+            if let Some(x) = args.partner_id {
+                builder.add_partner_id(x);
+            }
+            if let Some(x) = args.terminal_ids {
+                builder.add_terminal_ids(x);
+            }
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> PartnerT {
+            let id = self.id().map(|x| x.unpack());
+            let terminal_ids = self.terminal_ids().map(|x| x.iter().map(|t| t.unpack()).collect());
+            let partner_id = self.partner_id().map(|x| x.unpack());
+            let show_name = self.show_name().map(|x| alloc::string::ToString::to_string(x));
+            PartnerT {
+                id,
+                terminal_ids,
+                partner_id,
+                show_name,
+            }
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(Partner::VT_ID, None) }
+        }
+        #[inline]
+        pub fn terminal_ids(&self) -> Option<::flatbuffers::Vector<'a, super::base::TerminalId>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<::flatbuffers::ForwardsUOffset<::flatbuffers::Vector<'a, super::base::TerminalId>>>(Partner::VT_TERMINAL_IDS, None)
+            }
+        }
+        #[inline]
+        pub fn partner_id(&self) -> Option<&'a super::base::PartnerId> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::PartnerId>(Partner::VT_PARTNER_ID, None) }
+        }
+        #[inline]
+        pub fn show_name(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<::flatbuffers::ForwardsUOffset<&str>>(Partner::VT_SHOW_NAME, None) }
+        }
     }
-  }
-  #[inline]
-  pub fn finish(self) -> ::flatbuffers::WIPOffset<Partner<'a>> {
-    let o = self.fbb_.end_table(self.start_);
-    ::flatbuffers::WIPOffset::new(o.value())
-  }
-}
 
-impl ::core::fmt::Debug for Partner<'_> {
-  fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-    let mut ds = f.debug_struct("Partner");
-      ds.field("id", &self.id());
-      ds.field("terminal_ids", &self.terminal_ids());
-      ds.field("partner_id", &self.partner_id());
-      ds.field("show_name", &self.show_name());
-      ds.finish()
-  }
-}
-#[non_exhaustive]
-#[derive(Debug, Clone, PartialEq)]
-pub struct PartnerT {
-  pub id: Option<super::base::UlidBytesT>,
-  pub terminal_ids: Option<alloc::vec::Vec<super::base::TerminalIdT>>,
-  pub partner_id: Option<super::base::PartnerIdT>,
-  pub show_name: Option<alloc::string::String>,
-}
-impl Default for PartnerT {
-  fn default() -> Self {
-    Self {
-      id: None,
-      terminal_ids: None,
-      partner_id: None,
-      show_name: None,
+    impl ::flatbuffers::Verifiable for Partner<'_> {
+        #[inline]
+        fn run_verifier(v: &mut ::flatbuffers::Verifier, pos: usize) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
+            v.visit_table(pos)?
+                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<::flatbuffers::ForwardsUOffset<::flatbuffers::Vector<'_, super::base::TerminalId>>>(
+                    "terminal_ids",
+                    Self::VT_TERMINAL_IDS,
+                    false,
+                )?
+                .visit_field::<super::base::PartnerId>("partner_id", Self::VT_PARTNER_ID, false)?
+                .visit_field::<::flatbuffers::ForwardsUOffset<&str>>("show_name", Self::VT_SHOW_NAME, false)?
+                .finish();
+            Ok(())
+        }
     }
-  }
-}
-impl PartnerT {
-  pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(
-    &self,
-    _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>
-  ) -> ::flatbuffers::WIPOffset<Partner<'b>> {
-    let id_tmp = self.id.as_ref().map(|x| x.pack());
-    let id = id_tmp.as_ref();
-    let terminal_ids = self.terminal_ids.as_ref().map(|x|{
-      let w: alloc::vec::Vec<_> = x.iter().map(|t| t.pack()).collect();_fbb.create_vector(&w)
-    });
-    let partner_id_tmp = self.partner_id.as_ref().map(|x| x.pack());
-    let partner_id = partner_id_tmp.as_ref();
-    let show_name = self.show_name.as_ref().map(|x|{
-      _fbb.create_string(x)
-    });
-    Partner::create(_fbb, &PartnerArgs{
-      id,
-      terminal_ids,
-      partner_id,
-      show_name,
-    })
-  }
-}
-}  // pub mod partner
+    pub struct PartnerArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+        pub terminal_ids: Option<::flatbuffers::WIPOffset<::flatbuffers::Vector<'a, super::base::TerminalId>>>,
+        pub partner_id: Option<&'a super::base::PartnerId>,
+        pub show_name: Option<::flatbuffers::WIPOffset<&'a str>>,
+    }
+    impl<'a> Default for PartnerArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            PartnerArgs {
+                id: None,
+                terminal_ids: None,
+                partner_id: None,
+                show_name: None,
+            }
+        }
+    }
 
+    pub struct PartnerBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> PartnerBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(Partner::VT_ID, id);
+        }
+        #[inline]
+        pub fn add_terminal_ids(&mut self, terminal_ids: ::flatbuffers::WIPOffset<::flatbuffers::Vector<'b, super::base::TerminalId>>) {
+            self.fbb_
+                .push_slot_always::<::flatbuffers::WIPOffset<_>>(Partner::VT_TERMINAL_IDS, terminal_ids);
+        }
+        #[inline]
+        pub fn add_partner_id(&mut self, partner_id: &super::base::PartnerId) {
+            self.fbb_.push_slot_always::<&super::base::PartnerId>(Partner::VT_PARTNER_ID, partner_id);
+        }
+        #[inline]
+        pub fn add_show_name(&mut self, show_name: ::flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_.push_slot_always::<::flatbuffers::WIPOffset<_>>(Partner::VT_SHOW_NAME, show_name);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> PartnerBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            PartnerBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> ::flatbuffers::WIPOffset<Partner<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            ::flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl ::core::fmt::Debug for Partner<'_> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            let mut ds = f.debug_struct("Partner");
+            ds.field("id", &self.id());
+            ds.field("terminal_ids", &self.terminal_ids());
+            ds.field("partner_id", &self.partner_id());
+            ds.field("show_name", &self.show_name());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct PartnerT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub terminal_ids: Option<alloc::vec::Vec<super::base::TerminalIdT>>,
+        pub partner_id: Option<super::base::PartnerIdT>,
+        pub show_name: Option<alloc::string::String>,
+    }
+    impl Default for PartnerT {
+        fn default() -> Self {
+            Self {
+                id: None,
+                terminal_ids: None,
+                partner_id: None,
+                show_name: None,
+            }
+        }
+    }
+    impl PartnerT {
+        pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(&self, _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>) -> ::flatbuffers::WIPOffset<Partner<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let terminal_ids = self.terminal_ids.as_ref().map(|x| {
+                let w: alloc::vec::Vec<_> = x.iter().map(|t| t.pack()).collect();
+                _fbb.create_vector(&w)
+            });
+            let partner_id_tmp = self.partner_id.as_ref().map(|x| x.pack());
+            let partner_id = partner_id_tmp.as_ref();
+            let show_name = self.show_name.as_ref().map(|x| _fbb.create_string(x));
+            Partner::create(
+                _fbb,
+                &PartnerArgs {
+                    id,
+                    terminal_ids,
+                    partner_id,
+                    show_name,
+                },
+            )
+        }
+    }
+} // pub mod partner

@@ -7,844 +7,791 @@ use crate::base_generated::*;
 #[allow(unused_imports, dead_code)]
 pub mod chat {
 
-  use crate::base_generated::*;
+    use crate::base_generated::*;
 
-#[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-pub const ENUM_MIN_CHAT_TYPE: u32 = 0;
-#[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-pub const ENUM_MAX_CHAT_TYPE: u32 = 2;
-#[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-#[allow(non_camel_case_types)]
-pub const ENUM_VALUES_CHAT_TYPE: [ChatType; 3] = [
-  ChatType::none,
-  ChatType::text_message,
-  ChatType::text_message_ack,
-];
+    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+    pub const ENUM_MIN_CHAT_TYPE: u32 = 0;
+    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+    pub const ENUM_MAX_CHAT_TYPE: u32 = 2;
+    #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+    #[allow(non_camel_case_types)]
+    pub const ENUM_VALUES_CHAT_TYPE: [ChatType; 3] = [ChatType::none, ChatType::text_message, ChatType::text_message_ack];
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
-#[repr(transparent)]
-pub struct ChatType(pub u32);
-#[allow(non_upper_case_globals)]
-impl ChatType {
-  pub const none: Self = Self(0);
-  pub const text_message: Self = Self(1);
-  pub const text_message_ack: Self = Self(2);
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+    #[repr(transparent)]
+    pub struct ChatType(pub u32);
+    #[allow(non_upper_case_globals)]
+    impl ChatType {
+        pub const none: Self = Self(0);
+        pub const text_message: Self = Self(1);
+        pub const text_message_ack: Self = Self(2);
 
-  pub const ENUM_MIN: u32 = 0;
-  pub const ENUM_MAX: u32 = 2;
-  pub const ENUM_VALUES: &'static [Self] = &[
-    Self::none,
-    Self::text_message,
-    Self::text_message_ack,
-  ];
-  /// Returns the variant's name or "" if unknown.
-  pub fn variant_name(self) -> Option<&'static str> {
-    match self {
-      Self::none => Some("none"),
-      Self::text_message => Some("text_message"),
-      Self::text_message_ack => Some("text_message_ack"),
-      _ => None,
+        pub const ENUM_MIN: u32 = 0;
+        pub const ENUM_MAX: u32 = 2;
+        pub const ENUM_VALUES: &'static [Self] = &[Self::none, Self::text_message, Self::text_message_ack];
+        /// Returns the variant's name or "" if unknown.
+        pub fn variant_name(self) -> Option<&'static str> {
+            match self {
+                Self::none => Some("none"),
+                Self::text_message => Some("text_message"),
+                Self::text_message_ack => Some("text_message_ack"),
+                _ => None,
+            }
+        }
     }
-  }
-}
-impl ::core::fmt::Debug for ChatType {
-  fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
-    if let Some(name) = self.variant_name() {
-      f.write_str(name)
-    } else {
-      f.write_fmt(format_args!("<UNKNOWN {:?}>", self.0))
+    impl ::core::fmt::Debug for ChatType {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+            if let Some(name) = self.variant_name() {
+                f.write_str(name)
+            } else {
+                f.write_fmt(format_args!("<UNKNOWN {:?}>", self.0))
+            }
+        }
     }
-  }
-}
-impl<'a> ::flatbuffers::Follow<'a> for ChatType {
-  type Inner = Self;
-  #[inline]
-  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    let b = unsafe { ::flatbuffers::read_scalar_at::<u32>(buf, loc) };
-    Self(b)
-  }
-}
-
-impl ::flatbuffers::Push for ChatType {
-    type Output = ChatType;
-    #[inline]
-    unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
-        unsafe { ::flatbuffers::emplace_scalar::<u32>(dst, self.0) };
+    impl<'a> ::flatbuffers::Follow<'a> for ChatType {
+        type Inner = Self;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            let b = unsafe { ::flatbuffers::read_scalar_at::<u32>(buf, loc) };
+            Self(b)
+        }
     }
-}
 
-impl ::flatbuffers::EndianScalar for ChatType {
-  type Scalar = u32;
-  #[inline]
-  fn to_little_endian(self) -> u32 {
-    self.0.to_le()
-  }
-  #[inline]
-  #[allow(clippy::wrong_self_convention)]
-  fn from_little_endian(v: u32) -> Self {
-    let b = u32::from_le(v);
-    Self(b)
-  }
-}
-
-impl<'a> ::flatbuffers::Verifiable for ChatType {
-  #[inline]
-  fn run_verifier(
-    v: &mut ::flatbuffers::Verifier, pos: usize
-  ) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
-    u32::run_verifier(v, pos)
-  }
-}
-
-impl ::flatbuffers::SimpleToVerifyInSlice for ChatType {}
-pub enum TextMessageOffset {}
-#[derive(Copy, Clone, PartialEq)]
-
-pub struct TextMessage<'a> {
-  pub _tab: ::flatbuffers::Table<'a>,
-}
-
-impl<'a> ::flatbuffers::Follow<'a> for TextMessage<'a> {
-  type Inner = TextMessage<'a>;
-  #[inline]
-  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    Self { _tab: unsafe { ::flatbuffers::Table::new(buf, loc) } }
-  }
-}
-
-impl<'a> TextMessage<'a> {
-  pub const VT_ID: ::flatbuffers::VOffsetT = 4;
-  pub const VT_FROM_PARTNER_ID: ::flatbuffers::VOffsetT = 6;
-  pub const VT_TO_PARTNER_ID: ::flatbuffers::VOffsetT = 8;
-  pub const VT_FROM_TERMINAL_ID: ::flatbuffers::VOffsetT = 10;
-  pub const VT_TO_TERMINAL_ID: ::flatbuffers::VOffsetT = 12;
-  pub const VT_MESSAGE_ID: ::flatbuffers::VOffsetT = 14;
-  pub const VT_TEXT: ::flatbuffers::VOffsetT = 16;
-
-  #[inline]
-  pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
-    TextMessage { _tab: table }
-  }
-  #[allow(unused_mut)]
-  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
-    _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
-    args: &'args TextMessageArgs<'args>
-  ) -> ::flatbuffers::WIPOffset<TextMessage<'bldr>> {
-    let mut builder = TextMessageBuilder::new(_fbb);
-    if let Some(x) = args.text { builder.add_text(x); }
-    if let Some(x) = args.message_id { builder.add_message_id(x); }
-    if let Some(x) = args.to_terminal_id { builder.add_to_terminal_id(x); }
-    if let Some(x) = args.from_terminal_id { builder.add_from_terminal_id(x); }
-    if let Some(x) = args.to_partner_id { builder.add_to_partner_id(x); }
-    if let Some(x) = args.from_partner_id { builder.add_from_partner_id(x); }
-    if let Some(x) = args.id { builder.add_id(x); }
-    builder.finish()
-  }
-
-  pub fn unpack(&self) -> TextMessageT {
-    let id = self.id().map(|x| {
-      x.unpack()
-    });
-    let from_partner_id = self.from_partner_id().map(|x| {
-      x.unpack()
-    });
-    let to_partner_id = self.to_partner_id().map(|x| {
-      x.unpack()
-    });
-    let from_terminal_id = self.from_terminal_id().map(|x| {
-      x.unpack()
-    });
-    let to_terminal_id = self.to_terminal_id().map(|x| {
-      x.unpack()
-    });
-    let message_id = self.message_id().map(|x| {
-      x.unpack()
-    });
-    let text = self.text().map(|x| {
-      alloc::string::ToString::to_string(x)
-    });
-    TextMessageT {
-      id,
-      from_partner_id,
-      to_partner_id,
-      from_terminal_id,
-      to_terminal_id,
-      message_id,
-      text,
+    impl ::flatbuffers::Push for ChatType {
+        type Output = ChatType;
+        #[inline]
+        unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+            unsafe { ::flatbuffers::emplace_scalar::<u32>(dst, self.0) };
+        }
     }
-  }
 
-  #[inline]
-  pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::UlidBytes>(TextMessage::VT_ID, None)}
-  }
-  #[inline]
-  pub fn from_partner_id(&self) -> Option<&'a super::base::PartnerId> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::PartnerId>(TextMessage::VT_FROM_PARTNER_ID, None)}
-  }
-  #[inline]
-  pub fn to_partner_id(&self) -> Option<&'a super::base::PartnerId> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::PartnerId>(TextMessage::VT_TO_PARTNER_ID, None)}
-  }
-  #[inline]
-  pub fn from_terminal_id(&self) -> Option<&'a super::base::TerminalId> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::TerminalId>(TextMessage::VT_FROM_TERMINAL_ID, None)}
-  }
-  #[inline]
-  pub fn to_terminal_id(&self) -> Option<&'a super::base::TerminalId> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::TerminalId>(TextMessage::VT_TO_TERMINAL_ID, None)}
-  }
-  #[inline]
-  pub fn message_id(&self) -> Option<&'a super::base::UlidBytes> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::UlidBytes>(TextMessage::VT_MESSAGE_ID, None)}
-  }
-  #[inline]
-  pub fn text(&self) -> Option<&'a str> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<::flatbuffers::ForwardsUOffset<&str>>(TextMessage::VT_TEXT, None)}
-  }
-}
-
-impl ::flatbuffers::Verifiable for TextMessage<'_> {
-  #[inline]
-  fn run_verifier(
-    v: &mut ::flatbuffers::Verifier, pos: usize
-  ) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
-    v.visit_table(pos)?
-     .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-     .visit_field::<super::base::PartnerId>("from_partner_id", Self::VT_FROM_PARTNER_ID, false)?
-     .visit_field::<super::base::PartnerId>("to_partner_id", Self::VT_TO_PARTNER_ID, false)?
-     .visit_field::<super::base::TerminalId>("from_terminal_id", Self::VT_FROM_TERMINAL_ID, false)?
-     .visit_field::<super::base::TerminalId>("to_terminal_id", Self::VT_TO_TERMINAL_ID, false)?
-     .visit_field::<super::base::UlidBytes>("message_id", Self::VT_MESSAGE_ID, false)?
-     .visit_field::<::flatbuffers::ForwardsUOffset<&str>>("text", Self::VT_TEXT, false)?
-     .finish();
-    Ok(())
-  }
-}
-pub struct TextMessageArgs<'a> {
-    pub id: Option<&'a super::base::UlidBytes>,
-    pub from_partner_id: Option<&'a super::base::PartnerId>,
-    pub to_partner_id: Option<&'a super::base::PartnerId>,
-    pub from_terminal_id: Option<&'a super::base::TerminalId>,
-    pub to_terminal_id: Option<&'a super::base::TerminalId>,
-    pub message_id: Option<&'a super::base::UlidBytes>,
-    pub text: Option<::flatbuffers::WIPOffset<&'a str>>,
-}
-impl<'a> Default for TextMessageArgs<'a> {
-  #[inline]
-  fn default() -> Self {
-    TextMessageArgs {
-      id: None,
-      from_partner_id: None,
-      to_partner_id: None,
-      from_terminal_id: None,
-      to_terminal_id: None,
-      message_id: None,
-      text: None,
+    impl ::flatbuffers::EndianScalar for ChatType {
+        type Scalar = u32;
+        #[inline]
+        fn to_little_endian(self) -> u32 {
+            self.0.to_le()
+        }
+        #[inline]
+        #[allow(clippy::wrong_self_convention)]
+        fn from_little_endian(v: u32) -> Self {
+            let b = u32::from_le(v);
+            Self(b)
+        }
     }
-  }
-}
 
-pub struct TextMessageBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
-  fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
-  start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
-}
-impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> TextMessageBuilder<'a, 'b, A> {
-  #[inline]
-  pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-    self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessage::VT_ID, id);
-  }
-  #[inline]
-  pub fn add_from_partner_id(&mut self, from_partner_id: &super::base::PartnerId) {
-    self.fbb_.push_slot_always::<&super::base::PartnerId>(TextMessage::VT_FROM_PARTNER_ID, from_partner_id);
-  }
-  #[inline]
-  pub fn add_to_partner_id(&mut self, to_partner_id: &super::base::PartnerId) {
-    self.fbb_.push_slot_always::<&super::base::PartnerId>(TextMessage::VT_TO_PARTNER_ID, to_partner_id);
-  }
-  #[inline]
-  pub fn add_from_terminal_id(&mut self, from_terminal_id: &super::base::TerminalId) {
-    self.fbb_.push_slot_always::<&super::base::TerminalId>(TextMessage::VT_FROM_TERMINAL_ID, from_terminal_id);
-  }
-  #[inline]
-  pub fn add_to_terminal_id(&mut self, to_terminal_id: &super::base::TerminalId) {
-    self.fbb_.push_slot_always::<&super::base::TerminalId>(TextMessage::VT_TO_TERMINAL_ID, to_terminal_id);
-  }
-  #[inline]
-  pub fn add_message_id(&mut self, message_id: &super::base::UlidBytes) {
-    self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessage::VT_MESSAGE_ID, message_id);
-  }
-  #[inline]
-  pub fn add_text(&mut self, text: ::flatbuffers::WIPOffset<&'b  str>) {
-    self.fbb_.push_slot_always::<::flatbuffers::WIPOffset<_>>(TextMessage::VT_TEXT, text);
-  }
-  #[inline]
-  pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> TextMessageBuilder<'a, 'b, A> {
-    let start = _fbb.start_table();
-    TextMessageBuilder {
-      fbb_: _fbb,
-      start_: start,
+    impl<'a> ::flatbuffers::Verifiable for ChatType {
+        #[inline]
+        fn run_verifier(v: &mut ::flatbuffers::Verifier, pos: usize) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
+            u32::run_verifier(v, pos)
+        }
     }
-  }
-  #[inline]
-  pub fn finish(self) -> ::flatbuffers::WIPOffset<TextMessage<'a>> {
-    let o = self.fbb_.end_table(self.start_);
-    ::flatbuffers::WIPOffset::new(o.value())
-  }
-}
 
-impl ::core::fmt::Debug for TextMessage<'_> {
-  fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-    let mut ds = f.debug_struct("TextMessage");
-      ds.field("id", &self.id());
-      ds.field("from_partner_id", &self.from_partner_id());
-      ds.field("to_partner_id", &self.to_partner_id());
-      ds.field("from_terminal_id", &self.from_terminal_id());
-      ds.field("to_terminal_id", &self.to_terminal_id());
-      ds.field("message_id", &self.message_id());
-      ds.field("text", &self.text());
-      ds.finish()
-  }
-}
-#[non_exhaustive]
-#[derive(Debug, Clone, PartialEq)]
-pub struct TextMessageT {
-  pub id: Option<super::base::UlidBytesT>,
-  pub from_partner_id: Option<super::base::PartnerIdT>,
-  pub to_partner_id: Option<super::base::PartnerIdT>,
-  pub from_terminal_id: Option<super::base::TerminalIdT>,
-  pub to_terminal_id: Option<super::base::TerminalIdT>,
-  pub message_id: Option<super::base::UlidBytesT>,
-  pub text: Option<alloc::string::String>,
-}
-impl Default for TextMessageT {
-  fn default() -> Self {
-    Self {
-      id: None,
-      from_partner_id: None,
-      to_partner_id: None,
-      from_terminal_id: None,
-      to_terminal_id: None,
-      message_id: None,
-      text: None,
+    impl ::flatbuffers::SimpleToVerifyInSlice for ChatType {}
+    pub enum TextMessageOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct TextMessage<'a> {
+        pub _tab: ::flatbuffers::Table<'a>,
     }
-  }
-}
-impl TextMessageT {
-  pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(
-    &self,
-    _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>
-  ) -> ::flatbuffers::WIPOffset<TextMessage<'b>> {
-    let id_tmp = self.id.as_ref().map(|x| x.pack());
-    let id = id_tmp.as_ref();
-    let from_partner_id_tmp = self.from_partner_id.as_ref().map(|x| x.pack());
-    let from_partner_id = from_partner_id_tmp.as_ref();
-    let to_partner_id_tmp = self.to_partner_id.as_ref().map(|x| x.pack());
-    let to_partner_id = to_partner_id_tmp.as_ref();
-    let from_terminal_id_tmp = self.from_terminal_id.as_ref().map(|x| x.pack());
-    let from_terminal_id = from_terminal_id_tmp.as_ref();
-    let to_terminal_id_tmp = self.to_terminal_id.as_ref().map(|x| x.pack());
-    let to_terminal_id = to_terminal_id_tmp.as_ref();
-    let message_id_tmp = self.message_id.as_ref().map(|x| x.pack());
-    let message_id = message_id_tmp.as_ref();
-    let text = self.text.as_ref().map(|x|{
-      _fbb.create_string(x)
-    });
-    TextMessage::create(_fbb, &TextMessageArgs{
-      id,
-      from_partner_id,
-      to_partner_id,
-      from_terminal_id,
-      to_terminal_id,
-      message_id,
-      text,
-    })
-  }
-}
-pub enum TextMessageAckOffset {}
-#[derive(Copy, Clone, PartialEq)]
 
-pub struct TextMessageAck<'a> {
-  pub _tab: ::flatbuffers::Table<'a>,
-}
-
-impl<'a> ::flatbuffers::Follow<'a> for TextMessageAck<'a> {
-  type Inner = TextMessageAck<'a>;
-  #[inline]
-  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    Self { _tab: unsafe { ::flatbuffers::Table::new(buf, loc) } }
-  }
-}
-
-impl<'a> TextMessageAck<'a> {
-  pub const VT_ID: ::flatbuffers::VOffsetT = 4;
-  pub const VT_SEND_ID: ::flatbuffers::VOffsetT = 6;
-
-  #[inline]
-  pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
-    TextMessageAck { _tab: table }
-  }
-  #[allow(unused_mut)]
-  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
-    _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
-    args: &'args TextMessageAckArgs<'args>
-  ) -> ::flatbuffers::WIPOffset<TextMessageAck<'bldr>> {
-    let mut builder = TextMessageAckBuilder::new(_fbb);
-    if let Some(x) = args.send_id { builder.add_send_id(x); }
-    if let Some(x) = args.id { builder.add_id(x); }
-    builder.finish()
-  }
-
-  pub fn unpack(&self) -> TextMessageAckT {
-    let id = self.id().map(|x| {
-      x.unpack()
-    });
-    let send_id = self.send_id().map(|x| {
-      x.unpack()
-    });
-    TextMessageAckT {
-      id,
-      send_id,
+    impl<'a> ::flatbuffers::Follow<'a> for TextMessage<'a> {
+        type Inner = TextMessage<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { ::flatbuffers::Table::new(buf, loc) },
+            }
+        }
     }
-  }
 
-  #[inline]
-  pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::UlidBytes>(TextMessageAck::VT_ID, None)}
-  }
-  #[inline]
-  pub fn send_id(&self) -> Option<&'a super::base::UlidBytes> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::UlidBytes>(TextMessageAck::VT_SEND_ID, None)}
-  }
-}
+    impl<'a> TextMessage<'a> {
+        pub const VT_ID: ::flatbuffers::VOffsetT = 4;
+        pub const VT_FROM_PARTNER_ID: ::flatbuffers::VOffsetT = 6;
+        pub const VT_TO_PARTNER_ID: ::flatbuffers::VOffsetT = 8;
+        pub const VT_FROM_TERMINAL_ID: ::flatbuffers::VOffsetT = 10;
+        pub const VT_TO_TERMINAL_ID: ::flatbuffers::VOffsetT = 12;
+        pub const VT_MESSAGE_ID: ::flatbuffers::VOffsetT = 14;
+        pub const VT_TEXT: ::flatbuffers::VOffsetT = 16;
 
-impl ::flatbuffers::Verifiable for TextMessageAck<'_> {
-  #[inline]
-  fn run_verifier(
-    v: &mut ::flatbuffers::Verifier, pos: usize
-  ) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
-    v.visit_table(pos)?
-     .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
-     .visit_field::<super::base::UlidBytes>("send_id", Self::VT_SEND_ID, false)?
-     .finish();
-    Ok(())
-  }
-}
-pub struct TextMessageAckArgs<'a> {
-    pub id: Option<&'a super::base::UlidBytes>,
-    pub send_id: Option<&'a super::base::UlidBytes>,
-}
-impl<'a> Default for TextMessageAckArgs<'a> {
-  #[inline]
-  fn default() -> Self {
-    TextMessageAckArgs {
-      id: None,
-      send_id: None,
+        #[inline]
+        pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
+            TextMessage { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args TextMessageArgs<'args>,
+        ) -> ::flatbuffers::WIPOffset<TextMessage<'bldr>> {
+            let mut builder = TextMessageBuilder::new(_fbb);
+            if let Some(x) = args.text {
+                builder.add_text(x);
+            }
+            if let Some(x) = args.message_id {
+                builder.add_message_id(x);
+            }
+            if let Some(x) = args.to_terminal_id {
+                builder.add_to_terminal_id(x);
+            }
+            if let Some(x) = args.from_terminal_id {
+                builder.add_from_terminal_id(x);
+            }
+            if let Some(x) = args.to_partner_id {
+                builder.add_to_partner_id(x);
+            }
+            if let Some(x) = args.from_partner_id {
+                builder.add_from_partner_id(x);
+            }
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> TextMessageT {
+            let id = self.id().map(|x| x.unpack());
+            let from_partner_id = self.from_partner_id().map(|x| x.unpack());
+            let to_partner_id = self.to_partner_id().map(|x| x.unpack());
+            let from_terminal_id = self.from_terminal_id().map(|x| x.unpack());
+            let to_terminal_id = self.to_terminal_id().map(|x| x.unpack());
+            let message_id = self.message_id().map(|x| x.unpack());
+            let text = self.text().map(|x| alloc::string::ToString::to_string(x));
+            TextMessageT {
+                id,
+                from_partner_id,
+                to_partner_id,
+                from_terminal_id,
+                to_terminal_id,
+                message_id,
+                text,
+            }
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(TextMessage::VT_ID, None) }
+        }
+        #[inline]
+        pub fn from_partner_id(&self) -> Option<&'a super::base::PartnerId> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::PartnerId>(TextMessage::VT_FROM_PARTNER_ID, None) }
+        }
+        #[inline]
+        pub fn to_partner_id(&self) -> Option<&'a super::base::PartnerId> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::PartnerId>(TextMessage::VT_TO_PARTNER_ID, None) }
+        }
+        #[inline]
+        pub fn from_terminal_id(&self) -> Option<&'a super::base::TerminalId> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::TerminalId>(TextMessage::VT_FROM_TERMINAL_ID, None) }
+        }
+        #[inline]
+        pub fn to_terminal_id(&self) -> Option<&'a super::base::TerminalId> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::TerminalId>(TextMessage::VT_TO_TERMINAL_ID, None) }
+        }
+        #[inline]
+        pub fn message_id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(TextMessage::VT_MESSAGE_ID, None) }
+        }
+        #[inline]
+        pub fn text(&self) -> Option<&'a str> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<::flatbuffers::ForwardsUOffset<&str>>(TextMessage::VT_TEXT, None) }
+        }
     }
-  }
-}
 
-pub struct TextMessageAckBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
-  fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
-  start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
-}
-impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> TextMessageAckBuilder<'a, 'b, A> {
-  #[inline]
-  pub fn add_id(&mut self, id: &super::base::UlidBytes) {
-    self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessageAck::VT_ID, id);
-  }
-  #[inline]
-  pub fn add_send_id(&mut self, send_id: &super::base::UlidBytes) {
-    self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessageAck::VT_SEND_ID, send_id);
-  }
-  #[inline]
-  pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> TextMessageAckBuilder<'a, 'b, A> {
-    let start = _fbb.start_table();
-    TextMessageAckBuilder {
-      fbb_: _fbb,
-      start_: start,
+    impl ::flatbuffers::Verifiable for TextMessage<'_> {
+        #[inline]
+        fn run_verifier(v: &mut ::flatbuffers::Verifier, pos: usize) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
+            v.visit_table(pos)?
+                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<super::base::PartnerId>("from_partner_id", Self::VT_FROM_PARTNER_ID, false)?
+                .visit_field::<super::base::PartnerId>("to_partner_id", Self::VT_TO_PARTNER_ID, false)?
+                .visit_field::<super::base::TerminalId>("from_terminal_id", Self::VT_FROM_TERMINAL_ID, false)?
+                .visit_field::<super::base::TerminalId>("to_terminal_id", Self::VT_TO_TERMINAL_ID, false)?
+                .visit_field::<super::base::UlidBytes>("message_id", Self::VT_MESSAGE_ID, false)?
+                .visit_field::<::flatbuffers::ForwardsUOffset<&str>>("text", Self::VT_TEXT, false)?
+                .finish();
+            Ok(())
+        }
     }
-  }
-  #[inline]
-  pub fn finish(self) -> ::flatbuffers::WIPOffset<TextMessageAck<'a>> {
-    let o = self.fbb_.end_table(self.start_);
-    ::flatbuffers::WIPOffset::new(o.value())
-  }
-}
-
-impl ::core::fmt::Debug for TextMessageAck<'_> {
-  fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-    let mut ds = f.debug_struct("TextMessageAck");
-      ds.field("id", &self.id());
-      ds.field("send_id", &self.send_id());
-      ds.finish()
-  }
-}
-#[non_exhaustive]
-#[derive(Debug, Clone, PartialEq)]
-pub struct TextMessageAckT {
-  pub id: Option<super::base::UlidBytesT>,
-  pub send_id: Option<super::base::UlidBytesT>,
-}
-impl Default for TextMessageAckT {
-  fn default() -> Self {
-    Self {
-      id: None,
-      send_id: None,
+    pub struct TextMessageArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+        pub from_partner_id: Option<&'a super::base::PartnerId>,
+        pub to_partner_id: Option<&'a super::base::PartnerId>,
+        pub from_terminal_id: Option<&'a super::base::TerminalId>,
+        pub to_terminal_id: Option<&'a super::base::TerminalId>,
+        pub message_id: Option<&'a super::base::UlidBytes>,
+        pub text: Option<::flatbuffers::WIPOffset<&'a str>>,
     }
-  }
-}
-impl TextMessageAckT {
-  pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(
-    &self,
-    _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>
-  ) -> ::flatbuffers::WIPOffset<TextMessageAck<'b>> {
-    let id_tmp = self.id.as_ref().map(|x| x.pack());
-    let id = id_tmp.as_ref();
-    let send_id_tmp = self.send_id.as_ref().map(|x| x.pack());
-    let send_id = send_id_tmp.as_ref();
-    TextMessageAck::create(_fbb, &TextMessageAckArgs{
-      id,
-      send_id,
-    })
-  }
-}
-pub enum ChatTextMessageOffset {}
-#[derive(Copy, Clone, PartialEq)]
-
-pub struct ChatTextMessage<'a> {
-  pub _tab: ::flatbuffers::Table<'a>,
-}
-
-impl<'a> ::flatbuffers::Follow<'a> for ChatTextMessage<'a> {
-  type Inner = ChatTextMessage<'a>;
-  #[inline]
-  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    Self { _tab: unsafe { ::flatbuffers::Table::new(buf, loc) } }
-  }
-}
-
-impl<'a> ChatTextMessage<'a> {
-  pub const VT_HEADER: ::flatbuffers::VOffsetT = 4;
-  pub const VT_MESSAGE: ::flatbuffers::VOffsetT = 6;
-
-  #[inline]
-  pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
-    ChatTextMessage { _tab: table }
-  }
-  #[allow(unused_mut)]
-  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
-    _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
-    args: &'args ChatTextMessageArgs<'args>
-  ) -> ::flatbuffers::WIPOffset<ChatTextMessage<'bldr>> {
-    let mut builder = ChatTextMessageBuilder::new(_fbb);
-    if let Some(x) = args.message { builder.add_message(x); }
-    if let Some(x) = args.header { builder.add_header(x); }
-    builder.finish()
-  }
-
-  pub fn unpack(&self) -> ChatTextMessageT {
-    let header = self.header().map(|x| {
-      x.unpack()
-    });
-    let message = self.message().map(|x| {
-      alloc::boxed::Box::new(x.unpack())
-    });
-    ChatTextMessageT {
-      header,
-      message,
+    impl<'a> Default for TextMessageArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            TextMessageArgs {
+                id: None,
+                from_partner_id: None,
+                to_partner_id: None,
+                from_terminal_id: None,
+                to_terminal_id: None,
+                message_id: None,
+                text: None,
+            }
+        }
     }
-  }
 
-  #[inline]
-  pub fn header(&self) -> Option<&'a super::base::Header> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::Header>(ChatTextMessage::VT_HEADER, None)}
-  }
-  #[inline]
-  pub fn message(&self) -> Option<TextMessage<'a>> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<::flatbuffers::ForwardsUOffset<TextMessage>>(ChatTextMessage::VT_MESSAGE, None)}
-  }
-}
-
-impl ::flatbuffers::Verifiable for ChatTextMessage<'_> {
-  #[inline]
-  fn run_verifier(
-    v: &mut ::flatbuffers::Verifier, pos: usize
-  ) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
-    v.visit_table(pos)?
-     .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
-     .visit_field::<::flatbuffers::ForwardsUOffset<TextMessage>>("message", Self::VT_MESSAGE, false)?
-     .finish();
-    Ok(())
-  }
-}
-pub struct ChatTextMessageArgs<'a> {
-    pub header: Option<&'a super::base::Header>,
-    pub message: Option<::flatbuffers::WIPOffset<TextMessage<'a>>>,
-}
-impl<'a> Default for ChatTextMessageArgs<'a> {
-  #[inline]
-  fn default() -> Self {
-    ChatTextMessageArgs {
-      header: None,
-      message: None,
+    pub struct TextMessageBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
     }
-  }
-}
-
-pub struct ChatTextMessageBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
-  fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
-  start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
-}
-impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> ChatTextMessageBuilder<'a, 'b, A> {
-  #[inline]
-  pub fn add_header(&mut self, header: &super::base::Header) {
-    self.fbb_.push_slot_always::<&super::base::Header>(ChatTextMessage::VT_HEADER, header);
-  }
-  #[inline]
-  pub fn add_message(&mut self, message: ::flatbuffers::WIPOffset<TextMessage<'b >>) {
-    self.fbb_.push_slot_always::<::flatbuffers::WIPOffset<TextMessage>>(ChatTextMessage::VT_MESSAGE, message);
-  }
-  #[inline]
-  pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> ChatTextMessageBuilder<'a, 'b, A> {
-    let start = _fbb.start_table();
-    ChatTextMessageBuilder {
-      fbb_: _fbb,
-      start_: start,
+    impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> TextMessageBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessage::VT_ID, id);
+        }
+        #[inline]
+        pub fn add_from_partner_id(&mut self, from_partner_id: &super::base::PartnerId) {
+            self.fbb_
+                .push_slot_always::<&super::base::PartnerId>(TextMessage::VT_FROM_PARTNER_ID, from_partner_id);
+        }
+        #[inline]
+        pub fn add_to_partner_id(&mut self, to_partner_id: &super::base::PartnerId) {
+            self.fbb_
+                .push_slot_always::<&super::base::PartnerId>(TextMessage::VT_TO_PARTNER_ID, to_partner_id);
+        }
+        #[inline]
+        pub fn add_from_terminal_id(&mut self, from_terminal_id: &super::base::TerminalId) {
+            self.fbb_
+                .push_slot_always::<&super::base::TerminalId>(TextMessage::VT_FROM_TERMINAL_ID, from_terminal_id);
+        }
+        #[inline]
+        pub fn add_to_terminal_id(&mut self, to_terminal_id: &super::base::TerminalId) {
+            self.fbb_
+                .push_slot_always::<&super::base::TerminalId>(TextMessage::VT_TO_TERMINAL_ID, to_terminal_id);
+        }
+        #[inline]
+        pub fn add_message_id(&mut self, message_id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessage::VT_MESSAGE_ID, message_id);
+        }
+        #[inline]
+        pub fn add_text(&mut self, text: ::flatbuffers::WIPOffset<&'b str>) {
+            self.fbb_.push_slot_always::<::flatbuffers::WIPOffset<_>>(TextMessage::VT_TEXT, text);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> TextMessageBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            TextMessageBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> ::flatbuffers::WIPOffset<TextMessage<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            ::flatbuffers::WIPOffset::new(o.value())
+        }
     }
-  }
-  #[inline]
-  pub fn finish(self) -> ::flatbuffers::WIPOffset<ChatTextMessage<'a>> {
-    let o = self.fbb_.end_table(self.start_);
-    ::flatbuffers::WIPOffset::new(o.value())
-  }
-}
 
-impl ::core::fmt::Debug for ChatTextMessage<'_> {
-  fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-    let mut ds = f.debug_struct("ChatTextMessage");
-      ds.field("header", &self.header());
-      ds.field("message", &self.message());
-      ds.finish()
-  }
-}
-#[non_exhaustive]
-#[derive(Debug, Clone, PartialEq)]
-pub struct ChatTextMessageT {
-  pub header: Option<super::base::HeaderT>,
-  pub message: Option<alloc::boxed::Box<TextMessageT>>,
-}
-impl Default for ChatTextMessageT {
-  fn default() -> Self {
-    Self {
-      header: None,
-      message: None,
+    impl ::core::fmt::Debug for TextMessage<'_> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            let mut ds = f.debug_struct("TextMessage");
+            ds.field("id", &self.id());
+            ds.field("from_partner_id", &self.from_partner_id());
+            ds.field("to_partner_id", &self.to_partner_id());
+            ds.field("from_terminal_id", &self.from_terminal_id());
+            ds.field("to_terminal_id", &self.to_terminal_id());
+            ds.field("message_id", &self.message_id());
+            ds.field("text", &self.text());
+            ds.finish()
+        }
     }
-  }
-}
-impl ChatTextMessageT {
-  pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(
-    &self,
-    _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>
-  ) -> ::flatbuffers::WIPOffset<ChatTextMessage<'b>> {
-    let header_tmp = self.header.as_ref().map(|x| x.pack());
-    let header = header_tmp.as_ref();
-    let message = self.message.as_ref().map(|x|{
-      x.pack(_fbb)
-    });
-    ChatTextMessage::create(_fbb, &ChatTextMessageArgs{
-      header,
-      message,
-    })
-  }
-}
-pub enum ChatTextMessageAckOffset {}
-#[derive(Copy, Clone, PartialEq)]
-
-pub struct ChatTextMessageAck<'a> {
-  pub _tab: ::flatbuffers::Table<'a>,
-}
-
-impl<'a> ::flatbuffers::Follow<'a> for ChatTextMessageAck<'a> {
-  type Inner = ChatTextMessageAck<'a>;
-  #[inline]
-  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
-    Self { _tab: unsafe { ::flatbuffers::Table::new(buf, loc) } }
-  }
-}
-
-impl<'a> ChatTextMessageAck<'a> {
-  pub const VT_HEADER: ::flatbuffers::VOffsetT = 4;
-  pub const VT_MESSAGE: ::flatbuffers::VOffsetT = 6;
-
-  #[inline]
-  pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
-    ChatTextMessageAck { _tab: table }
-  }
-  #[allow(unused_mut)]
-  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
-    _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
-    args: &'args ChatTextMessageAckArgs<'args>
-  ) -> ::flatbuffers::WIPOffset<ChatTextMessageAck<'bldr>> {
-    let mut builder = ChatTextMessageAckBuilder::new(_fbb);
-    if let Some(x) = args.message { builder.add_message(x); }
-    if let Some(x) = args.header { builder.add_header(x); }
-    builder.finish()
-  }
-
-  pub fn unpack(&self) -> ChatTextMessageAckT {
-    let header = self.header().map(|x| {
-      x.unpack()
-    });
-    let message = self.message().map(|x| {
-      alloc::boxed::Box::new(x.unpack())
-    });
-    ChatTextMessageAckT {
-      header,
-      message,
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct TextMessageT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub from_partner_id: Option<super::base::PartnerIdT>,
+        pub to_partner_id: Option<super::base::PartnerIdT>,
+        pub from_terminal_id: Option<super::base::TerminalIdT>,
+        pub to_terminal_id: Option<super::base::TerminalIdT>,
+        pub message_id: Option<super::base::UlidBytesT>,
+        pub text: Option<alloc::string::String>,
     }
-  }
-
-  #[inline]
-  pub fn header(&self) -> Option<&'a super::base::Header> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<super::base::Header>(ChatTextMessageAck::VT_HEADER, None)}
-  }
-  #[inline]
-  pub fn message(&self) -> Option<TextMessageAck<'a>> {
-    // Safety:
-    // Created from valid Table for this object
-    // which contains a valid value in this slot
-    unsafe { self._tab.get::<::flatbuffers::ForwardsUOffset<TextMessageAck>>(ChatTextMessageAck::VT_MESSAGE, None)}
-  }
-}
-
-impl ::flatbuffers::Verifiable for ChatTextMessageAck<'_> {
-  #[inline]
-  fn run_verifier(
-    v: &mut ::flatbuffers::Verifier, pos: usize
-  ) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
-    v.visit_table(pos)?
-     .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
-     .visit_field::<::flatbuffers::ForwardsUOffset<TextMessageAck>>("message", Self::VT_MESSAGE, false)?
-     .finish();
-    Ok(())
-  }
-}
-pub struct ChatTextMessageAckArgs<'a> {
-    pub header: Option<&'a super::base::Header>,
-    pub message: Option<::flatbuffers::WIPOffset<TextMessageAck<'a>>>,
-}
-impl<'a> Default for ChatTextMessageAckArgs<'a> {
-  #[inline]
-  fn default() -> Self {
-    ChatTextMessageAckArgs {
-      header: None,
-      message: None,
+    impl Default for TextMessageT {
+        fn default() -> Self {
+            Self {
+                id: None,
+                from_partner_id: None,
+                to_partner_id: None,
+                from_terminal_id: None,
+                to_terminal_id: None,
+                message_id: None,
+                text: None,
+            }
+        }
     }
-  }
-}
-
-pub struct ChatTextMessageAckBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
-  fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
-  start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
-}
-impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> ChatTextMessageAckBuilder<'a, 'b, A> {
-  #[inline]
-  pub fn add_header(&mut self, header: &super::base::Header) {
-    self.fbb_.push_slot_always::<&super::base::Header>(ChatTextMessageAck::VT_HEADER, header);
-  }
-  #[inline]
-  pub fn add_message(&mut self, message: ::flatbuffers::WIPOffset<TextMessageAck<'b >>) {
-    self.fbb_.push_slot_always::<::flatbuffers::WIPOffset<TextMessageAck>>(ChatTextMessageAck::VT_MESSAGE, message);
-  }
-  #[inline]
-  pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> ChatTextMessageAckBuilder<'a, 'b, A> {
-    let start = _fbb.start_table();
-    ChatTextMessageAckBuilder {
-      fbb_: _fbb,
-      start_: start,
+    impl TextMessageT {
+        pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> ::flatbuffers::WIPOffset<TextMessage<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let from_partner_id_tmp = self.from_partner_id.as_ref().map(|x| x.pack());
+            let from_partner_id = from_partner_id_tmp.as_ref();
+            let to_partner_id_tmp = self.to_partner_id.as_ref().map(|x| x.pack());
+            let to_partner_id = to_partner_id_tmp.as_ref();
+            let from_terminal_id_tmp = self.from_terminal_id.as_ref().map(|x| x.pack());
+            let from_terminal_id = from_terminal_id_tmp.as_ref();
+            let to_terminal_id_tmp = self.to_terminal_id.as_ref().map(|x| x.pack());
+            let to_terminal_id = to_terminal_id_tmp.as_ref();
+            let message_id_tmp = self.message_id.as_ref().map(|x| x.pack());
+            let message_id = message_id_tmp.as_ref();
+            let text = self.text.as_ref().map(|x| _fbb.create_string(x));
+            TextMessage::create(
+                _fbb,
+                &TextMessageArgs {
+                    id,
+                    from_partner_id,
+                    to_partner_id,
+                    from_terminal_id,
+                    to_terminal_id,
+                    message_id,
+                    text,
+                },
+            )
+        }
     }
-  }
-  #[inline]
-  pub fn finish(self) -> ::flatbuffers::WIPOffset<ChatTextMessageAck<'a>> {
-    let o = self.fbb_.end_table(self.start_);
-    ::flatbuffers::WIPOffset::new(o.value())
-  }
-}
+    pub enum TextMessageAckOffset {}
+    #[derive(Copy, Clone, PartialEq)]
 
-impl ::core::fmt::Debug for ChatTextMessageAck<'_> {
-  fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-    let mut ds = f.debug_struct("ChatTextMessageAck");
-      ds.field("header", &self.header());
-      ds.field("message", &self.message());
-      ds.finish()
-  }
-}
-#[non_exhaustive]
-#[derive(Debug, Clone, PartialEq)]
-pub struct ChatTextMessageAckT {
-  pub header: Option<super::base::HeaderT>,
-  pub message: Option<alloc::boxed::Box<TextMessageAckT>>,
-}
-impl Default for ChatTextMessageAckT {
-  fn default() -> Self {
-    Self {
-      header: None,
-      message: None,
+    pub struct TextMessageAck<'a> {
+        pub _tab: ::flatbuffers::Table<'a>,
     }
-  }
-}
-impl ChatTextMessageAckT {
-  pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(
-    &self,
-    _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>
-  ) -> ::flatbuffers::WIPOffset<ChatTextMessageAck<'b>> {
-    let header_tmp = self.header.as_ref().map(|x| x.pack());
-    let header = header_tmp.as_ref();
-    let message = self.message.as_ref().map(|x|{
-      x.pack(_fbb)
-    });
-    ChatTextMessageAck::create(_fbb, &ChatTextMessageAckArgs{
-      header,
-      message,
-    })
-  }
-}
-}  // pub mod chat
 
+    impl<'a> ::flatbuffers::Follow<'a> for TextMessageAck<'a> {
+        type Inner = TextMessageAck<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { ::flatbuffers::Table::new(buf, loc) },
+            }
+        }
+    }
+
+    impl<'a> TextMessageAck<'a> {
+        pub const VT_ID: ::flatbuffers::VOffsetT = 4;
+        pub const VT_SEND_ID: ::flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
+            TextMessageAck { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args TextMessageAckArgs<'args>,
+        ) -> ::flatbuffers::WIPOffset<TextMessageAck<'bldr>> {
+            let mut builder = TextMessageAckBuilder::new(_fbb);
+            if let Some(x) = args.send_id {
+                builder.add_send_id(x);
+            }
+            if let Some(x) = args.id {
+                builder.add_id(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> TextMessageAckT {
+            let id = self.id().map(|x| x.unpack());
+            let send_id = self.send_id().map(|x| x.unpack());
+            TextMessageAckT { id, send_id }
+        }
+
+        #[inline]
+        pub fn id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(TextMessageAck::VT_ID, None) }
+        }
+        #[inline]
+        pub fn send_id(&self) -> Option<&'a super::base::UlidBytes> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::UlidBytes>(TextMessageAck::VT_SEND_ID, None) }
+        }
+    }
+
+    impl ::flatbuffers::Verifiable for TextMessageAck<'_> {
+        #[inline]
+        fn run_verifier(v: &mut ::flatbuffers::Verifier, pos: usize) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
+            v.visit_table(pos)?
+                .visit_field::<super::base::UlidBytes>("id", Self::VT_ID, false)?
+                .visit_field::<super::base::UlidBytes>("send_id", Self::VT_SEND_ID, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct TextMessageAckArgs<'a> {
+        pub id: Option<&'a super::base::UlidBytes>,
+        pub send_id: Option<&'a super::base::UlidBytes>,
+    }
+    impl<'a> Default for TextMessageAckArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            TextMessageAckArgs { id: None, send_id: None }
+        }
+    }
+
+    pub struct TextMessageAckBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> TextMessageAckBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_id(&mut self, id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessageAck::VT_ID, id);
+        }
+        #[inline]
+        pub fn add_send_id(&mut self, send_id: &super::base::UlidBytes) {
+            self.fbb_.push_slot_always::<&super::base::UlidBytes>(TextMessageAck::VT_SEND_ID, send_id);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> TextMessageAckBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            TextMessageAckBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> ::flatbuffers::WIPOffset<TextMessageAck<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            ::flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl ::core::fmt::Debug for TextMessageAck<'_> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            let mut ds = f.debug_struct("TextMessageAck");
+            ds.field("id", &self.id());
+            ds.field("send_id", &self.send_id());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct TextMessageAckT {
+        pub id: Option<super::base::UlidBytesT>,
+        pub send_id: Option<super::base::UlidBytesT>,
+    }
+    impl Default for TextMessageAckT {
+        fn default() -> Self {
+            Self { id: None, send_id: None }
+        }
+    }
+    impl TextMessageAckT {
+        pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> ::flatbuffers::WIPOffset<TextMessageAck<'b>> {
+            let id_tmp = self.id.as_ref().map(|x| x.pack());
+            let id = id_tmp.as_ref();
+            let send_id_tmp = self.send_id.as_ref().map(|x| x.pack());
+            let send_id = send_id_tmp.as_ref();
+            TextMessageAck::create(_fbb, &TextMessageAckArgs { id, send_id })
+        }
+    }
+    pub enum ChatTextMessageOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct ChatTextMessage<'a> {
+        pub _tab: ::flatbuffers::Table<'a>,
+    }
+
+    impl<'a> ::flatbuffers::Follow<'a> for ChatTextMessage<'a> {
+        type Inner = ChatTextMessage<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { ::flatbuffers::Table::new(buf, loc) },
+            }
+        }
+    }
+
+    impl<'a> ChatTextMessage<'a> {
+        pub const VT_HEADER: ::flatbuffers::VOffsetT = 4;
+        pub const VT_MESSAGE: ::flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
+            ChatTextMessage { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args ChatTextMessageArgs<'args>,
+        ) -> ::flatbuffers::WIPOffset<ChatTextMessage<'bldr>> {
+            let mut builder = ChatTextMessageBuilder::new(_fbb);
+            if let Some(x) = args.message {
+                builder.add_message(x);
+            }
+            if let Some(x) = args.header {
+                builder.add_header(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> ChatTextMessageT {
+            let header = self.header().map(|x| x.unpack());
+            let message = self.message().map(|x| alloc::boxed::Box::new(x.unpack()));
+            ChatTextMessageT { header, message }
+        }
+
+        #[inline]
+        pub fn header(&self) -> Option<&'a super::base::Header> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::Header>(ChatTextMessage::VT_HEADER, None) }
+        }
+        #[inline]
+        pub fn message(&self) -> Option<TextMessage<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<::flatbuffers::ForwardsUOffset<TextMessage>>(ChatTextMessage::VT_MESSAGE, None) }
+        }
+    }
+
+    impl ::flatbuffers::Verifiable for ChatTextMessage<'_> {
+        #[inline]
+        fn run_verifier(v: &mut ::flatbuffers::Verifier, pos: usize) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
+            v.visit_table(pos)?
+                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
+                .visit_field::<::flatbuffers::ForwardsUOffset<TextMessage>>("message", Self::VT_MESSAGE, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct ChatTextMessageArgs<'a> {
+        pub header: Option<&'a super::base::Header>,
+        pub message: Option<::flatbuffers::WIPOffset<TextMessage<'a>>>,
+    }
+    impl<'a> Default for ChatTextMessageArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            ChatTextMessageArgs { header: None, message: None }
+        }
+    }
+
+    pub struct ChatTextMessageBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> ChatTextMessageBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_header(&mut self, header: &super::base::Header) {
+            self.fbb_.push_slot_always::<&super::base::Header>(ChatTextMessage::VT_HEADER, header);
+        }
+        #[inline]
+        pub fn add_message(&mut self, message: ::flatbuffers::WIPOffset<TextMessage<'b>>) {
+            self.fbb_
+                .push_slot_always::<::flatbuffers::WIPOffset<TextMessage>>(ChatTextMessage::VT_MESSAGE, message);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> ChatTextMessageBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            ChatTextMessageBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> ::flatbuffers::WIPOffset<ChatTextMessage<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            ::flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl ::core::fmt::Debug for ChatTextMessage<'_> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            let mut ds = f.debug_struct("ChatTextMessage");
+            ds.field("header", &self.header());
+            ds.field("message", &self.message());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ChatTextMessageT {
+        pub header: Option<super::base::HeaderT>,
+        pub message: Option<alloc::boxed::Box<TextMessageT>>,
+    }
+    impl Default for ChatTextMessageT {
+        fn default() -> Self {
+            Self { header: None, message: None }
+        }
+    }
+    impl ChatTextMessageT {
+        pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> ::flatbuffers::WIPOffset<ChatTextMessage<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let message = self.message.as_ref().map(|x| x.pack(_fbb));
+            ChatTextMessage::create(_fbb, &ChatTextMessageArgs { header, message })
+        }
+    }
+    pub enum ChatTextMessageAckOffset {}
+    #[derive(Copy, Clone, PartialEq)]
+
+    pub struct ChatTextMessageAck<'a> {
+        pub _tab: ::flatbuffers::Table<'a>,
+    }
+
+    impl<'a> ::flatbuffers::Follow<'a> for ChatTextMessageAck<'a> {
+        type Inner = ChatTextMessageAck<'a>;
+        #[inline]
+        unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+            Self {
+                _tab: unsafe { ::flatbuffers::Table::new(buf, loc) },
+            }
+        }
+    }
+
+    impl<'a> ChatTextMessageAck<'a> {
+        pub const VT_HEADER: ::flatbuffers::VOffsetT = 4;
+        pub const VT_MESSAGE: ::flatbuffers::VOffsetT = 6;
+
+        #[inline]
+        pub unsafe fn init_from_table(table: ::flatbuffers::Table<'a>) -> Self {
+            ChatTextMessageAck { _tab: table }
+        }
+        #[allow(unused_mut)]
+        pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: ::flatbuffers::Allocator + 'bldr>(
+            _fbb: &'mut_bldr mut ::flatbuffers::FlatBufferBuilder<'bldr, A>,
+            args: &'args ChatTextMessageAckArgs<'args>,
+        ) -> ::flatbuffers::WIPOffset<ChatTextMessageAck<'bldr>> {
+            let mut builder = ChatTextMessageAckBuilder::new(_fbb);
+            if let Some(x) = args.message {
+                builder.add_message(x);
+            }
+            if let Some(x) = args.header {
+                builder.add_header(x);
+            }
+            builder.finish()
+        }
+
+        pub fn unpack(&self) -> ChatTextMessageAckT {
+            let header = self.header().map(|x| x.unpack());
+            let message = self.message().map(|x| alloc::boxed::Box::new(x.unpack()));
+            ChatTextMessageAckT { header, message }
+        }
+
+        #[inline]
+        pub fn header(&self) -> Option<&'a super::base::Header> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<super::base::Header>(ChatTextMessageAck::VT_HEADER, None) }
+        }
+        #[inline]
+        pub fn message(&self) -> Option<TextMessageAck<'a>> {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<::flatbuffers::ForwardsUOffset<TextMessageAck>>(ChatTextMessageAck::VT_MESSAGE, None)
+            }
+        }
+    }
+
+    impl ::flatbuffers::Verifiable for ChatTextMessageAck<'_> {
+        #[inline]
+        fn run_verifier(v: &mut ::flatbuffers::Verifier, pos: usize) -> Result<(), ::flatbuffers::InvalidFlatbuffer> {
+            v.visit_table(pos)?
+                .visit_field::<super::base::Header>("header", Self::VT_HEADER, false)?
+                .visit_field::<::flatbuffers::ForwardsUOffset<TextMessageAck>>("message", Self::VT_MESSAGE, false)?
+                .finish();
+            Ok(())
+        }
+    }
+    pub struct ChatTextMessageAckArgs<'a> {
+        pub header: Option<&'a super::base::Header>,
+        pub message: Option<::flatbuffers::WIPOffset<TextMessageAck<'a>>>,
+    }
+    impl<'a> Default for ChatTextMessageAckArgs<'a> {
+        #[inline]
+        fn default() -> Self {
+            ChatTextMessageAckArgs { header: None, message: None }
+        }
+    }
+
+    pub struct ChatTextMessageAckBuilder<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> {
+        fbb_: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>,
+        start_: ::flatbuffers::WIPOffset<::flatbuffers::TableUnfinishedWIPOffset>,
+    }
+    impl<'a: 'b, 'b, A: ::flatbuffers::Allocator + 'a> ChatTextMessageAckBuilder<'a, 'b, A> {
+        #[inline]
+        pub fn add_header(&mut self, header: &super::base::Header) {
+            self.fbb_.push_slot_always::<&super::base::Header>(ChatTextMessageAck::VT_HEADER, header);
+        }
+        #[inline]
+        pub fn add_message(&mut self, message: ::flatbuffers::WIPOffset<TextMessageAck<'b>>) {
+            self.fbb_
+                .push_slot_always::<::flatbuffers::WIPOffset<TextMessageAck>>(ChatTextMessageAck::VT_MESSAGE, message);
+        }
+        #[inline]
+        pub fn new(_fbb: &'b mut ::flatbuffers::FlatBufferBuilder<'a, A>) -> ChatTextMessageAckBuilder<'a, 'b, A> {
+            let start = _fbb.start_table();
+            ChatTextMessageAckBuilder { fbb_: _fbb, start_: start }
+        }
+        #[inline]
+        pub fn finish(self) -> ::flatbuffers::WIPOffset<ChatTextMessageAck<'a>> {
+            let o = self.fbb_.end_table(self.start_);
+            ::flatbuffers::WIPOffset::new(o.value())
+        }
+    }
+
+    impl ::core::fmt::Debug for ChatTextMessageAck<'_> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            let mut ds = f.debug_struct("ChatTextMessageAck");
+            ds.field("header", &self.header());
+            ds.field("message", &self.message());
+            ds.finish()
+        }
+    }
+    #[non_exhaustive]
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ChatTextMessageAckT {
+        pub header: Option<super::base::HeaderT>,
+        pub message: Option<alloc::boxed::Box<TextMessageAckT>>,
+    }
+    impl Default for ChatTextMessageAckT {
+        fn default() -> Self {
+            Self { header: None, message: None }
+        }
+    }
+    impl ChatTextMessageAckT {
+        pub fn pack<'b, A: ::flatbuffers::Allocator + 'b>(
+            &self,
+            _fbb: &mut ::flatbuffers::FlatBufferBuilder<'b, A>,
+        ) -> ::flatbuffers::WIPOffset<ChatTextMessageAck<'b>> {
+            let header_tmp = self.header.as_ref().map(|x| x.pack());
+            let header = header_tmp.as_ref();
+            let message = self.message.as_ref().map(|x| x.pack(_fbb));
+            ChatTextMessageAck::create(_fbb, &ChatTextMessageAckArgs { header, message })
+        }
+    }
+} // pub mod chat

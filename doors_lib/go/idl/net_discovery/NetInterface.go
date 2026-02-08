@@ -9,16 +9,16 @@ import (
 )
 
 type NetInterfaceT struct {
-	IpV4 uint32 `json:"ip_v4"`
-	PortV4 uint16 `json:"port_v4"`
-	IpV6Global *base.Ipv6T `json:"ip_v6_global"`
-	PortV6 uint16 `json:"port_v6"`
-	IpV6Temporary *base.Ipv6T `json:"ip_v6_temporary"`
-	IpV6LinkLocal *base.Ipv6T `json:"ip_v6_link_local"`
-	IndexNetinterface uint32 `json:"index_netinterface"`
-	IpV6UniqueLocal *base.Ipv6T `json:"ip_v6_unique_local"`
-	Name string `json:"name"`
-	MacAddress string `json:"mac_address"`
+	IpV4              uint32      `json:"ip_v4"`
+	PortV4            uint16      `json:"port_v4"`
+	IpV6Global        *base.Ipv6T `json:"ip_v6_global"`
+	PortV6            uint16      `json:"port_v6"`
+	IpV6Temporary     *base.Ipv6T `json:"ip_v6_temporary"`
+	IpV6LinkLocal     *base.Ipv6T `json:"ip_v6_link_local"`
+	IndexNetinterface uint32      `json:"index_netinterface"`
+	IpV6UniqueLocal   *base.Ipv6T `json:"ip_v6_unique_local"`
+	Name              string      `json:"name"`
+	MacAddress        string      `json:"mac_address"`
 }
 
 func (t *NetInterfaceT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
