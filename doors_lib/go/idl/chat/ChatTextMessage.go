@@ -9,7 +9,7 @@ import (
 )
 
 type ChatTextMessageT struct {
-	Header  *base.HeaderT `json:"header"`
+	Header *base.HeaderT `json:"header"`
 	Message *TextMessageT `json:"message"`
 }
 

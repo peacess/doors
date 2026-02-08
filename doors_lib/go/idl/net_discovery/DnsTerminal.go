@@ -9,12 +9,12 @@ import (
 )
 
 type DnsTerminalT struct {
-	PartnerId     *base.PartnerIdT    `json:"partner_id"`
-	TerminalId    *base.TerminalIdT   `json:"terminal_id"`
-	Key           *base.X25519PublicT `json:"key"`
-	HostName      string              `json:"host_name"`
-	ShowName      string              `json:"show_name"`
-	NetInterfaces []*NetInterfaceT    `json:"net_interfaces"`
+	PartnerId *base.PartnerIdT `json:"partner_id"`
+	TerminalId *base.TerminalIdT `json:"terminal_id"`
+	Key *base.X25519PublicT `json:"key"`
+	HostName string `json:"host_name"`
+	ShowName string `json:"show_name"`
+	NetInterfaces []*NetInterfaceT `json:"net_interfaces"`
 }
 
 func (t *DnsTerminalT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

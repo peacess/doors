@@ -10,7 +10,7 @@ import (
 
 type MySelfFrameT struct {
 	Header *base.HeaderT `json:"header"`
-	MySelf *MySelfT      `json:"my_self"`
+	MySelf *MySelfT `json:"my_self"`
 }
 
 func (t *MySelfFrameT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

@@ -9,8 +9,8 @@ import (
 )
 
 type DataSelfFrameT struct {
-	Header   *base.HeaderT `json:"header"`
-	DataSelf *DataSelfT    `json:"data_self"`
+	Header *base.HeaderT `json:"header"`
+	DataSelf *DataSelfT `json:"data_self"`
 }
 
 func (t *DataSelfFrameT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

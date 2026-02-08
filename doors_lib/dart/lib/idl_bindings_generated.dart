@@ -14,40 +14,54 @@ import 'dart:ffi' as ffi;
 ///
 class IdlBindings {
   /// Holds the symbol lookup function.
-  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) _lookup;
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
+  _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  IdlBindings(ffi.DynamicLibrary dynamicLibrary) : _lookup = dynamicLibrary.lookup;
+  IdlBindings(ffi.DynamicLibrary dynamicLibrary)
+    : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
-  IdlBindings.fromLookup(ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup) : _lookup = lookup;
+  IdlBindings.fromLookup(
+    ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
+  ) : _lookup = lookup;
 
   FfiBytes init(CallBack callback) {
     return _init(callback);
   }
 
-  late final _initPtr = _lookup<ffi.NativeFunction<FfiBytes Function(CallBack)>>('init');
+  late final _initPtr =
+      _lookup<ffi.NativeFunction<FfiBytes Function(CallBack)>>('init');
   late final _init = _initPtr.asFunction<FfiBytes Function(CallBack)>();
 
   FfiBytes un_init() {
     return _un_init();
   }
 
-  late final _un_initPtr = _lookup<ffi.NativeFunction<FfiBytes Function()>>('un_init');
+  late final _un_initPtr = _lookup<ffi.NativeFunction<FfiBytes Function()>>(
+    'un_init',
+  );
   late final _un_init = _un_initPtr.asFunction<FfiBytes Function()>();
 
   FfiBytes call(ffi.Pointer<ffi.Uint8> bytes, int length) {
     return _call(bytes, length);
   }
 
-  late final _callPtr = _lookup<ffi.NativeFunction<FfiBytes Function(ffi.Pointer<ffi.Uint8>, ffi.Uint64)>>('call');
-  late final _call = _callPtr.asFunction<FfiBytes Function(ffi.Pointer<ffi.Uint8>, int)>();
+  late final _callPtr =
+      _lookup<
+        ffi.NativeFunction<
+          FfiBytes Function(ffi.Pointer<ffi.Uint8>, ffi.Uint64)
+        >
+      >('call');
+  late final _call = _callPtr
+      .asFunction<FfiBytes Function(ffi.Pointer<ffi.Uint8>, int)>();
 
   void bytes_free(FfiBytes data) {
     return _bytes_free(data);
   }
 
-  late final _bytes_freePtr = _lookup<ffi.NativeFunction<ffi.Void Function(FfiBytes)>>('bytes_free');
+  late final _bytes_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(FfiBytes)>>('bytes_free');
   late final _bytes_free = _bytes_freePtr.asFunction<void Function(FfiBytes)>();
 
   /// remove the length for performance
@@ -55,16 +69,24 @@ class IdlBindings {
     return _generate_ulid(bytes);
   }
 
-  late final _generate_ulidPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Uint8>)>>('generate_ulid');
-  late final _generate_ulid = _generate_ulidPtr.asFunction<void Function(ffi.Pointer<ffi.Uint8>)>(isLeaf: true);
+  late final _generate_ulidPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Uint8>)>>(
+        'generate_ulid',
+      );
+  late final _generate_ulid = _generate_ulidPtr
+      .asFunction<void Function(ffi.Pointer<ffi.Uint8>)>(isLeaf: true);
 
   /// remove the length for performance
   void generate_uuid_v7(ffi.Pointer<ffi.Uint8> bytes) {
     return _generate_uuid_v7(bytes);
   }
 
-  late final _generate_uuid_v7Ptr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Uint8>)>>('generate_uuid_v7');
-  late final _generate_uuid_v7 = _generate_uuid_v7Ptr.asFunction<void Function(ffi.Pointer<ffi.Uint8>)>(isLeaf: true);
+  late final _generate_uuid_v7Ptr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Uint8>)>>(
+        'generate_uuid_v7',
+      );
+  late final _generate_uuid_v7 = _generate_uuid_v7Ptr
+      .asFunction<void Function(ffi.Pointer<ffi.Uint8>)>(isLeaf: true);
 }
 
 final class FfiBytes extends ffi.Struct {

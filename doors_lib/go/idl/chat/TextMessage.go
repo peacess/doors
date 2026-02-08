@@ -9,13 +9,13 @@ import (
 )
 
 type TextMessageT struct {
-	Id             *base.UlidBytesT  `json:"id"`
-	FromPartnerId  *base.PartnerIdT  `json:"from_partner_id"`
-	ToPartnerId    *base.PartnerIdT  `json:"to_partner_id"`
+	Id *base.UlidBytesT `json:"id"`
+	FromPartnerId *base.PartnerIdT `json:"from_partner_id"`
+	ToPartnerId *base.PartnerIdT `json:"to_partner_id"`
 	FromTerminalId *base.TerminalIdT `json:"from_terminal_id"`
-	ToTerminalId   *base.TerminalIdT `json:"to_terminal_id"`
-	MessageId      *base.UlidBytesT  `json:"message_id"`
-	Text           string            `json:"text"`
+	ToTerminalId *base.TerminalIdT `json:"to_terminal_id"`
+	MessageId *base.UlidBytesT `json:"message_id"`
+	Text string `json:"text"`
 }
 
 func (t *TextMessageT) Pack(builder *flatbuffers.Builder) flatbuffers.UOffsetT {

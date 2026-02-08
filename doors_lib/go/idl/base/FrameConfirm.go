@@ -7,7 +7,7 @@ import (
 )
 
 type FrameConfirmT struct {
-	Id      *UlidBytesT `json:"id"`
+	Id *UlidBytesT `json:"id"`
 	FrameId *UlidBytesT `json:"frame_id"`
 }
 

@@ -7,7 +7,7 @@ import (
 )
 
 type FrameErrorT struct {
-	Header    *HeaderT    `json:"header"`
+	Header *HeaderT `json:"header"`
 	ErrorInfo *ErrorInfoT `json:"error_info"`
 }
 

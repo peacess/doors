@@ -24,7 +24,7 @@ build:
 upgrade:
 	cd go && ${go} get -u -t ./...
 	cd rust && make upgrade
-	cd dart && ${flutter} pub upgrade
+	cd dart && ${flutter} pub upgrade --major-versions
 
 gen:
 	cd rust/ffi_rpc && cargo build --bin build_rs

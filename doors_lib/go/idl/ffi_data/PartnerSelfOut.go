@@ -10,7 +10,7 @@ import (
 )
 
 type PartnerSelfOutT struct {
-	Id       *base.UlidBytesT            `json:"id"`
+	Id *base.UlidBytesT `json:"id"`
 	Terminal *net_discovery.DnsTerminalT `json:"terminal"`
 }
 

@@ -27,7 +27,7 @@ build: gen
 upgrade:
 	cd doors_app && make upgrade
 	cd doors_lib && make upgrade
-	cargo upgrade && flutter pub upgrade
+	cargo upgrade && ${flutter} pub upgrade --major-versions
 
 release_linux_flutter_rust:gen
 	cd doors_lib/rust && make release_linux

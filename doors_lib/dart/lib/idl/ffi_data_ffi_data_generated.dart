@@ -6,6 +6,7 @@ library ffi_data;
 import 'dart:typed_data' show Uint8List;
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 
+
 import './base_base_generated.dart' as base;
 import './net_discovery_net_discovery_generated.dart' as net_discovery;
 
@@ -19,18 +20,15 @@ enum FfiRpcDiscoveryType {
 
   factory FfiRpcDiscoveryType.fromValue(int value) {
     switch (value) {
-      case 0:
-        return FfiRpcDiscoveryType.none;
-      case 1:
-        return FfiRpcDiscoveryType.partner_self_in;
-      case 2:
-        return FfiRpcDiscoveryType.partner_self_out;
-      default:
-        throw StateError('Invalid value $value for bit flag enum');
+      case 0: return FfiRpcDiscoveryType.none;
+      case 1: return FfiRpcDiscoveryType.partner_self_in;
+      case 2: return FfiRpcDiscoveryType.partner_self_out;
+      default: throw StateError('Invalid value $value for bit flag enum');
     }
   }
 
-  static FfiRpcDiscoveryType? _createOrNull(int? value) => value == null ? null : FfiRpcDiscoveryType.fromValue(value);
+  static FfiRpcDiscoveryType? _createOrNull(int? value) =>
+      value == null ? null : FfiRpcDiscoveryType.fromValue(value);
 
   static const int minValue = 0;
   static const int maxValue = 2;
@@ -44,7 +42,8 @@ class _FfiRpcDiscoveryTypeReader extends fb.Reader<FfiRpcDiscoveryType> {
   int get size => 4;
 
   @override
-  FfiRpcDiscoveryType read(fb.BufferContext bc, int offset) => FfiRpcDiscoveryType.fromValue(const fb.Uint32Reader().read(bc, offset));
+  FfiRpcDiscoveryType read(fb.BufferContext bc, int offset) =>
+      FfiRpcDiscoveryType.fromValue(const fb.Uint32Reader().read(bc, offset));
 }
 
 class PartnerSelfIn {
@@ -66,7 +65,8 @@ class PartnerSelfIn {
     return 'PartnerSelfIn{id: ${id}}';
   }
 
-  PartnerSelfInT unpack() => PartnerSelfInT(id: id?.unpack());
+  PartnerSelfInT unpack() => PartnerSelfInT(
+      id: id?.unpack());
 
   static int pack(fb.Builder fbBuilder, PartnerSelfInT? object) {
     if (object == null) return 0;
@@ -77,7 +77,8 @@ class PartnerSelfIn {
 class PartnerSelfInT implements fb.Packable {
   base.UlidBytesT? id;
 
-  PartnerSelfInT({this.id});
+  PartnerSelfInT({
+      this.id});
 
   @override
   int pack(fb.Builder fbBuilder) {
@@ -98,7 +99,8 @@ class _PartnerSelfInReader extends fb.TableReader<PartnerSelfIn> {
   const _PartnerSelfInReader();
 
   @override
-  PartnerSelfIn createObject(fb.BufferContext bc, int offset) => PartnerSelfIn._(bc, offset);
+  PartnerSelfIn createObject(fb.BufferContext bc, int offset) => 
+    PartnerSelfIn._(bc, offset);
 }
 
 class PartnerSelfInBuilder {
@@ -123,7 +125,10 @@ class PartnerSelfInBuilder {
 class PartnerSelfInObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
 
-  PartnerSelfInObjectBuilder({base.UlidBytesObjectBuilder? id}) : _id = id;
+  PartnerSelfInObjectBuilder({
+    base.UlidBytesObjectBuilder? id,
+  })
+      : _id = id;
 
   /// Finish building, and store into the [fbBuilder].
   @override
@@ -143,7 +148,6 @@ class PartnerSelfInObjectBuilder extends fb.ObjectBuilder {
     return fbBuilder.buffer;
   }
 }
-
 class PartnerSelfOut {
   PartnerSelfOut._(this._bc, this._bcOffset);
   factory PartnerSelfOut(List<int> bytes) {
@@ -164,7 +168,9 @@ class PartnerSelfOut {
     return 'PartnerSelfOut{id: ${id}, terminal: ${terminal}}';
   }
 
-  PartnerSelfOutT unpack() => PartnerSelfOutT(id: id?.unpack(), terminal: terminal?.unpack());
+  PartnerSelfOutT unpack() => PartnerSelfOutT(
+      id: id?.unpack(),
+      terminal: terminal?.unpack());
 
   static int pack(fb.Builder fbBuilder, PartnerSelfOutT? object) {
     if (object == null) return 0;
@@ -176,7 +182,9 @@ class PartnerSelfOutT implements fb.Packable {
   base.UlidBytesT? id;
   net_discovery.DnsTerminalT? terminal;
 
-  PartnerSelfOutT({this.id, this.terminal});
+  PartnerSelfOutT({
+      this.id,
+      this.terminal});
 
   @override
   int pack(fb.Builder fbBuilder) {
@@ -199,7 +207,8 @@ class _PartnerSelfOutReader extends fb.TableReader<PartnerSelfOut> {
   const _PartnerSelfOutReader();
 
   @override
-  PartnerSelfOut createObject(fb.BufferContext bc, int offset) => PartnerSelfOut._(bc, offset);
+  PartnerSelfOut createObject(fb.BufferContext bc, int offset) => 
+    PartnerSelfOut._(bc, offset);
 }
 
 class PartnerSelfOutBuilder {
@@ -215,7 +224,6 @@ class PartnerSelfOutBuilder {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
-
   int addTerminalOffset(int? offset) {
     fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
@@ -230,7 +238,12 @@ class PartnerSelfOutObjectBuilder extends fb.ObjectBuilder {
   final base.UlidBytesObjectBuilder? _id;
   final net_discovery.DnsTerminalObjectBuilder? _terminal;
 
-  PartnerSelfOutObjectBuilder({base.UlidBytesObjectBuilder? id, net_discovery.DnsTerminalObjectBuilder? terminal}) : _id = id, _terminal = terminal;
+  PartnerSelfOutObjectBuilder({
+    base.UlidBytesObjectBuilder? id,
+    net_discovery.DnsTerminalObjectBuilder? terminal,
+  })
+      : _id = id,
+        _terminal = terminal;
 
   /// Finish building, and store into the [fbBuilder].
   @override
@@ -252,7 +265,6 @@ class PartnerSelfOutObjectBuilder extends fb.ObjectBuilder {
     return fbBuilder.buffer;
   }
 }
-
 class FfiRpcPartnerSelfIn {
   FfiRpcPartnerSelfIn._(this._bc, this._bcOffset);
   factory FfiRpcPartnerSelfIn(List<int> bytes) {
@@ -273,7 +285,9 @@ class FfiRpcPartnerSelfIn {
     return 'FfiRpcPartnerSelfIn{header: ${header}, message: ${message}}';
   }
 
-  FfiRpcPartnerSelfInT unpack() => FfiRpcPartnerSelfInT(header: header?.unpack(), message: message?.unpack());
+  FfiRpcPartnerSelfInT unpack() => FfiRpcPartnerSelfInT(
+      header: header?.unpack(),
+      message: message?.unpack());
 
   static int pack(fb.Builder fbBuilder, FfiRpcPartnerSelfInT? object) {
     if (object == null) return 0;
@@ -285,7 +299,9 @@ class FfiRpcPartnerSelfInT implements fb.Packable {
   base.HeaderT? header;
   PartnerSelfInT? message;
 
-  FfiRpcPartnerSelfInT({this.header, this.message});
+  FfiRpcPartnerSelfInT({
+      this.header,
+      this.message});
 
   @override
   int pack(fb.Builder fbBuilder) {
@@ -308,7 +324,8 @@ class _FfiRpcPartnerSelfInReader extends fb.TableReader<FfiRpcPartnerSelfIn> {
   const _FfiRpcPartnerSelfInReader();
 
   @override
-  FfiRpcPartnerSelfIn createObject(fb.BufferContext bc, int offset) => FfiRpcPartnerSelfIn._(bc, offset);
+  FfiRpcPartnerSelfIn createObject(fb.BufferContext bc, int offset) => 
+    FfiRpcPartnerSelfIn._(bc, offset);
 }
 
 class FfiRpcPartnerSelfInBuilder {
@@ -324,7 +341,6 @@ class FfiRpcPartnerSelfInBuilder {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
-
   int addMessageOffset(int? offset) {
     fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
@@ -339,7 +355,12 @@ class FfiRpcPartnerSelfInObjectBuilder extends fb.ObjectBuilder {
   final base.HeaderObjectBuilder? _header;
   final PartnerSelfInObjectBuilder? _message;
 
-  FfiRpcPartnerSelfInObjectBuilder({base.HeaderObjectBuilder? header, PartnerSelfInObjectBuilder? message}) : _header = header, _message = message;
+  FfiRpcPartnerSelfInObjectBuilder({
+    base.HeaderObjectBuilder? header,
+    PartnerSelfInObjectBuilder? message,
+  })
+      : _header = header,
+        _message = message;
 
   /// Finish building, and store into the [fbBuilder].
   @override
@@ -361,7 +382,6 @@ class FfiRpcPartnerSelfInObjectBuilder extends fb.ObjectBuilder {
     return fbBuilder.buffer;
   }
 }
-
 class FfiRpcPartnerSelfOut {
   FfiRpcPartnerSelfOut._(this._bc, this._bcOffset);
   factory FfiRpcPartnerSelfOut(List<int> bytes) {
@@ -382,7 +402,9 @@ class FfiRpcPartnerSelfOut {
     return 'FfiRpcPartnerSelfOut{header: ${header}, message: ${message}}';
   }
 
-  FfiRpcPartnerSelfOutT unpack() => FfiRpcPartnerSelfOutT(header: header?.unpack(), message: message?.unpack());
+  FfiRpcPartnerSelfOutT unpack() => FfiRpcPartnerSelfOutT(
+      header: header?.unpack(),
+      message: message?.unpack());
 
   static int pack(fb.Builder fbBuilder, FfiRpcPartnerSelfOutT? object) {
     if (object == null) return 0;
@@ -394,7 +416,9 @@ class FfiRpcPartnerSelfOutT implements fb.Packable {
   base.HeaderT? header;
   PartnerSelfOutT? message;
 
-  FfiRpcPartnerSelfOutT({this.header, this.message});
+  FfiRpcPartnerSelfOutT({
+      this.header,
+      this.message});
 
   @override
   int pack(fb.Builder fbBuilder) {
@@ -417,7 +441,8 @@ class _FfiRpcPartnerSelfOutReader extends fb.TableReader<FfiRpcPartnerSelfOut> {
   const _FfiRpcPartnerSelfOutReader();
 
   @override
-  FfiRpcPartnerSelfOut createObject(fb.BufferContext bc, int offset) => FfiRpcPartnerSelfOut._(bc, offset);
+  FfiRpcPartnerSelfOut createObject(fb.BufferContext bc, int offset) => 
+    FfiRpcPartnerSelfOut._(bc, offset);
 }
 
 class FfiRpcPartnerSelfOutBuilder {
@@ -433,7 +458,6 @@ class FfiRpcPartnerSelfOutBuilder {
     fbBuilder.addStruct(0, offset);
     return fbBuilder.offset;
   }
-
   int addMessageOffset(int? offset) {
     fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
@@ -448,7 +472,12 @@ class FfiRpcPartnerSelfOutObjectBuilder extends fb.ObjectBuilder {
   final base.HeaderObjectBuilder? _header;
   final PartnerSelfOutObjectBuilder? _message;
 
-  FfiRpcPartnerSelfOutObjectBuilder({base.HeaderObjectBuilder? header, PartnerSelfOutObjectBuilder? message}) : _header = header, _message = message;
+  FfiRpcPartnerSelfOutObjectBuilder({
+    base.HeaderObjectBuilder? header,
+    PartnerSelfOutObjectBuilder? message,
+  })
+      : _header = header,
+        _message = message;
 
   /// Finish building, and store into the [fbBuilder].
   @override

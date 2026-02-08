@@ -7,7 +7,7 @@ import (
 )
 
 type Uint128T struct {
-	Low  uint64 `json:"low"`
+	Low uint64 `json:"low"`
 	High uint64 `json:"high"`
 }
 

@@ -20,4 +20,4 @@ gen_icon:
 install:
 # 	dart pub global activate flutter_gen
 upgrade:
-	${flutter} pub upgrade
+	${flutter} pub upgrade --major-versions
